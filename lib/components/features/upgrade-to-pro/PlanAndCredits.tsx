@@ -5,7 +5,7 @@ import { match } from 'ts-pattern';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import { Button, Card, Segment, Toggle, toast } from '$lib/components/core';
+import { Badge, Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
@@ -369,7 +369,6 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   }, [mergedPlans]);
 
   const previewSection = compareSections[0];
-  const isFreePlan = !space.subscription_tier || space.subscription_tier === SubscriptionItemType.Free;
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
 
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
@@ -380,8 +379,16 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   const usedCreditsBarPercent = Math.max(3, usedCreditsPercentRaw);
 
   React.useEffect(() => {
-    setData(mergedPlans);
-  }, [mergedPlans]);
+    setData(() => {
+      return mergedPlans.map((item) => {
+        if (item.type === space.subscription_tier && space.subscription_annual) {
+          item.annual = space.subscription_annual;
+        }
+
+        return item;
+      });
+    });
+  }, [mergedPlans, space]);
 
   const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
     if (purchasingPlan) return;
@@ -422,14 +429,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-6">
-        <div className="space-y-1">
+        <div className="hidden md:block space-y-1">
           <h3 className="text-2xl font-bold">Plans & Credits</h3>
           <p className="text-tertiary">Manage your subscription plan and credit balance.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card.Root className="md:col-span-2">
-            <Card.Content className="flex h-full flex-col justify-between">
+            <Card.Content className="flex h-full md:flex-col justify-between max-sm:items-center">
               <div className="flex gap-3 items-center">
                 <div className="p-2 rounded-sm bg-(--chip-secondary-bg) flex items-center justify-center">
                   <i className="icon-lemonade-logo text-warning-300 w-5 h-5 aspect-square" />
@@ -450,89 +457,60 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
             </Card.Content>
           </Card.Root>
 
-          {isFreePlan ? (
-            <Card.Root className="md:col-span-2 overflow-hidden">
-              <Card.Content className="relative">
-                <div className="pointer-events-none absolute inset-0" />
-                <div className="relative flex h-full flex-col justify-between gap-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <p>Unlock Credits</p>
-                      <div className="rounded-full px-1.5 py-1 bg-(--btn-tertiary) text-tertiary">
-                        <p className="text-xs leading-none">What is this?</p>
-                      </div>
+          <Card.Root className="md:col-span-2">
+            <Card.Content className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
+                <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                  <p className="text-primary">Credits Remaining</p>
+                  <div className="bg-(--btn-tertiary) tooltip tooltip-bottom w-fit px-1.5 py-[1px] rounded-full">
+                    <p className="text-xs">What is this?</p>
+                    <div className="tooltip-content text-left! max-w-86!">
+                      <p>
+                        Credits power AI interactions in this community. Each AI chat message uses credits from the
+                        community’s daily allowance.
+                      </p>
                     </div>
-                    <div className="rounded-full bg-(--btn-tertiary)">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          initial={{ width: '0%' }}
-                          animate={{ width: '3%' }}
-                          exit={{ width: 0 }}
-                          transition={{ type: 'tween' }}
-                          className="rounded-full h-5 p-1 flex justify-end"
-                        >
-                          <div className="h-3 w-3 border-3 border-tertiary rounded-full"></div>
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                    <p className="text-sm text-tertiary">
-                      Upgrade your plan to unlock credits and get the most out of LemonAI; build pages, generate
-                      content, and automate more of your event workflow.
-                    </p>
                   </div>
                 </div>
-              </Card.Content>
-            </Card.Root>
-          ) : (
-            <Card.Root className="md:col-span-2">
-              <Card.Content className="flex flex-col gap-3">
-                <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
-                  <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                    <p className="text-primary">Credits Remaining</p>
-                    <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
-                      <p className="text-xs">What is this?</p>
-                    </div>
-                  </div>
 
-                  <p className="ml-auto text-left md:text-right">
-                    <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
-                  </p>
-                </div>
-                <div className="rounded-full bg-alert-400/16 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      initial={{ width: '3%' }}
-                      animate={{ width: `${usedCreditsBarPercent}%` }}
-                      exit={{ width: 0 }}
-                      transition={{ type: 'tween', duration: CREDIT_ANIMATION_DURATION, ease: 'easeOut' }}
-                      className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 min-w-5 flex justify-end"
-                    >
-                      <div className="h-3 w-3 border-3 border-white rounded-full"></div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-                <div className="flex flex-col gap-3 text-tertiary">
-                  <div className="flex items-center gap-0.5 order-1">
-                    <div className="size-4 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-alert-400" />
-                    </div>
-                    <p>Daily credits will be used first</p>
+                <p className="ml-auto text-left md:text-right">
+                  <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
+                </p>
+              </div>
+              <div className="rounded-full bg-alert-400/16 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    initial={{ width: '3%' }}
+                    animate={{ width: `${usedCreditsBarPercent}%` }}
+                    exit={{ width: 0 }}
+                    transition={{ type: 'tween', duration: CREDIT_ANIMATION_DURATION, ease: 'easeOut' }}
+                    className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 min-w-5 flex justify-end"
+                  >
+                    <div className="h-3 w-3 border-3 border-white rounded-full"></div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <div className="flex flex-col gap-3 text-tertiary">
+                <div className="flex items-center gap-0.5 order-1">
+                  <div className="size-4 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-alert-400" />
                   </div>
+                  <p>Daily credits will be used first</p>
+                </div>
 
-                  <div className="flex flex-col gap-2 order-2">
-                    <div className="flex gap-1.5 items-center">
-                      <i className="icon-x w-4 h-4 aspect-square" />
-                      <p className="text-sm">No credits will rollover</p>
-                    </div>
-                    <div className="flex gap-1.5 items-center">
-                      <i className="icon-done w-4 h-4 aspect-square" />
-                      <p className="text-sm">Daily credits reset at midnight UTC</p>
-                    </div>
+                <div className="flex flex-col gap-2 order-2">
+                  <div className="flex gap-1.5 items-center">
+                    <i className="icon-x w-4 h-4 aspect-square" />
+                    <p className="text-sm">No credits will rollover</p>
+                  </div>
+                  <div className="flex gap-1.5 items-center">
+                    <i className="icon-done w-4 h-4 aspect-square" />
+                    <p className="text-sm">Daily credits reset at midnight UTC</p>
                   </div>
                 </div>
-              </Card.Content>
-            </Card.Root>
-          )}
+              </div>
+            </Card.Content>
+          </Card.Root>
 
           {[...data]
             .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
@@ -560,11 +538,16 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               <p className="text-tertiary">per month</p>
                             </div>
                           )}
-                          {/* {isSaving && ( */}
-                          {/*   <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5"> */}
-                          {/*     Save {formatCurrency(item.savings)} */}
-                          {/*   </Badge> */}
-                          {/* )} */}
+                          {item.annual && item.pricing?.annual_price && (
+                            <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
+                              Save{' '}
+                              {formatCurrency(
+                                Number(item.pricing.annual_price),
+                                item.pricing.currency,
+                                item.pricing.decimals,
+                              )}
+                            </Badge>
+                          )}
                         </div>
                         {item.pricing ? (
                           <p className="text-tertiary text-sm">Shared across unlimited users</p>
@@ -585,11 +568,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               onChange={(value) => {
                                 setData((prev) =>
                                   prev.map((i) => {
-                                    if (i.type === item.type) {
-                                      return { ...i, annual: value };
-                                    } else {
-                                      return i;
-                                    }
+                                    if (i.type === space.subscription_tier) return i;
+                                    return { ...i, annual: value };
                                   }),
                                 );
                               }}
@@ -600,10 +580,15 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', disabled: true },
+                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: true },
                             ]}
                             disabled={space.subscription_tier === item.type || purchasingPlan}
                             onSelect={(method) => {
+                              if (method.value === 'wallet') {
+                                toast.success('Coming Soon.');
+                                return;
+                              }
+
                               setData((prev) =>
                                 prev.map((i) => {
                                   if (i.type === item.type) {
@@ -769,10 +754,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               {!isCompareExpanded && previewSection && (
                 <motion.div
                   key="compare-preview"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24, ease: 'easeInOut' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0, ease: 'easeInOut' }}
                   className="relative border border-divider rounded-sm overflow-hidden bg-overlay-primary"
                 >
                   <div className="w-full h-12 px-4 bg-(--btn-tertiary) flex items-center justify-between">
@@ -827,10 +812,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               {isCompareExpanded && (
                 <motion.div
                   key="compare-expanded"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.28, ease: 'easeInOut' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0, ease: 'easeInOut' }}
                   className="flex flex-col gap-3"
                 >
                   {compareSections.map((section) => {

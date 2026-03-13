@@ -5,7 +5,7 @@ import { Space } from '$lib/graphql/generated/backend/graphql';
 export function Payouts({ space }: { space: Space }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="space-y-1">
+      <div className="space-y-1 hidden md:block">
         <h3 className="text-2xl font-bold">Payouts</h3>
         <p className="text-tertiary">Connect and manage your payout methods to receive earnings from your community.</p>
       </div>

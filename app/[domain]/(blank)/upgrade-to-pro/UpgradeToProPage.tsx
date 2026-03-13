@@ -34,7 +34,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
   const router = useRouter();
   const me = useMe();
 
-  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string | undefined>(spaceId);
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string>(spaceId);
   const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
 
   const activeMenuItem = getUpgradeToProSection(activeSection);
@@ -90,7 +90,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
                 </MenuItem>
               )}
             </Menu.Trigger>
-            <Menu.Content className="p-2 w-full">
+            <Menu.Content className="p-2 w-full h-60 overflow-auto no-scrollbar">
               {({ toggle }) => (
                 <>
                   {spaces.map((item) => (
@@ -134,7 +134,9 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
                   )}
                   onClick={() => {
                     setToggleMenuMobile(false);
-                    router.push(getUpgradeToProSectionHref(item.key));
+                    const params = new URLSearchParams(search.toString());
+                    params.set('space', selectedSpaceId);
+                    router.push(getUpgradeToProSectionHref(item.key) + '?' + params.toString());
                   }}
                 >
                   <i className={clsx('w-5 h-5 aspect-square', item.icon)}></i>
@@ -157,7 +159,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
             </Button>
           </div>
 
-          <p className="flex-2 text-center font-bold">{activeMenuItem.label}</p>
+          <p className="flex-2 text-lg text-center">{activeMenuItem.label}</p>
           <div className="flex-1" />
         </div>
 

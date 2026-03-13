@@ -10,6 +10,8 @@ interface SegmentItem<T> {
   icon?: string;
   iconLeft?: string;
   disabled?: boolean;
+  // use case for trigger onClick but not active item selected
+  ignore?: boolean;
 }
 
 interface SegmentProps<T> {
@@ -39,7 +41,7 @@ export function Segment<T>({ items, selected, size, onSelect, className, disable
             iconLeft={item.iconLeft}
             size={size}
             onClick={() => {
-              setActive(item.value);
+              if (!item.ignore) setActive(item.value);
               onSelect?.(item);
             }}
           >
