@@ -6,6 +6,10 @@ import { match } from 'ts-pattern';
 import { isMobile } from 'react-device-detect';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
+
+const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
+const TYPING_MS = 80;
+const PAUSE_AFTER_PHRASE_MS = 1500;
 import { useClient, useMutation } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
@@ -22,6 +26,28 @@ export function InputChat() {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
+
+  const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
+  const [focused, setFocused] = React.useState(false);
+  const isIdle = input.length === 0 && !focused;
+
+  React.useEffect(() => {
+    if (!isIdle) return;
+    const phrase = PLACEHOLDER_PHRASES[phraseIndex];
+    const isTyping = charCount < phrase.length;
+    const t = setTimeout(() => {
+      setAnim((prev) =>
+        prev.charCount < phrase.length
+          ? { ...prev, charCount: prev.charCount + 1 }
+          : { charCount: 0, phraseIndex: (prev.phraseIndex + 1) % PLACEHOLDER_PHRASES.length }
+      );
+    }, isTyping ? TYPING_MS : PAUSE_AFTER_PHRASE_MS);
+    return () => clearTimeout(t);
+  }, [isIdle, phraseIndex, charCount]);
+
+  React.useEffect(() => {
+    if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
+  }, [isIdle]);
 
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
@@ -141,26 +167,49 @@ export function InputChat() {
     }
   };
 
+  const typingText = isIdle ? PLACEHOLDER_PHRASES[phraseIndex].slice(0, charCount) : '';
+
   return (
     <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
       <Card.Content className="space-y-4 flex flex-col">
-        <textarea
-          disabled={loading}
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter a prompt here. Use Shift+Enter for new lines."
-          className="w-full outline-none resize-none overflow-y-auto"
-          rows={1}
-          style={{ maxHeight: 160 }}
-        />
+        <div className="relative w-full">
+          {isIdle && (
+            <div
+              className="absolute inset-0 pointer-events-none text-secondary overflow-hidden"
+              aria-hidden
+            >
+              <span className="font-medium">
+                Ask LemonAI to <span>{typingText}</span>
+              </span>
+              <span className="inline-block w-[1px] h-[1em] bg-current align-middle ml-[1px] animate-[blink_1s_step-end_infinite]" />
+            </div>
+          )}
+          <textarea
+            disabled={loading}
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            className="w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium placeholder:invisible"
+            rows={1}
+            style={{ maxHeight: 160 }}
+            placeholder=" "
+          />
+        </div>
         <div className="flex justify-between items-center">
           <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
             <Menu.Trigger>
               {({ toggle }) => (
-                <Button variant="tertiary-alt" onClick={() => toggle()} size="sm" iconLeft="icon-discover-tune">
-                  {state.selectedTool?.label || 'Tools'}
+                <Button
+                  variant="tertiary-alt"
+                  onClick={() => toggle()}
+                  size="sm"
+                  icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
+                  iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                >
+                  {state.selectedTool?.label}
                 </Button>
               )}
             </Menu.Trigger>
