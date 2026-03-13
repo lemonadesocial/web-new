@@ -542,7 +542,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
                               Save{' '}
                               {formatCurrency(
-                                Number(item.pricing.annual_price),
+                                Math.max(0, Number(item.pricing.price) * 12 - Number(item.pricing.annual_price)),
                                 item.pricing.currency,
                                 item.pricing.decimals,
                               )}
