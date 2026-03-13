@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.16.0](https://github.com/lemonadesocial/web-new/compare/v10.15.1...v10.16.0) (2026-03-13)
+
+
+### Features
+
+* add tooltips ([ebd1b85](https://github.com/lemonadesocial/web-new/commit/ebd1b859aca206ea51e864fc8b47f0ba034d88c0))
+* update annual pricing ([85a5821](https://github.com/lemonadesocial/web-new/commit/85a5821f04c743f5fb5d946ab5a099081dfeff74))
+
+
+### Bug Fixes
+
+* hide page title mweb ([8acc2f3](https://github.com/lemonadesocial/web-new/commit/8acc2f393d49d7a0ff5fcf8e85e13edca737f5b3))
+* remove duplicate code Ambassadors ([46ea01f](https://github.com/lemonadesocial/web-new/commit/46ea01f1e3efbdd75c9115c64d255e23dda4b953))
+
 ## [10.15.1](https://github.com/lemonadesocial/web-new/compare/v10.15.0...v10.15.1) (2026-03-12)
 
 
