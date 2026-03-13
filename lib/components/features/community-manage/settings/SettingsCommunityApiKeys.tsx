@@ -225,8 +225,7 @@ function SettingsCommunityApiKeysContent({
             onSubmit={(input) => {
               createApiKey({
                 variables: {
-                  space: space._id,
-                  input,
+                  input: { ...input, space: space._id },
                 },
               });
             }}
@@ -257,10 +256,9 @@ function SettingsCommunityApiKeysContent({
                   editingKey={editingKey}
                   setEditingKey={setEditingKey}
                   availableScopes={tierConfig?.available_scopes ?? []}
-                  spaceId={space._id}
                   onEdit={(input) => {
                     updateApiKey({
-                      variables: { space: space._id, keyId: key._id, input },
+                      variables: { id: key._id, input },
                     });
                   }}
                   onRotate={() => {
@@ -272,7 +270,7 @@ function SettingsCommunityApiKeysContent({
                         buttonText: 'Rotate',
                         onConfirm: async () => {
                           await rotateApiKey({
-                            variables: { space: space._id, keyId: key._id },
+                            variables: { id: key._id },
                           });
                         },
                       },
@@ -287,7 +285,7 @@ function SettingsCommunityApiKeysContent({
                         buttonText: 'Revoke',
                         onConfirm: async () => {
                           await revokeApiKey({
-                            variables: { space: space._id, keyId: key._id },
+                            variables: { id: key._id },
                           });
                         },
                       },
@@ -424,7 +422,7 @@ function CreateApiKeyForm({
           label="Expiration Date (optional)"
           type="date"
           value={expiresAt}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpiresAt(e.target.value)}
+          onChangeText={setExpiresAt}
         />
 
         <div className="flex gap-3">
@@ -448,7 +446,6 @@ function ApiKeyRow({
   editingKey,
   setEditingKey,
   availableScopes,
-  spaceId,
   onEdit,
   onRotate,
   onRevoke,
@@ -459,7 +456,6 @@ function ApiKeyRow({
   editingKey: ApiKey | null;
   setEditingKey: (v: ApiKey | null) => void;
   availableScopes: string[];
-  spaceId: string;
   onEdit: (input: { name?: string; scopes?: string[] }) => void;
   onRotate: () => void;
   onRevoke: () => void;
@@ -470,7 +466,7 @@ function ApiKeyRow({
 
   // Usage data — only fetched on expand (not for all keys at once)
   const { data: usageData } = useQuery(GetApiKeyUsageDocument, {
-    variables: { space: spaceId, keyId: apiKey._id },
+    variables: { id: apiKey._id },
     skip: !isExpanded,
   });
 
@@ -555,7 +551,7 @@ function ApiKeyRow({
         <div className="px-4 pb-3 flex gap-6 text-sm text-tertiary">
           <span>Last Used: {apiKey.last_used_at ? new Date(apiKey.last_used_at).toLocaleDateString() : 'Never'}</span>
           <span>Usage: {usage?.total_calls ?? apiKey.usage_count ?? 0} calls</span>
-          <span>Created: {new Date(apiKey.created_at).toLocaleDateString()}</span>
+          <span>Created: {new Date(apiKey.createdAt).toLocaleDateString()}</span>
           {apiKey.expires_at && (
             <span>Expires: {new Date(apiKey.expires_at).toLocaleDateString()}</span>
           )}
@@ -627,10 +623,8 @@ function QuotaStatusCard({ quota }: { quota: ApiQuotaStatus }) {
 
           <div className="flex gap-6 text-sm text-tertiary">
             <span>Remaining: {quota.calls_remaining.toLocaleString()} calls</span>
-            {quota.current_period_start && quota.current_period_end && (
-              <span>
-                Period: {new Date(quota.current_period_start).toLocaleDateString()} - {new Date(quota.current_period_end).toLocaleDateString()}
-              </span>
+            {quota.period && (
+              <span>Period: {quota.period}</span>
             )}
           </div>
 
