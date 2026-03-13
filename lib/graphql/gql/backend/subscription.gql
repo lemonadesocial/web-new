@@ -30,6 +30,7 @@ query ListSubscriptionItems {
       currency
       decimals
       price
+      annual_price
     }
     weekly_email_limit
     credits_per_month

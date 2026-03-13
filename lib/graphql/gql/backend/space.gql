@@ -76,6 +76,7 @@ fragment Space on Space {
   credits
   subscription_credits
   purchased_credits
+  subscription_annual
 }
 
 fragment SpaceTagFragment on SpaceTag {

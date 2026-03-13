@@ -5,7 +5,7 @@ import { match } from 'ts-pattern';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import { Button, Card, Segment, Toggle, toast } from '$lib/components/core';
+import { Badge, Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
@@ -379,8 +379,16 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   const usedCreditsBarPercent = Math.max(3, usedCreditsPercentRaw);
 
   React.useEffect(() => {
-    setData(mergedPlans);
-  }, [mergedPlans]);
+    setData(() => {
+      return mergedPlans.map((item) => {
+        if (item.type === space.subscription_tier && space.subscription_annual) {
+          item.annual = space.subscription_annual;
+        }
+
+        return item;
+      });
+    });
+  }, [mergedPlans, space]);
 
   const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
     if (purchasingPlan) return;
@@ -530,11 +538,16 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               <p className="text-tertiary">per month</p>
                             </div>
                           )}
-                          {/* {isSaving && ( */}
-                          {/*   <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5"> */}
-                          {/*     Save {formatCurrency(item.savings)} */}
-                          {/*   </Badge> */}
-                          {/* )} */}
+                          {item.annual && item.pricing?.annual_price && (
+                            <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
+                              Save{' '}
+                              {formatCurrency(
+                                Number(item.pricing.annual_price),
+                                item.pricing.currency,
+                                item.pricing.decimals,
+                              )}
+                            </Badge>
+                          )}
                         </div>
                         {item.pricing ? (
                           <p className="text-tertiary text-sm">Shared across unlimited users</p>
@@ -553,7 +566,12 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               disabled={space.subscription_tier === item.type || purchasingPlan}
                               checked={!!data.find((i) => i.type === item.type)?.annual}
                               onChange={(value) => {
-                                setData((prev) => prev.map((i) => ({ ...i, annual: value })));
+                                setData((prev) =>
+                                  prev.map((i) => {
+                                    if (i.type === space.subscription_tier) return i;
+                                    return { ...i, annual: value };
+                                  }),
+                                );
                               }}
                             />
                             <p className="text-tertiary">Annual</p>
