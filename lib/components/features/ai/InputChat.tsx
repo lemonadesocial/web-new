@@ -7,17 +7,26 @@ import { isMobile } from 'react-device-detect';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 
-const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
-const TYPING_MS = 80;
-const PAUSE_AFTER_PHRASE_MS = 1500;
-import { useClient, useMutation } from '$lib/graphql/request';
+import { useClient, useMutation, useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
-import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetSpaceDocument,
+  GetSpacesDocument,
+  Space,
+  SpaceRole,
+} from '$lib/graphql/generated/backend/graphql';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
+import { communityAvatar } from '$lib/utils/community';
+
+const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
+const TYPING_MS = 80;
+const PAUSE_AFTER_PHRASE_MS = 1500;
 
 export function InputChat() {
   const router = useRouter();
@@ -235,10 +244,81 @@ export function InputChat() {
               )}
             </Menu.Content>
           </Menu.Root>
-          <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
+          <div className="flex items-center gap-2">
+            <SpaceSelector
+              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id}
+              onSelectSpace={(space) =>
+                dispatch({
+                  type: AIChatActionKind.set_data_run,
+                  payload: { data: { space_id: space._id } },
+                })
+              }
+            />
+            <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
+          </div>
         </div>
       </Card.Content>
     </Card.Root>
+  );
+}
+
+type SpaceSelectorProps = {
+  currentSpaceId?: string;
+  onSelectSpace: (space: Space) => void;
+};
+
+function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
+  const { data } = useQuery(GetSpacesDocument, {
+    variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const spaces = (data?.listSpaces || []) as Space[];
+  const personalSpace = spaces.find((space) => space.personal);
+  const selectedSpace = spaces.find((space) => space._id === currentSpaceId) || personalSpace;
+
+  React.useEffect(() => {
+    if (!currentSpaceId && personalSpace) {
+      onSelectSpace(personalSpace);
+    }
+  }, [currentSpaceId, personalSpace, onSelectSpace]);
+
+  return (
+    <Menu.Root placement="top-start">
+      <Menu.Trigger>
+        {({ toggle }) => (
+          <div
+            onClick={() => toggle()}
+            className="h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border cursor-pointer"
+          >
+            <img
+              src={communityAvatar(selectedSpace)}
+              className="w-4 h-4 rounded-full object-cover"
+              alt={selectedSpace?.title || 'Community avatar'}
+            />
+            <p className="text-sm max-w-[132px] truncate text-tertiary">
+              {selectedSpace?.title || 'Select community'}
+            </p>
+            <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />
+          </div>
+        )}
+      </Menu.Trigger>
+      <Menu.Content className="p-1 w-[224px] backdrop-blur-md!">
+        {() => (
+          <>
+            {spaces.map((space) => (
+              <MenuItem
+                key={space._id}
+                title={space.title}
+                onClick={() => {
+                  onSelectSpace(space);
+                }}
+              />
+            ))}
+          </>
+        )}
+      </Menu.Content>
+    </Menu.Root>
   );
 }
 
