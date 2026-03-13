@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.17.1](https://github.com/lemonadesocial/web-new/compare/v10.17.0...v10.17.1) (2026-03-13)
+
+
+### Bug Fixes
+
+* update save cost ([9f82b71](https://github.com/lemonadesocial/web-new/commit/9f82b716fd8424e8963d0af07e756ab6e0a97920))
+
 ## [10.17.0](https://github.com/lemonadesocial/web-new/compare/v10.16.0...v10.17.0) (2026-03-13)
 
 
