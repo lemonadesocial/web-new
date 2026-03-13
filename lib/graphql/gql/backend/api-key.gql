@@ -1,0 +1,101 @@
+mutation CreateApiKey($input: CreateApiKeyInput!) {
+  createApiKey(input: $input) {
+    apiKey {
+      _id
+      name
+      scopes
+      key_prefix
+      status
+      usage_count
+      last_used_at
+      expires_at
+      createdAt
+    }
+    secret
+  }
+}
+
+mutation UpdateApiKey($id: ObjectId!, $input: UpdateApiKeyInput!) {
+  updateApiKey(id: $id, input: $input) {
+    _id
+    name
+    scopes
+    updatedAt
+  }
+}
+
+mutation RevokeApiKey($id: ObjectId!) {
+  revokeApiKey(id: $id) {
+    _id
+    status
+    revoked_at
+  }
+}
+
+mutation RotateApiKey($id: ObjectId!) {
+  rotateApiKey(id: $id) {
+    apiKey {
+      _id
+      key_prefix
+      status
+      createdAt
+    }
+    secret
+  }
+}
+
+query ListApiKeys($space: ObjectId!) {
+  listApiKeys(space: $space) {
+    _id
+    name
+    scopes
+    key_prefix
+    status
+    usage_count
+    last_used_at
+    expires_at
+    createdAt
+  }
+}
+
+query GetApiKeyUsage($id: ObjectId!, $days: Int) {
+  getApiKeyUsage(id: $id, days: $days) {
+    days
+    byDay {
+      date
+      count
+      avg_response_ms
+    }
+    byEndpoint {
+      endpoint
+      count
+      avg_response_ms
+    }
+  }
+}
+
+query GetApiQuotaStatus($space: ObjectId!) {
+  getApiQuotaStatus(space: $space) {
+    period
+    tier
+    monthly_quota
+    calls_used
+    calls_remaining
+    grace_buffer
+    overage_enabled
+    hard_cap
+  }
+}
+
+query GetApiTierConfig($space: ObjectId!) {
+  getApiTierConfig(space: $space) {
+    tier
+    api_access_enabled
+    max_api_keys
+    available_scopes
+    rate_limit_per_minute
+    monthly_quota
+    overage_enabled
+    overage_rate_per_1000
+  }
+}
