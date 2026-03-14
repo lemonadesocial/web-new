@@ -18,8 +18,7 @@ const zugramaPassportConfig: PassportTemplate = {
         props: {
           title: 'Become a Citizen',
           image: `${ASSET_PREFIX}/assets/images/passports/zugrama-passport-mini-dark.png`,
-          subtitle:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.',
+          subtitle: 'You can be a part of this journey, join us to create the future.',
         },
       },
       {
