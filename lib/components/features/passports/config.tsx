@@ -306,7 +306,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     provider: 'zugrama',
     passportTitle: 'Zugrama',
     currentStep: PassportStep.intro,
-    useLemonhead: false,
+    useLemonhead: true,
     ui: {
       intro: {
         title: 'Join Grama',

@@ -36,7 +36,7 @@ export function LemonheadCard() {
       <CardDetail
         image={`${ASSET_PREFIX}/assets/images/lemonheads.gif`}
         title="No LemonHead Found"
-        subtitle="Set LemonHead as Passport Photo."
+        subtitle="You don’t have a LemonHead, yet."
       >
         <Button
           variant={isSelected ? 'tertiary' : 'secondary'}
