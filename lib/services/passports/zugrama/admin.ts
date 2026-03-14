@@ -9,10 +9,10 @@ export const getApproval = async (wallet: string, userId: string, uri: string) =
   });
 };
 
-// TODO: need double check authCookie
 export const getData = async (authCookie?: string) => {
+  const authParam = authCookie ? `&auth=${authCookie}` : '';
   return request<{ userId: string; passportNumber: number; selfVerifiedTimestamp: number }>(
-    `/passport/data?provider=zugrama&auth=${authCookie}`,
+    `/passport/data?provider=zugrama${authParam}`,
     'GET',
   );
 };

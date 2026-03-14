@@ -26,19 +26,11 @@ export async function GET(request: NextRequest) {
 
     const authCookie = request.cookies.get(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)?.value;
 
-    // if (!authCookie) {
-    //   return NextResponse.json({ error: 'Authentication cookie not found' }, { status: 401 });
-    // }
-
     const passportData = await getData(authCookie);
 
     if (!passportData) {
       return NextResponse.json({ error: 'Passport data not found' }, { status: 404 });
     }
-
-    // if (!passportData.selfVerifiedTimestamp) {
-    //   return NextResponse.json({ error: 'Self not verified' }, { status: 400 });
-    // }
 
     const mintData = await getMintZuGramaPassportData(
       passportData.userId,

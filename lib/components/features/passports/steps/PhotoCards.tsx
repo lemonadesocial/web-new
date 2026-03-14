@@ -31,7 +31,7 @@ export function LemonheadCard() {
     return <CardIndicator />;
   }
 
-  if (data?.tokenId == 0) {
+  if (data?.tokenId === 0) {
     return (
       <CardDetail
         image={`${ASSET_PREFIX}/assets/images/lemonheads.gif`}
