@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.19.0](https://github.com/lemonadesocial/web-new/compare/v10.18.1...v10.19.0) (2026-03-16)
+
+
+### Features
+
+* **home:** refine homepage AI greeting, credits indicator, and responsive grids ([d19a3d2](https://github.com/lemonadesocial/web-new/commit/d19a3d2a4b9937fe3baef4f59796776c37e32103))
+
 ## [10.18.1](https://github.com/lemonadesocial/web-new/compare/v10.18.0...v10.18.1) (2026-03-16)
 
 
