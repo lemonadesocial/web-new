@@ -108,7 +108,6 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   return (
     <div className="relative h-full overflow-auto">
-      <div ref={sentinelRef} />
       <div className="sticky top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-2 font-default">
           <div className="page mx-auto px-4 md:px-0">

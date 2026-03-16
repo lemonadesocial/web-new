@@ -5,8 +5,11 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 import { isEqual, merge } from 'lodash';
+import { v4 as uuid } from 'uuid';
+import { addHours, getUnixTime } from 'date-fns';
 
 import {
+  Badge,
   Button,
   Card,
   InputField,
@@ -40,7 +43,6 @@ import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { EventThemeLayout } from '../../event-manage/EventThemeLayout';
 import { EventGuestSideContent } from '../../event/EventGuestSide';
-import { ListItem } from '$app/[domain]/(default)/settings/list-item';
 
 const devices = {
   desktop: {
@@ -252,7 +254,7 @@ function ManageLayoutToolbar() {
 
             {['design', 'preview'].includes(state.activeTab) && (
               <>
-                <Menu.Root placement="bottom-end">
+                <Menu.Root placement="bottom-end" dismissable={false}>
                   <Menu.Trigger>
                     {({ toggle }) => (
                       <Button size="sm" variant="secondary" iconLeft="icon-share" onClick={toggle}>
@@ -571,8 +573,25 @@ function DesignThemeBridge({ onThemeChange }: { onThemeChange?: (theme: ThemeVal
   return null;
 }
 
+interface PreviewLink {
+  id: string;
+  url: string;
+  passwordProtected: boolean;
+  expired: number;
+}
 function PreviewLinkPopup() {
   const event = useEvent();
+  const [links, setLinks] = React.useState<PreviewLink[]>([]);
+
+  const formatExpires = (unixTime: number) => {
+    const diffInSeconds = Math.abs(getUnixTime(new Date()) - unixTime);
+    const hours = Math.floor(diffInSeconds / 3600);
+    const minutes = Math.floor((diffInSeconds % 3600) / 60);
+    const mins = minutes > 0 ? ` ${minutes}m` : '';
+
+    if (!hours) return '';
+    return `${hours}h ${mins}`;
+  };
 
   return (
     <Card.Root>
@@ -594,11 +613,70 @@ function PreviewLinkPopup() {
             )}
           </div>
         </div>
+
+        {links.map((item) => (
+          <div key={item.id} className="flex flex-col gap-2">
+            <div className="flex gap-2 items-end">
+              <InputField label="Preview Link" value={item.url} className="w-full" readOnly />
+              <Button icon="icon-copy" variant="tertiary-alt" className="size-[40px] aspect-square" />
+              <Menu.Root placement="bottom-end">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <Button
+                      icon="icon-more-horiz"
+                      variant="tertiary-alt"
+                      className="size-[40px] aspect-square"
+                      onClick={() => toggle()}
+                    />
+                  )}
+                </Menu.Trigger>
+
+                <Menu.Content className="p-1">
+                  {({ toggle }) => (
+                    <>
+                      <MenuItem
+                        title="Delete Link"
+                        iconLeft="icon-delete text-danger-400!"
+                        className="[&_p]:text-danger-400!"
+                        onClick={() => {
+                          setLinks((prev) => prev.filter((i) => i.id !== item.id));
+                          toggle();
+                        }}
+                      />
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+            </div>
+            <div className="flex gap-1.5">
+              {item.passwordProtected && (
+                <Badge title="Password Protected" color="var(--color-secondary)" className="rounded-full" />
+              )}
+
+              {!!item.expired && !!formatExpires(item.expired) && (
+                <Badge
+                  title={`Expires in ${formatExpires(item.expired)}`}
+                  color="var(--color-warning-400)"
+                  className="rounded-full"
+                />
+              )}
+            </div>
+          </div>
+        ))}
+
         <div className="flex flex-col gap-3 items-center">
           <Button
             variant="secondary"
             className="w-full"
-            onClick={() => modal.open(CreatePreviewLinkModal, { dismissible: false })}
+            onClick={() =>
+              modal.open(CreatePreviewLinkModal, {
+                dismissible: true,
+                props: {
+                  onComplete: (link) => setLinks((prev) => [...prev, link]),
+                },
+                className: 'overflow-auto!',
+              })
+            }
           >
             Create Preview Link
           </Button>
@@ -617,42 +695,75 @@ const expiredList = [
   { value: 168, label: '7 days' },
   { value: 0, label: 'Never' },
 ];
-function CreatePreviewLinkModal() {
+function CreatePreviewLinkModal({ onComplete }: { onComplete: (link: PreviewLink) => void }) {
   const [requiredPassword, setRequiredPassword] = React.useState(false);
   const [password, setPassword] = React.useState('');
   const [expired, setExpired] = React.useState(() => expiredList.at(-1));
 
+  const handleCreateLink = () => {
+    const date = addHours(new Date(), expired?.value ?? 0);
+    const unixTime = getUnixTime(date);
+    onComplete({
+      id: uuid(),
+      url: 'https://preview.lemonade.social/e/2b2l0aUW',
+      passwordProtected: requiredPassword,
+      expired: unixTime,
+    });
+    modal.close();
+  };
+
   return (
-    <ModalContent icon="icon-link" className="flex flex-col gap-4">
-      <div className="space-y-2">
-        <p className="text-lg">Create Preview Link</p>
-        <p className="text-sm text-secondary">Set access options for this preview link before sharing it.</p>
-      </div>
-      <div>
-        <p>Password Required</p>
-        <Toggle id="preview-link-pw" checked={requiredPassword} onChange={(value) => setRequiredPassword(value)} />
-      </div>
-      {requiredPassword && (
-        <InputField label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      )}
-      <div className="flex justify-between">
-        <p>Expires in</p>
-        <Menu.Root>
-          <Menu.Trigger>
-            {({ toggle }) => (
-              <div onClick={toggle} className="cursor-pointer bg-background/64 w-[150px] h-10 flex items-center px-3.5">
-                <p>{expired?.label}</p>
-              </div>
-            )}
-          </Menu.Trigger>
-          <Menu.Content>
-            {({ toggle }) => {
-              return expiredList.map((item) => (
-                <MenuItem key={item.value} onClick={() => setExpired(item)} title={item.label}></MenuItem>
-              ));
-            }}
-          </Menu.Content>
-        </Menu.Root>
+    <ModalContent icon="icon-link">
+      <div className="flex flex-col gap-4">
+        <div className="space-y-2">
+          <p className="text-lg">Create Preview Link</p>
+          <p className="text-sm text-secondary">Set access options for this preview link before sharing it.</p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <p>Password Required</p>
+          <Toggle id="preview-link-pw" checked={requiredPassword} onChange={(value) => setRequiredPassword(value)} />
+        </div>
+
+        {requiredPassword && (
+          <InputField label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        )}
+
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-secondary">Expires in</p>
+          <Menu.Root strategy="fixed">
+            <Menu.Trigger>
+              {({ toggle, isOpen }) => (
+                <div
+                  onClick={toggle}
+                  className="cursor-pointer bg-background/64 w-[150px] h-10 flex items-center px-3.5 border rounded-sm justify-between"
+                >
+                  <p>{expired?.label}</p>
+                  <i className={clsx('icon-chevron-down size-5 text-quaternary', isOpen && 'rotate-180')} />
+                </div>
+              )}
+            </Menu.Trigger>
+            <Menu.Content className="max-w-[110px] p-1">
+              {({ toggle }) => {
+                return expiredList.map((item) => (
+                  <MenuItem
+                    key={item.value}
+                    iconRight={item.value === expired?.value ? 'icon-done text-quaternary!' : undefined}
+                    onClick={() => {
+                      setExpired(item);
+                      toggle();
+                    }}
+                    title={item.label}
+                  ></MenuItem>
+                ));
+              }}
+            </Menu.Content>
+          </Menu.Root>
+        </div>
+
+        <Button variant="secondary" onClick={handleCreateLink}>
+          Create
+        </Button>
       </div>
     </ModalContent>
   );
