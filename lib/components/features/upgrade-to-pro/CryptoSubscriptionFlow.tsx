@@ -2,6 +2,7 @@
 
 import React from 'react';
 import clsx from 'clsx';
+import { formatUnits } from 'viem';
 
 import { Button, modal, ModalContent } from '$lib/components/core';
 import {
@@ -96,8 +97,8 @@ function formatTokenAmount(amount: string, chainId: string, tokenAddress: string
   const decimals = token?.decimals ?? 18;
   const symbol = token?.symbol ?? '';
 
-  const value = Number(BigInt(amount)) / 10 ** decimals;
-  return `${value.toFixed(2)} ${symbol}`;
+  const value = formatUnits(BigInt(amount), decimals);
+  return `${Number(value).toFixed(2)} ${symbol}`;
 }
 
 function CryptoSubscriptionFlowContent({

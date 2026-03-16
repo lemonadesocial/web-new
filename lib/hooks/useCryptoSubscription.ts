@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
@@ -10,6 +10,7 @@ import { useSubscription } from '$lib/graphql/subscription/useSubscription';
 import {
   CreateCryptoSubscriptionDocument,
   CryptoSubscriptionActivatedDocument,
+  GetCryptoSubscriptionStatusDocument,
   type Space,
   type SubscriptionItemType,
 } from '$lib/graphql/generated/backend/graphql';
@@ -18,6 +19,7 @@ import { formatError } from '$lib/utils/error';
 import { appKit } from '$lib/utils/appkit';
 import { ERC20 } from '$lib/abis/ERC20';
 import { LemonadeForwardPaymentABI } from '$lib/abis/LemonadeForwardPayment';
+import { client } from '$lib/graphql/request/client';
 
 export type CryptoSubscriptionStatus =
   | 'idle'
@@ -33,6 +35,8 @@ interface UseCryptoSubscriptionParams {
   onError?: (error: unknown) => void;
 }
 
+const POLL_INTERVAL_MS = 5000;
+
 export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSubscriptionParams) {
   const [status, setStatus] = useState<CryptoSubscriptionStatus>('idle');
   const [error, setError] = useState<unknown>(null);
@@ -42,12 +46,14 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
   onSuccessRef.current = onSuccess;
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
+  const statusRef = useRef(status);
+  statusRef.current = status;
 
   const [createCryptoSub] = useMutation(CreateCryptoSubscriptionDocument);
 
-  // Subscribe to real-time activation events when we have a subscription ID
+  // Subscribe to real-time activation events only when we have a subscription ID
   useSubscription(CryptoSubscriptionActivatedDocument, {
-    variables: subscriptionId ? { subscriptionId } : undefined,
+    ...(subscriptionId ? { variables: { subscriptionId } } : {}),
     onData: (data) => {
       const activated = data?.cryptoSubscriptionActivated;
       if (activated?.subscription?.status === 'active') {
@@ -57,10 +63,40 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
       }
     },
     onError: (err) => {
-      // WebSocket error — don't fail the flow, backend will still verify
+      // WebSocket error — fall back to polling (handled below)
       console.error('Subscription WS error:', err);
     },
   });
+
+  // Polling fallback: if WebSocket disconnects or misses the event,
+  // poll getCryptoSubscriptionStatus every 5s while confirming
+  useEffect(() => {
+    if (statusRef.current !== 'confirming' || !subscriptionId) return;
+
+    const interval = setInterval(async () => {
+      if (statusRef.current !== 'confirming') {
+        clearInterval(interval);
+        return;
+      }
+
+      try {
+        const result = await client.query(GetCryptoSubscriptionStatusDocument, {
+          subscriptionId,
+        });
+
+        if (result?.getCryptoSubscriptionStatus?.subscription?.status === 'active') {
+          setStatus('active');
+          toast.success('Subscription activated successfully!');
+          onSuccessRef.current?.();
+          clearInterval(interval);
+        }
+      } catch {
+        // Ignore polling errors — will retry next interval
+      }
+    }, POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [subscriptionId, status]);
 
   const reset = useCallback(() => {
     setStatus('idle');
@@ -154,7 +190,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
 
         // Step 4: Wait for backend to verify the on-chain payment
         setStatus('confirming');
-        // The useSubscription hook above will handle the activation event
+        // The useSubscription hook + polling fallback will handle activation
       } catch (err) {
         Sentry.captureException(err);
         setStatus('error');
