@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.18.1](https://github.com/lemonadesocial/web-new/compare/v10.18.0...v10.18.1) (2026-03-16)
+
+
+### Bug Fixes
+
+* **home:** center logged-out homepage layout ([35c8d76](https://github.com/lemonadesocial/web-new/commit/35c8d767824cf2a5a2712f640c9693e79ce98d30))
+
 ## [10.18.0](https://github.com/lemonadesocial/web-new/compare/v10.17.1...v10.18.0) (2026-03-14)
 
 
