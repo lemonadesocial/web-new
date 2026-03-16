@@ -14,7 +14,7 @@ export function Home() {
 
   if (!me) {
     return (
-      <div className="w-full h-full flex max-sm:px-4 max-sm:pt-44 items-center justify-between max-w-[1200px]">
+      <div className="w-full h-full flex max-sm:px-4 max-sm:pt-44 items-center justify-center max-w-[1200px] mx-auto">
         <NonLoginContent />
       </div>
     );
