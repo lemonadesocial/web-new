@@ -309,9 +309,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     useLemonhead: true,
     ui: {
       intro: {
-        title: 'Join Zugrama',
-        subtitle:
-          'Mint your ZuGrama passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.',
+        title: 'Join Grama',
+        subtitle: 'Mint your Grama passport and become a citizen.',
         footer: {
           label: '',
           btnText: "Yes, I'm In",
@@ -357,7 +356,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     },
     enabled: {
       lemonhead: true,
-      shouldMintedLemonhead: true,
+      shouldMintedLemonhead: false,
       fluffePhoto: true,
       // selfVerify: true,
       // uploadPhoto: true,

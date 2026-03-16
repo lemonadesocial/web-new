@@ -8,8 +8,10 @@ import { useFluffle } from '$lib/hooks/useFluffle';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { usePassportContext } from '../provider';
 import { PassportActionKind } from '../types';
+import { useRouter } from 'next/navigation';
 
 export function LemonheadCard() {
+  const router = useRouter();
   const { data, loading } = useLemonhead();
   const [state, dispatch] = usePassportContext();
 
@@ -27,6 +29,25 @@ export function LemonheadCard() {
 
   if (loading || !data) {
     return <CardIndicator />;
+  }
+
+  if (data?.tokenId == 0) {
+    return (
+      <CardDetail
+        image={`${ASSET_PREFIX}/assets/images/lemonheads.gif`}
+        title="No LemonHead Found"
+        subtitle="You don’t have a LemonHead, yet."
+      >
+        <Button
+          variant={isSelected ? 'tertiary' : 'secondary'}
+          className="w-full"
+          onClick={() => router.push('/lemonheads/mint')}
+          size="sm"
+        >
+          Claim LemonHead
+        </Button>
+      </CardDetail>
+    );
   }
 
   return (

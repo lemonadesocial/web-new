@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 
-import { getMintZuGramaPassportData } from "$lib/services/passports/zugrama";
-import { getData } from "$lib/services/passports/zugrama/admin";
+import { getMintZuGramaPassportData } from '$lib/services/passports/zugrama';
+import { getData } from '$lib/services/passports/zugrama/admin';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,23 +18,18 @@ export async function GET(request: NextRequest) {
     }
 
     if (!process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-      return NextResponse.json({ error: 'NEXT_PUBLIC_AUTH_COOKIE_NAME environment variable is not set' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'NEXT_PUBLIC_AUTH_COOKIE_NAME environment variable is not set' },
+        { status: 500 },
+      );
     }
 
     const authCookie = request.cookies.get(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)?.value;
-
-    if (!authCookie) {
-      return NextResponse.json({ error: 'Authentication cookie not found' }, { status: 401 });
-    }
 
     const passportData = await getData(authCookie);
 
     if (!passportData) {
       return NextResponse.json({ error: 'Passport data not found' }, { status: 404 });
-    }
-
-    if (!passportData.selfVerifiedTimestamp) {
-      return NextResponse.json({ error: 'Self not verified' }, { status: 400 });
     }
 
     const mintData = await getMintZuGramaPassportData(

@@ -14,6 +14,7 @@ import {
   Space,
   SubscriptionItem,
   SubscriptionItemType,
+  SubscriptionPricing,
   SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
 
@@ -426,6 +427,17 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     syncCompareScroll(compareBodyScrollRef.current, compareHeaderScrollRef.current);
   }, [syncCompareScroll]);
 
+  const calculatePrice = (pricing: SubscriptionPricing, annual?: boolean) => {
+    let price = Number(pricing.price);
+    if (annual) {
+      price = Number(pricing.annual_price) / 12;
+    }
+
+    if (pricing.decimals > 0) price /= 10 ** pricing.decimals;
+
+    return formatCurrency(Math.round(price), pricing.currency, 0);
+  };
+
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-6">
@@ -528,13 +540,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                         <div className="flex justify-between items-center flex-1 min-h-[32px]">
                           {!!item.pricing && (
                             <div className="flex gap-2 items-end">
-                              <p className="text-2xl">
-                                {formatCurrency(
-                                  Number(item.pricing.price),
-                                  item.pricing.currency,
-                                  item.pricing.decimals,
-                                )}
-                              </p>
+                              <p className="text-2xl">{calculatePrice(item.pricing, !!item.annual)}</p>
                               <p className="text-tertiary">per month</p>
                             </div>
                           )}
@@ -542,9 +548,13 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
                               Save{' '}
                               {formatCurrency(
-                                Number(item.pricing.annual_price),
+                                Math.max(
+                                  0,
+                                  (Number(item.pricing.price) / 10 ** item.pricing.decimals) * 12 -
+                                    Number(item.pricing.annual_price) / 10 ** item.pricing.decimals,
+                                ),
                                 item.pricing.currency,
-                                item.pricing.decimals,
+                                0,
                               )}
                             </Badge>
                           )}

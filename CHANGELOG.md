@@ -1,5 +1,36 @@
 # Changelog
 
+## [10.18.0](https://github.com/lemonadesocial/web-new/compare/v10.17.1...v10.18.0) (2026-03-14)
+
+
+### Features
+
+* ignore auth check self veriry ([40c98aa](https://github.com/lemonadesocial/web-new/commit/40c98aacbd665cf29c268474ff5d0388ff8656b0))
+* update config zugrama passport ([4fbe211](https://github.com/lemonadesocial/web-new/commit/4fbe2113f4931721f9b71fecbecb1866464d1bf1))
+* update message ([f23db01](https://github.com/lemonadesocial/web-new/commit/f23db01fd12ed27de06e86ca3bc940b0ccc14792))
+
+
+### Bug Fixes
+
+* address Karen review — decimal normalization, strict equality, auth cleanup ([99c5a6c](https://github.com/lemonadesocial/web-new/commit/99c5a6cc3301805659975541069b9e833ccf7966))
+* calculate annual price per month ([0a99ac5](https://github.com/lemonadesocial/web-new/commit/0a99ac5e317216cd9fd4a79f03114a733dab6ffa))
+* revert strict equality ([4239cc1](https://github.com/lemonadesocial/web-new/commit/4239cc178a58e2dc9c249d9ead45be31c7f74a00))
+
+## [10.17.1](https://github.com/lemonadesocial/web-new/compare/v10.17.0...v10.17.1) (2026-03-13)
+
+
+### Bug Fixes
+
+* update save cost ([9f82b71](https://github.com/lemonadesocial/web-new/commit/9f82b716fd8424e8963d0af07e756ab6e0a97920))
+
+## [10.17.0](https://github.com/lemonadesocial/web-new/compare/v10.16.0...v10.17.0) (2026-03-13)
+
+
+### Features
+
+* **ai:** add community selector to LemonAI input ([1e3bf18](https://github.com/lemonadesocial/web-new/commit/1e3bf18cb44ca593ed7df48bd3eab21ff65a728b))
+* **home:** add communities tab on home ([293b0f0](https://github.com/lemonadesocial/web-new/commit/293b0f0285979994e53d1ba01edbd5bc6039558e))
+
 ## [10.16.0](https://github.com/lemonadesocial/web-new/compare/v10.15.1...v10.16.0) (2026-03-13)
 
 

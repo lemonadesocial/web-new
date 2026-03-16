@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { Button, Spacer } from '$lib/components/core';
+import { Spacer } from '$lib/components/core';
 import { usePassportContext } from '../provider';
 
 export function PassportIntro() {
   const [state] = usePassportContext();
-  console.log();
   return (
     <div className="flex-1 h-full flex flex-col md:justify-center gap-4 md:gap-6 md:py-12">
       <div className="flex flex-col gap-4">
