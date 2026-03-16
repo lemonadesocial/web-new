@@ -10,7 +10,9 @@ export function WelcomeChat() {
     <div className="space-y-2">
       <div className="flex gap-3 items-center">
         <i aria-hidden="true" className="icon-lemon-ai text-warning-300 size-8" />
-        <h3 className="text-2xl font-semibold">{me.name || me.display_name}</h3>
+        <h3 className="text-2xl font-semibold">
+          Hi {me.username || me.display_name || me.name}
+        </h3>
       </div>
       <p className="text-tertiary">I can help with events, communities, tokens, and more.</p>
     </div>

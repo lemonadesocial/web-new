@@ -50,7 +50,7 @@ export function HomeEventsSection() {
 
   return (
     <section
-      className="w-full p-7 max-w-[1064px] bg-background rounded-xl"
+      className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl"
     >
       <header
         className="flex items-center justify-between w-full"
@@ -113,14 +113,14 @@ export function HomeEventsSection() {
 
       {tab === 'events' && (
         <div
-          className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mt-5 overflow-y-auto"
+          className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 w-full gap-4 mt-5 overflow-y-auto"
           style={{
             gap: 16,
             marginTop: 20,
           }}
         >
           {eventsLoading &&
-            Array.from({ length: 4 }).map((_, i) => (
+            Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
                 className="h-[168px] rounded-lg bg-overlay-secondary animate-pulse"
@@ -158,7 +158,7 @@ export function HomeEventsSection() {
 
       {tab === 'communities' && (
         <div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5 overflow-y-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5 gap-4 mt-5 overflow-y-auto"
           style={{
             gap: 16,
             marginTop: 20,
