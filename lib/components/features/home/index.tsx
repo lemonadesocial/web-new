@@ -38,7 +38,11 @@ export function Home() {
         <AIChat />
       </div>
       {
-        !chatExpanded && <HomeEventsSection />
+        !chatExpanded && (
+          <div className="w-full px-4 md:px-6 xl:px-8">
+            <HomeEventsSection />
+          </div>
+        )
       }
     </div>
   );

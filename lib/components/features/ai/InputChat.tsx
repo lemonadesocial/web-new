@@ -37,9 +37,8 @@ export function InputChat() {
   const updateEvent = useUpdateEvent();
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
-  const [focused, setFocused] = React.useState(false);
   const hasActivity = !!state.messages.length || !!state.thinking;
-  const isIdle = input.length === 0 && !focused && !hasActivity;
+  const isIdle = input.length === 0 && !hasActivity;
 
   React.useEffect(() => {
     if (!isIdle) return;
@@ -188,13 +187,12 @@ export function InputChat() {
         <div className="relative w-full">
           {isIdle && (
             <div
-              className="absolute inset-0 pointer-events-none text-secondary overflow-hidden"
+              className="absolute inset-0 pointer-events-none text-quaternary overflow-hidden"
               aria-hidden
             >
               <span className="font-medium">
                 Ask LemonAI to <span>{typingText}</span>
               </span>
-              <span className="inline-block w-[1px] h-[1em] bg-current align-middle ml-[1px] animate-[blink_1s_step-end_infinite]" />
             </div>
           )}
           <textarea
@@ -203,8 +201,6 @@ export function InputChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
             className={textareaClass}
             rows={1}
             style={{ maxHeight: 160 }}
@@ -267,7 +263,20 @@ type SpaceSelectorProps = {
   onSelectSpace: (space: Space) => void;
 };
 
+function formatCredits(value?: number | null) {
+  if (typeof value !== 'number' || Number.isNaN(value)) return 0;
+  return Math.max(0, Math.floor(value));
+}
+
+function getCreditFillPercent(credits?: number | null, highWaterMark?: number | null) {
+  if (typeof credits !== 'number' || Number.isNaN(credits)) return 0;
+  if (typeof highWaterMark !== 'number' || Number.isNaN(highWaterMark) || highWaterMark <= 0) return 0;
+  const percent = (credits / highWaterMark) * 100;
+  return Math.max(0, Math.min(100, percent));
+}
+
 function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
+  const router = useRouter();
   const { data } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
     fetchPolicy: 'cache-and-network',
@@ -276,6 +285,10 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
   const spaces = (data?.listSpaces || []) as Space[];
   const personalSpace = spaces.find((space) => space.personal);
   const selectedSpace = spaces.find((space) => space._id === currentSpaceId) || personalSpace;
+  const creditFillPercent = getCreditFillPercent(selectedSpace?.credits, selectedSpace?.credits_high_water_mark);
+  const ringRadius = 6;
+  const ringCircumference = 2 * Math.PI * ringRadius;
+  const ringOffset = ringCircumference * (1 - creditFillPercent / 100);
 
   React.useEffect(() => {
     if (!currentSpaceId && personalSpace) {
@@ -284,41 +297,75 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
   }, [currentSpaceId, personalSpace, onSelectSpace]);
 
   return (
-    <Menu.Root placement="top-start">
-      <Menu.Trigger>
-        {({ toggle }) => (
-          <div
-            onClick={() => toggle()}
-            className="h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border cursor-pointer"
-          >
-            <img
-              src={communityAvatar(selectedSpace)}
-              className="w-4 h-4 rounded-full object-cover"
-              alt={selectedSpace?.title || 'Community avatar'}
-            />
-            <p className="text-sm max-w-[132px] truncate text-tertiary">
-              {selectedSpace?.title || 'Select community'}
-            </p>
-            <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />
-          </div>
-        )}
-      </Menu.Trigger>
-      <Menu.Content className="p-1 w-[224px] backdrop-blur-md!">
-        {() => (
-          <>
-            {spaces.map((space) => (
-              <MenuItem
-                key={space._id}
-                title={space.title}
-                onClick={() => {
-                  onSelectSpace(space);
-                }}
+    <div className="flex items-center gap-2">
+      <Menu.Root placement="top-start">
+        <Menu.Trigger>
+          {({ toggle }) => (
+            <div
+              onClick={() => toggle()}
+              className="h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border cursor-pointer"
+            >
+              <img
+                src={communityAvatar(selectedSpace)}
+                className="w-4 h-4 rounded-full object-cover"
+                alt={selectedSpace?.title || 'Community avatar'}
               />
-            ))}
-          </>
-        )}
-      </Menu.Content>
-    </Menu.Root>
+              <p className="text-sm max-w-[132px] truncate text-tertiary">
+                {selectedSpace?.title || 'Select community'}
+              </p>
+              <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />
+            </div>
+          )}
+        </Menu.Trigger>
+        <Menu.Content className="p-1 w-[224px] backdrop-blur-md!">
+          {() => (
+            <>
+              {spaces.map((space) => (
+                <MenuItem
+                  key={space._id}
+                  title={space.title}
+                  onClick={() => {
+                    onSelectSpace(space);
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </Menu.Content>
+      </Menu.Root>
+
+      <button
+        type="button"
+        className="h-8 px-2.5 rounded-sm bg-(--btn-tertiary) text-tertiary text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:bg-(--btn-tertiary-hover)"
+        onClick={() => {
+          if (selectedSpace?._id) {
+            router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
+            return;
+          }
+          router.push('/upgrade-to-pro');
+        }}
+        title="Upgrade to Pro"
+      >
+        <svg className="size-4 -rotate-90 shrink-0" viewBox="0 0 16 16" aria-hidden>
+          <circle cx="8" cy="8" r={ringRadius} fill="none" stroke="currentColor" strokeWidth="1" className="text-quaternary" />
+          <circle
+            cx="8"
+            cy="8"
+            r={ringRadius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="text-primary transition-[stroke-dashoffset] duration-300"
+            strokeDasharray={ringCircumference}
+            strokeDashoffset={ringOffset}
+          />
+        </svg>
+        <span>
+          {formatCredits(selectedSpace?.credits)} / {formatCredits(selectedSpace?.credits_high_water_mark)}
+        </span>
+      </button>
+    </div>
   );
 }
 
