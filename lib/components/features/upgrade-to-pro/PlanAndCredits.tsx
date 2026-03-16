@@ -17,6 +17,7 @@ import {
   SubscriptionPricing,
   SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
+import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
 
 type PlanCard = {
   type: SubscriptionItemType | 'enterprise';
@@ -29,6 +30,7 @@ type PlanCard = {
   features: string[];
   pricing?: SubscriptionItem['pricing'];
   credits_per_month?: number | null;
+  crypto_prices?: SubscriptionItem['crypto_prices'];
 };
 
 type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
@@ -590,12 +592,24 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: true },
+                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: item.crypto_prices?.length ? false : true },
                             ]}
                             disabled={space.subscription_tier === item.type || purchasingPlan}
                             onSelect={(method) => {
                               if (method.value === 'wallet') {
-                                toast.success('Coming Soon.');
+                                if (item.crypto_prices?.length && item.type !== 'enterprise') {
+                                  openCryptoSubscriptionModal({
+                                    space,
+                                    cryptoPrices: item.crypto_prices,
+                                    items: [item.type as SubscriptionItemType],
+                                    annual: Boolean(item.annual),
+                                    onComplete: () => {
+                                      window.location.reload();
+                                    },
+                                  });
+                                } else {
+                                  toast.success('Coming Soon.');
+                                }
                                 return;
                               }
 

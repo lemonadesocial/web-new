@@ -34,6 +34,12 @@ query ListSubscriptionItems {
     }
     weekly_email_limit
     credits_per_month
+    crypto_prices {
+      chain_id
+      token_address
+      amount
+      amount_annual
+    }
   }
 }
 
@@ -89,4 +95,62 @@ mutation UpdateSpaceSubscription($id: MongoID!, $space: MongoID!, $input: Update
 
 mutation CancelSpaceSubscription($id: MongoID!, $space: MongoID!) {
   cancelSpaceSubscription(_id: $id, space: $space)
+}
+
+mutation CreateCryptoSubscription($input: CreateCryptoSubscriptionInput!) {
+  createCryptoSubscription(input: $input) {
+    subscription_id
+    forwarder_contract
+    destination
+    reference
+    amount
+    token_address
+    chain_id
+  }
+}
+
+mutation RenewCryptoSubscription($subscriptionId: MongoID!, $chainId: String!, $tokenAddress: String!, $annual: Boolean) {
+  renewCryptoSubscription(subscription_id: $subscriptionId, chain_id: $chainId, token_address: $tokenAddress, annual: $annual) {
+    subscription_id
+    forwarder_contract
+    destination
+    reference
+    amount
+    token_address
+    chain_id
+  }
+}
+
+query GetCryptoSubscriptionStatus($subscriptionId: MongoID!) {
+  getCryptoSubscriptionStatus(subscription_id: $subscriptionId) {
+    subscription {
+      _id
+      status
+      current_period_end
+      current_period_start
+      space
+      payment_method
+    }
+    items {
+      active
+      type
+    }
+  }
+}
+
+subscription CryptoSubscriptionActivated($subscriptionId: MongoID!) {
+  cryptoSubscriptionActivated(subscription_id: $subscriptionId) {
+    subscription {
+      _id
+      status
+      current_period_end
+      current_period_start
+      space
+      payment_method
+    }
+    items {
+      active
+      type
+    }
+  }
 }
