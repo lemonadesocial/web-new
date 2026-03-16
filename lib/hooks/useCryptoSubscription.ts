@@ -14,12 +14,12 @@ import {
   type Space,
   type SubscriptionItemType,
 } from '$lib/graphql/generated/backend/graphql';
+import { defaultClient } from '$lib/graphql/request/instances';
 import { createViemClients } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
 import { appKit } from '$lib/utils/appkit';
 import { ERC20 } from '$lib/abis/ERC20';
 import { LemonadeForwardPaymentABI } from '$lib/abis/LemonadeForwardPayment';
-import { client } from '$lib/graphql/request/client';
 
 export type CryptoSubscriptionStatus =
   | 'idle'
@@ -48,8 +48,17 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
   onErrorRef.current = onError;
   const statusRef = useRef(status);
   statusRef.current = status;
+  const activatedRef = useRef(false);
 
   const [createCryptoSub] = useMutation(CreateCryptoSubscriptionDocument);
+
+  const handleActivated = useCallback(() => {
+    if (activatedRef.current) return;
+    activatedRef.current = true;
+    setStatus('active');
+    toast.success('Subscription activated successfully!');
+    onSuccessRef.current?.();
+  }, []);
 
   // Subscribe to real-time activation events only when we have a subscription ID
   useSubscription(CryptoSubscriptionActivatedDocument, {
@@ -57,9 +66,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
     onData: (data) => {
       const activated = data?.cryptoSubscriptionActivated;
       if (activated?.subscription?.status === 'active') {
-        setStatus('active');
-        toast.success('Subscription activated successfully!');
-        onSuccessRef.current?.();
+        handleActivated();
       }
     },
     onError: (err) => {
@@ -71,23 +78,23 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
   // Polling fallback: if WebSocket disconnects or misses the event,
   // poll getCryptoSubscriptionStatus every 5s while confirming
   useEffect(() => {
-    if (statusRef.current !== 'confirming' || !subscriptionId) return;
+    if (status !== 'confirming' || !subscriptionId) return;
 
     const interval = setInterval(async () => {
-      if (statusRef.current !== 'confirming') {
+      if (statusRef.current !== 'confirming' || activatedRef.current) {
         clearInterval(interval);
         return;
       }
 
       try {
-        const result = await client.query(GetCryptoSubscriptionStatusDocument, {
-          subscriptionId,
+        const result = await defaultClient.query({
+          query: GetCryptoSubscriptionStatusDocument,
+          variables: { subscriptionId },
+          fetchPolicy: 'network-only',
         });
 
-        if (result?.getCryptoSubscriptionStatus?.subscription?.status === 'active') {
-          setStatus('active');
-          toast.success('Subscription activated successfully!');
-          onSuccessRef.current?.();
+        if (result?.data?.getCryptoSubscriptionStatus?.subscription?.status === 'active') {
+          handleActivated();
           clearInterval(interval);
         }
       } catch {
@@ -96,12 +103,13 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
     }, POLL_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [subscriptionId, status]);
+  }, [subscriptionId, status, handleActivated]);
 
   const reset = useCallback(() => {
     setStatus('idle');
     setError(null);
     setSubscriptionId(null);
+    activatedRef.current = false;
   }, []);
 
   const createCryptoSubscription = useCallback(
@@ -113,6 +121,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
     ) => {
       setStatus('idle');
       setError(null);
+      activatedRef.current = false;
 
       const walletProvider = appKit.getProvider('eip155');
       const userAddress = appKit.getAddress();
