@@ -74,6 +74,7 @@ fragment Space on Space {
   subscription_status
   subscription_renewal_date
   credits
+  credits_high_water_mark
   subscription_credits
   purchased_credits
   subscription_annual
