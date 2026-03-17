@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import clsx from 'clsx';
 import { CreatePreviewLinkDocument, PreviewLink, PreviewLinkType } from '$lib/graphql/generated/backend/graphql';
@@ -91,7 +92,7 @@ export function CreatePreviewLinkModal({
                 input: {
                   link_type: linkType,
                   expires_in_hours: expired?.value,
-                  password: password ?? undefined,
+                  password: requiredPassword && password ? password : undefined,
                   resource_id: resourceId,
                 },
               },

@@ -27,13 +27,15 @@ export function PreviewLinkPopup() {
     const nowUnix = Math.floor(Date.now() / 1000);
 
     const diffInSeconds = Math.abs(nowUnix - targetUnix);
+    if (diffInSeconds <= 0) return 'Expired';
+
     const hours = Math.floor(diffInSeconds / 3600);
     const minutes = Math.floor((diffInSeconds % 3600) / 60);
 
-    if (hours === 0) return '';
+    if (hours === 0) return minutes > 0 ? `Expires in ${minutes}m` : 'Expires in < 1m';
 
     const minsPart = minutes > 0 ? ` ${minutes}m` : '';
-    return `${hours}h${minsPart}`;
+    return `Expires in ${hours}h${minsPart}`;
   };
 
   useQuery(ListPreviewLinksDocument, {
@@ -115,9 +117,9 @@ export function PreviewLinkPopup() {
                     <Badge title="Password Protected" color="var(--color-secondary)" className="rounded-full" />
                   )}
 
-                  {!!item.expires_at && !!formatExpires(item.expires_at) && (
+                  {!!item.expires_at && (
                     <Badge
-                      title={`Expires in ${formatExpires(item.expires_at)}`}
+                      title={formatExpires(item.expires_at)}
                       color="var(--color-warning-400)"
                       className="rounded-full"
                     />
