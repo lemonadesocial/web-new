@@ -77,9 +77,10 @@ function ManageLayoutToolbar() {
   const [updateEventTheme, { loading: savingTheme }] = useMutation(UpdateEventThemeDocument, {
     onComplete: (_, data) => {
       const updatedEvent = data?.updateEvent;
-      if (updatedEvent?._id) {
+      if (data?.updateEvent?._id) {
         toast.success('Theme saved successfully!');
         store.setData({ ...state.data, theme_data: themeState } as Event);
+        updateEvent(data.updateEvent);
       }
     },
     onError: (error) => {
@@ -369,6 +370,18 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
+            {['preview', 'design'].includes(state.activeTab) && (
+              <Button
+                size="sm"
+                variant="secondary"
+                icon="icon-share"
+                className="rounded-full"
+                onClick={() => modal.open(PreviewLinkPopup)}
+              >
+                Share Preview
+              </Button>
+            )}
+
             {canSaveTheme && (
               <>
                 <Button size="sm" variant="tertiary-alt" className="rounded-full" onClick={handleResetTheme}>
@@ -595,92 +608,95 @@ function PreviewLinkPopup() {
 
   return (
     <Card.Root>
-      <Card.Content className="flex flex-col gap-4">
-        <div className="space-y-2">
-          <p className="text-lg">Preview Links</p>
-          <p className="text-secondary text-sm">
-            Create a public view link to allow anyone to access a view-only version of this design. No sign-in required.
-          </p>
-        </div>
-        <div className="aspect-[157/88] bg-tertiary relative overflow-hidden">
-          <div className="absolute scale-50 origin-top-left w-[200%]">
-            {event && (
-              <EventThemeProvider themeData={event.theme_data}>
-                <EventThemeLayout>
-                  <EventGuestSideContent event={event} />
-                </EventThemeLayout>
-              </EventThemeProvider>
-            )}
+      <Card.Content className="p-0">
+        <div className="space-y-4 max-h-[648px] overflow-auto p-4">
+          <div className="space-y-2">
+            <p className="text-lg">Preview Links</p>
+            <p className="text-secondary text-sm">
+              Create a public view link to allow anyone to access a view-only version of this design. No sign-in
+              required.
+            </p>
           </div>
-        </div>
+          <div className="rounded-sm border border-(--color-divider) aspect-[157/88] relative overflow-hidden">
+            <div className="absolute scale-50 origin-top-left w-[200%]" data-mode="desktop">
+              {event && (
+                <EventThemeProvider themeData={event.theme_data}>
+                  <EventThemeLayout>
+                    <EventGuestSideContent event={event} />
+                  </EventThemeLayout>
+                </EventThemeProvider>
+              )}
+            </div>
+          </div>
 
-        {links.map((item) => (
-          <div key={item.id} className="flex flex-col gap-2">
-            <div className="flex gap-2 items-end">
-              <InputField label="Preview Link" value={item.url} className="w-full" readOnly />
-              <Button icon="icon-copy" variant="tertiary-alt" className="size-[40px] aspect-square" />
-              <Menu.Root placement="bottom-end">
-                <Menu.Trigger>
-                  {({ toggle }) => (
-                    <Button
-                      icon="icon-more-horiz"
-                      variant="tertiary-alt"
-                      className="size-[40px] aspect-square"
-                      onClick={() => toggle()}
-                    />
-                  )}
-                </Menu.Trigger>
-
-                <Menu.Content className="p-1">
-                  {({ toggle }) => (
-                    <>
-                      <MenuItem
-                        title="Delete Link"
-                        iconLeft="icon-delete text-danger-400!"
-                        className="[&_p]:text-danger-400!"
-                        onClick={() => {
-                          setLinks((prev) => prev.filter((i) => i.id !== item.id));
-                          toggle();
-                        }}
+          {links.map((item) => (
+            <div key={item.id} className="flex flex-col gap-2">
+              <div className="flex gap-2 items-end">
+                <InputField label="Preview Link" value={item.url} className="w-full" readOnly />
+                <Button icon="icon-copy" variant="tertiary-alt" className="size-[40px] aspect-square" />
+                <Menu.Root placement="bottom-end">
+                  <Menu.Trigger>
+                    {({ toggle }) => (
+                      <Button
+                        icon="icon-more-horiz"
+                        variant="tertiary-alt"
+                        className="size-[40px] aspect-square"
+                        onClick={() => toggle()}
                       />
-                    </>
-                  )}
-                </Menu.Content>
-              </Menu.Root>
-            </div>
-            <div className="flex gap-1.5">
-              {item.passwordProtected && (
-                <Badge title="Password Protected" color="var(--color-secondary)" className="rounded-full" />
-              )}
+                    )}
+                  </Menu.Trigger>
 
-              {!!item.expired && !!formatExpires(item.expired) && (
-                <Badge
-                  title={`Expires in ${formatExpires(item.expired)}`}
-                  color="var(--color-warning-400)"
-                  className="rounded-full"
-                />
-              )}
+                  <Menu.Content className="p-1">
+                    {({ toggle }) => (
+                      <>
+                        <MenuItem
+                          title="Delete Link"
+                          iconLeft="icon-delete text-danger-400!"
+                          className="[&_p]:text-danger-400!"
+                          onClick={() => {
+                            setLinks((prev) => prev.filter((i) => i.id !== item.id));
+                            toggle();
+                          }}
+                        />
+                      </>
+                    )}
+                  </Menu.Content>
+                </Menu.Root>
+              </div>
+              <div className="flex gap-1.5">
+                {item.passwordProtected && (
+                  <Badge title="Password Protected" color="var(--color-secondary)" className="rounded-full" />
+                )}
+
+                {!!item.expired && !!formatExpires(item.expired) && (
+                  <Badge
+                    title={`Expires in ${formatExpires(item.expired)}`}
+                    color="var(--color-warning-400)"
+                    className="rounded-full"
+                  />
+                )}
+              </div>
             </div>
+          ))}
+
+          <div className="flex flex-col gap-3 items-center">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() =>
+                modal.open(CreatePreviewLinkModal, {
+                  dismissible: true,
+                  props: {
+                    onComplete: (link) => setLinks((prev) => [...prev, link]),
+                  },
+                  className: 'overflow-auto!',
+                })
+              }
+            >
+              Create Preview Link
+            </Button>
+            <p className="text-sm text-tertiary">This link can be deleted at any time.</p>
           </div>
-        ))}
-
-        <div className="flex flex-col gap-3 items-center">
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={() =>
-              modal.open(CreatePreviewLinkModal, {
-                dismissible: true,
-                props: {
-                  onComplete: (link) => setLinks((prev) => [...prev, link]),
-                },
-                className: 'overflow-auto!',
-              })
-            }
-          >
-            Create Preview Link
-          </Button>
-          <p className="text-sm text-tertiary">This link can be deleted at any time.</p>
         </div>
       </Card.Content>
     </Card.Root>
