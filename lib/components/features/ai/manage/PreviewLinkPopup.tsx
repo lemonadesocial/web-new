@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { useEvent } from '../../event-manage/store';
 import {
@@ -7,14 +8,14 @@ import {
   PreviewLinkType,
 } from '$lib/graphql/generated/backend/graphql';
 import { Badge, Button, Card, InputField, Menu, MenuItem, modal, toast } from '$lib/components/core';
+import { copy } from '$lib/utils/helpers';
+
 import { EventThemeProvider } from '../../theme-builder/provider';
 import { EventThemeLayout } from '../../event-manage/EventThemeLayout';
 import { EventGuestSideContent } from '../../event/EventGuestSide';
 import { CreatePreviewLinkModal } from './CreatePreviewLinkModal';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { useStoreManageLayout } from './store';
-import { match } from 'ts-pattern';
-import { copy } from '$lib/utils/helpers';
 
 export function PreviewLinkPopup() {
   const event = useEvent();
@@ -45,7 +46,11 @@ export function PreviewLinkPopup() {
       setLinks(data.listPreviewLinks as PreviewLink[]);
     },
   });
-  const [deleteLink] = useMutation(DeletePreviewLinkDocument);
+  const [deleteLink] = useMutation(DeletePreviewLinkDocument, {
+    onError: () => {
+      toast.error('Failed to delete link');
+    },
+  });
 
   return (
     <Card.Root>
@@ -102,8 +107,13 @@ export function PreviewLinkPopup() {
                             iconLeft="icon-delete text-danger-400!"
                             className="[&_p]:text-danger-400!"
                             onClick={() => {
-                              deleteLink({ variables: { id: item._id } });
-                              setLinks((prev) => prev.filter((i) => i._id !== item._id));
+                              deleteLink({
+                                variables: { id: item._id },
+                                onComplete: () => {
+                                  setLinks((prev) => prev.filter((i) => i._id !== item._id));
+                                  toast.success('Link deleted');
+                                },
+                              });
                               toggle();
                             }}
                           />

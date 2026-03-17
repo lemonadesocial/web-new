@@ -2,7 +2,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { CreatePreviewLinkDocument, PreviewLink, PreviewLinkType } from '$lib/graphql/generated/backend/graphql';
-import { Button, InputField, Menu, MenuItem, modal, ModalContent, Toggle } from '$lib/components/core';
+import { Button, InputField, Menu, MenuItem, modal, ModalContent, toast, Toggle } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
 
 const expiredList = [
@@ -29,8 +29,13 @@ export function CreatePreviewLinkModal({
 
   const [createLink, { loading }] = useMutation(CreatePreviewLinkDocument, {
     onComplete(_, response) {
-      onComplete(response.createPreviewLink as PreviewLink);
-      modal.close();
+      if (response.createPreviewLink) {
+        onComplete(response.createPreviewLink as PreviewLink);
+        modal.close();
+      }
+    },
+    onError: () => {
+      toast.error('Failed to create preview link');
     },
   });
 
@@ -86,6 +91,7 @@ export function CreatePreviewLinkModal({
         <Button
           variant="secondary"
           loading={loading}
+          disabled={requiredPassword && !password.trim()}
           onClick={() => {
             createLink({
               variables: {
