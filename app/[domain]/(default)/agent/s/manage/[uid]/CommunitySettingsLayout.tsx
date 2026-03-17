@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { SettingsCommunityDisplay } from '$lib/components/features/community-manage/settings';
 import { SettingsCommunityAvanced } from '$lib/components/features/community-manage/settings/SettingsCommunityAvanced';
+import { SettingsCommunityDeveloper } from '$lib/components/features/community-manage/settings/SettingsCommunityDeveloper';
 import { SettingsCommunityEmbed } from '$lib/components/features/community-manage/settings/SettingsCommunityEmbed';
 import { SettingsCommunityTags } from '$lib/components/features/community-manage/settings/SettingsCommunityTags';
 import { SettingsCommunityTeam } from '$lib/components/features/community-manage/settings/SettingsCommunityTeam';
@@ -16,6 +17,7 @@ const tabs: Record<string, { label: string; component: React.FC<{ space: Space }
   connectors: { label: 'Connectors', component: Connectors },
   advanced: { label: 'Advanced', component: SettingsCommunityAvanced },
   embed: { label: 'Embed', component: SettingsCommunityEmbed },
+  developer: { label: 'Developer', component: SettingsCommunityDeveloper },
   // send_limit: { label: 'Send Limit', component: null },
   // lemonade_pro: { label: 'Lemonade Pro', component: null },
 };

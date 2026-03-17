@@ -11,6 +11,7 @@ const tabs = [
   { label: 'Connectors', path: 'connectors' },
   { label: 'Advanced', path: 'advanced' },
   { label: 'Embed', path: 'embed' },
+  { label: 'Developer', path: 'developer' },
   // { label: 'Send Limit', path: 'send-limit' },
   // { label: 'Lemonade Pro', path: 'lemonade-pro' },
 ];
