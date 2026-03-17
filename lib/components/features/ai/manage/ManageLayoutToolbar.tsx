@@ -5,22 +5,8 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 import { isEqual, merge } from 'lodash';
-import { v4 as uuid } from 'uuid';
-import { addHours, getUnixTime } from 'date-fns';
 
-import {
-  Badge,
-  Button,
-  Card,
-  InputField,
-  Menu,
-  MenuItem,
-  modal,
-  ModalContent,
-  sheet,
-  toast,
-  Toggle,
-} from '$lib/components/core';
+import { Button, Menu, MenuItem, modal, sheet, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
@@ -38,7 +24,7 @@ import {
 import { defaultTheme, ThemeValues } from '$lib/components/features/theme-builder/store';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 
-import { useEvent, useUpdateEvent } from '../../event-manage/store';
+import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
