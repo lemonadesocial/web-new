@@ -28,7 +28,11 @@ const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a 
 const TYPING_MS = 80;
 const PAUSE_AFTER_PHRASE_MS = 1500;
 
-export function InputChat() {
+type InputChatProps = {
+  variant?: 'default' | 'home';
+};
+
+export function InputChat({ variant = 'default' }: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -180,9 +184,13 @@ export function InputChat() {
   const textareaBaseClass =
     'w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium';
   const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
+  const rootClassName =
+    variant === 'home'
+      ? 'backdrop-blur-[8px]! border border-white bg-[rgba(20,19,23,0.64)] rounded-[16px] overflow-visible'
+      : 'backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible';
 
   return (
-    <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
+    <Card.Root className={rootClassName}>
       <Card.Content className="space-y-4 flex flex-col">
         <div className="relative w-full">
           {isIdle && (
@@ -317,7 +325,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
             </div>
           )}
         </Menu.Trigger>
-        <Menu.Content className="p-1 w-[224px] backdrop-blur-md!">
+        <Menu.Content className="p-1 w-[224px] max-h-[280px] overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
           {() => (
             <>
               {spaces.map((space) => (
