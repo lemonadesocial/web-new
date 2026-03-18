@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { CreatePreviewLinkDocument, PreviewLink, PreviewLinkType } from '$lib/graphql/generated/backend/graphql';
 import { Button, InputField, Menu, MenuItem, modal, ModalContent, toast, Toggle } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
+import { copy } from '$lib/utils/helpers';
 
 const expiredList = [
   { value: 1, label: '1 hour' },
@@ -53,7 +54,20 @@ export function CreatePreviewLinkModal({
         </div>
 
         {requiredPassword && (
-          <InputField label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <InputField
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="[&_div.control]:pr-1.5! [&_div.control]:items-center [&_button]:bg-(--btn-tertiary) [&_button]:p-[7px] [&_button]:justify-center [&_button]:hover:bg-(--btn-tertiary-hover) [&_button]:rounded-xs [&_button]:flex [&_button]:items-center"
+            right={
+              password
+                ? {
+                    icon: 'icon-copy size-4',
+                    onClick: () => copy(password, () => toast.success('Copied to clipboard! 📋')),
+                  }
+                : undefined
+            }
+          />
         )}
 
         <div className="flex justify-between items-center">
