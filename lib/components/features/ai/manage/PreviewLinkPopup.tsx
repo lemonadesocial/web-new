@@ -27,7 +27,7 @@ export function PreviewLinkPopup() {
     const targetUnix = Math.floor(new Date(isoString).getTime() / 1000);
     const nowUnix = Math.floor(Date.now() / 1000);
 
-    const diffInSeconds = Math.abs(nowUnix - targetUnix);
+    const diffInSeconds = targetUnix - nowUnix;
     if (diffInSeconds <= 0) return 'Expired';
 
     const hours = Math.floor(diffInSeconds / 3600);
@@ -44,6 +44,9 @@ export function PreviewLinkPopup() {
     skip: !state.data?._id,
     onComplete: (data) => {
       setLinks(data.listPreviewLinks as PreviewLink[]);
+    },
+    onError: () => {
+      toast.error('Failed to load preview links');
     },
   });
   const [deleteLink] = useMutation(DeletePreviewLinkDocument, {
@@ -76,7 +79,7 @@ export function PreviewLinkPopup() {
           </div>
 
           {links.map((item) => {
-            const url = `https://${window.location.hostname}/preview/${item.token}`;
+            const url = `https://${process.env.NEXT_PUBLIC_APP_DOMAIN ?? window.location.hostname}/preview/${item.token}`;
             return (
               <div key={item._id} className="flex flex-col gap-2">
                 <div className="flex gap-2 items-end">
@@ -143,6 +146,7 @@ export function PreviewLinkPopup() {
             <Button
               variant={links.length ? 'tertiary-alt' : 'secondary'}
               className="w-full"
+              disabled={!state.data?._id}
               onClick={() => {
                 modal.open(CreatePreviewLinkModal, {
                   dismissible: true,

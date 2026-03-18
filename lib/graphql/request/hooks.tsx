@@ -13,7 +13,8 @@ export function useQuery<T, V extends object>(
     skip = false,
     fetchPolicy,
     onComplete,
-  }: QueryOptions<T, V> & { onComplete?: (data: T) => void } = {},
+    onError,
+  }: QueryOptions<T, V> & { onComplete?: (data: T) => void; onError?: (error: unknown) => void } = {},
   client: GraphqlClient = defaultClient,
 ) {
   const [data, setData] = React.useState<T | null>(initData);
@@ -33,6 +34,7 @@ export function useQuery<T, V extends object>(
       onComplete?.(queryData as T);
     } catch (error) {
       setError(error);
+      onError?.(error);
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ export function useQuery<T, V extends object>(
       callback: () => {
         const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables);
         if (res) {
-          setData(() => ({ ...res } as T));
+          setData(() => ({ ...res }) as T);
         }
       },
     });

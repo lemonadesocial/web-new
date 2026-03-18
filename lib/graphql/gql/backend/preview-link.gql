@@ -21,7 +21,6 @@ query ListPreviewLinks($link_type: PreviewLinkType!, $resource_id: MongoID!) {
     link_type
     resource_id
     token
-    password
     expires_at
     created_at
     view_count
