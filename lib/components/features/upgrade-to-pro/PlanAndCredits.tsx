@@ -3,6 +3,7 @@ import React from 'react';
 import { animate, motion, AnimatePresence } from 'framer-motion';
 import { match } from 'ts-pattern';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { formatUnits } from 'viem';
 
@@ -195,8 +196,13 @@ function CryptoPlanPriceText({ item, fallbackPrice }: { item: PlanCard; fallback
 }
 
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
+  const router = useRouter();
   const mergedPlans = React.useMemo(() => mergePlansWithSubscriptions(pricingPlans, subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [optimisticSubscriptionTier, setOptimisticSubscriptionTier] = React.useState<SubscriptionItemType | null>(null);
+  const [optimisticSubscriptionAnnual, setOptimisticSubscriptionAnnual] = React.useState<boolean | null>(null);
+  const activeSubscriptionTier = optimisticSubscriptionTier ?? (space.subscription_tier || SubscriptionItemType.Free);
+  const activeSubscriptionAnnual = optimisticSubscriptionAnnual ?? space.subscription_annual ?? false;
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
   const [upgradingTier, setUpgradingTier] = React.useState<SubscriptionTierEnum | null>(null);
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
@@ -390,14 +396,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   React.useEffect(() => {
     setData(() => {
       return mergedPlans.map((item) => {
-        if (item.type === space.subscription_tier && space.subscription_annual) {
-          return { ...item, annual: space.subscription_annual };
+        if (item.type === activeSubscriptionTier) {
+          return { ...item, annual: activeSubscriptionAnnual };
         }
 
         return item;
       });
     });
-  }, [mergedPlans, space]);
+  }, [activeSubscriptionAnnual, activeSubscriptionTier, mergedPlans]);
 
   const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
     if (purchasingPlan) return;
@@ -454,12 +460,13 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
           openCryptoSubscriptionModal({
             space,
-            cryptoPrices: item.crypto_prices,
             items: [item.type as SubscriptionItemType],
             annual: Boolean(item.annual),
             planOptions: walletPlanOptions,
-            onComplete: () => {
-              window.location.reload();
+            onComplete: ({ planType, annual: nextAnnual }) => {
+              setOptimisticSubscriptionTier(planType);
+              setOptimisticSubscriptionAnnual(nextAnnual);
+              router.refresh();
             },
           });
           return;
@@ -471,7 +478,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
       handleUpgrade(tier, Boolean(item.annual));
     },
-    [data, handleUpgrade, space, subscriptionItems],
+    [data, handleUpgrade, router, space, subscriptionItems],
   );
 
   return (
@@ -490,7 +497,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                   <i className="icon-lemonade-logo text-warning-300 w-5 h-5 aspect-square" />
                 </div>
                 <div>
-                  <p>You’re on {(space.subscription_tier || SubscriptionItemType.Free).toUpperCase()} Plan</p>
+                  <p>You’re on {activeSubscriptionTier.toUpperCase()} Plan</p>
                   <p className="text-tertiary text-sm">Upgrade anytime!</p>
                 </div>
               </div>
@@ -618,12 +625,12 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <div className="flex gap-2">
                             <Toggle
                               id={item.type}
-                              disabled={space.subscription_tier === item.type || purchasingPlan}
+                              disabled={activeSubscriptionTier === item.type || purchasingPlan}
                               checked={!!data.find((i) => i.type === item.type)?.annual}
                               onChange={(value) => {
                                 setData((prev) =>
                                   prev.map((i) => {
-                                    if (i.type === space.subscription_tier) return i;
+                                    if (i.type === activeSubscriptionTier) return i;
                                     return { ...i, annual: value };
                                   }),
                                 );
@@ -637,7 +644,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               { value: 'card', iconLeft: 'icon-credit-card' },
                               { value: 'wallet', iconLeft: 'icon-wallet', ignore: item.crypto_prices?.length ? false : true },
                             ]}
-                            disabled={space.subscription_tier === item.type || purchasingPlan}
+                            disabled={activeSubscriptionTier === item.type || purchasingPlan}
                             onSelect={(method) => {
                               if (method.ignore) return;
                               setData((prev) =>
@@ -662,7 +669,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Plus || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Plus || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Plus}
                             onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Plus)}
                           >
@@ -671,7 +678,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                         ))
                         .with(SubscriptionItemType.Pro, () => (
                           <Button
-                            disabled={space.subscription_tier === SubscriptionItemType.Pro || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Pro || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Pro}
                             onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Pro)}
                           >
@@ -682,7 +689,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Max || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Max || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Max}
                             onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Max)}
                           >

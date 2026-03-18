@@ -106,7 +106,7 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
       crypto_prices: plan.crypto_prices || [],
     })) as Array<Pick<SubscriptionItem, 'type' | 'title' | 'crypto_prices'>>;
 
-  return sourcePlans.map((plan, index) => {
+  const options = sourcePlans.map((plan, index) => {
     const planType = plan.type as SubscriptionItemType;
     const isEnterprise = planType === SubscriptionItemType.Enterprise;
     const fallbackTitle = planType.charAt(0).toUpperCase() + planType.slice(1).toLowerCase();
@@ -122,4 +122,28 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
       available: Boolean(plan.crypto_prices?.length && !isEnterprise),
     };
   });
+
+  return options
+    .map((option, index) => ({ option, index }))
+    .sort((a, b) => {
+      if (a.option.available !== b.option.available) {
+        return a.option.available ? -1 : 1;
+      }
+
+      if (!a.option.available && !b.option.available) {
+        return a.index - b.index;
+      }
+
+      const aPrice = a.option.cryptoPrices[0];
+      const bPrice = b.option.cryptoPrices[0];
+
+      if (!aPrice || !bPrice) return a.index - b.index;
+
+      const aAmount = BigInt(a.option.annual ? aPrice.amount_annual : aPrice.amount);
+      const bAmount = BigInt(b.option.annual ? bPrice.amount_annual : bPrice.amount);
+
+      if (aAmount === bAmount) return a.index - b.index;
+      return aAmount < bAmount ? -1 : 1;
+    })
+    .map(({ option }) => option);
 }

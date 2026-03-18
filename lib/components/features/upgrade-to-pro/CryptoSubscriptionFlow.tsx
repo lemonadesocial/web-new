@@ -4,11 +4,7 @@ import React from 'react';
 import { addMonths, addYears, format } from 'date-fns';
 
 import { Button, Menu, MenuItem, modal } from '$lib/components/core';
-import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { ErrorModal } from '$lib/components/features/modals/ErrorModal';
-import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
-import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import {
   type Space,
   type SubscriptionItemType,
@@ -19,39 +15,22 @@ import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
 import { communityAvatar } from '$lib/utils/community';
 import { getChain } from '$lib/utils/crypto';
 import { userAvatar } from '$lib/utils/user';
-import { useCryptoSubscription } from './hooks';
 import {
   formatPlanTitle,
   formatTokenAmount,
-  getProcessingMessage,
-  getTokenSymbol,
   type WalletPlanOption,
 } from './utils';
+import { CryptoSubscriptionTransactionModal } from './CryptoSubscriptionTransactionModal';
 
 interface CryptoSubscriptionFlowProps {
   space: Space;
-  cryptoPrices: SubscriptionCryptoPrice[];
   items: SubscriptionItemType[];
   annual: boolean;
-  planOptions?: WalletPlanOption[];
-  onComplete?: () => void;
+  planOptions: WalletPlanOption[];
+  onComplete?: (params: { planType: SubscriptionItemType; annual: boolean }) => void;
 }
 
 type CryptoPlanOption = WalletPlanOption;
-
-interface CryptoSubscriptionTransactionModalProps {
-  space: Space;
-  selectedPrice: SubscriptionCryptoPrice;
-  items: SubscriptionItemType[];
-  annual: boolean;
-  onComplete?: () => void;
-}
-
-function TokenSymbolText({ chainId, tokenAddress }: { chainId: string; tokenAddress: string }) {
-  const { tokenMetadata } = useTokenMetadata(chainId, tokenAddress);
-
-  return <>{getTokenSymbol(tokenMetadata)}</>;
-}
 
 function TokenAmountText({
   amount,
@@ -67,113 +46,23 @@ function TokenAmountText({
   return <>{formatTokenAmount(amount, tokenMetadata)}</>;
 }
 
-function CryptoSubscriptionTransactionModal({
-  space,
-  selectedPrice,
-  items,
-  annual,
-  onComplete,
-}: CryptoSubscriptionTransactionModalProps) {
-  const { status, createCryptoSubscription, reset } = useCryptoSubscription({
-    space,
-    onSuccess: () => {
-      onComplete?.();
-      setTimeout(() => modal.close(), 1500);
-    },
-    onError: () => {
-      // Error is handled by the hook (toast + status)
-    },
-  });
-
-  const chain = getChain(selectedPrice.chain_id);
-  const chainName = chain?.name ?? selectedPrice.chain_id;
-  const { tokenMetadata } = useTokenMetadata(selectedPrice.chain_id, selectedPrice.token_address);
-  const amountStr = annual ? selectedPrice.amount_annual : selectedPrice.amount;
-  const amountText = formatTokenAmount(amountStr, tokenMetadata);
-
-  const handleSign = () => {
-    void createCryptoSubscription(
-      selectedPrice.chain_id,
-      selectedPrice.token_address,
-      items,
-      annual,
-    );
-  };
-
-  if (status === 'idle') {
-    return (
-      <SignTransactionModal
-        title="Confirm Payment"
-        description={`Please sign the transaction to pay ${amountText} on ${chainName}. An approval step may appear first.`}
-        onSign={handleSign}
-        onClose={() => modal.close()}
-      />
-    );
-  }
-
-  if (status === 'error') {
-    return (
-      <ErrorModal
-        title="Payment Failed"
-        message="Payment failed. Please try again."
-        onRetry={reset}
-        onClose={() => modal.close()}
-      />
-    );
-  }
-
-  if (status === 'active') {
-    return (
-      <SuccessModal
-        title="Subscription Activated!"
-        description={`${amountText} on ${chainName} has been confirmed.`}
-      />
-    );
-  }
-
-  return (
-    <ConfirmTransaction
-      title="Processing Payment"
-      description={getProcessingMessage(status)}
-    />
-  );
-}
-
 function CryptoSubscriptionFlowContent({
   space,
-  cryptoPrices,
   items,
   annual,
   planOptions,
   onComplete,
 }: CryptoSubscriptionFlowProps) {
   const me = useMe();
-  const normalizedPlanOptions = React.useMemo<CryptoPlanOption[]>(() => {
-    if (planOptions?.length) {
-      return planOptions;
-    }
-
-    const item = items[0];
-    if (!item || !cryptoPrices.length) return [];
-
-    return [{
-      key: item,
-      planType: item,
-      title: formatPlanTitle(item),
-      annual,
-      cryptoPrices,
-      available: cryptoPrices.length > 0,
-    }];
-  }, [annual, cryptoPrices, items, planOptions]);
 
   const initialSelectedPlanOption = React.useMemo(() => {
     const requestedPlanType = items[0];
-    if (!requestedPlanType) return normalizedPlanOptions[0] ?? null;
+    if (!requestedPlanType) return planOptions[0] ?? null;
 
-    return normalizedPlanOptions.find((option) => option.planType === requestedPlanType)
-      ?? normalizedPlanOptions[0]
+    return planOptions.find((option) => option.planType === requestedPlanType)
+      ?? planOptions[0]
       ?? null;
-  }, [items, normalizedPlanOptions]);
+  }, [items, planOptions]);
 
   const [selectedPlanKey, setSelectedPlanKey] = React.useState<string | null>(
     initialSelectedPlanOption?.key ?? null,
@@ -188,11 +77,11 @@ function CryptoSubscriptionFlowContent({
   const [isSelectingPlan, setIsSelectingPlan] = React.useState(false);
 
   const selectedPlanOption = React.useMemo(() => {
-    if (!normalizedPlanOptions.length) return null;
+    if (!planOptions.length) return null;
 
-    return normalizedPlanOptions.find((option) => option.key === selectedPlanKey)
-      ?? normalizedPlanOptions[0];
-  }, [normalizedPlanOptions, selectedPlanKey]);
+    return planOptions.find((option) => option.key === selectedPlanKey)
+      ?? planOptions[0];
+  }, [planOptions, selectedPlanKey]);
 
   const activeCryptoPrices = selectedPlanOption?.cryptoPrices ?? [];
 
@@ -243,6 +132,7 @@ function CryptoSubscriptionFlowContent({
               selectedPrice: price,
               items: [planType],
               annual: planOption.annual,
+              planTitle: planOption.title,
               onComplete,
             },
           });
@@ -251,11 +141,7 @@ function CryptoSubscriptionFlowContent({
     });
   };
 
-  // Step 2: Select chain/token
   const selectedChain = selectedPrice ? getChain(selectedPrice.chain_id) : null;
-  const selectedTokenSymbol = selectedPrice
-    ? getTokenSymbol(selectedTokenMeta)
-    : 'Token';
   const amountStr = selectedPrice
     ? ((selectedPlanOption?.annual ?? annual) ? selectedPrice.amount_annual : selectedPrice.amount)
     : '0';
@@ -321,7 +207,7 @@ function CryptoSubscriptionFlowContent({
                       <i aria-hidden="true" className="icon-wallet size-5 text-tertiary" />
                     )}
                     <p className="flex-1 text-left">
-                      {selectedChain?.name || 'Network'} {selectedTokenSymbol ? `• ${selectedTokenSymbol}` : ''}
+                      {selectedChain?.name || 'Network'}
                     </p>
                   </div>
                   <div className="p-2.5">
@@ -353,7 +239,7 @@ function CryptoSubscriptionFlowContent({
                           }}
                         >
                           <p className="flex-1 truncate">
-                            {chain?.name || price.chain_id} • <TokenSymbolText chainId={price.chain_id} tokenAddress={price.token_address} />
+                            {chain?.name || price.chain_id}
                           </p>
                         </MenuItem>
                       );
@@ -414,7 +300,7 @@ function CryptoSubscriptionFlowContent({
 
             {isSelectingPlan && (
               <div className="flex max-h-[260px] flex-col gap-2 overflow-y-auto pb-3 pr-1 no-scrollbar">
-                {normalizedPlanOptions.map((option) => {
+                {planOptions.map((option) => {
                   const optionPrice = option.cryptoPrices[0];
                   const isSelected = selectedPlanOption?.key === option.key;
 

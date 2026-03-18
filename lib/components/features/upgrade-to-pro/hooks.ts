@@ -15,7 +15,7 @@ import {
   type SubscriptionItemType,
 } from '$lib/graphql/generated/backend/graphql';
 import { defaultClient } from '$lib/graphql/request/instances';
-import { createViemClients } from '$lib/utils/crypto';
+import { checkBalanceSufficient, createViemClients } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
 import { appKit } from '$lib/utils/appkit';
 import { ERC20 } from '$lib/abis/ERC20';
@@ -26,26 +26,25 @@ export type CryptoSubscriptionStatus =
   | 'approving'
   | 'paying'
   | 'confirming'
-  | 'active'
+  | 'success'
   | 'error';
 
 interface UseCryptoSubscriptionParams {
   space: Space;
-  onSuccess?: () => void;
   onError?: (error: unknown) => void;
 }
 
 const POLL_INTERVAL_MS = 5000;
 
-export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSubscriptionParams) {
+export function useCryptoSubscription({ space, onError }: UseCryptoSubscriptionParams) {
   const [status, setStatus] = useState<CryptoSubscriptionStatus>('idle');
   const [error, setError] = useState<unknown>(null);
   const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
 
-  const onSuccessRef = useRef(onSuccess);
-  onSuccessRef.current = onSuccess;
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
+  const onCompleteRef = useRef<(() => void) | undefined>(undefined);
   const statusRef = useRef(status);
   statusRef.current = status;
   const activatedRef = useRef(false);
@@ -55,9 +54,9 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
   const handleActivated = useCallback(() => {
     if (activatedRef.current) return;
     activatedRef.current = true;
-    setStatus('active');
-    toast.success('Subscription activated successfully!');
-    onSuccessRef.current?.();
+    setStatus('success');
+    onCompleteRef.current?.();
+    onCompleteRef.current = undefined;
   }, []);
 
   // Subscribe to real-time activation events only when we have a subscription ID
@@ -109,6 +108,8 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
     setStatus('idle');
     setError(null);
     setSubscriptionId(null);
+    setTxHash(null);
+    onCompleteRef.current = undefined;
     activatedRef.current = false;
   }, []);
 
@@ -118,9 +119,12 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
       tokenAddress: string,
       items: SubscriptionItemType[],
       annual?: boolean,
+      onComplete?: () => void,
     ) => {
       setStatus('idle');
       setError(null);
+      setTxHash(null);
+      onCompleteRef.current = onComplete;
       activatedRef.current = false;
 
       const walletProvider = appKit.getProvider('eip155');
@@ -149,6 +153,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
           const errMsg = formatError(mutationError || new Error('Failed to create crypto subscription'));
           setStatus('error');
           setError(mutationError);
+          onCompleteRef.current = undefined;
           toast.error(errMsg);
           onErrorRef.current?.(mutationError);
           return;
@@ -166,6 +171,14 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
         );
 
         const amount = BigInt(paymentInfo.amount);
+
+        await checkBalanceSufficient({
+          publicClient,
+          tokenAddress: paymentInfo.token_address,
+          chainId: paymentInfo.chain_id,
+          amount,
+          account: account as Address,
+        });
 
         const approveHash = await walletClient.writeContract({
           abi: ERC20,
@@ -194,6 +207,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
           account,
           chain: walletClient.chain,
         });
+        setTxHash(payHash);
 
         await publicClient.waitForTransactionReceipt({ hash: payHash });
 
@@ -204,6 +218,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
         Sentry.captureException(err);
         setStatus('error');
         setError(err);
+        onCompleteRef.current = undefined;
         toast.error(formatError(err));
         onErrorRef.current?.(err);
       }
@@ -215,6 +230,7 @@ export function useCryptoSubscription({ space, onSuccess, onError }: UseCryptoSu
     status,
     error,
     subscriptionId,
+    txHash,
     createCryptoSubscription,
     reset,
   };
