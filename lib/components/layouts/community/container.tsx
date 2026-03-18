@@ -42,28 +42,28 @@ function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
 
 export function CommunityContainer({ space, children }: React.PropsWithChildren & { space: Space }) {
   const [state] = useTheme();
+
   return (
     <main
       id={space._id}
       className={clsx(
-        'relative flex flex-col h-dvh w-full z-100 overflow-auto',
+        'relative flex h-dvh w-full z-100 overflow-hidden',
         state.theme !== 'default' && [state.config.color, state.config.mode],
       )}
     >
       <FaviconUpdater faviconUrl={space?.fav_icon_url} />
       <ThemeGenerator data={state} />
-      <LoadMoreWrapper>
-        <div className="fixed top-0 left-0 w-screen h-[64px] z-[9] border-b backdrop-blur-md">
-          <Header title={space?.title} />
-        </div>
-        <Sidebar space={space} />
-        <div>
+      <Sidebar space={space} />
+
+      <div className="flex-1 overflow-auto">
+        <Header hideLogo className="sticky top-0 left-0 w-full h-[64px] z-[9] border-b backdrop-blur-md" />
+        <LoadMoreWrapper>
           <div className="lg:pl-[97px] pt-[64px]">
             <div className="page mx-auto px-4 xl:px-0 pt-6">{children}</div>
           </div>
-        </div>
-        <Footer space={space} />
-      </LoadMoreWrapper>
+        </LoadMoreWrapper>
+      </div>
+      <Footer space={space} />
     </main>
   );
 }
