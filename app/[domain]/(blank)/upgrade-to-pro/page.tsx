@@ -9,7 +9,5 @@ export default async function Page() {
   const { data } = await client.query({ query: ListSubscriptionItemsDocument });
   const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
 
-  console.log(subscriptionData)
-
   return <UpgradeToProPage activeSection={DEFAULT_UPGRADE_TO_PRO_SECTION} subscriptionData={subscriptionData} />;
 }

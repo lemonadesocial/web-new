@@ -96,6 +96,39 @@ export type WalletPlanOption = {
   available: boolean;
 };
 
+function hasPositiveCryptoAmount(amount?: string | null) {
+  if (!amount) return false;
+
+  try {
+    return BigInt(amount) > 0n;
+  } catch {
+    return false;
+  }
+}
+
+export function filterCryptoPricesForPeriod(
+  cryptoPrices: SubscriptionCryptoPrice[] = [],
+  annual: boolean,
+): SubscriptionCryptoPrice[] {
+  return cryptoPrices.filter((price) =>
+    hasPositiveCryptoAmount(annual ? price.amount_annual : price.amount),
+  );
+}
+
+export function getFirstCryptoPriceForPeriod(
+  cryptoPrices: SubscriptionCryptoPrice[] = [],
+  annual: boolean,
+): SubscriptionCryptoPrice | null {
+  return filterCryptoPricesForPeriod(cryptoPrices, annual)[0] ?? null;
+}
+
+export function hasCryptoPriceForPeriod(
+  cryptoPrices: SubscriptionCryptoPrice[] = [],
+  annual: boolean,
+): boolean {
+  return filterCryptoPricesForPeriod(cryptoPrices, annual).length > 0;
+}
+
 export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], uiPlans: WalletUiPlan[]): WalletPlanOption[] {
   const uiPlanByType = new Map(uiPlans.map((plan) => [plan.type, plan]));
   const sourcePlans = subscriptionItems.length
@@ -119,7 +152,7 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
       description: uiPlan?.description || undefined,
       annual: Boolean(uiPlan?.annual),
       cryptoPrices: plan.crypto_prices || [],
-      available: Boolean(plan.crypto_prices?.length && !isEnterprise),
+      available: Boolean(!isEnterprise && hasCryptoPriceForPeriod(plan.crypto_prices || [], Boolean(uiPlan?.annual))),
     };
   });
 
@@ -134,8 +167,8 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
         return a.index - b.index;
       }
 
-      const aPrice = a.option.cryptoPrices[0];
-      const bPrice = b.option.cryptoPrices[0];
+      const aPrice = getFirstCryptoPriceForPeriod(a.option.cryptoPrices, a.option.annual);
+      const bPrice = getFirstCryptoPriceForPeriod(b.option.cryptoPrices, b.option.annual);
 
       if (!aPrice || !bPrice) return a.index - b.index;
 
