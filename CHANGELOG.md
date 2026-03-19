@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.21.0](https://github.com/lemonadesocial/web-new/compare/v10.20.0...v10.21.0) (2026-03-19)
+
+
+### Features
+
+* adjust home bg size ([8155712](https://github.com/lemonadesocial/web-new/commit/8155712894e8aaafd351885f280155b14de5603f))
+
 ## [10.20.0](https://github.com/lemonadesocial/web-new/compare/v10.19.0...v10.20.0) (2026-03-19)
 
 
