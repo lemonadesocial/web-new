@@ -1,5 +1,20 @@
 # Changelog
 
+## [10.20.0](https://github.com/lemonadesocial/web-new/compare/v10.19.0...v10.20.0) (2026-03-19)
+
+
+### Features
+
+* add stablecoin crypto payment for subscriptions ([b477213](https://github.com/lemonadesocial/web-new/commit/b47721303cfc9afaf4201bfb7ef766a628d695b8))
+* update upgrade-to-pro crypto subscription flow ([ae3a849](https://github.com/lemonadesocial/web-new/commit/ae3a849287e94e7586df5e99e61a9515bcdebb10))
+
+
+### Bug Fixes
+
+* address Karen review findings on crypto subscription FE ([4fd6e12](https://github.com/lemonadesocial/web-new/commit/4fd6e1223693c91685ef2e3a1f3d39b6a5b04256))
+* address Karen round 2 findings ([e6213d5](https://github.com/lemonadesocial/web-new/commit/e6213d55d1ed3dd8fd61a9af497d95f9368a3da0))
+* refine crypto subscription wallet flow ([bcaa82b](https://github.com/lemonadesocial/web-new/commit/bcaa82bda0c6f6dce7259c702e3f0c493f06dd96))
+
 ## [10.19.0](https://github.com/lemonadesocial/web-new/compare/v10.18.1...v10.19.0) (2026-03-16)
 
 
