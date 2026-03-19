@@ -35,7 +35,7 @@ export function Home() {
             className="absolute left-1/2 aspect-[2160/1432] -translate-x-1/2 -translate-y-1/2"
             style={{
               top: 'calc((100vh - 100px) / 2 + 464px)',
-              width: 'max(2160px, 180vw)',
+              width: 'max(2160px, 150vw)',
             }}
           >
             <img
