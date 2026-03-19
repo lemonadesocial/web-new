@@ -2,11 +2,12 @@ import { getDefaultStore } from 'jotai';
 import { createPublicClient, createWalletClient, custom, http, type Address, type EIP1193Provider as ViemEIP1193Provider, type PublicClient, type WalletClient, zeroAddress } from 'viem';
 import { mainnet } from 'viem/chains';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
-import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
+import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID } from '$lib/utils/constants';
 
 import { ERC20 } from '$lib/abis/ERC20';
 import { ERC721 } from '$lib/abis/ERC721'; 
 import { Chain as BackendChain } from '$lib/graphql/generated/backend/graphql';
+import { CurrencyClient } from '$lib/services/currency';
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
@@ -14,6 +15,24 @@ export function getListChains() {
 
 export function getChain(network: string) {
   return getDefaultStore().get(chainsMapAtom)[network];
+}
+
+export type TokenMeta = {
+  symbol: string;
+  decimals: number;
+};
+
+export async function getTokenMeta(chainId: string, tokenAddress: string): Promise<TokenMeta | null> {
+  const chain = getChain(chainId) as BackendChain | undefined;
+  if (!chain) return null;
+
+  try {
+    const currencyClient = new CurrencyClient(chain, tokenAddress);
+    const [symbol, decimals] = await Promise.all([currencyClient.getSymbol(), currencyClient.getDecimals()]);
+    return { symbol, decimals };
+  } catch {
+    return null;
+  }
 }
 
 export function getViemChainConfig(chain: BackendChain) {
