@@ -16,7 +16,5 @@ export default async function Page({ params }: { params: Promise<{ section: stri
   const { data } = await client.query({ query: ListSubscriptionItemsDocument });
   const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
 
-  console.log(subscriptionData)
-
   return <UpgradeToProPage activeSection={activeSection} subscriptionData={subscriptionData} />;
 }

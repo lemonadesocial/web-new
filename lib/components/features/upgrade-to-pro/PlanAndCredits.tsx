@@ -22,7 +22,12 @@ import {
 import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
 import { formatNumber } from '$lib/utils/number';
 import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
-import { buildWalletPlanOptions, mergePlansWithSubscriptions } from './utils';
+import {
+  buildWalletPlanOptions,
+  getFirstCryptoPriceForPeriod,
+  hasCryptoPriceForPeriod,
+  mergePlansWithSubscriptions,
+} from './utils';
 
 type PlanCard = {
   type: SubscriptionItemType | 'enterprise';
@@ -183,7 +188,7 @@ function renderCompareValue(value: CompareValue) {
 }
 
 function CryptoPlanPriceText({ item, fallbackPrice }: { item: PlanCard; fallbackPrice: string | null }) {
-  const primaryCryptoPrice = item.crypto_prices?.[0];
+  const primaryCryptoPrice = getFirstCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual));
   const { tokenMetadata } = useTokenMetadata(primaryCryptoPrice?.chain_id, primaryCryptoPrice?.token_address);
 
   if (!primaryCryptoPrice || !tokenMetadata) return <>{fallbackPrice}</>;
@@ -452,16 +457,33 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     return formatCurrency(Math.round(price), pricing.currency, 0);
   };
 
+  const calculateFiatAnnualSavings = (pricing: SubscriptionPricing) =>
+    formatCurrency(
+      Math.max(
+        0,
+        (Number(pricing.price) / 10 ** pricing.decimals) * 12 - Number(pricing.annual_price) / 10 ** pricing.decimals,
+      ),
+      pricing.currency,
+      0,
+    );
+
   const handlePlanCheckout = React.useCallback(
     (item: PlanCard, tier: SubscriptionTierEnum) => {
       if (item.method === 'wallet') {
+        const annual = Boolean(item.annual);
+
+        if (!hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
+          toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+          return;
+        }
+
         if (item.crypto_prices?.length && item.type !== 'enterprise') {
           const walletPlanOptions = buildWalletPlanOptions(subscriptionItems, data);
 
           openCryptoSubscriptionModal({
             space,
             items: [item.type as SubscriptionItemType],
-            annual: Boolean(item.annual),
+            annual,
             planOptions: walletPlanOptions,
             onComplete: ({ planType, annual: nextAnnual }) => {
               setOptimisticSubscriptionTier(planType);
@@ -584,7 +606,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           {!!item.pricing && (
                             <div className="flex gap-2 items-end">
                               <p className="text-2xl">
-                                {item.method === 'wallet' && item.crypto_prices?.length
+                                {item.method === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual))
                                   ? (
                                     <CryptoPlanPriceText
                                       item={item}
@@ -596,18 +618,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               <p className="text-tertiary">per month</p>
                             </div>
                           )}
-                          {item.annual && item.pricing?.annual_price && (
+                          {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
                             <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
-                              Save{' '}
-                              {formatCurrency(
-                                Math.max(
-                                  0,
-                                  (Number(item.pricing.price) / 10 ** item.pricing.decimals) * 12 -
-                                    Number(item.pricing.annual_price) / 10 ** item.pricing.decimals,
-                                ),
-                                item.pricing.currency,
-                                0,
-                              )}
+                              Save {calculateFiatAnnualSavings(item.pricing)}
                             </Badge>
                           )}
                         </div>
@@ -631,7 +644,13 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                 setData((prev) =>
                                   prev.map((i) => {
                                     if (i.type === activeSubscriptionTier) return i;
-                                    return { ...i, annual: value };
+                                    const nextItem = { ...i, annual: value };
+
+                                    if (nextItem.method === 'wallet' && !hasCryptoPriceForPeriod(nextItem.crypto_prices ?? [], value)) {
+                                      return { ...nextItem, method: 'card' };
+                                    }
+
+                                    return nextItem;
                                   }),
                                 );
                               }}
@@ -642,11 +661,21 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: item.crypto_prices?.length ? false : true },
+                              {
+                                value: 'wallet',
+                                iconLeft: 'icon-wallet',
+                                ignore: !hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)),
+                              },
                             ]}
                             disabled={activeSubscriptionTier === item.type || purchasingPlan}
                             onSelect={(method) => {
-                              if (method.ignore) return;
+                              const annual = Boolean(item.annual);
+
+                              if (method.value === 'wallet' && !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
+                                toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+                                return;
+                              }
+
                               setData((prev) =>
                                 prev.map((i) => {
                                   if (i.type !== item.type) return i;

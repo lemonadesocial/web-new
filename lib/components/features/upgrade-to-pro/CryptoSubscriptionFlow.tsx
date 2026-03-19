@@ -16,6 +16,8 @@ import { communityAvatar } from '$lib/utils/community';
 import { getChain } from '$lib/utils/crypto';
 import { userAvatar } from '$lib/utils/user';
 import {
+  filterCryptoPricesForPeriod,
+  getFirstCryptoPriceForPeriod,
   formatPlanTitle,
   formatTokenAmount,
   type WalletPlanOption,
@@ -57,9 +59,10 @@ function CryptoSubscriptionFlowContent({
 
   const initialSelectedPlanOption = React.useMemo(() => {
     const requestedPlanType = items[0];
-    if (!requestedPlanType) return planOptions[0] ?? null;
+    if (!requestedPlanType) return planOptions.find((option) => option.available) ?? planOptions[0] ?? null;
 
-    return planOptions.find((option) => option.planType === requestedPlanType)
+    return planOptions.find((option) => option.planType === requestedPlanType && option.available)
+      ?? planOptions.find((option) => option.available)
       ?? planOptions[0]
       ?? null;
   }, [items, planOptions]);
@@ -68,7 +71,10 @@ function CryptoSubscriptionFlowContent({
     initialSelectedPlanOption?.key ?? null,
   );
   const [selectedPrice, setSelectedPrice] = React.useState<SubscriptionCryptoPrice | null>(
-    initialSelectedPlanOption?.cryptoPrices[0] ?? null,
+    getFirstCryptoPriceForPeriod(
+      initialSelectedPlanOption?.cryptoPrices ?? [],
+      initialSelectedPlanOption?.annual ?? annual,
+    ),
   );
   const { tokenMetadata: selectedTokenMeta } = useTokenMetadata(
     selectedPrice?.chain_id,
@@ -83,24 +89,28 @@ function CryptoSubscriptionFlowContent({
       ?? planOptions[0];
   }, [planOptions, selectedPlanKey]);
 
-  const activeCryptoPrices = selectedPlanOption?.cryptoPrices ?? [];
+  const activeCryptoPrices = React.useMemo(() => {
+    if (!selectedPlanOption) return [];
+
+    return filterCryptoPricesForPeriod(selectedPlanOption.cryptoPrices, selectedPlanOption.annual);
+  }, [selectedPlanOption]);
 
   React.useEffect(() => {
     if (!selectedPlanOption) return;
 
     setSelectedPlanKey((prev) => prev ?? selectedPlanOption.key);
     setSelectedPrice((prev) => {
-      if (!prev) return selectedPlanOption.cryptoPrices[0] ?? null;
+      if (!prev) return getFirstCryptoPriceForPeriod(selectedPlanOption.cryptoPrices, selectedPlanOption.annual);
 
-      const matchingPrice = selectedPlanOption.cryptoPrices.find(
+      const matchingPrice = activeCryptoPrices.find(
         (price) =>
           price.chain_id === prev.chain_id
           && price.token_address.toLowerCase() === prev.token_address.toLowerCase(),
       );
 
-      return matchingPrice ?? selectedPlanOption.cryptoPrices[0] ?? null;
+      return matchingPrice ?? getFirstCryptoPriceForPeriod(selectedPlanOption.cryptoPrices, selectedPlanOption.annual);
     });
-  }, [selectedPlanOption]);
+  }, [activeCryptoPrices, selectedPlanOption]);
 
   React.useEffect(() => {
     if (!selectedPrice && activeCryptoPrices.length > 0) {
@@ -110,7 +120,7 @@ function CryptoSubscriptionFlowContent({
 
   const handleSelectPlan = (option: CryptoPlanOption) => {
     setSelectedPlanKey(option.key);
-    setSelectedPrice(option.cryptoPrices[0] ?? null);
+    setSelectedPrice(getFirstCryptoPriceForPeriod(option.cryptoPrices, option.annual));
   };
 
   const handleOpenConnectWallet = () => {
@@ -301,7 +311,7 @@ function CryptoSubscriptionFlowContent({
             {isSelectingPlan && (
               <div className="flex max-h-[260px] flex-col gap-2 overflow-y-auto pb-3 pr-1 no-scrollbar">
                 {planOptions.map((option) => {
-                  const optionPrice = option.cryptoPrices[0];
+                  const optionPrice = getFirstCryptoPriceForPeriod(option.cryptoPrices, option.annual);
                   const isSelected = selectedPlanOption?.key === option.key;
 
                   return (

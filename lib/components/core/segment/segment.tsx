@@ -26,6 +26,10 @@ interface SegmentProps<T> {
 export function Segment<T>({ items, selected, size, onSelect, className, disabled }: SegmentProps<T>) {
   const [active, setActive] = React.useState(selected);
 
+  React.useEffect(() => {
+    setActive(selected);
+  }, [selected]);
+
   return (
     <ul className={twMerge('inline-flex bg-primary/8 rounded-sm backdrop-blur-lg list-none', className)}>
       {items.map((item) => (
