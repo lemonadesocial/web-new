@@ -26,6 +26,7 @@ type State = {
   openPane?: boolean;
   data?: unknown;
   config: string;
+  configs: RunResult['metadata'][];
   standId?: string;
 };
 
@@ -34,6 +35,7 @@ const defaultState: State = {
   toggleChat: false,
   session: session,
   config: AI_CONFIG,
+  configs: [],
   tools: [
     { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
     { key: 'manage_event', icon: 'icon-crown', label: 'Create Event' },
@@ -45,8 +47,12 @@ const defaultState: State = {
 
 export const AIChatContext = React.createContext(null);
 
-export function AIChatProvider({ children }: React.PropsWithChildren) {
-  const [state, dispatch] = React.useReducer(reducers, defaultState);
+export function AIChatProvider({ children, initialConfigs }: React.PropsWithChildren & { initialConfigs?: RunResult['metadata'][] }) {
+  const [state, dispatch] = React.useReducer(reducers, {
+    ...defaultState,
+    configs: initialConfigs || [],
+    config: initialConfigs?.length ? (initialConfigs[0] as any)._id : AI_CONFIG,
+  });
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
@@ -68,6 +74,7 @@ export enum AIChatActionKind {
   'set_open_pane',
   'set_data_run',
   'set_config',
+  'set_configs',
   'reset',
 }
 
@@ -109,6 +116,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_config: {
       return { ...state, config: action.payload?.config };
+    }
+
+    case AIChatActionKind.set_configs: {
+      return { ...state, configs: action.payload?.configs || [] };
     }
 
     case AIChatActionKind.reset: {

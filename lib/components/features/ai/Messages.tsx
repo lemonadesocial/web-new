@@ -50,6 +50,9 @@ export function Messages() {
 }
 
 function MessageItem({ message: item }: { message: Message }) {
+  const [state] = useAIChat();
+  const currentAgent = state.configs.find((c: any) => c._id === state.config);
+
   const messageContent =
     item.role === 'assistant' && item.metadata?.cards
       ? item.message.split('\n\n')[0] ?? item.message
@@ -58,12 +61,19 @@ function MessageItem({ message: item }: { message: Message }) {
   return match(item.role)
     .with('assistant', () => (
       <div className="flex items-start gap-4">
-        <div className="relative flex mt-1 items-center justify-center">
-          <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
+        <div className="relative flex mt-1 shrink-0 items-center justify-center">
+          {currentAgent?.avatar ? (
+            <img src={currentAgent.avatar} className="w-6 h-6 rounded-full object-cover" alt={currentAgent.name} />
+          ) : (
+            <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
+          )}
         </div>
         <div className="whitespace-break-spaces flex flex-col gap-6">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
-
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-semibold text-tertiary uppercase tracking-wider">{currentAgent?.name || 'LemonAI'}</p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
+          </div>
+...
           {item.metadata?.cards && (
             <CardList
               cards={item.metadata.cards}

@@ -1,30 +1,30 @@
-import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
-import { graphql } from '$lib/graphql/generated/backend';
-import { GetSpaceDocument, GetSpaceQuery, Space } from '$lib/graphql/generated/backend/graphql';
-import { getClient } from '$lib/graphql/request';
-import { aiChatClient } from '$lib/graphql/request/instances';
-import { isObjectId } from '$lib/utils/helpers';
-import { notFound } from 'next/navigation';
+'use client';
+import React from 'react';
+import { useParams } from 'next/navigation';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
-  const uid = (await params).uid;
+import { useQuery } from '$lib/graphql/request';
+import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { isObjectId } from '$lib/utils/helpers';
+import { useAIChat, AIChatActionKind } from '$lib/components/features/ai/provider';
+import { AIChat } from '$lib/components/features/ai/AIChat';
+
+export default function ChatPage() {
+  const params = useParams();
+  const uid = params.uid as string;
+  const [_, dispatch] = useAIChat();
+
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
-  const client = getClient();
-  const { data, error } = await client.query<GetSpaceQuery, object>({
-    query: GetSpaceDocument,
-    variables,
-  });
-  const space = data?.getSpace as Space;
+  const { data: spaceData } = useQuery(GetSpaceDocument, { variables });
+  const space = spaceData?.getSpace as Space;
 
-  if (!space || error) return notFound();
+  React.useEffect(() => {
+    if (space?._id) {
+      dispatch({ type: AIChatActionKind.set_data_run, payload: { standId: space._id } });
+    }
+  }, [space?._id, dispatch]);
 
-  const { data: dataConfig } = await aiChatClient.query({
-    query: GetListAiConfigDocument,
-    variables: { filter: { spaces_in: [space._id] } },
-  });
+  if (!space) return null;
 
-  if (!dataConfig?.configs.items.length) return notFound();
-
-  return <div>Chat Page</div>;
+  return <AIChat hideHeader />;
 }

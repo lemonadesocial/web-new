@@ -10,6 +10,9 @@ import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql'
 import { CommunityContainer } from './container';
 import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
 import { merge } from 'lodash';
+import { AIChatProvider } from '$lib/components/features/ai/provider';
+import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -34,6 +37,12 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   if (!space) {
     return notFound();
   }
+
+  const { data: dataConfig } = await aiChatClient.query({
+    query: GetListAiConfigDocument,
+    variables: { filter: { spaces_in: [space._id] } },
+  });
+  const configs = dataConfig?.configs?.items || [];
 
   let emptyTheme = null;
 
@@ -65,7 +74,9 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
-      <CommunityContainer space={space}>{children}</CommunityContainer>
+      <AIChatProvider initialConfigs={configs as any}>
+        <CommunityContainer space={space}>{children}</CommunityContainer>
+      </AIChatProvider>
     </ThemeProvider>
   );
 }

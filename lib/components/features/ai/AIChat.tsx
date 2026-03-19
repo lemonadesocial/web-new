@@ -9,51 +9,84 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat() {
+export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
   const me = useMe();
   const [state] = useAIChat();
 
   if (!me) return null;
 
-  return (
-    <div className="space-y-8 flex flex-col h-full">
-      <AnimatePresence mode="wait">
-        <React.Fragment>
-          {!state.messages.length && !state.thinking && (
-            <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />
-          )}
+  const currentAgent = state.configs.find((c: any) => c._id === state.config);
 
-          {!!state.messages.length || state.thinking ? (
+  return (
+    <div className="flex flex-col h-full relative isolate">
+      {/* Chat Header */}
+      {!hideHeader && (
+        <div className="h-[64px] border-b flex items-center justify-between px-6 shrink-0 bg-background/80 backdrop-blur-md sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <img
+              src={currentAgent?.avatar || '/assets/default-bot.png'}
+              className="w-8 h-8 rounded-full object-cover"
+              alt={currentAgent?.name}
+            />
+            <p className="font-semibold text-lg">{currentAgent?.name || 'LemonAI'}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="text-tertiary hover:text-primary transition-colors">
+              <i className="icon-bell-outline size-6" />
+            </button>
+            <img
+              src={me.image_avatar || '/assets/default-avatar.png'}
+              className="w-8 h-8 rounded-full border border-primary/10"
+              alt={me.username}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex-1 overflow-hidden flex flex-col px-6">
+        <AnimatePresence mode="wait">
+          <React.Fragment>
+            {!state.messages.length && !state.thinking && (
+              <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />
+            )}
+
+            {!!state.messages.length || state.thinking ? (
+              <motion.div
+                key="messages"
+                layout
+                className="flex-1 pt-8 overflow-y-auto no-scrollbar max-w-4xl mx-auto w-full"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                <Messages />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="welcome"
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1"
+              >
+                <WelcomeChat />
+              </motion.div>
+            )}
             <motion.div
-              key="messages"
-              layout
-              className="flex-1 pt-8 overflow-y-auto no-scrollbar"
+              className="space-y-4 pb-6 pt-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{
+                duration: 0.3,
+                ease: 'easeOut',
+                delay: state.messages.length || state.thinking ? 0.3 : 0,
+              }}
             >
-              <Messages />
-            </motion.div>
-          ) : (
-            <motion.div key="welcome" layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <WelcomeChat />
-            </motion.div>
-          )}
-          <motion.div
-            className="space-y-4 pb-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.3,
-              ease: 'easeOut',
-              delay: state.messages.length || state.thinking ? 0.3 : 0,
-            }}
-          >
-            <div className="relative z-10">
-              <InputChat />
-            </div>
-            {!!state.messages.length || state.thinking ? (
+              <div className="relative z-10 max-w-4xl mx-auto w-full">
+                <InputChat />
+              </div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -63,17 +96,15 @@ export function AIChat() {
                   delay: 0.3,
                 }}
               >
-                <p className="text-center text-xs text-tertiary">LemonAI can make mistakes, so double-check it</p>
+                <p className="text-center text-xs text-tertiary">LemonAI can make mistakes, so please double-check it.</p>
               </motion.div>
-            ) : (
-              <ToolsSuggest />
+            </motion.div>
+            {!state.messages.length && !state.thinking && (
+              <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />
             )}
-          </motion.div>
-          {!state.messages.length && !state.thinking && (
-            <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />
-          )}
-        </React.Fragment>
-      </AnimatePresence>
+          </React.Fragment>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

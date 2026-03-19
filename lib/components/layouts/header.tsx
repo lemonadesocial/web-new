@@ -18,7 +18,7 @@ import { useHandleFarcasterMiniApp } from '$lib/hooks/useConnectFarcaster';
 import { UserMenu } from './UserMenu';
 
 type Props = {
-  title?: string;
+  title?: React.ReactNode;
   mainMenu?: () => ReactElement;
   hideLogo?: boolean;
   className?: string;
