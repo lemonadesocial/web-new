@@ -9,7 +9,15 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
+export function AIChat({
+  hideHeader,
+  showTools = true,
+  readonly,
+}: {
+  hideHeader?: boolean;
+  showTools?: boolean;
+  readonly?: boolean;
+}) {
   const me = useMe();
   const [state] = useAIChat();
 
@@ -37,7 +45,6 @@ export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
             <img
               src={me.image_avatar || '/assets/default-avatar.png'}
               className="w-8 h-8 rounded-full border border-primary/10"
-              alt={me.username}
             />
           </div>
         </div>
@@ -74,6 +81,7 @@ export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
                 <WelcomeChat />
               </motion.div>
             )}
+
             <motion.div
               className="space-y-4 pb-6 pt-4"
               initial={{ opacity: 0, y: 20 }}
@@ -85,8 +93,13 @@ export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
               }}
             >
               <div className="relative z-10 max-w-4xl mx-auto w-full">
-                <InputChat />
+                <InputChat showTools={showTools} readonly={readonly} />
               </div>
+              {showTools && (
+                <div className="flex justify-center">
+                  <ToolsSuggest />
+                </div>
+              )}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -96,9 +109,12 @@ export function AIChat({ hideHeader }: { hideHeader?: boolean }) {
                   delay: 0.3,
                 }}
               >
-                <p className="text-center text-xs text-tertiary">LemonAI can make mistakes, so please double-check it.</p>
+                <p className="text-center text-xs text-tertiary">
+                  LemonAI can make mistakes, so please double-check it.
+                </p>
               </motion.div>
             </motion.div>
+
             {!state.messages.length && !state.thinking && (
               <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />
             )}

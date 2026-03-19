@@ -48,10 +48,23 @@ const defaultState: State = {
 export const AIChatContext = React.createContext(null);
 
 export function AIChatProvider({ children, initialConfigs }: React.PropsWithChildren & { initialConfigs?: RunResult['metadata'][] }) {
+  const initialMessages: Message[] = [];
+  if (initialConfigs?.length) {
+    const firstConfig = initialConfigs[0] as any;
+    if (firstConfig.welcomeMessage) {
+      initialMessages.push({
+        message: firstConfig.welcomeMessage,
+        role: 'assistant',
+        metadata: firstConfig.welcomeMetadata,
+      });
+    }
+  }
+
   const [state, dispatch] = React.useReducer(reducers, {
     ...defaultState,
     configs: initialConfigs || [],
     config: initialConfigs?.length ? (initialConfigs[0] as any)._id : AI_CONFIG,
+    messages: initialMessages,
   });
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
@@ -115,7 +128,23 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.set_config: {
-      return { ...state, config: action.payload?.config };
+      const nextConfigId = action.payload?.config;
+      const nextConfig = state.configs.find((c: any) => c._id === nextConfigId) as any;
+      const nextMessages: Message[] = [];
+
+      if (nextConfig?.welcomeMessage) {
+        nextMessages.push({
+          message: nextConfig.welcomeMessage,
+          role: 'assistant',
+          metadata: nextConfig.welcomeMetadata,
+        });
+      }
+
+      return {
+        ...state,
+        config: nextConfigId,
+        messages: nextMessages,
+      };
     }
 
     case AIChatActionKind.set_configs: {
