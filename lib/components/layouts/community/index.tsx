@@ -6,7 +6,7 @@ import { isObjectId } from '$lib/utils/helpers';
 import { ThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { defaultTheme } from '$lib/components/features/theme-builder/store';
 import { getClient } from '$lib/graphql/request';
-import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { GetSpaceDocument, Space, GetEventsDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { CommunityContainer } from './container';
 import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
 import { merge } from 'lodash';
@@ -44,6 +44,40 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   });
   const configs = dataConfig?.configs?.items || [];
 
+  // Enrich configs with spotlight events
+  const allEventIds = Array.from(new Set(configs.flatMap((c: any) => c.welcomeMetadata?.events || [])));
+  let fetchedEvents: Event[] = [];
+  if (allEventIds.length) {
+    const { data: eventsData } = await client.query({
+      query: GetEventsDocument,
+      variables: { id: allEventIds },
+    });
+    fetchedEvents = (eventsData?.getEvents || []) as Event[];
+  }
+
+  const enrichedConfigs = configs.map((config: any) => {
+    const meta = config.welcomeMetadata;
+    if (meta?.events?.length) {
+      const cards = meta.events
+        .map((id: string) => {
+          const event = fetchedEvents.find((e) => e._id === id);
+          if (!event) return null;
+          return { type: 'event', data: event };
+        })
+        .filter(Boolean);
+
+      return {
+        ...config,
+        welcomeMetadata: {
+          ...meta,
+          title: meta.title || 'Spotlight Events',
+          cards,
+        },
+      };
+    }
+    return config;
+  });
+
   let emptyTheme = null;
 
   let themeData = defaultTheme;
@@ -74,7 +108,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
-      <AIChatProvider initialConfigs={configs as any}>
+      <AIChatProvider initialConfigs={enrichedConfigs as any}>
         <CommunityContainer space={space}>{children}</CommunityContainer>
       </AIChatProvider>
     </ThemeProvider>

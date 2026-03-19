@@ -11,6 +11,7 @@ import LoadMoreWrapper from './loadMoreWrapper';
 import Sidebar from './sidebar';
 import { Footer } from './footer';
 import { useAIChat, AIChatActionKind } from '../../features/ai/provider';
+import { randomEventDP } from '$lib/utils/user';
 
 function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
   React.useEffect(() => {
@@ -79,7 +80,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
             isChat ? (
               <div className="flex items-center gap-3">
                 <img
-                  src={currentAgent?.avatar || '/assets/default-bot.png'}
+                  src={currentAgent.avatar || randomEventDP(currentAgent._id)}
                   className="w-8 h-8 rounded-full object-cover"
                   alt={currentAgent?.name}
                 />
