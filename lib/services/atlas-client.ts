@@ -9,22 +9,15 @@ import type {
 
 const ATLAS_VERSION_HEADER = { 'Atlas-Version': '1.0' };
 
-function getAtlasRegistryUrl(): string | undefined {
-  return typeof window !== 'undefined'
-    ? process.env.NEXT_PUBLIC_ATLAS_REGISTRY_URL
-    : process.env.NEXT_PUBLIC_ATLAS_REGISTRY_URL;
-}
-
-function getBackendUrl(): string | undefined {
-  return process.env.NEXT_PUBLIC_LMD_BE;
-}
+const ATLAS_REGISTRY_URL = process.env.NEXT_PUBLIC_ATLAS_REGISTRY_URL;
+const ATLAS_BACKEND_URL = process.env.NEXT_PUBLIC_LMD_BE;
 
 export function isAtlasEnabled(): boolean {
-  return Boolean(getAtlasRegistryUrl());
+  return Boolean(ATLAS_REGISTRY_URL);
 }
 
 async function atlasFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const baseUrl = getAtlasRegistryUrl();
+  const baseUrl = ATLAS_REGISTRY_URL;
   if (!baseUrl) {
     throw new Error('Atlas registry URL is not configured');
   }
@@ -48,7 +41,7 @@ async function atlasFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 async function backendFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const baseUrl = getBackendUrl();
+  const baseUrl = ATLAS_BACKEND_URL;
   if (!baseUrl) {
     throw new Error('Backend URL is not configured');
   }
