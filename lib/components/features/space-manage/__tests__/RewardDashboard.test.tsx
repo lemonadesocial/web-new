@@ -4,18 +4,20 @@ import { render, screen, waitFor } from '@testing-library/react';
 import type { AtlasRewardBalance, AtlasRewardTransaction } from '$lib/types/atlas';
 
 // Default mock: Atlas disabled
+// The component uses atlasGraphqlQuery + mapRewardSummary (not atlasGetRewardBalance/History).
 vi.mock('$lib/services/atlas-client', () => ({
   isAtlasEnabled: vi.fn(() => false),
-  atlasGetRewardBalance: vi.fn(),
-  atlasGetRewardHistory: vi.fn(),
+  atlasGraphqlQuery: vi.fn(),
+  mapRewardSummary: vi.fn((data: unknown) => data),
+  ATLAS_REWARD_SUMMARY_QUERY: 'mock-summary-query',
+  ATLAS_REWARD_HISTORY_QUERY: 'mock-history-query',
 }));
 
 import { RewardDashboard } from '../RewardDashboard';
-import { isAtlasEnabled, atlasGetRewardBalance, atlasGetRewardHistory } from '$lib/services/atlas-client';
+import { isAtlasEnabled, atlasGraphqlQuery } from '$lib/services/atlas-client';
 
 const mockedIsAtlasEnabled = vi.mocked(isAtlasEnabled);
-const mockedGetBalance = vi.mocked(atlasGetRewardBalance);
-const mockedGetHistory = vi.mocked(atlasGetRewardHistory);
+const mockedAtlasGraphqlQuery = vi.mocked(atlasGraphqlQuery);
 
 const mockBalance: AtlasRewardBalance = {
   total_earned: 150.5,
@@ -55,8 +57,11 @@ describe('RewardDashboard', () => {
 
   it('renders balance cards with data when Atlas is enabled', async () => {
     mockedIsAtlasEnabled.mockReturnValue(true);
-    mockedGetBalance.mockResolvedValue(mockBalance);
-    mockedGetHistory.mockResolvedValue(mockTransactions);
+    // atlasGraphqlQuery is called twice: once for summary, once for history.
+    // First call returns summary data, second returns history data.
+    mockedAtlasGraphqlQuery
+      .mockResolvedValueOnce({ atlasRewardSummary: mockBalance })
+      .mockResolvedValueOnce({ atlasRewardHistory: mockTransactions });
 
     render(<RewardDashboard spaceId="space-1" />);
 
@@ -84,8 +89,7 @@ describe('RewardDashboard', () => {
 
   it('renders error state when API fails', async () => {
     mockedIsAtlasEnabled.mockReturnValue(true);
-    mockedGetBalance.mockRejectedValue(new Error('Server error'));
-    mockedGetHistory.mockRejectedValue(new Error('Server error'));
+    mockedAtlasGraphqlQuery.mockRejectedValue(new Error('Server error'));
 
     render(<RewardDashboard spaceId="space-1" />);
 

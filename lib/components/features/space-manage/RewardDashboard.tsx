@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-import { isAtlasEnabled, atlasGetRewardBalance, atlasGetRewardHistory } from '$lib/services/atlas-client';
+import { isAtlasEnabled, ATLAS_REWARD_SUMMARY_QUERY, ATLAS_REWARD_HISTORY_QUERY, mapRewardSummary, atlasGraphqlQuery } from '$lib/services/atlas-client';
 import type { AtlasRewardBalance, AtlasRewardTransaction } from '$lib/types/atlas';
 import { RewardHistory } from './RewardHistory';
 import { RewardVerificationBanner } from './RewardVerificationBanner';
@@ -18,7 +18,7 @@ const VOLUME_TIERS = [
   { name: 'Platinum', minVolume: 10000, cashback: '5%' },
 ];
 
-export function RewardDashboard({ spaceId: _spaceId }: RewardDashboardProps) {
+export function RewardDashboard({ spaceId }: RewardDashboardProps) {
   const enabled = isAtlasEnabled();
   const [balance, setBalance] = useState<AtlasRewardBalance | null>(null);
   const [transactions, setTransactions] = useState<AtlasRewardTransaction[]>([]);
@@ -35,13 +35,13 @@ export function RewardDashboard({ spaceId: _spaceId }: RewardDashboardProps) {
 
     async function load() {
       try {
-        const [bal, txs] = await Promise.all([
-          atlasGetRewardBalance(),
-          atlasGetRewardHistory(),
+        const [summaryData, historyData] = await Promise.all([
+          atlasGraphqlQuery(ATLAS_REWARD_SUMMARY_QUERY, { space: spaceId }),
+          atlasGraphqlQuery(ATLAS_REWARD_HISTORY_QUERY, { space: spaceId, limit: 20, offset: 0 }),
         ]);
         if (!cancelled) {
-          setBalance(bal);
-          setTransactions(txs);
+          setBalance(mapRewardSummary(summaryData.atlasRewardSummary));
+          setTransactions(historyData.atlasRewardHistory as AtlasRewardTransaction[]);
         }
       } catch (err) {
         if (!cancelled) {

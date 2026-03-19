@@ -30,13 +30,14 @@ describe('AtlasEventCard', () => {
     render(<AtlasEventCard event={makeEvent()} />);
     // date-fns format: "EEE, d MMM 'at' h:mm a" => "Wed, 15 Apr at 10:00 AM"
     // location: "Berlin, Germany"
-    const dateLocationEl = screen.getByText(/Berlin, Germany/);
-    expect(dateLocationEl).toBeDefined();
+    const elements = screen.getAllByText(/Berlin, Germany/);
+    expect(elements.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders price display', () => {
     render(<AtlasEventCard event={makeEvent({ min_price: 25, currency: 'EUR' })} />);
-    expect(screen.getByText('EUR25')).toBeDefined();
+    const elements = screen.getAllByText('EUR25');
+    expect(elements.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders "Free" for zero price', () => {

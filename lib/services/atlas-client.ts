@@ -40,6 +40,29 @@ async function atlasFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
+// GraphQL query helper for reward data (Phase 4 resolvers)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function atlasGraphqlQuery(query: string, variables: Record<string, unknown> = {}): Promise<any> {
+  const graphqlUrl = process.env.NEXT_PUBLIC_GRAPHQL_URL;
+  if (!graphqlUrl) throw new Error('GraphQL URL is not configured');
+
+  const res = await fetch(graphqlUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables }),
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`GraphQL error ${res.status}: ${body}`);
+  }
+
+  const json = await res.json();
+  if (json.errors?.length) throw new Error(json.errors[0].message);
+  return json.data;
+}
+
 async function backendFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const baseUrl = ATLAS_BACKEND_URL;
   if (!baseUrl) {
@@ -90,10 +113,68 @@ export async function atlasListTickets(eventId: string): Promise<AtlasTicketType
   return atlasFetch<AtlasTicketType[]>(`/v1/events/${encodeURIComponent(eventId)}/tickets`);
 }
 
-export async function atlasGetRewardBalance(): Promise<AtlasRewardBalance> {
-  return backendFetch<AtlasRewardBalance>('/atlas/rewards/balance');
+// Reward data comes from GraphQL resolvers (Phase 4), not REST endpoints.
+// The RewardDashboard component should use useQuery with these query strings.
+export const ATLAS_REWARD_SUMMARY_QUERY = `
+  query AtlasRewardSummary($space: String!) {
+    atlasRewardSummary(space: $space) {
+      organizer_accrued_usdc
+      organizer_pending_usdc
+      organizer_paid_out_usdc
+      attendee_accrued_usdc
+      attendee_pending_usdc
+      attendee_paid_out_usdc
+      volume_tier
+      monthly_gmv_usdc
+      next_tier_threshold_usdc
+      next_payout_date
+      is_self_verified
+      verification_cta_extra_usdc
+    }
+  }
+`;
+
+export const ATLAS_REWARD_HISTORY_QUERY = `
+  query AtlasRewardHistory($space: String!, $limit: Int, $offset: Int) {
+    atlasRewardHistory(space: $space, limit: $limit, offset: $offset) {
+      _id
+      event_id
+      gross_amount_usdc
+      organizer_cashback_usdc
+      attendee_cashback_usdc
+      organizer_volume_bonus_usdc
+      attendee_discovery_bonus_usdc
+      payment_method
+      status
+      created_at
+    }
+  }
+`;
+
+// Convert backend micro-unit USDC strings to dollar numbers
+export function usdcMicroToDollars(micro: string): number {
+  return Number(micro) / 1_000_000;
 }
 
-export async function atlasGetRewardHistory(): Promise<AtlasRewardTransaction[]> {
-  return backendFetch<AtlasRewardTransaction[]>('/atlas/rewards/history');
+// Map backend AtlasRewardSummaryOutput to frontend AtlasRewardBalance
+export function mapRewardSummary(data: {
+  organizer_accrued_usdc: string;
+  organizer_pending_usdc: string;
+  organizer_paid_out_usdc: string;
+  attendee_accrued_usdc: string;
+  attendee_pending_usdc: string;
+  attendee_paid_out_usdc: string;
+  volume_tier: string;
+  next_tier_threshold_usdc: string;
+  is_self_verified: boolean;
+}): AtlasRewardBalance {
+  return {
+    total_earned: usdcMicroToDollars(data.organizer_accrued_usdc) + usdcMicroToDollars(data.attendee_accrued_usdc),
+    available: usdcMicroToDollars(data.organizer_pending_usdc) + usdcMicroToDollars(data.attendee_pending_usdc),
+    total_redeemed: usdcMicroToDollars(data.organizer_paid_out_usdc) + usdcMicroToDollars(data.attendee_paid_out_usdc),
+    currency: 'USDC',
+    volume_tier: data.volume_tier,
+    next_tier_threshold: usdcMicroToDollars(data.next_tier_threshold_usdc),
+    is_verified: data.is_self_verified,
+  };
 }
