@@ -9,7 +9,11 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat() {
+type AIChatProps = {
+  variant?: 'default' | 'home';
+};
+
+export function AIChat({ variant = 'default' }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
@@ -51,7 +55,7 @@ export function AIChat() {
             }}
           >
             <div className="relative z-10">
-              <InputChat />
+              <InputChat variant={variant} />
             </div>
             {!!state.messages.length || state.thinking ? (
               <motion.div
