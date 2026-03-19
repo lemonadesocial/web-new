@@ -27,29 +27,7 @@ export function AIChat({
 
   return (
     <div className="flex flex-col h-full relative isolate">
-      {/* Chat Header */}
-      {!hideHeader && (
-        <div className="h-[64px] border-b flex items-center justify-between px-6 shrink-0 bg-background/80 backdrop-blur-md sticky top-0 z-20">
-          <div className="flex items-center gap-3">
-            <img
-              src={currentAgent?.avatar || '/assets/default-bot.png'}
-              className="w-8 h-8 rounded-full object-cover"
-              alt={currentAgent?.name}
-            />
-            <p className="font-semibold text-lg">{currentAgent?.name || 'LemonAI'}</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-tertiary hover:text-primary transition-colors">
-              <i className="icon-bell-outline size-6" />
-            </button>
-            <img
-              src={me.image_avatar || '/assets/default-avatar.png'}
-              className="w-8 h-8 rounded-full border border-primary/10"
-            />
-          </div>
-        </div>
-      )}
-
+  
       <div className="flex-1 overflow-hidden flex flex-col px-6">
         <AnimatePresence mode="wait">
           <React.Fragment>

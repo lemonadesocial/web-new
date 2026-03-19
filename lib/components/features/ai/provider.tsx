@@ -51,13 +51,11 @@ export function AIChatProvider({ children, initialConfigs }: React.PropsWithChil
   const initialMessages: Message[] = [];
   if (initialConfigs?.length) {
     const firstConfig = initialConfigs[0] as any;
-    if (firstConfig.welcomeMessage) {
-      initialMessages.push({
-        message: firstConfig.welcomeMessage,
-        role: 'assistant',
-        metadata: firstConfig.welcomeMetadata,
-      });
-    }
+    initialMessages.push({
+      message: firstConfig.welcomeMessage || `Hi, I’m ${firstConfig.name}, your ${firstConfig.job || 'assistant'}.\nHow can I help?`,
+      role: 'assistant',
+      metadata: firstConfig.welcomeMetadata,
+    });
   }
 
   const [state, dispatch] = React.useReducer(reducers, {
@@ -66,6 +64,16 @@ export function AIChatProvider({ children, initialConfigs }: React.PropsWithChil
     config: initialConfigs?.length ? (initialConfigs[0] as any)._id : AI_CONFIG,
     messages: initialMessages,
   });
+
+  React.useEffect(() => {
+    if (initialConfigs?.length) {
+      const configId = (initialConfigs[0] as any)._id;
+      if (configId) {
+        dispatch({ type: AIChatActionKind.set_config, payload: { config: configId, configs: initialConfigs } });
+      }
+    }
+  }, [initialConfigs]);
+
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
@@ -129,12 +137,13 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_config: {
       const nextConfigId = action.payload?.config;
-      const nextConfig = state.configs.find((c: any) => c._id === nextConfigId) as any;
+      const configs = (action.payload?.configs || state.configs) as any[];
+      const nextConfig = configs.find((c: any) => c._id === nextConfigId) as any;
       const nextMessages: Message[] = [];
 
-      if (nextConfig?.welcomeMessage) {
+      if (nextConfig) {
         nextMessages.push({
-          message: nextConfig.welcomeMessage,
+          message: nextConfig.welcomeMessage || `Hi, I’m ${nextConfig.name}, your ${nextConfig.job || 'assistant'}.\nHow can I help?`,
           role: 'assistant',
           metadata: nextConfig.welcomeMetadata,
         });
@@ -142,6 +151,7 @@ function reducers(state: State, action: AIChatAction) {
 
       return {
         ...state,
+        configs,
         config: nextConfigId,
         messages: nextMessages,
       };

@@ -10,7 +10,7 @@ import Header from '../header';
 import LoadMoreWrapper from './loadMoreWrapper';
 import Sidebar from './sidebar';
 import { Footer } from './footer';
-import { useAIChat } from '../../features/ai/provider';
+import { useAIChat, AIChatActionKind } from '../../features/ai/provider';
 
 function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
   React.useEffect(() => {
@@ -44,11 +44,20 @@ function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
 
 export function CommunityContainer({ space, children }: React.PropsWithChildren & { space: Space }) {
   const [state] = useTheme();
-  const [aiState] = useAIChat();
+  const [aiState, aiDispatch] = useAIChat();
   const pathname = usePathname();
 
   const isChat = pathname?.endsWith('/chat');
-  const currentAgent = aiState.configs.find((c: any) => c._id === aiState.config);
+  const currentAgent = aiState.configs.find((c: any) => c._id === aiState.config) as any;
+
+  React.useEffect(() => {
+    if (isChat && aiState.configs.length && !aiState.messages.length) {
+      const configId = aiState.config || (aiState.configs[0] as any)?._id;
+      if (configId) {
+        aiDispatch({ type: AIChatActionKind.set_config, payload: { config: configId } });
+      }
+    }
+  }, [isChat, aiState.configs, aiDispatch]);
 
   return (
     <main
