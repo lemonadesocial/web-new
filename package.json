@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@date-fns/tz": "^1.2.0",
-    "@dicebear/core": "^9.2.2",
+    "@dicebear/core": "^9.4.1",
     "@dicebear/glass": "^9.2.2",
     "@dicebear/identicon": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
