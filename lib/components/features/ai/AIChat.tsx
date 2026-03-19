@@ -10,7 +10,6 @@ import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
 export function AIChat({
-  hideHeader,
   showTools = true,
   readonly,
 }: {
@@ -23,11 +22,8 @@ export function AIChat({
 
   if (!me) return null;
 
-  const currentAgent = state.configs.find((c: any) => c._id === state.config);
-
   return (
     <div className="flex flex-col h-full relative isolate">
-  
       <div className="flex-1 overflow-hidden flex flex-col px-6">
         <AnimatePresence mode="wait">
           <React.Fragment>

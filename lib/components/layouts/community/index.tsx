@@ -62,7 +62,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
         .map((id: string) => {
           const event = fetchedEvents.find((e) => e._id === id);
           if (!event) return null;
-          return { type: 'event', data: event };
+          return { type: 'spotlight_event', data: event };
         })
         .filter(Boolean);
 

@@ -9,6 +9,8 @@ import { TicketCard } from './TicketCard';
 import { SpaceCard } from './SpaceCard';
 import { GuestRow } from './GuestRow';
 import type { CardItem, OverflowData } from './utils';
+import { EventCardItem } from '$lib/components/features/EventList';
+import Link from 'next/link';
 
 interface CardListProps {
   cards: CardItem[];
@@ -23,17 +25,14 @@ export function CardList({ cards, overflow }: CardListProps) {
     <div className="flex flex-col gap-3 w-full">
       {cards.map((card, idx) =>
         match(card)
-          .with({ type: 'event' }, (c) => (
-            <EventCard key={idx} data={c.data} link={c.link} />
-          ))
-          .with({ type: 'ticket' }, (c) => (
-            <TicketCard key={idx} data={c.data} link={c.link} />
-          ))
-          .with({ type: 'space' }, (c) => (
-            <SpaceCard key={idx} data={c.data} link={c.link} />
-          ))
-          .with({ type: 'guest' }, (c) => (
-            <GuestRow key={idx} data={c.data} />
+          .with({ type: 'event' }, (c) => <EventCard key={idx} data={c.data} link={c.link} />)
+          .with({ type: 'ticket' }, (c) => <TicketCard key={idx} data={c.data} link={c.link} />)
+          .with({ type: 'space' }, (c) => <SpaceCard key={idx} data={c.data} link={c.link} />)
+          .with({ type: 'guest' }, (c) => <GuestRow key={idx} data={c.data} />)
+          .with({ type: 'spotlight_event' }, (c) => (
+            <Link href={c.data.external_url || `/e/${c.data.shortid}`} className="block">
+              <EventCardItem key={idx} item={c.data} />
+            </Link>
           ))
           .exhaustive(),
       )}

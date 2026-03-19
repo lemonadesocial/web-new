@@ -54,9 +54,7 @@ function MessageItem({ message: item }: { message: Message }) {
   const currentAgent = state.configs.find((c: any) => c._id === state.config);
 
   const messageContent =
-    item.role === 'assistant' && item.metadata?.cards
-      ? item.message.split('\n\n')[0] ?? item.message
-      : item.message;
+    item.role === 'assistant' && item.metadata?.cards ? (item.message?.split('\n\n')[0] ?? item.message) : item.message;
 
   return match(item.role)
     .with('assistant', () => (
@@ -68,18 +66,15 @@ function MessageItem({ message: item }: { message: Message }) {
             <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
           )}
         </div>
-        <div className="whitespace-break-spaces flex flex-col gap-6">
+        <div className="whitespace-break-spaces flex flex-col gap-6 flex-1">
           <div className="flex flex-col gap-1">
-            <p className="text-xs font-semibold text-tertiary uppercase tracking-wider">{currentAgent?.name || 'LemonAI'}</p>
+            <p className="text-xs font-semibold text-tertiary uppercase tracking-wider">
+              {currentAgent?.name || 'LemonAI'}
+            </p>
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
           </div>
-...
-          {item.metadata?.cards && (
-            <CardList
-              cards={item.metadata.cards}
-              overflow={item.metadata.overflow}
-            />
-          )}
+
+          {item.metadata?.cards && <CardList cards={item.metadata.cards} overflow={item.metadata.overflow} />}
 
           <div className="flex gap-2">
             {item.metadata?.actions?.map((action, idx) =>

@@ -1,12 +1,8 @@
-import type {
-  Event,
-  EventGuestDetail,
-  Space,
-  Ticket,
-} from '$lib/graphql/generated/backend/graphql';
+import type { Event, EventGuestDetail, Space, Ticket } from '$lib/graphql/generated/backend/graphql';
 
 export type CardItem =
   | { type: 'event'; data: Event; link?: string }
+  | { type: 'spotlight_event'; data: Event; link?: string }
   | { type: 'ticket'; data: Ticket; link?: string }
   | { type: 'space'; data: Space; link?: string }
   | { type: 'guest'; data: EventGuestDetail; link?: string };

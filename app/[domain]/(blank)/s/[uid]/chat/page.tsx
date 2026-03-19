@@ -26,5 +26,9 @@ export default function ChatPage() {
 
   if (!space) return null;
 
-  return <AIChat hideHeader showTools={false} readonly={true} />;
+  return (
+    <div className="md:w-[720px] w-full h-full mx-auto">
+      <AIChat hideHeader showTools={false} readonly={true} />
+    </div>
+  );
 }
