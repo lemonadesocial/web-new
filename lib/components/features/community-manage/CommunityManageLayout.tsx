@@ -20,6 +20,7 @@ const menu = [
   { name: 'People', page: 'people' },
   { name: 'Agents', page: 'agents' },
   { name: 'Payments', page: 'payments' },
+  { name: 'Rewards', page: 'rewards' },
   { name: 'Launchpad', page: 'launchpad' },
   { name: 'Settings', page: 'settings' },
 ];
