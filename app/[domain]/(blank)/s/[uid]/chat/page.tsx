@@ -1,34 +1,33 @@
-'use client';
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
-import { useQuery } from '$lib/graphql/request';
+import { getClient } from '$lib/graphql/request';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { isObjectId } from '$lib/utils/helpers';
-import { useAIChat, AIChatActionKind } from '$lib/components/features/ai/provider';
-import { AIChat } from '$lib/components/features/ai/AIChat';
+import { Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
+import Content from './Content';
 
-export default function ChatPage() {
-  const params = useParams();
-  const uid = params.uid as string;
-  const [_, dispatch] = useAIChat();
-
+export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
+  const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
-  const { data: spaceData } = useQuery(GetSpaceDocument, { variables });
+  const client = getClient();
+  const { data: spaceData } = await client.query({ query: GetSpaceDocument, variables });
   const space = spaceData?.getSpace as Space;
 
-  React.useEffect(() => {
-    if (space?._id) {
-      dispatch({ type: AIChatActionKind.set_data_run, payload: { standId: space._id } });
-    }
-  }, [space?._id, dispatch]);
+  if (!space) return notFound();
 
-  if (!space) return null;
+  let configs: Config[] = [];
+  if (space._id) {
+    const { data: dataConfig } = await aiChatClient.query({
+      query: GetListAiConfigDocument,
+      variables: { filter: { spaces_in: [space?._id] }, skip: !space?._id },
+    });
+    configs = (dataConfig?.configs.items as Config[]) || [];
+  }
 
-  return (
-    <div className="md:w-[720px] w-full h-full mx-auto">
-      <AIChat hideHeader showTools={false} readonly={true} />
-    </div>
-  );
+  if (!configs.length) return notFound();
+
+  return <Content space={space} />;
 }

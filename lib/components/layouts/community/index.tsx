@@ -11,7 +11,7 @@ import { CommunityContainer } from './container';
 import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
 import { merge } from 'lodash';
 import { AIChatProvider } from '$lib/components/features/ai/provider';
-import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 
 type LayoutProps = {
@@ -38,25 +38,34 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return notFound();
   }
 
-  const { data: dataConfig } = await aiChatClient.query({
-    query: GetListAiConfigDocument,
-    variables: { filter: { spaces_in: [space._id] } },
-  });
-  const configs = dataConfig?.configs?.items || [];
+  let configs: Config[] = [];
+  try {
+    const { data: dataConfig } = await aiChatClient.query({
+      query: GetListAiConfigDocument,
+      variables: { filter: { spaces_in: [space._id] } },
+    });
+    configs = (dataConfig?.configs?.items || []) as Config[];
+  } catch (e) {
+    console.error('Failed to fetch AI configs', e);
+  }
 
   // Enrich configs with spotlight events
   const allEventIds = Array.from(new Set(configs.flatMap((c: any) => c.welcomeMetadata?.events || [])));
   let fetchedEvents: Event[] = [];
   if (allEventIds.length) {
-    const { data: eventsData } = await client.query({
-      query: GetEventsDocument,
-      variables: { id: allEventIds },
-    });
-    fetchedEvents = (eventsData?.getEvents || []) as Event[];
+    try {
+      const { data: eventsData } = await client.query({
+        query: GetEventsDocument,
+        variables: { id: allEventIds },
+      });
+      fetchedEvents = (eventsData?.getEvents || []) as Event[];
+    } catch (e) {
+      console.error('Failed to fetch spotlight events', e);
+    }
   }
 
-  const enrichedConfigs = configs.map((config: any) => {
-    const meta = config.welcomeMetadata;
+  const enrichedConfigs = configs.map((config) => {
+    const meta = config.welcomeMetadata as any;
     if (meta?.events?.length) {
       const cards = meta.events
         .map((id: string) => {
@@ -108,7 +117,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
-      <AIChatProvider initialConfigs={enrichedConfigs as any}>
+      <AIChatProvider initialConfigs={enrichedConfigs as Config[]}>
         <CommunityContainer space={space}>{children}</CommunityContainer>
       </AIChatProvider>
     </ThemeProvider>

@@ -38,8 +38,8 @@ export function CardList({ cards, overflow, title }: CardListProps) {
           .with({ type: 'space' }, (c) => <SpaceCard key={idx} data={c.data} link={c.link} />)
           .with({ type: 'guest' }, (c) => <GuestRow key={idx} data={c.data} />)
           .with({ type: 'spotlight_event' }, (c) => (
-            <Link href={c.data.external_url || `/e/${c.data.shortid}`} className="block">
-              <EventCardItem key={idx} item={c.data} />
+            <Link key={idx} href={c.data.external_url || `/e/${c.data.shortid}`} className="block">
+              <EventCardItem item={c.data} />
             </Link>
           ))
           .exhaustive(),

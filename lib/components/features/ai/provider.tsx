@@ -47,7 +47,7 @@ const defaultState: State = {
 
 export const AIChatContext = React.createContext(null);
 
-export function AIChatProvider({ children, initialConfigs }: React.PropsWithChildren & { initialConfigs?: Config[] }) {
+export function AIChatProvider({ children, initialConfigs }: { children: React.ReactNode; initialConfigs?: Config[] }) {
   const initialMessages: Message[] = [];
   if (initialConfigs?.length) {
     const firstConfig = initialConfigs[0] as Config;
@@ -66,15 +66,6 @@ export function AIChatProvider({ children, initialConfigs }: React.PropsWithChil
     config: initialConfigs?.length ? initialConfigs[0]._id : AI_CONFIG,
     messages: initialMessages,
   });
-
-  React.useEffect(() => {
-    if (initialConfigs?.length) {
-      const configId = initialConfigs[0]._id;
-      if (configId) {
-        dispatch({ type: AIChatActionKind.set_config, payload: { config: configId, configs: initialConfigs } });
-      }
-    }
-  }, [initialConfigs]);
 
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 

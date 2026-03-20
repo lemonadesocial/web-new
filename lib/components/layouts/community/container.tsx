@@ -5,9 +5,11 @@ import { usePathname } from 'next/navigation';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import Image from 'next/image';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useTheme } from '$lib/components/features/theme-builder/provider';
 import { Space } from '$lib/graphql/generated/backend/graphql';
+import { Config } from '$lib/graphql/generated/ai/graphql';
 import Header from '../header';
 import LoadMoreWrapper from './loadMoreWrapper';
 import Sidebar from './sidebar';
@@ -54,11 +56,11 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
   const [showAgents, setShowAgents] = React.useState(false);
 
   const isChat = pathname?.endsWith('/chat');
-  const currentAgent = aiState.configs.find((c: any) => c._id === aiState.config) as any;
+  const currentAgent = aiState.configs.find((c) => c._id === aiState.config) as Config;
 
   React.useEffect(() => {
     if (isChat && aiState.configs.length && !aiState.messages.length) {
-      const configId = aiState.config || (aiState.configs[0] as any)?._id;
+      const configId = aiState.config || (aiState.configs[0] as Config)?._id;
       if (configId) {
         aiDispatch({ type: AIChatActionKind.set_config, payload: { config: configId } });
       }
@@ -88,10 +90,12 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
           title={
             isChat ? (
               <div className="flex items-center gap-3">
-                <img
-                  src={currentAgent.avatar || randomEventDP(currentAgent._id)}
+                <Image
+                  src={currentAgent?.avatar || randomEventDP(currentAgent?._id)}
                   className="w-8 h-8 rounded-full object-cover"
-                  alt={currentAgent?.name}
+                  alt={currentAgent?.name || 'LemonAI'}
+                  width={32}
+                  height={32}
                 />
                 <p className="font-semibold text-lg">{currentAgent?.name || 'LemonAI'}</p>
               </div>
@@ -103,27 +107,30 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
         {isChat && (
           <>
             <div className="md:hidden flex items-center gap-3 py-3 px-4 border-b bg-background z-10">
-              <img
-                src={currentAgent.avatar || randomEventDP(currentAgent._id)}
+              <Image
+                src={currentAgent?.avatar || randomEventDP(currentAgent?._id)}
                 className="w-8 h-8 rounded-full object-cover"
-                alt={currentAgent?.name}
+                alt={currentAgent?.name || 'LemonAI'}
+                width={32}
+                height={32}
               />
               <div className="flex-1">
                 <p>{currentAgent?.name || 'LemonAI'}</p>
-                {currentAgent.job && <p className="text-tertiary text-sm">{currentAgent.job}</p>}
+                {currentAgent?.job && <p className="text-tertiary text-sm">{currentAgent?.job}</p>}
               </div>
               <div className="flex gap-2 items-center">
                 <Button
                   icon="icon-info"
                   variant="tertiary-alt"
                   size="sm"
+                  aria-label="Agent Info"
                   onClick={() =>
                     modal.open(AgentInfoModal, {
                       props: {
                         agent: currentAgent,
                         onSelectAgent: () => {
-                          if (currentAgent._id !== aiState.config) {
-                            aiDispatch({ type: AIChatActionKind.set_config, payload: { config: currentAgent._id } });
+                          if (currentAgent?._id !== aiState.config) {
+                            aiDispatch({ type: AIChatActionKind.set_config, payload: { config: currentAgent?._id } });
                           }
                           modal.close();
                         },
