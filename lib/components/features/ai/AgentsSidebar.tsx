@@ -20,56 +20,67 @@ export function AgentsSidebar() {
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-3">
-        {state.configs.map((agent: any) => {
-          const isActive = state.config === agent._id;
-          return (
-            <div
-              key={agent._id}
-              onClick={() => dispatch({ type: AIChatActionKind.set_config, payload: { config: agent._id } })}
-              className={clsx(
-                'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary',
-                isActive && 'border border-primary hover:bg-(--btn-tertiary)!',
-              )}
-            >
-              <img
-                src={agent.avatar || randomEventDP(agent._id)}
-                className="w-10 h-10 rounded-full object-cover shrink-0"
-                alt={agent.name}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="truncate">{agent.name}</p>
-                  <i className="icon-info-outline text-tertiary size-4" />
-                </div>
-                <p className="text-sm text-tertiary truncate">{agent.job}</p>
-              </div>
-              <i
-                className="icon-info size-5 aspect-square text-quaternary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  modal.open(AgentInfoModal, {
-                    props: {
-                      agent,
-                      onSelectAgent: () => {
-                        if (agent._id !== state.config) {
-                          dispatch({ type: AIChatActionKind.set_config, payload: { config: agent._id } });
-                        }
-                        modal.close();
-                      },
-                    },
-                  });
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
+      <AgentList />
     </div>
   );
 }
 
-function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSelectAgent: () => void }) {
+export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
+  const [state, dispatch] = useAIChat();
+
+  return (
+    <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-3">
+      {state.configs.map((agent: any) => {
+        const isActive = state.config === agent._id;
+        return (
+          <div
+            key={agent._id}
+            onClick={() => {
+              dispatch({ type: AIChatActionKind.set_config, payload: { config: agent._id } });
+              onSelectAgent?.();
+            }}
+            className={clsx(
+              'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary',
+              isActive && 'border border-primary hover:bg-(--btn-tertiary)!',
+            )}
+          >
+            <img
+              src={agent.avatar || randomEventDP(agent._id)}
+              className="w-10 h-10 rounded-full object-cover shrink-0"
+              alt={agent.name}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <p className="truncate">{agent.name}</p>
+                <i className="icon-info-outline text-tertiary size-4" />
+              </div>
+              <p className="text-sm text-tertiary truncate">{agent.job}</p>
+            </div>
+            <i
+              className="icon-info size-5 aspect-square text-quaternary"
+              onClick={(e) => {
+                e.stopPropagation();
+                modal.open(AgentInfoModal, {
+                  props: {
+                    agent,
+                    onSelectAgent: () => {
+                      if (agent._id !== state.config) {
+                        dispatch({ type: AIChatActionKind.set_config, payload: { config: agent._id } });
+                      }
+                      modal.close();
+                    },
+                  },
+                });
+              }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSelectAgent: () => void }) {
   return (
     <ModalContent
       className="**:data-icon:bg-transparent"

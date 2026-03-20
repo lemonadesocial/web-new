@@ -15,14 +15,22 @@ import Link from 'next/link';
 interface CardListProps {
   cards: CardItem[];
   overflow?: OverflowData;
+  title?: string;
 }
 
-export function CardList({ cards, overflow }: CardListProps) {
+export function CardList({ cards, overflow, title }: CardListProps) {
   const router = useRouter();
   if (!cards || cards.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-3 w-full">
+      {title && (
+        <div className="flex gap-1.5 text-tertiary">
+          <i className="icon-lightbulb-outline" />
+          <p className="text-tertiary">{title}</p>
+        </div>
+      )}
+
       {cards.map((card, idx) =>
         match(card)
           .with({ type: 'event' }, (c) => <EventCard key={idx} data={c.data} link={c.link} />)

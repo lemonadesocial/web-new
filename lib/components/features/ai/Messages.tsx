@@ -74,7 +74,7 @@ function MessageItem({ message: item }: { message: Message }) {
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
           </div>
 
-          {item.metadata?.cards && <CardList cards={item.metadata.cards} overflow={item.metadata.overflow} />}
+          {item.metadata?.cards && <CardList title={item.metadata.title} cards={item.metadata.cards} overflow={item.metadata.overflow} />}
 
           <div className="flex gap-2">
             {item.metadata?.actions?.map((action, idx) =>
