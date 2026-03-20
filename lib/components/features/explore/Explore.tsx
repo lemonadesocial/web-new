@@ -1,10 +1,12 @@
 'use client';
 import { Button } from '$lib/components/core';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CoinList } from '../coins/CoinList';
 // import { FeaturedCoins } from './FeaturedCoins';
 import { FeaturedCommunityHubs } from './FeaturedCommunityHubs';
 import { TopPerformers } from './TopPerformers';
+import { isAtlasEnabled } from '$lib/services/atlas-client';
 
 export function ExploreContent() {
   const router = useRouter();
@@ -16,6 +18,22 @@ export function ExploreContent() {
       </div>
       <div className="flex flex-col gap-12">
         <FeaturedCommunityHubs />
+        {isAtlasEnabled() && (
+          <div className="flex flex-col gap-5 relative">
+            <div className="flex justify-between items-center">
+              <p className="text-xl font-semibold">Atlas Events</p>
+              <Link
+                href="/explore/atlas"
+                className="text-sm text-accent-400 hover:text-accent-400/80 transition-colors"
+              >
+                View All
+              </Link>
+            </div>
+            <p className="text-sm text-tertiary">
+              Discover events across Lemonade, Eventbrite, Lu.ma, Meetup, and more.
+            </p>
+          </div>
+        )}
         {/* <FeaturedCoins /> */}
         <TopPerformers />
         <div className="flex flex-col gap-5 relative">

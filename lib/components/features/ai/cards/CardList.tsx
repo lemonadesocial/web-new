@@ -8,6 +8,10 @@ import { EventCard } from './EventCard';
 import { TicketCard } from './TicketCard';
 import { SpaceCard } from './SpaceCard';
 import { GuestRow } from './GuestRow';
+import { AtlasEventCard } from './AtlasEventCard';
+import { PaymentLinkCard } from './PaymentLinkCard';
+import { AtlasReceiptCard } from './AtlasReceiptCard';
+import { TicketComparePane } from '../panes/TicketComparePane';
 import type { CardItem, OverflowData } from './utils';
 
 interface CardListProps {
@@ -35,7 +39,19 @@ export function CardList({ cards, overflow }: CardListProps) {
           .with({ type: 'guest' }, (c) => (
             <GuestRow key={idx} data={c.data} />
           ))
-          .exhaustive(),
+          .with({ type: 'atlas_event' }, (c) => (
+            <AtlasEventCard key={idx} event={c.data} />
+          ))
+          .with({ type: 'atlas_comparison' }, (c) => (
+            <TicketComparePane key={idx} comparisons={c.data} onSelectTicket={() => {}} />
+          ))
+          .with({ type: 'atlas_payment_link' }, (c) => (
+            <PaymentLinkCard key={idx} checkout={c.data} />
+          ))
+          .with({ type: 'atlas_receipt' }, (c) => (
+            <AtlasReceiptCard key={idx} receipt={c.data} />
+          ))
+          .otherwise(() => null),
       )}
       {overflow?.viewAllLink && (
         <Button
