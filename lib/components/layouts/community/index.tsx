@@ -38,30 +38,36 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return notFound();
   }
 
-  let configs: Config[] = [];
-  try {
-    const { data: dataConfig } = await aiChatClient.query({
-      query: GetListAiConfigDocument,
-      variables: { filter: { spaces_in: [space._id] } },
-    });
-    configs = (dataConfig?.configs?.items || []) as Config[];
-  } catch (e) {
-    console.error('Failed to fetch AI configs', e);
-  }
-
-  // Enrich configs with spotlight events
-  const allEventIds = Array.from(new Set(configs.flatMap((c: any) => c.welcomeMetadata?.events || [])));
-  let fetchedEvents: Event[] = [];
-  if (allEventIds.length) {
-    try {
-      const { data: eventsData } = await client.query({
-        query: GetEventsDocument,
-        variables: { id: allEventIds },
+  const [aiTaskResult] = await Promise.allSettled([
+    (async () => {
+      // Fetch AI Configs
+      const { data: dataConfig } = await aiChatClient.query({
+        query: GetListAiConfigDocument,
+        variables: { filter: { spaces_in: [space._id] } },
       });
-      fetchedEvents = (eventsData?.getEvents || []) as Event[];
-    } catch (e) {
-      console.error('Failed to fetch spotlight events', e);
-    }
+      const configs = (dataConfig?.configs?.items || []) as Config[];
+
+      // Fetch Events based on those configs
+      const allEventIds = Array.from(new Set(configs.flatMap((c: any) => c.welcomeMetadata?.events || [])));
+      let fetchedEvents: Event[] = [];
+
+      if (allEventIds.length) {
+        const { data: eventsData } = await client.query({
+          query: GetEventsDocument,
+          variables: { id: allEventIds },
+        });
+        fetchedEvents = (eventsData?.getEvents || []) as Event[];
+      }
+
+      return { configs, fetchedEvents };
+    })(),
+  ]);
+
+  const { configs, fetchedEvents } =
+    aiTaskResult.status === 'fulfilled' ? aiTaskResult.value : { configs: [], fetchedEvents: [] };
+
+  if (aiTaskResult.status === 'rejected') {
+    console.error('AI Service degradation:', aiTaskResult.reason);
   }
 
   const enrichedConfigs = configs.map((config) => {

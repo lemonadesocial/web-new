@@ -32,10 +32,10 @@ const PAUSE_AFTER_PHRASE_MS = 1500;
 type InputChatProps = {
   variant?: 'default' | 'home';
   showTools?: boolean;
-  readonly?: boolean;
+  readOnly?: boolean;
 };
 
-export function InputChat({ variant = 'default', showTools = true, readonly }: InputChatProps) {
+export function InputChat({ variant = 'default', showTools = true, readOnly }: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -261,7 +261,7 @@ export function InputChat({ variant = 'default', showTools = true, readonly }: I
           )}
           <div className="flex items-center gap-2 flex-1 justify-end">
             <SpaceSelector
-              readonly={readonly}
+              readOnly={readOnly}
               currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
               onSelectSpace={(space) =>
                 dispatch({
@@ -287,7 +287,7 @@ export function InputChat({ variant = 'default', showTools = true, readonly }: I
 type SpaceSelectorProps = {
   currentSpaceId?: string;
   onSelectSpace: (space: Space) => void;
-  readonly?: boolean;
+  readOnly?: boolean;
 };
 
 function formatCredits(value?: number | null) {
@@ -302,7 +302,7 @@ function getCreditFillPercent(credits?: number | null, highWaterMark?: number | 
   return Math.max(0, Math.min(100, percent));
 }
 
-function SpaceSelector({ currentSpaceId, onSelectSpace, readonly }: SpaceSelectorProps) {
+function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelectorProps) {
   const router = useRouter();
   const { data } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
@@ -325,14 +325,14 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readonly }: SpaceSelecto
 
   return (
     <div className="flex items-center gap-2">
-      <Menu.Root placement="top-start" readonly={readonly}>
+      <Menu.Root placement="top-start" readonly={readOnly}>
         <Menu.Trigger>
           {({ toggle }) => (
             <div
               onClick={() => toggle()}
               className={clsx(
                 'h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border',
-                !readonly && 'cursor-pointer',
+                !readOnly && 'cursor-pointer',
               )}
             >
               <img
@@ -343,7 +343,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readonly }: SpaceSelecto
               <p className="text-sm max-w-[132px] truncate text-tertiary">
                 {selectedSpace?.title || 'Select community'}
               </p>
-              {!readonly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
+              {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
             </div>
           )}
         </Menu.Trigger>
@@ -365,11 +365,11 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readonly }: SpaceSelecto
       </Menu.Root>
 
       <button
-        disabled={readonly}
+        disabled={readOnly}
         type="button"
         className="h-8 px-2.5 rounded-sm bg-(--btn-tertiary) text-tertiary text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:bg-(--btn-tertiary-hover) disabled:cursor-default"
         onClick={() => {
-          if (readonly) return;
+          if (readOnly) return;
           if (selectedSpace?._id) {
             router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
             return;

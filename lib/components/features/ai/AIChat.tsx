@@ -12,11 +12,11 @@ import { WelcomeChat } from './WelcomeChat';
 type AIChatProps = {
   variant?: 'default' | 'home';
   showTools?: boolean;
-  readonly?: boolean;
+  readOnly?: boolean;
   hideHeader?: boolean;
 };
 
-export function AIChat({ variant = 'default', showTools = true, readonly }: AIChatProps) {
+export function AIChat({ variant = 'default', showTools = true, readOnly }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
@@ -67,7 +67,7 @@ export function AIChat({ variant = 'default', showTools = true, readonly }: AICh
               }}
             >
               <div className="relative z-10 max-w-4xl mx-auto w-full">
-                <InputChat variant={variant} showTools={showTools} readonly={readonly} />
+                <InputChat variant={variant} showTools={showTools} readOnly={readOnly} />
               </div>
               {showTools && (
                 <div className="flex justify-center">

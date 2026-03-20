@@ -16,7 +16,7 @@ export default function Content({ space }: { space: Space }) {
 
   return (
     <div className="md:w-[720px] w-full h-full mx-auto">
-      <AIChat hideHeader showTools={false} readonly={true} />
+      <AIChat hideHeader showTools={false} readOnly={true} />
     </div>
   );
 }
