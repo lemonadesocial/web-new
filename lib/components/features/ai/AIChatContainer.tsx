@@ -40,7 +40,7 @@ export function AIChatContainer() {
     chatStoreDispath({ type: AIChatActionKind.toggle_chat });
     if (isMobile) {
       setState({
-        content: <AIChat {...(opts.props as T)} />,
+        content: <AIChat hideHeader {...(opts.props as T)} />,
         options: { ...opts },
       });
     } else {
@@ -58,7 +58,7 @@ export function AIChatContainer() {
               </Pane.Header.Right>
             </Pane.Header.Root>
             <Pane.Content className="p-4 overflow-auto">
-              <AIChat {...(opts.props as T)} />
+              <AIChat hideHeader {...(opts.props as T)} />
             </Pane.Content>
           </Pane.Root>
         ),

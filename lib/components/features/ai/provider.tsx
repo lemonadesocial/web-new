@@ -1,5 +1,5 @@
 'use client';
-import { RunResult } from '$lib/graphql/generated/ai/graphql';
+import { Config, RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
 import { AI_CONFIG } from '$lib/utils/constants';
@@ -26,6 +26,7 @@ type State = {
   openPane?: boolean;
   data?: unknown;
   config: string;
+  configs: Config[];
   standId?: string;
 };
 
@@ -34,6 +35,7 @@ const defaultState: State = {
   toggleChat: false,
   session: session,
   config: AI_CONFIG,
+  configs: [],
   tools: [
     { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
     { key: 'manage_event', icon: 'icon-crown', label: 'Manage Event' },
@@ -45,8 +47,26 @@ const defaultState: State = {
 
 export const AIChatContext = React.createContext(null);
 
-export function AIChatProvider({ children }: React.PropsWithChildren) {
-  const [state, dispatch] = React.useReducer(reducers, defaultState);
+export function AIChatProvider({ children, initialConfigs }: { children: React.ReactNode; initialConfigs?: Config[] }) {
+  const initialMessages: Message[] = [];
+  if (initialConfigs?.length) {
+    const firstConfig = initialConfigs[0] as Config;
+    initialMessages.push({
+      message:
+        firstConfig.welcomeMessage ||
+        `Hi, I’m ${firstConfig.name}, your ${firstConfig.job || 'assistant'}.\nHow can I help?`,
+      role: 'assistant',
+      metadata: firstConfig.welcomeMetadata,
+    });
+  }
+
+  const [state, dispatch] = React.useReducer(reducers, {
+    ...defaultState,
+    configs: initialConfigs || [],
+    config: initialConfigs?.length ? initialConfigs[0]._id : AI_CONFIG,
+    messages: initialMessages,
+  });
+
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
@@ -68,6 +88,7 @@ export enum AIChatActionKind {
   'set_open_pane',
   'set_data_run',
   'set_config',
+  'set_configs',
   'reset',
 }
 
@@ -108,7 +129,31 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.set_config: {
-      return { ...state, config: action.payload?.config };
+      const nextConfigId = action.payload?.config;
+      const configs = action.payload?.configs || state.configs;
+      const nextConfig = configs.find((c) => c._id === nextConfigId);
+      const nextMessages: Message[] = [];
+
+      if (nextConfig) {
+        nextMessages.push({
+          message:
+            nextConfig.welcomeMessage ||
+            `Hi, I’m ${nextConfig.name}, your ${nextConfig.job || 'assistant'}.\nHow can I help?`,
+          role: 'assistant',
+          metadata: nextConfig.welcomeMetadata,
+        });
+      }
+
+      return {
+        ...state,
+        configs,
+        config: nextConfigId,
+        messages: nextMessages,
+      };
+    }
+
+    case AIChatActionKind.set_configs: {
+      return { ...state, configs: action.payload?.configs || [] };
     }
 
     case AIChatActionKind.reset: {

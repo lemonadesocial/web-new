@@ -1,10 +1,10 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 
-import { scrollAtBottomAtom } from "$lib/jotai";
-import { useSetAtom } from "jotai";
+import { scrollAtBottomAtom } from '$lib/jotai';
+import { useSetAtom } from 'jotai';
 
-const LoadMoreWrapper = ({ children }: { children: React.ReactNode; }) => {
+const LoadMoreWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
   const mainRef = React.useRef<HTMLDivElement>(null);
   const setShouldLoadMore = useSetAtom(scrollAtBottomAtom);
 
@@ -27,7 +27,11 @@ const LoadMoreWrapper = ({ children }: { children: React.ReactNode; }) => {
       }
     };
   }, []);
-  return <div ref={mainRef}>{children}</div>;
+  return (
+    <div ref={mainRef} className={className}>
+      {children}
+    </div>
+  );
 };
 
 export default LoadMoreWrapper;

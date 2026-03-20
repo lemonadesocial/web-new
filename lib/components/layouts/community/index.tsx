@@ -6,10 +6,13 @@ import { isObjectId } from '$lib/utils/helpers';
 import { ThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { defaultTheme } from '$lib/components/features/theme-builder/store';
 import { getClient } from '$lib/graphql/request';
-import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { GetSpaceDocument, Space, GetEventsDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { CommunityContainer } from './container';
 import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
 import { merge } from 'lodash';
+import { AIChatProvider } from '$lib/components/features/ai/provider';
+import { Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -34,6 +37,61 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   if (!space) {
     return notFound();
   }
+
+  const [aiTaskResult] = await Promise.allSettled([
+    (async () => {
+      // Fetch AI Configs
+      const { data: dataConfig } = await aiChatClient.query({
+        query: GetListAiConfigDocument,
+        variables: { filter: { spaces_in: [space._id] } },
+      });
+      const configs = (dataConfig?.configs?.items || []) as Config[];
+
+      // Fetch Events based on those configs
+      const allEventIds = Array.from(new Set(configs.flatMap((c: any) => c.welcomeMetadata?.events || [])));
+      let fetchedEvents: Event[] = [];
+
+      if (allEventIds.length) {
+        const { data: eventsData } = await client.query({
+          query: GetEventsDocument,
+          variables: { id: allEventIds },
+        });
+        fetchedEvents = (eventsData?.getEvents || []) as Event[];
+      }
+
+      return { configs, fetchedEvents };
+    })(),
+  ]);
+
+  const { configs, fetchedEvents } =
+    aiTaskResult.status === 'fulfilled' ? aiTaskResult.value : { configs: [], fetchedEvents: [] };
+
+  if (aiTaskResult.status === 'rejected') {
+    console.error('AI Service degradation:', aiTaskResult.reason);
+  }
+
+  const enrichedConfigs = configs.map((config) => {
+    const meta = config.welcomeMetadata as any;
+    if (meta?.events?.length) {
+      const cards = meta.events
+        .map((id: string) => {
+          const event = fetchedEvents.find((e) => e._id === id);
+          if (!event) return null;
+          return { type: 'spotlight_event', data: event };
+        })
+        .filter(Boolean);
+
+      return {
+        ...config,
+        welcomeMetadata: {
+          ...meta,
+          title: meta.title || 'Spotlight Events',
+          cards,
+        },
+      };
+    }
+    return config;
+  });
 
   let emptyTheme = null;
 
@@ -65,7 +123,9 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
-      <CommunityContainer space={space}>{children}</CommunityContainer>
+      <AIChatProvider initialConfigs={enrichedConfigs as Config[]}>
+        <CommunityContainer space={space}>{children}</CommunityContainer>
+      </AIChatProvider>
     </ThemeProvider>
   );
 }

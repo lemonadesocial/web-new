@@ -23,6 +23,7 @@ import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
+import clsx from 'clsx';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -30,9 +31,11 @@ const PAUSE_AFTER_PHRASE_MS = 1500;
 
 type InputChatProps = {
   variant?: 'default' | 'home';
+  showTools?: boolean;
+  readOnly?: boolean;
 };
 
-export function InputChat({ variant = 'default' }: InputChatProps) {
+export function InputChat({ variant = 'default', showTools = true, readOnly }: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -48,13 +51,16 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
     if (!isIdle) return;
     const phrase = PLACEHOLDER_PHRASES[phraseIndex];
     const isTyping = charCount < phrase.length;
-    const t = setTimeout(() => {
-      setAnim((prev) =>
-        prev.charCount < phrase.length
-          ? { ...prev, charCount: prev.charCount + 1 }
-          : { charCount: 0, phraseIndex: (prev.phraseIndex + 1) % PLACEHOLDER_PHRASES.length }
-      );
-    }, isTyping ? TYPING_MS : PAUSE_AFTER_PHRASE_MS);
+    const t = setTimeout(
+      () => {
+        setAnim((prev) =>
+          prev.charCount < phrase.length
+            ? { ...prev, charCount: prev.charCount + 1 }
+            : { charCount: 0, phraseIndex: (prev.phraseIndex + 1) % PLACEHOLDER_PHRASES.length },
+        );
+      },
+      isTyping ? TYPING_MS : PAUSE_AFTER_PHRASE_MS,
+    );
     return () => clearTimeout(t);
   }, [isIdle, phraseIndex, charCount]);
 
@@ -169,7 +175,13 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
     run({
-      variables: { message: text, config: state.config || AI_CONFIG, session: state.session, data: state.data || {}, standId: state.standId },
+      variables: {
+        message: text,
+        config: state.config || AI_CONFIG,
+        session: state.session,
+        data: state.data || {},
+        standId: state.standId,
+      },
     });
   };
 
@@ -194,10 +206,7 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
       <Card.Content className="space-y-4 flex flex-col">
         <div className="relative w-full">
           {isIdle && (
-            <div
-              className="absolute inset-0 pointer-events-none text-quaternary overflow-hidden"
-              aria-hidden
-            >
+            <div className="absolute inset-0 pointer-events-none text-quaternary overflow-hidden" aria-hidden>
               <span className="font-medium">
                 Ask LemonAI to <span>{typingText}</span>
               </span>
@@ -216,41 +225,44 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
           />
         </div>
         <div className="flex justify-between items-center">
-          <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
-            <Menu.Trigger>
-              {({ toggle }) => (
-                <Button
-                  variant="tertiary-alt"
-                  onClick={() => toggle()}
-                  size="sm"
-                  icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
-                  iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
-                >
-                  {state.selectedTool?.label}
-                </Button>
-              )}
-            </Menu.Trigger>
-            <Menu.Content className="p-1 w-[192px] backdrop-blur-md!">
-              {({ toggle }) => (
-                <>
-                  {state.tools.map((tool) => (
-                    <MenuItem
-                      key={tool.key}
-                      iconLeft={tool.icon}
-                      title={tool.label}
-                      onClick={() => {
-                        dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: tool } });
-                        toggle();
-                      }}
-                    />
-                  ))}
-                </>
-              )}
-            </Menu.Content>
-          </Menu.Root>
-          <div className="flex items-center gap-2">
+          {showTools && (
+            <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
+              <Menu.Trigger>
+                {({ toggle }) => (
+                  <Button
+                    variant="tertiary-alt"
+                    onClick={() => toggle()}
+                    size="sm"
+                    icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
+                    iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                  >
+                    {state.selectedTool?.label}
+                  </Button>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-1 w-[192px] backdrop-blur-md!">
+                {({ toggle }) => (
+                  <>
+                    {state.tools.map((tool) => (
+                      <MenuItem
+                        key={tool.key}
+                        iconLeft={tool.icon}
+                        title={tool.label}
+                        onClick={() => {
+                          dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: tool } });
+                          toggle();
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+          )}
+          <div className="flex items-center gap-2 flex-1 justify-end">
             <SpaceSelector
-              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id}
+              readOnly={readOnly}
+              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
               onSelectSpace={(space) =>
                 dispatch({
                   type: AIChatActionKind.set_data_run,
@@ -258,7 +270,13 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
                 })
               }
             />
-            <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
+            <Button
+              icon="icon-arrow-foward-sharp -rotate-90"
+              size="sm"
+              onClick={handleSubmit}
+              loading={loading}
+              disabled={!input.trim()}
+            />
           </div>
         </div>
       </Card.Content>
@@ -269,6 +287,7 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
 type SpaceSelectorProps = {
   currentSpaceId?: string;
   onSelectSpace: (space: Space) => void;
+  readOnly?: boolean;
 };
 
 function formatCredits(value?: number | null) {
@@ -283,7 +302,7 @@ function getCreditFillPercent(credits?: number | null, highWaterMark?: number | 
   return Math.max(0, Math.min(100, percent));
 }
 
-function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
+function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelectorProps) {
   const router = useRouter();
   const { data } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
@@ -306,12 +325,15 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <Menu.Root placement="top-start">
+      <Menu.Root placement="top-start" readonly={readOnly}>
         <Menu.Trigger>
           {({ toggle }) => (
             <div
               onClick={() => toggle()}
-              className="h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border cursor-pointer"
+              className={clsx(
+                'h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border',
+                !readOnly && 'cursor-pointer',
+              )}
             >
               <img
                 src={communityAvatar(selectedSpace)}
@@ -321,7 +343,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
               <p className="text-sm max-w-[132px] truncate text-tertiary">
                 {selectedSpace?.title || 'Select community'}
               </p>
-              <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />
+              {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
             </div>
           )}
         </Menu.Trigger>
@@ -343,9 +365,11 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
       </Menu.Root>
 
       <button
+        disabled={readOnly}
         type="button"
-        className="h-8 px-2.5 rounded-sm bg-(--btn-tertiary) text-tertiary text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:bg-(--btn-tertiary-hover)"
+        className="h-8 px-2.5 rounded-sm bg-(--btn-tertiary) text-tertiary text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:bg-(--btn-tertiary-hover) disabled:cursor-default"
         onClick={() => {
+          if (readOnly) return;
           if (selectedSpace?._id) {
             router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
             return;
@@ -355,7 +379,15 @@ function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
         title="Upgrade to Pro"
       >
         <svg className="size-4 -rotate-90 shrink-0" viewBox="0 0 16 16" aria-hidden>
-          <circle cx="8" cy="8" r={ringRadius} fill="none" stroke="currentColor" strokeWidth="1" className="text-quaternary" />
+          <circle
+            cx="8"
+            cy="8"
+            r={ringRadius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="text-quaternary"
+          />
           <circle
             cx="8"
             cy="8"
