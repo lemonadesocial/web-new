@@ -28,8 +28,8 @@
   .btn-outlined {
     --btn-bg: transparent !important;
     &.btn-primary {
-      --btn-content: var(--color-accent-500);
-      --btn-content-hover: var(--color-accent-500);
+      --btn-content: var(--color-accent-400);
+      --btn-content-hover: var(--color-accent-400);
       --btn-border-color: var(--color-accent-500);
       --btn-bg-hover: color-mix(in oklab, var(--color-accent-500) 10%, transparent);
     }

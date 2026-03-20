@@ -1,0 +1,37 @@
+mutation CreatePreviewLink($input: CreatePreviewLinkInput!) {
+  createPreviewLink(input: $input) {
+    _id
+    link_type
+    resource_id
+    token
+    password
+    expires_at
+    created_at
+    view_count
+  }
+}
+
+mutation DeletePreviewLink($id: MongoID!) {
+  deletePreviewLink(id: $id)
+}
+
+query ListPreviewLinks($link_type: PreviewLinkType!, $resource_id: MongoID!) {
+  listPreviewLinks(link_type: $link_type, resource_id: $resource_id) {
+    _id
+    link_type
+    resource_id
+    token
+    expires_at
+    created_at
+    view_count
+  }
+}
+
+query ValidatePreviewLink($token: String!, $password: String) {
+  validatePreviewLink(token: $token, password: $password) {
+    valid
+    password_protected
+    resource_type
+    resource_id
+  }
+}
