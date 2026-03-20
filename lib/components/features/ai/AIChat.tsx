@@ -9,14 +9,14 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat({
-  showTools = true,
-  readonly,
-}: {
-  hideHeader?: boolean;
+type AIChatProps = {
+  variant?: 'default' | 'home';
   showTools?: boolean;
   readonly?: boolean;
-}) {
+  hideHeader?: boolean;
+};
+
+export function AIChat({ variant = 'default', showTools = true, readonly }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
@@ -67,7 +67,7 @@ export function AIChat({
               }}
             >
               <div className="relative z-10 max-w-4xl mx-auto w-full">
-                <InputChat showTools={showTools} readonly={readonly} />
+                <InputChat variant={variant} showTools={showTools} readonly={readonly} />
               </div>
               {showTools && (
                 <div className="flex justify-center">

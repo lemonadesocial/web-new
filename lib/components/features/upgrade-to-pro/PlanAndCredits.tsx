@@ -3,7 +3,9 @@ import React from 'react';
 import { animate, motion, AnimatePresence } from 'framer-motion';
 import { match } from 'ts-pattern';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
+import { formatUnits } from 'viem';
 
 import { Badge, Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
@@ -17,6 +19,15 @@ import {
   SubscriptionPricing,
   SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
+import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
+import { formatNumber } from '$lib/utils/number';
+import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
+import {
+  buildWalletPlanOptions,
+  getFirstCryptoPriceForPeriod,
+  hasCryptoPriceForPeriod,
+  mergePlansWithSubscriptions,
+} from './utils';
 
 type PlanCard = {
   type: SubscriptionItemType | 'enterprise';
@@ -29,6 +40,7 @@ type PlanCard = {
   features: string[];
   pricing?: SubscriptionItem['pricing'];
   credits_per_month?: number | null;
+  crypto_prices?: SubscriptionItem['crypto_prices'];
 };
 
 type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
@@ -175,20 +187,27 @@ function renderCompareValue(value: CompareValue) {
   return <span className="text-tertiary">{value}</span>;
 }
 
-function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
-  const subscriptionByType = new Map(subscriptionItems.map((item) => [item.type, item]));
+function CryptoPlanPriceText({ item, fallbackPrice }: { item: PlanCard; fallbackPrice: string | null }) {
+  const primaryCryptoPrice = getFirstCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual));
+  const { tokenMetadata } = useTokenMetadata(primaryCryptoPrice?.chain_id, primaryCryptoPrice?.token_address);
 
-  return pricingPlans.map((plan) => {
-    if (plan.type === 'enterprise') return { ...plan };
+  if (!primaryCryptoPrice || !tokenMetadata) return <>{fallbackPrice}</>;
 
-    const subscription = subscriptionByType.get(plan.type);
-    return subscription ? { ...plan, ...subscription } : { ...plan };
-  });
+  const rawAmount = item.annual ? primaryCryptoPrice.amount_annual : primaryCryptoPrice.amount;
+  const amount = Number(formatUnits(BigInt(rawAmount), tokenMetadata.decimals));
+  const monthlyAmount = item.annual ? amount / 12 : amount;
+
+  return <>{`${formatNumber(monthlyAmount)} ${tokenMetadata.symbol.toUpperCase()}`}</>;
 }
 
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
-  const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
+  const router = useRouter();
+  const mergedPlans = React.useMemo(() => mergePlansWithSubscriptions(pricingPlans, subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [optimisticSubscriptionTier, setOptimisticSubscriptionTier] = React.useState<SubscriptionItemType | null>(null);
+  const [optimisticSubscriptionAnnual, setOptimisticSubscriptionAnnual] = React.useState<boolean | null>(null);
+  const activeSubscriptionTier = optimisticSubscriptionTier ?? (space.subscription_tier || SubscriptionItemType.Free);
+  const activeSubscriptionAnnual = optimisticSubscriptionAnnual ?? space.subscription_annual ?? false;
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
   const [upgradingTier, setUpgradingTier] = React.useState<SubscriptionTierEnum | null>(null);
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
@@ -382,14 +401,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   React.useEffect(() => {
     setData(() => {
       return mergedPlans.map((item) => {
-        if (item.type === space.subscription_tier && space.subscription_annual) {
-          item.annual = space.subscription_annual;
+        if (item.type === activeSubscriptionTier) {
+          return { ...item, annual: activeSubscriptionAnnual };
         }
 
         return item;
       });
     });
-  }, [mergedPlans, space]);
+  }, [activeSubscriptionAnnual, activeSubscriptionTier, mergedPlans]);
 
   const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
     if (purchasingPlan) return;
@@ -427,7 +446,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     syncCompareScroll(compareBodyScrollRef.current, compareHeaderScrollRef.current);
   }, [syncCompareScroll]);
 
-  const calculatePrice = (pricing: SubscriptionPricing, annual?: boolean) => {
+  const calculateFiatPrice = (pricing: SubscriptionPricing, annual?: boolean) => {
     let price = Number(pricing.price);
     if (annual) {
       price = Number(pricing.annual_price) / 12;
@@ -437,6 +456,52 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
     return formatCurrency(Math.round(price), pricing.currency, 0);
   };
+
+  const calculateFiatAnnualSavings = (pricing: SubscriptionPricing) =>
+    formatCurrency(
+      Math.max(
+        0,
+        (Number(pricing.price) / 10 ** pricing.decimals) * 12 - Number(pricing.annual_price) / 10 ** pricing.decimals,
+      ),
+      pricing.currency,
+      0,
+    );
+
+  const handlePlanCheckout = React.useCallback(
+    (item: PlanCard, tier: SubscriptionTierEnum) => {
+      if (item.method === 'wallet') {
+        const annual = Boolean(item.annual);
+
+        if (!hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
+          toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+          return;
+        }
+
+        if (item.crypto_prices?.length && item.type !== 'enterprise') {
+          const walletPlanOptions = buildWalletPlanOptions(subscriptionItems, data);
+
+          openCryptoSubscriptionModal({
+            space,
+            items: [item.type as SubscriptionItemType],
+            annual,
+            planOptions: walletPlanOptions,
+            onComplete: ({ planType, annual: nextAnnual }) => {
+              setOptimisticSubscriptionTier(planType);
+              setOptimisticSubscriptionAnnual(nextAnnual);
+              router.refresh();
+            },
+          });
+          return;
+        }
+
+        toast.error('Crypto pricing is unavailable for this plan.');
+        return;
+      }
+
+      handleUpgrade(tier, Boolean(item.annual));
+    },
+    [data, handleUpgrade, router, space, subscriptionItems],
+  );
 
   return (
     <div className="flex flex-col gap-7">
@@ -454,7 +519,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                   <i className="icon-lemonade-logo text-warning-300 w-5 h-5 aspect-square" />
                 </div>
                 <div>
-                  <p>You’re on {(space.subscription_tier || SubscriptionItemType.Free).toUpperCase()} Plan</p>
+                  <p>You’re on {activeSubscriptionTier.toUpperCase()} Plan</p>
                   <p className="text-tertiary text-sm">Upgrade anytime!</p>
                 </div>
               </div>
@@ -540,22 +605,22 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                         <div className="flex justify-between items-center flex-1 min-h-[32px]">
                           {!!item.pricing && (
                             <div className="flex gap-2 items-end">
-                              <p className="text-2xl">{calculatePrice(item.pricing, !!item.annual)}</p>
+                              <p className="text-2xl">
+                                {item.method === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual))
+                                  ? (
+                                    <CryptoPlanPriceText
+                                      item={item}
+                                      fallbackPrice={calculateFiatPrice(item.pricing, Boolean(item.annual))}
+                                    />
+                                  )
+                                  : calculateFiatPrice(item.pricing, Boolean(item.annual))}
+                              </p>
                               <p className="text-tertiary">per month</p>
                             </div>
                           )}
-                          {item.annual && item.pricing?.annual_price && (
+                          {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
                             <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
-                              Save{' '}
-                              {formatCurrency(
-                                Math.max(
-                                  0,
-                                  (Number(item.pricing.price) / 10 ** item.pricing.decimals) * 12 -
-                                    Number(item.pricing.annual_price) / 10 ** item.pricing.decimals,
-                                ),
-                                item.pricing.currency,
-                                0,
-                              )}
+                              Save {calculateFiatAnnualSavings(item.pricing)}
                             </Badge>
                           )}
                         </div>
@@ -573,13 +638,19 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <div className="flex gap-2">
                             <Toggle
                               id={item.type}
-                              disabled={space.subscription_tier === item.type || purchasingPlan}
+                              disabled={activeSubscriptionTier === item.type || purchasingPlan}
                               checked={!!data.find((i) => i.type === item.type)?.annual}
                               onChange={(value) => {
                                 setData((prev) =>
                                   prev.map((i) => {
-                                    if (i.type === space.subscription_tier) return i;
-                                    return { ...i, annual: value };
+                                    if (i.type === activeSubscriptionTier) return i;
+                                    const nextItem = { ...i, annual: value };
+
+                                    if (nextItem.method === 'wallet' && !hasCryptoPriceForPeriod(nextItem.crypto_prices ?? [], value)) {
+                                      return { ...nextItem, method: 'card' };
+                                    }
+
+                                    return nextItem;
                                   }),
                                 );
                               }}
@@ -590,28 +661,30 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: true },
+                              {
+                                value: 'wallet',
+                                iconLeft: 'icon-wallet',
+                                ignore: !hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)),
+                              },
                             ]}
-                            disabled={space.subscription_tier === item.type || purchasingPlan}
+                            disabled={activeSubscriptionTier === item.type || purchasingPlan}
                             onSelect={(method) => {
-                              if (method.value === 'wallet') {
-                                toast.success('Coming Soon.');
+                              const annual = Boolean(item.annual);
+
+                              if (method.value === 'wallet' && !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
+                                toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
                                 return;
                               }
 
                               setData((prev) =>
                                 prev.map((i) => {
-                                  if (i.type === item.type) {
-                                    i.method = method.value as 'card' | 'wallet';
-                                  }
-
-                                  return i;
+                                  if (i.type !== item.type) return i;
+                                  return { ...i, method: method.value as 'card' | 'wallet' };
                                 }),
                               );
                             }}
                             selected={item.method}
                             size="sm"
-                            className={clsx(item.annual ? 'visible' : 'invisible')}
                           />
                         </div>
                       ) : (
@@ -625,18 +698,18 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Plus || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Plus || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Plus}
-                            onClick={() => handleUpgrade(SubscriptionTierEnum.Plus, Boolean(item.annual))}
+                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Plus)}
                           >
                             Upgrade
                           </Button>
                         ))
                         .with(SubscriptionItemType.Pro, () => (
                           <Button
-                            disabled={space.subscription_tier === SubscriptionItemType.Pro || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Pro || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Pro}
-                            onClick={() => handleUpgrade(SubscriptionTierEnum.Pro, Boolean(item.annual))}
+                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Pro)}
                           >
                             Upgrade
                           </Button>
@@ -645,9 +718,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Max || purchasingPlan}
+                            disabled={activeSubscriptionTier === SubscriptionItemType.Max || purchasingPlan}
                             loading={upgradingTier === SubscriptionTierEnum.Max}
-                            onClick={() => handleUpgrade(SubscriptionTierEnum.Max, Boolean(item.annual))}
+                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Max)}
                           >
                             Upgrade
                           </Button>

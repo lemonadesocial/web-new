@@ -38,7 +38,7 @@ const defaultState: State = {
   configs: [],
   tools: [
     { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
-    { key: 'manage_event', icon: 'icon-crown', label: 'Create Event' },
+    { key: 'manage_event', icon: 'icon-crown', label: 'Manage Event' },
     { key: 'create_community', icon: 'icon-community', label: 'Create Community' },
     { key: 'manage_community', icon: 'icon-settings', label: 'Manage Community' },
   ],
