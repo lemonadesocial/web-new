@@ -7,7 +7,7 @@ import { Button, modal, ModalContent } from '$lib/components/core';
 import { Config } from '$lib/graphql/generated/ai/graphql';
 
 export function AgentsSidebar() {
-  const [state, dispatch] = useAIChat();
+  const [state] = useAIChat();
 
   if (state.configs.length <= 1) return null;
 
@@ -30,7 +30,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
 
   return (
     <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-3">
-      {state.configs.map((agent: any) => {
+      {state.configs.map((agent) => {
         const isActive = state.config === agent._id;
         return (
           <div

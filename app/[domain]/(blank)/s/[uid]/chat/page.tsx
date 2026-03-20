@@ -20,11 +20,16 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 
   let configs: Config[] = [];
   if (space._id) {
-    const { data: dataConfig } = await aiChatClient.query({
-      query: GetListAiConfigDocument,
-      variables: { filter: { spaces_in: [space?._id] }, skip: !space?._id },
-    });
-    configs = (dataConfig?.configs.items as Config[]) || [];
+    try {
+      const { data: dataConfig } = await aiChatClient.query({
+        query: GetListAiConfigDocument,
+        variables: { filter: { spaces_in: [space._id] } },
+      });
+      configs = (dataConfig?.configs.items as Config[]) || [];
+    } catch {
+      // AI service unavailable — treat as no configs
+      return notFound();
+    }
   }
 
   if (!configs.length) return notFound();

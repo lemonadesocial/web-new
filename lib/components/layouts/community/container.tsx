@@ -55,7 +55,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
   const pathname = usePathname();
   const [showAgents, setShowAgents] = React.useState(false);
 
-  const isChat = pathname?.endsWith('/chat');
+  const isChat = /\/s\/[^/]+\/chat$/.test(pathname || '');
   const currentAgent = aiState.configs.find((c) => c._id === aiState.config) as Config;
 
   React.useEffect(() => {
@@ -124,7 +124,8 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
                   variant="tertiary-alt"
                   size="sm"
                   aria-label="Agent Info"
-                  onClick={() =>
+                  onClick={() => {
+                    if (!currentAgent) return;
                     modal.open(AgentInfoModal, {
                       props: {
                         agent: currentAgent,
@@ -135,8 +136,8 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
                           modal.close();
                         },
                       },
-                    })
-                  }
+                    });
+                  }}
                 />
                 {!!aiState.configs.length && (
                   <Button
@@ -177,9 +178,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
               'pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0',
             )}
           >
-            <div className={clsx('mx-auto', isChat ? 'w-full h-full' : 'page px-4 xl:px-0 pt-6')}>
-              {children}
-            </div>
+            <div className={clsx('mx-auto', isChat ? 'w-full h-full' : 'page px-4 xl:px-0 pt-6')}>{children}</div>
           </div>
         </LoadMoreWrapper>
       </div>

@@ -4,10 +4,8 @@ import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Button, drawer } from '$lib/components/core';
+import { Button } from '$lib/components/core';
 import { Message, useAIChat } from './provider';
-import { EventPane } from '../pane';
-import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { CardList } from './cards';
 
 export function Messages() {
@@ -51,7 +49,7 @@ export function Messages() {
 
 function MessageItem({ message: item }: { message: Message }) {
   const [state] = useAIChat();
-  const currentAgent = state.configs.find((c: any) => c._id === state.config);
+  const currentAgent = state.configs.find((c) => c._id === state.config);
 
   const messageContent =
     item.role === 'assistant' && item.metadata?.cards ? (item.message?.split('\n\n')[0] ?? item.message) : item.message;
@@ -74,7 +72,9 @@ function MessageItem({ message: item }: { message: Message }) {
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
           </div>
 
-          {item.metadata?.cards && <CardList title={item.metadata.title} cards={item.metadata.cards} overflow={item.metadata.overflow} />}
+          {item.metadata?.cards && (
+            <CardList title={item.metadata.title} cards={item.metadata.cards} overflow={item.metadata.overflow} />
+          )}
 
           <div className="flex gap-2">
             {item.metadata?.actions?.map((action, idx) =>
