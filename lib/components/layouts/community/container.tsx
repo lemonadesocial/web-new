@@ -162,8 +162,17 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
         )}
 
         <LoadMoreWrapper className="flex-1 overflow-auto no-scrollbar">
-          <div className={clsx(!isChat && 'lg:pl-[97px]', 'md:pt-[64px]', isChat && 'h-full')}>
-            <div className={clsx('mx-auto', isChat ? 'w-full h-full' : 'page px-4 xl:px-0 pt-6')}>{children}</div>
+          <div
+            className={clsx(
+              !isChat && 'lg:pl-[97px]',
+              'md:pt-[64px]',
+              isChat && 'h-full',
+              'pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0',
+            )}
+          >
+            <div className={clsx('mx-auto', isChat ? 'w-full h-full' : 'page px-4 xl:px-0 pt-6')}>
+              {children}
+            </div>
           </div>
         </LoadMoreWrapper>
       </div>
