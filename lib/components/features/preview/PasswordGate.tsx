@@ -14,8 +14,8 @@ export function PasswordGate({ token, error }: { token: string; error?: boolean 
     e.preventDefault();
     setSubmitting(true);
 
-    // Set cookie scoped to this preview path
-    document.cookie = `preview-pwd=${encodeURIComponent(password)}; path=/preview/${token}; SameSite=Lax`;
+    // Set cookie scoped to root path so it's sent for all requests on this domain
+    document.cookie = `preview-pwd=${encodeURIComponent(password)}; path=/; SameSite=Lax`;
 
     // Trigger SSR re-render
     router.refresh();
@@ -27,22 +27,16 @@ export function PasswordGate({ token, error }: { token: string; error?: boolean 
   return (
     <div className="flex min-h-screen items-center justify-center bg-primary p-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        <h1 className="text-center text-xl font-semibold text-primary">
-          This preview is password protected
-        </h1>
+        <h1 className="text-center text-xl font-semibold text-primary">This preview is password protected</h1>
 
-        {error && (
-          <p className="text-center text-sm text-danger">
-            Incorrect password. Please try again.
-          </p>
-        )}
+        {error && <p className="text-center text-sm text-danger">Incorrect password. Please try again.</p>}
 
         <InputField
           label="Password"
           type="password"
           placeholder="Enter password"
           value={password}
-          onChange={(value) => setPassword(value as string)}
+          onChangeText={(value) => setPassword(value)}
         />
 
         <Button

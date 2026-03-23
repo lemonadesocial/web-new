@@ -1122,6 +1122,8 @@ export type Chain = {
   /** Number of confirmations after which a transaction is considered irrevertible */
   safe_confirmations: Scalars['Float']['output'];
   stake_payment_contract?: Maybe<Scalars['String']['output']>;
+  subscription_destination_wallet?: Maybe<Scalars['String']['output']>;
+  subscription_forwarder_contract?: Maybe<Scalars['String']['output']>;
   /** The corresponding ERC20 tokens deployed on this chain which can be used as currency */
   tokens?: Maybe<Array<Token>>;
   vinyl_nation_passport_contract_address?: Maybe<Scalars['String']['output']>;
@@ -1327,6 +1329,14 @@ export type ConnectorSelectOption = {
   value: Scalars['String']['output'];
 };
 
+export type ConnectorSlotInfo = {
+  __typename?: 'ConnectorSlotInfo';
+  canAddMore: Scalars['Boolean']['output'];
+  currentTier: Scalars['String']['output'];
+  max: Scalars['Int']['output'];
+  used: Scalars['Int']['output'];
+};
+
 export type CreateApiKeyInput = {
   expires_at?: InputMaybe<Scalars['DateTimeISO']['input']>;
   name: Scalars['String']['input'];
@@ -1350,6 +1360,14 @@ export type CreateBadgeInput = {
 export type CreateBadgeListInput = {
   image_url?: InputMaybe<Scalars['String']['input']>;
   title: Scalars['String']['input'];
+};
+
+export type CreateCryptoSubscriptionInput = {
+  annual?: InputMaybe<Scalars['Boolean']['input']>;
+  chain_id: Scalars['String']['input'];
+  items: Array<SubscriptionItemType>;
+  space: Scalars['MongoID']['input'];
+  token_address: Scalars['String']['input'];
 };
 
 export type CreateDonationInput = {
@@ -1440,6 +1458,13 @@ export type CreatePoapInput = {
   name: Scalars['String']['input'];
   private?: InputMaybe<Scalars['Boolean']['input']>;
   ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type CreatePreviewLinkInput = {
+  expires_at?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  link_type: PreviewLinkType;
+  password?: InputMaybe<Scalars['String']['input']>;
+  resource_id: Scalars['MongoID']['input'];
 };
 
 export type CreateSiteInput = {
@@ -1537,6 +1562,17 @@ export type CryptoPaymentStatistics = {
   count: Scalars['Int']['output'];
   networks: Array<CryptoPaymentNetworkStatistics>;
   revenue: Array<PaymentRevenue>;
+};
+
+export type CryptoSubscriptionPaymentInfo = {
+  __typename?: 'CryptoSubscriptionPaymentInfo';
+  amount: Scalars['String']['output'];
+  chain_id: Scalars['String']['output'];
+  destination: Scalars['String']['output'];
+  forwarder_contract: Scalars['String']['output'];
+  reference: Scalars['String']['output'];
+  subscription_id: Scalars['MongoID']['output'];
+  token_address: Scalars['String']['output'];
 };
 
 export type Currency = {
@@ -4537,6 +4573,7 @@ export type Mutation = {
   createCastReaction: Scalars['Boolean']['output'];
   createCheckinTokenRewardSetting: CheckinTokenRewardSetting;
   createComment: Comment;
+  createCryptoSubscription: CryptoSubscriptionPaymentInfo;
   createDonation: Donation;
   createDonationVault: DonationVault;
   createEvent: Event;
@@ -4561,6 +4598,7 @@ export type Mutation = {
   createPageConfig: PageConfig;
   createPoapDrop: PoapDrop;
   createPost: Post;
+  createPreviewLink: PreviewLink;
   createRegistration: Scalars['Boolean']['output'];
   createRewardVault: TokenRewardVault;
   createRoom: Room;
@@ -4613,6 +4651,7 @@ export type Mutation = {
   deleteNotifications: Scalars['Boolean']['output'];
   deleteOauth2Client: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
+  deletePreviewLink: Scalars['Boolean']['output'];
   deleteSite: Scalars['Boolean']['output'];
   deleteSpace: Scalars['Boolean']['output'];
   deleteSpaceAsset: Scalars['Boolean']['output'];
@@ -4642,7 +4681,6 @@ export type Mutation = {
   followSpace: Scalars['Boolean']['output'];
   generateCubejsToken: Scalars['String']['output'];
   generateMatrixToken: Scalars['String']['output'];
-  generatePreviewLink: PreviewLinkResponse;
   generateStripeAccountLink: GenerateStripeAccountLinkResponse;
   heartbeatConfigLock: Scalars['Boolean']['output'];
   importPoapDrop: PoapDrop;
@@ -4666,6 +4704,7 @@ export type Mutation = {
   releaseConfigLock: Scalars['Boolean']['output'];
   removeSubSpaces: Scalars['Boolean']['output'];
   removeUserFcmToken: Scalars['Boolean']['output'];
+  renewCryptoSubscription: CryptoSubscriptionPaymentInfo;
   reorderTicketTypeCategories: Scalars['Boolean']['output'];
   reorderTicketTypes: Scalars['Boolean']['output'];
   reportUser: Scalars['Boolean']['output'];
@@ -5674,6 +5713,11 @@ export type MutationCreateCommentArgs = {
 };
 
 
+export type MutationCreateCryptoSubscriptionArgs = {
+  input: CreateCryptoSubscriptionInput;
+};
+
+
 export type MutationCreateDonationArgs = {
   input: CreateDonationInput;
 };
@@ -5792,6 +5836,11 @@ export type MutationCreatePoapDropArgs = {
 
 export type MutationCreatePostArgs = {
   input: PostInput;
+};
+
+
+export type MutationCreatePreviewLinkArgs = {
+  input: CreatePreviewLinkInput;
 };
 
 
@@ -6076,6 +6125,11 @@ export type MutationDeletePostArgs = {
 };
 
 
+export type MutationDeletePreviewLinkArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
 export type MutationDeleteSiteArgs = {
   _id: Scalars['MongoID']['input'];
 };
@@ -6221,12 +6275,6 @@ export type MutationGenerateCubejsTokenArgs = {
 };
 
 
-export type MutationGeneratePreviewLinkArgs = {
-  config_id: Scalars['MongoID']['input'];
-  options?: InputMaybe<PreviewLinkOptionsInput>;
-};
-
-
 export type MutationGenerateStripeAccountLinkArgs = {
   refresh_url: Scalars['String']['input'];
   return_url: Scalars['String']['input'];
@@ -6352,6 +6400,14 @@ export type MutationRemoveSubSpacesArgs = {
 
 export type MutationRemoveUserFcmTokenArgs = {
   token: Scalars['String']['input'];
+};
+
+
+export type MutationRenewCryptoSubscriptionArgs = {
+  annual?: InputMaybe<Scalars['Boolean']['input']>;
+  chain_id: Scalars['String']['input'];
+  subscription_id: Scalars['MongoID']['input'];
+  token_address: Scalars['String']['input'];
 };
 
 
@@ -7569,18 +7625,23 @@ export enum PostVisibility {
   Public = 'PUBLIC'
 }
 
-export type PreviewLinkOptionsInput = {
-  expires_in_hours?: InputMaybe<Scalars['Float']['input']>;
-  password?: InputMaybe<Scalars['String']['input']>;
+export type PreviewLink = {
+  __typename?: 'PreviewLink';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  created_by: Scalars['MongoID']['output'];
+  expires_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  link_type: PreviewLinkType;
+  password?: Maybe<Scalars['String']['output']>;
+  resource_id: Scalars['MongoID']['output'];
+  token: Scalars['String']['output'];
+  view_count: Scalars['Float']['output'];
 };
 
-export type PreviewLinkResponse = {
-  __typename?: 'PreviewLinkResponse';
-  expires_at?: Maybe<Scalars['DateTimeISO']['output']>;
-  id: Scalars['String']['output'];
-  token: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
+export enum PreviewLinkType {
+  Event = 'event',
+  Space = 'space'
+}
 
 export type PricingInfo = {
   __typename?: 'PricingInfo';
@@ -7747,6 +7808,7 @@ export type Query = {
   checkTemplateUpdate: TemplateUpdateInfo;
   checkTicketTypePasscode: Scalars['Boolean']['output'];
   connectionLogs: Array<ConnectionLog>;
+  connectorSlotInfo: ConnectorSlotInfo;
   exportEventApplications: Array<EventApplicationExport>;
   exportEventTickets: ExportedTickets;
   fetchConnectionConfigOptions: Array<ConnectorSelectOption>;
@@ -7766,6 +7828,7 @@ export type Query = {
   getBroadcasts: Array<Broadcast>;
   getComments: Array<Comment>;
   getConfigs: Scalars['JSON']['output'];
+  getCryptoSubscriptionStatus?: Maybe<SubscriptionResponse>;
   getDefaultLensProfile?: Maybe<Scalars['String']['output']>;
   getEvent?: Maybe<Event>;
   getEventApplicationAnswers: Array<EventApplicationAnswer>;
@@ -7942,6 +8005,7 @@ export type Query = {
   listOauth2Clients: Array<OAuth2Client>;
   listPassportSponsors: ListLemonheadSponsorsResponse;
   listPoapDrops: Array<PoapDrop>;
+  listPreviewLinks: Array<PreviewLink>;
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceAssets: Array<FileBase>;
   listSpaceCategories: Array<SpaceCategory>;
@@ -7969,7 +8033,7 @@ export type Query = {
   searchUsers: Array<UserWithEmail>;
   spaceConnections: Array<ConnectionOutput>;
   tgGetMyChannels: ScanChannelsResult;
-  validatePreviewLink?: Maybe<PageConfig>;
+  validatePreviewLink: ValidatePreviewLinkResult;
 };
 
 
@@ -8343,6 +8407,11 @@ export type QueryConnectionLogsArgs = {
 };
 
 
+export type QueryConnectorSlotInfoArgs = {
+  spaceId: Scalars['String']['input'];
+};
+
+
 export type QueryExportEventApplicationsArgs = {
   event: Scalars['MongoID']['input'];
 };
@@ -8458,6 +8527,11 @@ export type QueryGetCommentsArgs = {
 
 export type QueryGetConfigsArgs = {
   keys: Array<Scalars['String']['input']>;
+};
+
+
+export type QueryGetCryptoSubscriptionStatusArgs = {
+  subscription_id: Scalars['MongoID']['input'];
 };
 
 
@@ -9486,6 +9560,12 @@ export type QueryListPoapDropsArgs = {
 };
 
 
+export type QueryListPreviewLinksArgs = {
+  link_type: PreviewLinkType;
+  resource_id: Scalars['MongoID']['input'];
+};
+
+
 export type QueryListSpaceAssetsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -9640,7 +9720,6 @@ export type QueryTgGetMyChannelsArgs = {
 
 
 export type QueryValidatePreviewLinkArgs = {
-  config_id: Scalars['MongoID']['input'];
   password?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
@@ -10621,6 +10700,7 @@ export type Space = {
   image_cover?: Maybe<Scalars['MongoID']['output']>;
   image_cover_expanded?: Maybe<File>;
   is_ambassador?: Maybe<Scalars['Boolean']['output']>;
+  is_crypto_subscription?: Maybe<Scalars['Boolean']['output']>;
   lens_feed_id?: Maybe<Scalars['String']['output']>;
   light_theme_image?: Maybe<Scalars['MongoID']['output']>;
   light_theme_image_expanded?: Maybe<File>;
@@ -11696,6 +11776,7 @@ export type SubmitEventFeedbackInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  cryptoSubscriptionActivated: SubscriptionResponse;
   notificationCreated: Notification;
   poapDropReady: PoapDrop;
   postCreated: Post;
@@ -11705,6 +11786,11 @@ export type Subscription = {
   roomUpdated: Room;
   subscribeEventLatestViews: Track;
   votingUpdated: Scalars['MongoID']['output'];
+};
+
+
+export type SubscriptionCryptoSubscriptionActivatedArgs = {
+  subscription_id: Scalars['MongoID']['input'];
 };
 
 
@@ -11742,6 +11828,14 @@ export type SubscriptionVotingUpdatedArgs = {
   _id: Scalars['MongoID']['input'];
 };
 
+export type SubscriptionCryptoPrice = {
+  __typename?: 'SubscriptionCryptoPrice';
+  amount?: Maybe<Scalars['String']['output']>;
+  amount_annual?: Maybe<Scalars['String']['output']>;
+  chain_id: Scalars['String']['output'];
+  token_address: Scalars['String']['output'];
+};
+
 export type SubscriptionDetail = {
   __typename?: 'SubscriptionDetail';
   active?: Maybe<Scalars['Boolean']['output']>;
@@ -11751,6 +11845,7 @@ export type SubscriptionDetail = {
 export type SubscriptionItem = {
   __typename?: 'SubscriptionItem';
   credits_per_month?: Maybe<Scalars['Int']['output']>;
+  crypto_prices?: Maybe<Array<SubscriptionCryptoPrice>>;
   pricing?: Maybe<SubscriptionPricing>;
   title: Scalars['String']['output'];
   type: SubscriptionItemType;
@@ -11771,6 +11866,11 @@ export type SubscriptionPayment = {
   publishable_key: Scalars['String']['output'];
 };
 
+export enum SubscriptionPaymentMethod {
+  Crypto = 'crypto',
+  Stripe = 'stripe'
+}
+
 export type SubscriptionPricing = {
   __typename?: 'SubscriptionPricing';
   annual_price: Scalars['String']['output'];
@@ -11784,8 +11884,14 @@ export type SubscriptionRecord = {
   _id: Scalars['MongoID']['output'];
   cancel_at_period_end?: Maybe<Scalars['Boolean']['output']>;
   created_at: Scalars['DateTimeISO']['output'];
+  crypto_subscription_amount?: Maybe<Scalars['String']['output']>;
+  crypto_subscription_chain_id?: Maybe<Scalars['String']['output']>;
+  crypto_subscription_reference?: Maybe<Scalars['String']['output']>;
+  crypto_subscription_token_address?: Maybe<Scalars['String']['output']>;
+  crypto_subscription_tx_hash?: Maybe<Scalars['String']['output']>;
   current_period_end: Scalars['DateTimeISO']['output'];
   current_period_start: Scalars['DateTimeISO']['output'];
+  payment_method?: Maybe<SubscriptionPaymentMethod>;
   space: Scalars['MongoID']['output'];
   status: SubscriptionStatus;
 };
@@ -13067,6 +13173,14 @@ export type UsernameAvailability = {
   price?: Maybe<Scalars['String']['output']>;
 };
 
+export type ValidatePreviewLinkResult = {
+  __typename?: 'ValidatePreviewLinkResult';
+  password_protected: Scalars['Boolean']['output'];
+  resource_id?: Maybe<Scalars['MongoID']['output']>;
+  resource_type?: Maybe<PreviewLinkType>;
+  valid: Scalars['Boolean']['output'];
+};
+
 export type VerifyCodeInput = {
   password_2fa?: InputMaybe<Scalars['String']['input']>;
   phone_code: Scalars['String']['input'];
@@ -14220,6 +14334,36 @@ export type UpdateEventPaymentAccountsMutation = { __typename: 'Mutation', updat
       & { ' $fragmentRefs'?: { 'PaymentAccountFragment': PaymentAccountFragment } }
     ) | null> | null } };
 
+export type CreatePreviewLinkMutationVariables = Exact<{
+  input: CreatePreviewLinkInput;
+}>;
+
+
+export type CreatePreviewLinkMutation = { __typename: 'Mutation', createPreviewLink: { __typename: 'PreviewLink', _id: any, link_type: PreviewLinkType, resource_id: any, token: string, password?: string | null, expires_at?: any | null, created_at: any, view_count: number } };
+
+export type DeletePreviewLinkMutationVariables = Exact<{
+  id: Scalars['MongoID']['input'];
+}>;
+
+
+export type DeletePreviewLinkMutation = { __typename: 'Mutation', deletePreviewLink: boolean };
+
+export type ListPreviewLinksQueryVariables = Exact<{
+  link_type: PreviewLinkType;
+  resource_id: Scalars['MongoID']['input'];
+}>;
+
+
+export type ListPreviewLinksQuery = { __typename: 'Query', listPreviewLinks: Array<{ __typename: 'PreviewLink', _id: any, link_type: PreviewLinkType, resource_id: any, token: string, password?: string | null, expires_at?: any | null, created_at: any, view_count: number }> };
+
+export type ValidatePreviewLinkQueryVariables = Exact<{
+  token: Scalars['String']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ValidatePreviewLinkQuery = { __typename: 'Query', validatePreviewLink: { __typename: 'ValidatePreviewLinkResult', valid: boolean, password_protected: boolean, resource_type?: PreviewLinkType | null, resource_id?: any | null } };
+
 export type SpaceFragment = { __typename: 'Space', _id: any, title: string, description?: string | null, is_ambassador?: boolean | null, followed?: boolean | null, followers?: Array<any> | null, followers_count?: number | null, image_avatar?: any | null, image_cover?: any | null, creator: any, slug?: string | null, private?: boolean | null, listed_events?: Array<any> | null, website?: string | null, handle_instagram?: string | null, handle_twitter?: string | null, handle_linkedin?: string | null, handle_youtube?: string | null, handle_tiktok?: string | null, personal?: boolean | null, theme_data?: any | null, sub_spaces?: Array<any> | null, lens_feed_id?: string | null, state: SpaceState, nft_enabled?: boolean | null, theme_name?: string | null, hostnames?: Array<string> | null, fav_icon_url?: string | null, subscription_tier?: string | null, subscription_status?: string | null, subscription_renewal_date?: any | null, credits?: number | null, credits_high_water_mark?: number | null, subscription_credits?: number | null, purchased_credits?: number | null, subscription_annual?: boolean | null, admins?: Array<{ __typename: 'User', _id?: any | null, image_avatar?: string | null }> | null, image_avatar_expanded?: { __typename: 'File', _id?: any | null, bucket: string, url: string, type: string, key: string } | null, image_cover_expanded?: { __typename: 'File', _id?: any | null, bucket: string, url: string, type: string, key: string } | null, creator_expanded?: { __typename: 'User', _id?: any | null, name: string, image_avatar?: string | null } | null, address?: { __typename: 'Address', _id?: any | null, city?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, street_1?: string | null, street_2?: string | null, region?: string | null, title?: string | null } | null, council_members?: Array<{ __typename: 'SpaceCouncilMember', wallet: string, user?: { __typename: 'BasicUserInfo', _id: any, display_name?: string | null, username?: string | null, image_avatar?: string | null } | null }> | null } & { ' $fragmentName'?: 'SpaceFragment' };
 
 export type SpaceTagFragmentFragment = { __typename: 'SpaceTag', _id: any, color: string, space: any, tag: string, targets?: Array<string> | null, type: SpaceTagType } & { ' $fragmentName'?: 'SpaceTagFragmentFragment' };
@@ -14890,6 +15034,10 @@ export const GenerateStripeAccountLinkDocument = {"kind":"Document","definitions
 export const ListNewPaymentAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listNewPaymentAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentAccountType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NewPaymentProvider"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listNewPaymentAccounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"account_info"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"AccountInfoFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AccountInfoFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SafeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"owners"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"pending"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DigitalAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StripeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}},{"kind":"Field","name":{"kind":"Name","value":"publishable_key"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumEscrowAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"minimum_deposit_percent"}},{"kind":"Field","name":{"kind":"Name","value":"host_refund_percent"}},{"kind":"Field","name":{"kind":"Name","value":"refund_policies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumRelayAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"payment_splitter_contract"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumStakeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"config_id"}},{"kind":"Field","name":{"kind":"Name","value":"requirement_checkin_before"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SolanaAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}}]}}]} as unknown as DocumentNode<ListNewPaymentAccountsQuery, ListNewPaymentAccountsQueryVariables>;
 export const CreateNewPaymentAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createNewPaymentAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentAccountType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NewPaymentProvider"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"account_info"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createNewPaymentAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"account_info"},"value":{"kind":"Variable","name":{"kind":"Name","value":"account_info"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"account_info"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"AccountInfoFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AccountInfoFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SafeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"owners"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"pending"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DigitalAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StripeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}},{"kind":"Field","name":{"kind":"Name","value":"publishable_key"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumEscrowAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"minimum_deposit_percent"}},{"kind":"Field","name":{"kind":"Name","value":"host_refund_percent"}},{"kind":"Field","name":{"kind":"Name","value":"refund_policies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumRelayAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"payment_splitter_contract"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumStakeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"config_id"}},{"kind":"Field","name":{"kind":"Name","value":"requirement_checkin_before"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SolanaAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}}]}}]} as unknown as DocumentNode<CreateNewPaymentAccountMutation, CreateNewPaymentAccountMutationVariables>;
 export const UpdateEventPaymentAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateEventPaymentAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payment_accounts_new"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"payment_accounts_new"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payment_accounts_new"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"payment_accounts_new"}},{"kind":"Field","name":{"kind":"Name","value":"payment_accounts_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PaymentAccount"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PaymentAccount"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NewPaymentAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"account_info"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SafeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"owners"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"pending"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DigitalAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StripeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}},{"kind":"Field","name":{"kind":"Name","value":"publishable_key"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumEscrowAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"minimum_deposit_percent"}},{"kind":"Field","name":{"kind":"Name","value":"host_refund_percent"}},{"kind":"Field","name":{"kind":"Name","value":"refund_policies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumRelayAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"payment_splitter_contract"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumStakeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"config_id"}},{"kind":"Field","name":{"kind":"Name","value":"requirement_checkin_before"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SolanaAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateEventPaymentAccountsMutation, UpdateEventPaymentAccountsMutationVariables>;
+export const CreatePreviewLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreatePreviewLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreatePreviewLinkInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createPreviewLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"link_type"}},{"kind":"Field","name":{"kind":"Name","value":"resource_id"}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"expires_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"view_count"}}]}}]}}]} as unknown as DocumentNode<CreatePreviewLinkMutation, CreatePreviewLinkMutationVariables>;
+export const DeletePreviewLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeletePreviewLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"deletePreviewLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeletePreviewLinkMutation, DeletePreviewLinkMutationVariables>;
+export const ListPreviewLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListPreviewLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"link_type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PreviewLinkType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"resource_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listPreviewLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"link_type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"link_type"}}},{"kind":"Argument","name":{"kind":"Name","value":"resource_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"resource_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"link_type"}},{"kind":"Field","name":{"kind":"Name","value":"resource_id"}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"expires_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"view_count"}}]}}]}}]} as unknown as DocumentNode<ListPreviewLinksQuery, ListPreviewLinksQueryVariables>;
+export const ValidatePreviewLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ValidatePreviewLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"validatePreviewLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"password_protected"}},{"kind":"Field","name":{"kind":"Name","value":"resource_type"}},{"kind":"Field","name":{"kind":"Name","value":"resource_id"}}]}}]}}]} as unknown as DocumentNode<ValidatePreviewLinkQuery, ValidatePreviewLinkQueryVariables>;
 export const GetSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"with_my_spaces"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"with_public_spaces"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roles"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SpaceRole"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"featured"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listSpaces"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"with_my_spaces"},"value":{"kind":"Variable","name":{"kind":"Name","value":"with_my_spaces"}}},{"kind":"Argument","name":{"kind":"Name","value":"with_public_spaces"},"value":{"kind":"Variable","name":{"kind":"Name","value":"with_public_spaces"}}},{"kind":"Argument","name":{"kind":"Name","value":"roles"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roles"}}},{"kind":"Argument","name":{"kind":"Name","value":"featured"},"value":{"kind":"Variable","name":{"kind":"Name","value":"featured"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Space"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Space"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Space"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"is_ambassador"}},{"kind":"Field","name":{"kind":"Name","value":"followed"}},{"kind":"Field","name":{"kind":"Name","value":"followers"}},{"kind":"Field","name":{"kind":"Name","value":"followers_count"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image_cover"}},{"kind":"Field","name":{"kind":"Name","value":"image_cover_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"creator"}},{"kind":"Field","name":{"kind":"Name","value":"creator_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"listed_events"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"street_2"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"handle_instagram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"handle_linkedin"}},{"kind":"Field","name":{"kind":"Name","value":"handle_youtube"}},{"kind":"Field","name":{"kind":"Name","value":"handle_tiktok"}},{"kind":"Field","name":{"kind":"Name","value":"personal"}},{"kind":"Field","name":{"kind":"Name","value":"theme_data"}},{"kind":"Field","name":{"kind":"Name","value":"sub_spaces"}},{"kind":"Field","name":{"kind":"Name","value":"lens_feed_id"}},{"kind":"Field","name":{"kind":"Name","value":"council_members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"display_name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"wallet"}}]}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"nft_enabled"}},{"kind":"Field","name":{"kind":"Name","value":"theme_name"}},{"kind":"Field","name":{"kind":"Name","value":"hostnames"}},{"kind":"Field","name":{"kind":"Name","value":"fav_icon_url"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_tier"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_status"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_renewal_date"}},{"kind":"Field","name":{"kind":"Name","value":"credits"}},{"kind":"Field","name":{"kind":"Name","value":"credits_high_water_mark"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_credits"}},{"kind":"Field","name":{"kind":"Name","value":"purchased_credits"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_annual"}}]}}]} as unknown as DocumentNode<GetSpacesQuery, GetSpacesQueryVariables>;
 export const GetSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hostname"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getSpace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}},{"kind":"Argument","name":{"kind":"Name","value":"hostname"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hostname"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Space"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Space"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Space"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"is_ambassador"}},{"kind":"Field","name":{"kind":"Name","value":"followed"}},{"kind":"Field","name":{"kind":"Name","value":"followers"}},{"kind":"Field","name":{"kind":"Name","value":"followers_count"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image_cover"}},{"kind":"Field","name":{"kind":"Name","value":"image_cover_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"creator"}},{"kind":"Field","name":{"kind":"Name","value":"creator_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"listed_events"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"street_2"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"handle_instagram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"handle_linkedin"}},{"kind":"Field","name":{"kind":"Name","value":"handle_youtube"}},{"kind":"Field","name":{"kind":"Name","value":"handle_tiktok"}},{"kind":"Field","name":{"kind":"Name","value":"personal"}},{"kind":"Field","name":{"kind":"Name","value":"theme_data"}},{"kind":"Field","name":{"kind":"Name","value":"sub_spaces"}},{"kind":"Field","name":{"kind":"Name","value":"lens_feed_id"}},{"kind":"Field","name":{"kind":"Name","value":"council_members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"display_name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"wallet"}}]}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"nft_enabled"}},{"kind":"Field","name":{"kind":"Name","value":"theme_name"}},{"kind":"Field","name":{"kind":"Name","value":"hostnames"}},{"kind":"Field","name":{"kind":"Name","value":"fav_icon_url"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_tier"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_status"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_renewal_date"}},{"kind":"Field","name":{"kind":"Name","value":"credits"}},{"kind":"Field","name":{"kind":"Name","value":"credits_high_water_mark"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_credits"}},{"kind":"Field","name":{"kind":"Name","value":"purchased_credits"}},{"kind":"Field","name":{"kind":"Name","value":"subscription_annual"}}]}}]} as unknown as DocumentNode<GetSpaceQuery, GetSpaceQueryVariables>;
 export const GetSpaceEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpaceEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"EventSortInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceTags"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getEvents"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"start_from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"start_to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"end_from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"end_to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"space_tags"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceTags"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"shortid"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"host_expanded_new"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visible_cohosts_expanded_new"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"new_new_photos_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"published"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"end"}},{"kind":"Field","name":{"kind":"Name","value":"timezone"}},{"kind":"Field","name":{"kind":"Name","value":"external_url"}},{"kind":"Field","name":{"kind":"Name","value":"external_hostname"}},{"kind":"Field","name":{"kind":"Name","value":"event_ticket_types"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"cost"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"default"}},{"kind":"Field","name":{"kind":"Name","value":"payment_accounts"}},{"kind":"Field","name":{"kind":"Name","value":"payment_accounts_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PaymentAccount"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"host_expanded_new"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visible_cohosts_expanded_new"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PaymentAccount"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"NewPaymentAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"account_info"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SafeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"owners"}},{"kind":"Field","name":{"kind":"Name","value":"threshold"}},{"kind":"Field","name":{"kind":"Name","value":"pending"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DigitalAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StripeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"account_id"}},{"kind":"Field","name":{"kind":"Name","value":"publishable_key"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumEscrowAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"minimum_deposit_percent"}},{"kind":"Field","name":{"kind":"Name","value":"host_refund_percent"}},{"kind":"Field","name":{"kind":"Name","value":"refund_policies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumRelayAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"payment_splitter_contract"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EthereumStakeAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}},{"kind":"Field","name":{"kind":"Name","value":"config_id"}},{"kind":"Field","name":{"kind":"Name","value":"requirement_checkin_before"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SolanaAccount"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"currencies"}},{"kind":"Field","name":{"kind":"Name","value":"currency_map"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"network"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceEventsQuery, GetSpaceEventsQueryVariables>;

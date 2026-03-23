@@ -11,11 +11,11 @@ mutation CreatePreviewLink($input: CreatePreviewLinkInput!) {
   }
 }
 
-mutation DeletePreviewLink($id: ObjectId!) {
+mutation DeletePreviewLink($id: MongoID!) {
   deletePreviewLink(id: $id)
 }
 
-query ListPreviewLinks($link_type: PreviewLinkType!, $resource_id: ObjectId!) {
+query ListPreviewLinks($link_type: PreviewLinkType!, $resource_id: MongoID!) {
   listPreviewLinks(link_type: $link_type, resource_id: $resource_id) {
     _id
     link_type
