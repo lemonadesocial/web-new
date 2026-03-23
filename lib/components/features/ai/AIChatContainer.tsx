@@ -40,7 +40,7 @@ export function AIChatContainer() {
     chatStoreDispath({ type: AIChatActionKind.toggle_chat });
     if (isMobile) {
       setState({
-        content: <AIChat hideHeader {...(opts.props as T)} />,
+        content: <AIChat {...(opts.props as T)} />,
         options: { ...opts },
       });
     } else {
