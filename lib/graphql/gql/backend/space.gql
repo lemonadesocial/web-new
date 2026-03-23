@@ -419,6 +419,39 @@ query GetSpaceMembers(
   }
 }
 
+query GetSpaceVerificationSubmission($space: MongoID!) {
+  getSpaceVerificationSubmission(space: $space) {
+    confirmation_1
+    confirmation_2
+    created_at
+    event_info
+    guests_info
+    number_of_recipients
+    space
+    state
+    updated_at
+  }
+}
+
+query GetSpaceNewsletter($space: MongoID!, $id: MongoID!) {
+  getSpaceNewsletter(space: $space, _id: $id) {
+    _id
+    created_at
+    custom_body_html
+    custom_subject_html
+    draft
+    scheduled_at
+    sent_at
+  }
+}
+
+query GetSpaceSendingQuota($space: MongoID!) {
+  getSpaceSendingQuota(space: $space) {
+    total
+    used
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -454,6 +487,48 @@ mutation CreateSpace($input: SpaceInput!) {
   createSpace(input: $input) {
     ...Space
   }
+}
+
+mutation CreateSpaceVerificationSubmission($input: SpaceVerificationSubmissionInput!) {
+  createSpaceVerificationSubmission(input: $input) {
+    confirmation_1
+    confirmation_2
+    created_at
+    event_info
+    guests_info
+    number_of_recipients
+    space
+    state
+    updated_at
+  }
+}
+
+mutation CreateSpaceNewsletter($input: CreateSpaceNewsletterInput!) {
+  createSpaceNewsletter(input: $input) {
+    _id
+    created_at
+    custom_body_html
+    custom_subject_html
+    draft
+    scheduled_at
+    sent_at
+  }
+}
+
+mutation UpdateSpaceNewsletter($input: UpdateSpaceNewsletterInput!) {
+  updateSpaceNewsletter(input: $input) {
+    _id
+    created_at
+    custom_body_html
+    custom_subject_html
+    draft
+    scheduled_at
+    sent_at
+  }
+}
+
+mutation DeleteSpaceNewsletter($id: MongoID!) {
+  deleteSpaceNewsletter(_id: $id)
 }
 
 mutation DecideSpaceEventRequests($input: DecideSpaceEventRequestsInput!) {

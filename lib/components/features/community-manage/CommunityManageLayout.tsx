@@ -19,6 +19,7 @@ const menu = [
   { name: 'Submissions', page: 'submissions' },
   { name: 'People', page: 'people' },
   { name: 'Agents', page: 'agents' },
+  { name: 'Newsletters', page: 'newsletters' },
   { name: 'Payments', page: 'payments' },
   { name: 'Rewards', page: 'rewards' },
   { name: 'Launchpad', page: 'launchpad' },

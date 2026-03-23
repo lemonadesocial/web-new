@@ -9,12 +9,18 @@ import NextLink from 'next/link';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { Button } from '$lib/components/core';
+// import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useMe } from '$lib/hooks/useMe';
+import { Button } from '$lib/components/core';
+// import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAuth } from '$lib/hooks/useAuth';
 
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useConnectUnicornWallet } from '$lib/hooks/useConnectUnicornWallet';
 import { useHandleFarcasterMiniApp } from '$lib/hooks/useConnectFarcaster';
 
+// import { useLemonhead } from '$lib/hooks/useLemonhead';
+// import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { UserMenu } from './UserMenu';
 
 type Props = {
@@ -23,6 +29,7 @@ type Props = {
   hideLogo?: boolean;
   className?: string;
   showUI?: boolean;
+  leftIcon?: React.ReactNode;
 };
 
 const menu = [
@@ -51,7 +58,14 @@ export function RootMenu() {
   );
 }
 
-export default function Header({ showUI = true, title, mainMenu, hideLogo, className }: Props) {
+export default function Header({
+  showUI = true,
+  title,
+  mainMenu,
+  hideLogo,
+  className,
+  leftIcon,
+}: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { reload } = useAuth();
@@ -64,15 +78,18 @@ export default function Header({ showUI = true, title, mainMenu, hideLogo, class
   return (
     <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">
-        {!hideLogo && (
-          <NextLink
-            href="/"
-            aria-label="Lemonade"
-            className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
-          >
-            <i aria-hidden="true" className="icon-lemonade size-[20]" />
-          </NextLink>
-        )}
+        {!hideLogo &&
+          (leftIcon ? (
+            leftIcon
+          ) : (
+            <NextLink
+              href="/"
+              aria-label="Lemonade"
+              className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
+            >
+              <i aria-hidden="true" className="icon-lemonade size-[20]" />
+            </NextLink>
+          ))}
         {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
       </div>
 
