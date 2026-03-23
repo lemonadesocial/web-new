@@ -76,38 +76,38 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
         payload = { ...payload, config: { ...payload.config, name: pattern } };
       }
 
-      return { ...merge(state, payload) };
+      return merge({}, state, payload);
     }
 
     case ThemeBuilderActionKind.select_color: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.select_font: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.select_mode: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.select_style: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.select_effect: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.select_image: {
-      return { ...merge(state, action.payload) };
+      return merge({}, state, action.payload);
     }
 
     case ThemeBuilderActionKind.random: {
       const [fontTitle, fontTitleVariable] = getRandomFont('title');
       const [fontBody, fontBodyVariable] = getRandomFont('body');
 
-      let payload = {
+      let payload: ThemeValues = {
         ...state,
         font_title: fontTitle,
         font_body: fontBody,
@@ -130,11 +130,11 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
         payload = { ...payload, config: { ...payload.config, name: pattern } };
       }
 
-      return { ...payload };
+      return payload;
     }
 
     case ThemeBuilderActionKind.reset: {
-      return { ...merge(defaultTheme, action.payload) };
+      return merge({}, defaultTheme, action.payload);
     }
 
     default:

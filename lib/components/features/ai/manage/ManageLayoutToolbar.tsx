@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 import { isEqual, merge } from 'lodash';
 
-import { Button, Menu, MenuItem, sheet, toast } from '$lib/components/core';
+import { Button, Menu, MenuItem, modal, sheet, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
@@ -17,13 +17,18 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
-import { EventThemeProvider, ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
+import {
+  EventThemeProvider,
+  ThemeBuilderActionKind,
+  useEventTheme,
+} from '$lib/components/features/theme-builder/provider';
 import { defaultTheme, ThemeValues } from '$lib/components/features/theme-builder/store';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
+import { PreviewLinkPopup } from './PreviewLinkPopup';
 
 const devices = {
   desktop: {
@@ -61,6 +66,7 @@ function ManageLayoutToolbar() {
       if (updatedEvent?._id) {
         toast.success('Theme saved successfully!');
         store.setData({ ...state.data, theme_data: themeState } as Event);
+        updateEvent({ theme_data: updatedEvent.theme_data });
       }
     },
     onError: (error) => {
@@ -220,26 +226,50 @@ function ManageLayoutToolbar() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              iconLeft="icon-arrow-shape-up-stack-outline"
-              onClick={() => {
-                router.push('/upgrade-to-pro');
-              }}
-            >
-              Upgrade
-            </Button>
-            {canSaveTheme && (
-              <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-                Reset
+            {state.activeTab === 'manage' && (
+              <Button
+                size="sm"
+                outlined
+                iconLeft="icon-arrow-shape-up-stack-outline"
+                onClick={() => {
+                  router.push('/upgrade-to-pro');
+                }}
+              >
+                Upgrade
               </Button>
             )}
-            {canSaveTheme && (
-              <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-                Save
-              </Button>
+
+            {['design', 'preview'].includes(state.activeTab) && (
+              <>
+                <Menu.Root placement="bottom-end" dismissable={false}>
+                  <Menu.Trigger>
+                    {({ toggle }) => (
+                      <Button size="sm" variant="secondary" iconLeft="icon-share" onClick={toggle}>
+                        Share Preview
+                      </Button>
+                    )}
+                  </Menu.Trigger>
+                  <Menu.Content className="p-0 w-[480px]">
+                    <PreviewLinkPopup />
+                  </Menu.Content>
+                </Menu.Root>
+                <Button size="sm" variant="tertiary-alt" onClick={() => store.setActiveTab('manage')}>
+                  Close
+                </Button>
+              </>
             )}
+
+            {canSaveTheme && (
+              <>
+                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
+                  Reset
+                </Button>
+                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
+                  Save
+                </Button>
+              </>
+            )}
+
             {state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
@@ -326,6 +356,27 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
+            {['preview', 'design'].includes(state.activeTab) && (
+              <Button
+                size="sm"
+                variant="secondary"
+                icon="icon-share"
+                className="rounded-full"
+                onClick={() =>
+                  modal.open(PreviewLinkPopup, {
+                    props: { hideCard: true },
+                    component: (props) => (
+                      <ModalContent icon="icon-link">
+                        <PreviewLinkPopup {...props} />
+                      </ModalContent>
+                    ),
+                  })
+                }
+              >
+                Share Preview
+              </Button>
+            )}
+
             {canSaveTheme && (
               <>
                 <Button size="sm" variant="tertiary-alt" className="rounded-full" onClick={handleResetTheme}>

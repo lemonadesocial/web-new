@@ -444,14 +444,20 @@
 /*
  * Responsive variant overrides for manage preview panel.
  * When an ancestor has data-mode='mobile', responsive breakpoints are suppressed
- * to force mobile layout rendering in the preview. This attribute is ONLY set in
- * ManageLayoutContent.tsx (sidebar + content panels) — it never appears on non-manage pages.
+ * to force mobile layout rendering in the preview.
+ * When an ancestor has data-mode='desktop', responsive breakpoints are forced
+ * to show desktop layout rendering even on mobile.
+ * This attribute is ONLY set in ManageLayoutContent.tsx (sidebar + content panels)
+ * — it never appears on non-manage pages.
  */
 @variant sm {
   @media (min-width: 640px) {
     &:not([data-mode='mobile'] &) {
       @slot;
     }
+  }
+  [data-mode='desktop'] & {
+    @slot;
   }
 }
 
@@ -461,6 +467,9 @@
       @slot;
     }
   }
+  [data-mode='desktop'] & {
+    @slot;
+  }
 }
 
 @variant lg {
@@ -468,6 +477,9 @@
     &:not([data-mode='mobile'] &) {
       @slot;
     }
+  }
+  [data-mode='desktop'] & {
+    @slot;
   }
 }
 
@@ -477,6 +489,9 @@
       @slot;
     }
   }
+  [data-mode='desktop'] & {
+    @slot;
+  }
 }
 
 @variant 2xl {
@@ -484,6 +499,9 @@
     &:not([data-mode='mobile'] &) {
       @slot;
     }
+  }
+  [data-mode='desktop'] & {
+    @slot;
   }
 }
 
