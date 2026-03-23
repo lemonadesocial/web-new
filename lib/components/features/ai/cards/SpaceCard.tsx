@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 import type { Space } from '$lib/graphql/generated/backend/graphql';
 import { randomCommunityImage } from '$lib/utils/community';
@@ -22,11 +23,12 @@ export function SpaceCard({ data, link }: SpaceCardProps) {
   return (
     <Link href={href} className="block">
       <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card cursor-pointer">
-        <img
+        <Image
           src={avatarUrl}
           alt={data.title ?? ''}
-          loading="lazy"
-          className="size-[38px] rounded-full object-cover shrink-0 border border-card-border"
+          width={38}
+          height={38}
+          className="rounded-full object-cover shrink-0 border border-card-border"
         />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-primary truncate">

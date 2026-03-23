@@ -9,51 +9,71 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat() {
+type AIChatProps = {
+  variant?: 'default' | 'home';
+  showTools?: boolean;
+  readOnly?: boolean;
+  allowGuest?: boolean;
+};
+
+export function AIChat({ variant = 'default', showTools = true, readOnly, allowGuest = false }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
-  if (!me) return null;
+  if (!me && !allowGuest) return null;
 
   return (
-    <div className="space-y-8 flex flex-col h-full">
-      <AnimatePresence mode="wait">
-        <React.Fragment>
-          {!state.messages.length && !state.thinking && (
-            <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />
-          )}
+    <div className="flex flex-col h-full relative isolate">
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <AnimatePresence mode="wait">
+          <React.Fragment>
+            {!state.messages.length && !state.thinking && (
+              <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />
+            )}
 
-          {!!state.messages.length || state.thinking ? (
+            {!!state.messages.length || state.thinking ? (
+              <motion.div
+                key="messages"
+                layout
+                className="flex-1 pt-8 overflow-y-auto no-scrollbar max-w-4xl mx-auto w-full"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                <Messages />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="welcome"
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1"
+              >
+                <WelcomeChat />
+              </motion.div>
+            )}
+
             <motion.div
-              key="messages"
-              layout
-              className="flex-1 pt-8 overflow-y-auto no-scrollbar"
+              className="space-y-4 pb-6 pt-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{
+                duration: 0.3,
+                ease: 'easeOut',
+                delay: state.messages.length || state.thinking ? 0.3 : 0,
+              }}
             >
-              <Messages />
-            </motion.div>
-          ) : (
-            <motion.div key="welcome" layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <WelcomeChat />
-            </motion.div>
-          )}
-          <motion.div
-            className="space-y-4 pb-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.3,
-              ease: 'easeOut',
-              delay: state.messages.length || state.thinking ? 0.3 : 0,
-            }}
-          >
-            <div className="relative z-10">
-              <InputChat />
-            </div>
-            {!!state.messages.length || state.thinking ? (
+              <div className="relative z-10 max-w-4xl mx-auto w-full">
+                <InputChat variant={variant} showTools={showTools} readOnly={readOnly} />
+              </div>
+              {showTools && (
+                <div className="flex justify-center">
+                  <ToolsSuggest />
+                </div>
+              )}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -63,17 +83,18 @@ export function AIChat() {
                   delay: 0.3,
                 }}
               >
-                <p className="text-center text-xs text-tertiary">LemonAI can make mistakes, so double-check it</p>
+                <p className="text-center text-xs text-tertiary">
+                  LemonAI can make mistakes, so please double-check it.
+                </p>
               </motion.div>
-            ) : (
-              <ToolsSuggest />
+            </motion.div>
+
+            {!state.messages.length && !state.thinking && (
+              <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />
             )}
-          </motion.div>
-          {!state.messages.length && !state.thinking && (
-            <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />
-          )}
-        </React.Fragment>
-      </AnimatePresence>
+          </React.Fragment>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

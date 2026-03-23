@@ -1,5 +1,35 @@
 # Changelog
 
+## [10.22.0](https://github.com/lemonadesocial/web-new/compare/v10.21.0...v10.22.0) (2026-03-23)
+
+
+### Features
+
+* add atlas discovery page, ai chat cards, and reward dashboard ([#1046](https://github.com/lemonadesocial/web-new/issues/1046)) ([ab50d92](https://github.com/lemonadesocial/web-new/commit/ab50d9249fb5f1991e7bd86722fda65f5bd0d583))
+* align signed-out home chat and section with logged-in UI ([7caf96f](https://github.com/lemonadesocial/web-new/commit/7caf96f5b332671b8367323519d599d68d0d4dd8))
+
+## [10.21.0](https://github.com/lemonadesocial/web-new/compare/v10.20.0...v10.21.0) (2026-03-19)
+
+
+### Features
+
+* adjust home bg size ([8155712](https://github.com/lemonadesocial/web-new/commit/8155712894e8aaafd351885f280155b14de5603f))
+
+## [10.20.0](https://github.com/lemonadesocial/web-new/compare/v10.19.0...v10.20.0) (2026-03-19)
+
+
+### Features
+
+* add stablecoin crypto payment for subscriptions ([b477213](https://github.com/lemonadesocial/web-new/commit/b47721303cfc9afaf4201bfb7ef766a628d695b8))
+* update upgrade-to-pro crypto subscription flow ([ae3a849](https://github.com/lemonadesocial/web-new/commit/ae3a849287e94e7586df5e99e61a9515bcdebb10))
+
+
+### Bug Fixes
+
+* address Karen review findings on crypto subscription FE ([4fd6e12](https://github.com/lemonadesocial/web-new/commit/4fd6e1223693c91685ef2e3a1f3d39b6a5b04256))
+* address Karen round 2 findings ([e6213d5](https://github.com/lemonadesocial/web-new/commit/e6213d55d1ed3dd8fd61a9af497d95f9368a3da0))
+* refine crypto subscription wallet flow ([bcaa82b](https://github.com/lemonadesocial/web-new/commit/bcaa82bda0c6f6dce7259c702e3f0c493f06dd96))
+
 ## [10.19.0](https://github.com/lemonadesocial/web-new/compare/v10.18.1...v10.19.0) (2026-03-16)
 
 

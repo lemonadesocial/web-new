@@ -3,10 +3,12 @@ import { useMemo } from 'react';
 
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { useStakingCoin } from '$lib/hooks/useCoin';
+import { useAIChat } from '$lib/components/features/ai/provider';
 
 export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boolean }) {
   const pathname = usePathname();
   const { stakingToken } = useStakingCoin(space._id);
+  const [aiState] = useAIChat();
 
   const menu = useMemo(() => {
     let menu = [];
@@ -72,8 +74,16 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
       }
     }
 
+    if (aiState.configs?.length) {
+      menu.push({
+        icon: 'icon-robot',
+        path: 'chat',
+        label: 'Chat',
+      });
+    }
+
     return menu;
-  }, [pathname, space, isMobile, stakingToken]);
+  }, [pathname, space, isMobile, stakingToken, aiState.configs]);
 
   const isActive = (item: { path: string }) => {
     const uid = space.slug || space._id;
