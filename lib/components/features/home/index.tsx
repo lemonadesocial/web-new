@@ -3,6 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
 import { AIChat } from '$lib/components/features/ai/AIChat';
 import { useAIChat } from '$lib/components/features/ai/provider';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -11,17 +12,10 @@ import { HomeEventsSection } from './HomeEventsSection';
 
 export function Home() {
   const me = useMe();
+  const signIn = useSignIn();
   const [aiState] = useAIChat();
-
-  if (!me) {
-    return (
-      <div className="w-full h-full flex max-sm:px-4 max-sm:pt-44 items-center justify-center max-w-[1200px] mx-auto">
-        <NonLoginContent />
-      </div>
-    );
-  }
-
-  const chatExpanded = aiState.messages.length || aiState.thinking;
+  const loggedIn = !!me;
+  const chatExpanded = loggedIn && (aiState.messages.length || aiState.thinking);
   const rootClassName = clsx(
     'min-h-full w-full bg-overlay-primary flex flex-col items-center',
     !chatExpanded && 'pb-10 relative overflow-x-clip',
@@ -53,18 +47,24 @@ export function Home() {
         </div>
       ) : (
         <div className="relative z-10 w-full min-h-[calc(100vh-100px)] shrink-0 flex justify-center">
-          <div className="w-full max-w-[720px] px-4 md:px-0 flex flex-col justify-center">
-            <AIChat variant="home" />
+          <div className="w-full max-w-[720px] px-4 md:px-0 flex flex-col justify-center relative">
+            <AIChat variant="home" allowGuest={!loggedIn} />
+            {!loggedIn && (
+              <button
+                type="button"
+                onClick={() => signIn()}
+                className="absolute inset-0 z-20 rounded-[16px] bg-transparent cursor-pointer"
+                aria-label="Sign in to use LemonAI chat"
+              />
+            )}
           </div>
         </div>
       )}
-      {
-        !chatExpanded && (
-          <div className="relative z-10 w-full px-4 md:px-6 xl:px-8">
-            <HomeEventsSection />
-          </div>
-        )
-      }
+      {!chatExpanded && (
+        <div className="relative z-10 w-full px-4 md:px-6 xl:px-8">
+          {loggedIn ? <HomeEventsSection /> : <NonLoginContent onGetStarted={() => signIn()} />}
+        </div>
+      )}
     </div>
   );
 }

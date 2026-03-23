@@ -13,13 +13,14 @@ type AIChatProps = {
   variant?: 'default' | 'home';
   showTools?: boolean;
   readOnly?: boolean;
+  allowGuest?: boolean;
 };
 
-export function AIChat({ variant = 'default', showTools = true, readOnly }: AIChatProps) {
+export function AIChat({ variant = 'default', showTools = true, readOnly, allowGuest = false }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
-  if (!me) return null;
+  if (!me && !allowGuest) return null;
 
   return (
     <div className="flex flex-col h-full relative isolate">

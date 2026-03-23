@@ -4,6 +4,8 @@ import { delay } from 'lodash';
 import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
 import { isMobile } from 'react-device-detect';
+import clsx from 'clsx';
+import Image from 'next/image';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 
@@ -23,8 +25,7 @@ import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
-import clsx from 'clsx';
-import Image from 'next/image';
+import { useMe } from '$lib/hooks/useMe';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -37,6 +38,7 @@ type InputChatProps = {
 };
 
 export function InputChat({ variant = 'default', showTools = true, readOnly }: InputChatProps) {
+  const me = useMe();
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -261,16 +263,18 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
             </Menu.Root>
           )}
           <div className="flex items-center gap-2 flex-1 justify-end">
-            <SpaceSelector
-              readOnly={readOnly}
-              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
-              onSelectSpace={(space) =>
-                dispatch({
-                  type: AIChatActionKind.set_data_run,
-                  payload: { data: { space_id: space._id } },
-                })
-              }
-            />
+            {me && (
+              <SpaceSelector
+                readOnly={readOnly}
+                currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
+                onSelectSpace={(space) =>
+                  dispatch({
+                    type: AIChatActionKind.set_data_run,
+                    payload: { data: { space_id: space._id } },
+                  })
+                }
+              />
+            )}
             <Button
               icon="icon-arrow-foward-sharp -rotate-90"
               size="sm"

@@ -9,96 +9,107 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 const cards = [
   {
     icon: 'icon-ticket',
-    color: 'bg-alert-500',
-    title: () => (
-      <p className="md:text-lg">
-        Run <span className="text-alert-400!">events</span> that power your community.
-      </p>
-    ),
+    color: 'bg-[#2B7FFF]',
+    highlight: 'text-[#51A2FF]',
+    prefix: 'Run ',
+    accent: 'events',
+    suffix: ' that power your community.',
     subtitle: "Create & manage events that your community won't forget.",
   },
   {
     icon: 'icon-community',
-    color: 'bg-warning-600',
-    title: () => (
-      <p className="md:text-lg">
-        Create <span className="text-warning-400">hubs</span> where people come together.
-      </p>
-    ),
+    color: 'bg-[#CA8A04]',
+    highlight: 'text-[#FDE047]',
+    prefix: 'Create ',
+    accent: 'hubs',
+    suffix: ' where people come together.',
     subtitle: 'Bring members together in spaces that grow with you.',
   },
   {
     icon: 'icon-farcaster',
-    color: 'bg-accent-500',
-    title: () => (
-      <p className="md:text-lg">
-        Bring your Farcaster <span className="text-accent-400">channels</span> to life.
-      </p>
-    ),
+    color: 'bg-[#8E51FF]',
+    highlight: 'text-[#A684FF]',
+    prefix: 'Bring your Farcaster ',
+    accent: 'channels',
+    suffix: ' to life.',
     subtitle: 'Import them, link to your hubs, and host events seamlessly.',
   },
   {
     icon: 'icon-lens',
-    color: 'bg-success-600',
-    title: () => (
-      <p className="md:text-lg">
-        Deploy Lens <span className="text-success-400">feeds</span> for your hubs.
-      </p>
-    ),
+    color: 'bg-[#009966]',
+    highlight: 'text-[#00BC7D]',
+    prefix: 'Deploy Lens ',
+    accent: 'feeds',
+    suffix: ' for your hubs.',
     subtitle: 'Give your community a live social layer that keeps them connected.',
   },
 ];
 
-export function NonLoginContent() {
+type NonLoginContentProps = {
+  onGetStarted?: () => void;
+};
+
+export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
   const signIn = useSignIn();
+  const handleGetStarted = React.useCallback(() => {
+    if (onGetStarted) {
+      onGetStarted();
+      return;
+    }
+    signIn();
+  }, [onGetStarted, signIn]);
 
   return (
-    <div className="flex flex-col gap-2 mb-20">
-      <div className="rounded-md outline-2 outline-card-border overflow-hidden">
-        <div
-          className="w-full aspect-video max-h-[548px] p-5 md:p-16 flex flex-col justify-between"
-          style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
-        >
-          <div className="flex flex-col gap-2 md:gap-4">
-            <h3 className="text-xl md:text-[60px] font-semibold md:leading-[72px] max-w-2/3">
-              Create your Lemonade Stand
-            </h3>
-            <p className="text-sm md:text-[24px] md:leading-9 text-secondary max-w-5/6 md:max-w-1/2">
-              Your space for events, communities, and everything in between.
-            </p>
-          </div>
+    <div className="w-full pb-10 md:pb-20">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-4">
+        <Card.Root className="rounded-[24px] border-card-border bg-background overflow-hidden">
+          <Card.Content
+            className="h-full min-h-[300px] md:min-h-[480px] p-7 md:p-14 flex flex-col justify-between gap-10"
+            style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
+          >
+            <div className="flex flex-col gap-4">
+              <h3 className="font-title text-4xl md:text-[60px] font-semibold leading-[1.15] md:leading-[72px] max-w-[420px]">
+                Create your Lemonade Stand
+              </h3>
+              <p className="text-lg md:text-[24px] md:leading-9 text-secondary max-w-[420px]">
+                Your space for events, communities, and everything in between.
+              </p>
+            </div>
 
-          <div className="hidden md:flex justify-between items-end">
-            <Button size="lg" onClick={() => signIn()}>
-              Get Started
-            </Button>
-            <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-24 aspect-square" />
-          </div>
+            <div className="flex items-end justify-between gap-4">
+              <Button size="lg" variant="secondary" onClick={handleGetStarted}>
+                Get Started
+              </Button>
+              <img
+                alt=""
+                aria-hidden
+                src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`}
+                className="size-14 md:size-24 aspect-square shrink-0"
+              />
+            </div>
+          </Card.Content>
+        </Card.Root>
 
-          <div className="flex md:hidden justify-between items-end">
-            <Button size="sm" onClick={() => signIn()}>
-              Get Started
-            </Button>
-            <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-12 aspect-square" />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {cards.map((item, idx) => (
+            <Card.Root key={idx} className="rounded-[24px] border-card-border bg-background">
+              <Card.Content className="p-7 flex flex-col gap-6 h-full">
+                <div className={twMerge('size-14 flex items-center justify-center rounded-[8px]', item.color)}>
+                  <i aria-hidden className={twMerge('size-8 text-white', item.icon)} />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <p className="text-lg leading-6 text-primary">
+                    <span>{item.prefix}</span>
+                    <span className={item.highlight}>{item.accent}</span>
+                    <span>{item.suffix}</span>
+                  </p>
+                  <p className="text-sm leading-5 text-tertiary">{item.subtitle}</p>
+                </div>
+              </Card.Content>
+            </Card.Root>
+          ))}
         </div>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4 py-2">
-        {cards.map((item, idx) => (
-          <Card.Root key={idx}>
-            <Card.Content className="p-5 flex flex-row md:flex-col gap-4">
-              <div className={twMerge('size-14 aspect-square flex items-center justify-center rounded-sm', item.color)}>
-                <i className={twMerge('size-8', item.icon)} />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                {item.title()}
-                <p className="text-sm text-tertiary">{item.subtitle}</p>
-              </div>
-            </Card.Content>
-          </Card.Root>
-        ))}
       </div>
     </div>
   );
