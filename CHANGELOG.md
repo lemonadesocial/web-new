@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.22.0](https://github.com/lemonadesocial/web-new/compare/v10.21.0...v10.22.0) (2026-03-23)
+
+
+### Features
+
+* add atlas discovery page, ai chat cards, and reward dashboard ([#1046](https://github.com/lemonadesocial/web-new/issues/1046)) ([ab50d92](https://github.com/lemonadesocial/web-new/commit/ab50d9249fb5f1991e7bd86722fda65f5bd0d583))
+* align signed-out home chat and section with logged-in UI ([7caf96f](https://github.com/lemonadesocial/web-new/commit/7caf96f5b332671b8367323519d599d68d0d4dd8))
+
 ## [10.21.0](https://github.com/lemonadesocial/web-new/compare/v10.20.0...v10.21.0) (2026-03-19)
 
 
