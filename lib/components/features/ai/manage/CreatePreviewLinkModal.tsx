@@ -7,12 +7,12 @@ import { useMutation } from '$lib/graphql/request';
 import { copy } from '$lib/utils/helpers';
 
 const expiredList = [
-  { value: 1, label: '1 hour' },
-  { value: 6, label: '6 hours' },
-  { value: 24, label: '24 hours' },
-  { value: 48, label: '48 hours' },
-  { value: 168, label: '7 days' },
-  { value: 0, label: 'Never' },
+  { hours: 1, label: '1 hour' },
+  { hours: 6, label: '6 hours' },
+  { hours: 24, label: '24 hours' },
+  { hours: 48, label: '48 hours' },
+  { hours: 168, label: '7 days' },
+  { hours: 0, label: 'Never' },
 ];
 
 export function CreatePreviewLinkModal({
@@ -88,8 +88,8 @@ export function CreatePreviewLinkModal({
               {({ toggle }) => {
                 return expiredList.map((item) => (
                   <MenuItem
-                    key={item.value}
-                    iconRight={item.value === expired?.value ? 'icon-done text-quaternary!' : undefined}
+                    key={item.hours}
+                    iconRight={item.hours === expired?.hours ? 'icon-done text-quaternary!' : undefined}
                     onClick={() => {
                       setExpired(item);
                       toggle();
@@ -111,7 +111,9 @@ export function CreatePreviewLinkModal({
               variables: {
                 input: {
                   link_type: linkType,
-                  expires_in_hours: expired?.value || undefined,
+                  expires_at: expired?.hours
+                    ? new Date(Date.now() + expired.hours * 60 * 60 * 1000).toISOString()
+                    : undefined,
                   password: requiredPassword && password ? password : undefined,
                   resource_id: resourceId,
                 },

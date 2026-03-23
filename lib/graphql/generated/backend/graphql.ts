@@ -1453,7 +1453,7 @@ export type CreatePoapInput = {
 };
 
 export type CreatePreviewLinkInput = {
-  expires_in_hours?: InputMaybe<Scalars['Float']['input']>;
+  expires_at?: InputMaybe<Scalars['DateTime']['input']>;
   link_type: PreviewLinkType;
   password?: InputMaybe<Scalars['String']['input']>;
   resource_id: Scalars['MongoID']['input'];
