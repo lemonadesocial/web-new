@@ -25,7 +25,7 @@ export function PasswordGate({ token, error }: { token: string; error?: boolean 
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-primary p-4">
+    <main className="flex min-h-screen items-center justify-center p-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
         <h1 className="text-center text-xl font-semibold text-primary">This preview is password protected</h1>
 
@@ -49,6 +49,6 @@ export function PasswordGate({ token, error }: { token: string; error?: boolean 
           Continue
         </Button>
       </form>
-    </div>
+    </main>
   );
 }

@@ -47,7 +47,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const client = getClient();
-  console.log(result.resource_id);
 
   if (result.resource_type === 'event') {
     const { data } = await client.query({
