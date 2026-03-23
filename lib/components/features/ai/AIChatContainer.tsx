@@ -58,7 +58,7 @@ export function AIChatContainer() {
               </Pane.Header.Right>
             </Pane.Header.Root>
             <Pane.Content className="p-4 overflow-auto">
-              <AIChat hideHeader {...(opts.props as T)} />
+              <AIChat {...(opts.props as T)} />
             </Pane.Content>
           </Pane.Root>
         ),
