@@ -111,7 +111,7 @@ export function CreatePreviewLinkModal({
               variables: {
                 input: {
                   link_type: linkType,
-                  expires_in_hours: expired?.value,
+                  expires_in_hours: expired?.value || undefined,
                   password: requiredPassword && password ? password : undefined,
                   resource_id: resourceId,
                 },

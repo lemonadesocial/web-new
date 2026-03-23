@@ -62,10 +62,10 @@ function ManageLayoutToolbar() {
   const [updateEventTheme, { loading: savingTheme }] = useMutation(UpdateEventThemeDocument, {
     onComplete: (_, data) => {
       const updatedEvent = data?.updateEvent;
-      if (data?.updateEvent?._id) {
+      if (updatedEvent?._id) {
         toast.success('Theme saved successfully!');
         store.setData({ ...state.data, theme_data: themeState } as Event);
-        updateEvent(data.updateEvent);
+        updateEvent({ theme_data: updatedEvent.theme_data });
       }
     },
     onError: (error) => {
@@ -361,7 +361,16 @@ function ManageLayoutToolbar() {
                 variant="secondary"
                 icon="icon-share"
                 className="rounded-full"
-                onClick={() => modal.open(PreviewLinkPopup)}
+                onClick={() =>
+                  modal.open(PreviewLinkPopup, {
+                    props: { hideCard: true },
+                    component: (props) => (
+                      <ModalContent icon="icon-link">
+                        <PreviewLinkPopup {...props} />
+                      </ModalContent>
+                    ),
+                  })
+                }
               >
                 Share Preview
               </Button>
