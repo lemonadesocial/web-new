@@ -13,7 +13,6 @@ type AIChatProps = {
   variant?: 'default' | 'home';
   showTools?: boolean;
   readOnly?: boolean;
-  hideHeader?: boolean;
 };
 
 export function AIChat({ variant = 'default', showTools = true, readOnly }: AIChatProps) {
