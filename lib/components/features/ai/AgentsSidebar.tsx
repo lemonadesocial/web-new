@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
+import Image from 'next/image';
 import { useAIChat, AIChatActionKind } from './provider';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { Button, modal, ModalContent } from '$lib/components/core';
@@ -44,9 +45,11 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
               isActive && 'border border-primary hover:bg-(--btn-tertiary)!',
             )}
           >
-            <img
+            <Image
               src={agent.avatar || randomEventDP(agent._id)}
-              className="w-10 h-10 rounded-full object-cover shrink-0"
+              width={40}
+              height={40}
+              className="rounded-full object-cover shrink-0"
               alt={agent.name}
             />
             <div className="flex-1 min-w-0">
@@ -81,12 +84,16 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
 }
 
 export function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSelectAgent: () => void }) {
+  if (!agent) return null;
+
   return (
     <ModalContent
       className="**:data-icon:bg-transparent"
       icon={
-        <img
+        <Image
           src={agent.avatar || randomEventDP(agent._id)}
+          width={48}
+          height={48}
           className="rounded-full object-cover shrink-0"
           data-icon
           alt={agent.name}
@@ -104,9 +111,12 @@ export function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSele
           <div className="flex gap-2 text-sm text-tertiary items-center">
             <span>By</span>
             <div className="flex gap-1.5 items-center">
-              <img
+              <Image
                 src={agent.userExpanded?.image_avatar || userAvatar(agent.userExpanded)}
-                className="w-4 h-4 rounded-full"
+                width={16}
+                height={16}
+                className="rounded-full"
+                alt={agent.userExpanded?.name || 'User'}
               />
               <p>{agent.userExpanded?.name}</p>
             </div>

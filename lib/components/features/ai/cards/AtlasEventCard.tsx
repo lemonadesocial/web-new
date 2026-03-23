@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 import clsx from 'clsx';
+import Image from 'next/image';
 
 import type { AtlasEvent } from '$lib/types/atlas';
 
@@ -58,11 +59,12 @@ export function AtlasEventCard({ event, selectable, selected, onSelect, onClick 
         </span>
       )}
 
-      <img
+      <Image
         src={event.image_url || '/placeholder-event.png'}
         alt={event.title}
-        loading="lazy"
-        className="size-[38px] rounded-sm border border-card-border object-cover shrink-0"
+        width={38}
+        height={38}
+        className="rounded-sm border border-card-border object-cover shrink-0"
       />
 
       <div className="flex-1 min-w-0">

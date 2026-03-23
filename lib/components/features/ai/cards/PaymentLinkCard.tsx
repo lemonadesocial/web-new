@@ -74,13 +74,13 @@ export function PaymentLinkCard({ checkout }: PaymentLinkCardProps) {
         )}
 
         <a
-          href={checkout.checkout_url}
+          href={isExpired ? undefined : checkout.checkout_url}
           target="_blank"
           rel="noopener noreferrer"
           aria-disabled={isExpired}
           className={
             isExpired
-              ? 'px-4 py-1.5 rounded-md text-sm font-medium bg-overlay-secondary text-quaternary pointer-events-none'
+              ? 'px-4 py-1.5 rounded-md text-sm font-medium bg-overlay-secondary text-quaternary cursor-not-allowed'
               : 'px-4 py-1.5 rounded-md text-sm font-medium bg-accent-400 text-white hover:bg-accent-400/90 transition-colors'
           }
         >

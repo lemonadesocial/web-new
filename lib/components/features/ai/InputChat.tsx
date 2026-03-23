@@ -24,6 +24,7 @@ import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
 import clsx from 'clsx';
+import Image from 'next/image';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -335,9 +336,11 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
                 !readOnly && 'cursor-pointer',
               )}
             >
-              <img
+              <Image
                 src={communityAvatar(selectedSpace)}
-                className="w-4 h-4 rounded-full object-cover"
+                width={16}
+                height={16}
+                className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
               <p className="text-sm max-w-[132px] truncate text-tertiary">

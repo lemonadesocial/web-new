@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Image from 'next/image';
 import { Button } from '$lib/components/core';
 import { Message, useAIChat } from './provider';
 import { CardList } from './cards';
@@ -59,7 +60,13 @@ function MessageItem({ message: item }: { message: Message }) {
       <div className="flex items-start gap-4">
         <div className="relative flex mt-1 shrink-0 items-center justify-center">
           {currentAgent?.avatar ? (
-            <img src={currentAgent.avatar} className="w-6 h-6 rounded-full object-cover" alt={currentAgent.name} />
+            <Image
+              src={currentAgent.avatar}
+              width={24}
+              height={24}
+              className="rounded-full object-cover"
+              alt={currentAgent.name || 'Agent'}
+            />
           ) : (
             <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
           )}

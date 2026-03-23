@@ -56,7 +56,7 @@ export function RewardDashboard({ spaceId }: RewardDashboardProps) {
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, spaceId]);
 
   if (!enabled) {
     return (

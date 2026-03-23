@@ -24,7 +24,7 @@ export function AIChat({ variant = 'default', showTools = true, readOnly }: AICh
 
   return (
     <div className="flex flex-col h-full relative isolate">
-      <div className="flex-1 overflow-hidden flex flex-col px-6">
+      <div className="flex-1 overflow-hidden flex flex-col">
         <AnimatePresence mode="wait">
           <React.Fragment>
             {!state.messages.length && !state.thinking && (
