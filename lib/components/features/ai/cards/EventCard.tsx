@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { format } from 'date-fns';
 
 import { randomEventDP } from '$lib/utils/user';
@@ -20,11 +21,12 @@ export function EventCard({ data, link }: EventCardProps) {
   return (
     <Link href={href} className="block">
       <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card cursor-pointer">
-        <img
+        <Image
           src={data.cover ?? randomEventDP()}
           alt={data.title ?? ''}
-          loading="lazy"
-          className="size-[38px] rounded-sm border border-card-border object-cover shrink-0"
+          width={38}
+          height={38}
+          className="rounded-sm border border-card-border object-cover shrink-0"
         />
         <div className="flex-1 min-w-0">
           <p>{data.title}</p>

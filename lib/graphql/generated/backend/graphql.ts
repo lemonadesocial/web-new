@@ -1329,6 +1329,14 @@ export type ConnectorSelectOption = {
   value: Scalars['String']['output'];
 };
 
+export type ConnectorSlotInfo = {
+  __typename?: 'ConnectorSlotInfo';
+  canAddMore: Scalars['Boolean']['output'];
+  currentTier: Scalars['String']['output'];
+  max: Scalars['Int']['output'];
+  used: Scalars['Int']['output'];
+};
+
 export type CreateApiKeyInput = {
   expires_at?: InputMaybe<Scalars['DateTimeISO']['input']>;
   name: Scalars['String']['input'];
@@ -1450,6 +1458,13 @@ export type CreatePoapInput = {
   name: Scalars['String']['input'];
   private?: InputMaybe<Scalars['Boolean']['input']>;
   ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type CreatePreviewLinkInput = {
+  expires_in_hours?: InputMaybe<Scalars['Float']['input']>;
+  link_type: PreviewLinkType;
+  password?: InputMaybe<Scalars['String']['input']>;
+  resource_id: Scalars['MongoID']['input'];
 };
 
 export type CreateSiteInput = {
@@ -4583,6 +4598,7 @@ export type Mutation = {
   createPageConfig: PageConfig;
   createPoapDrop: PoapDrop;
   createPost: Post;
+  createPreviewLink: PreviewLink;
   createRegistration: Scalars['Boolean']['output'];
   createRewardVault: TokenRewardVault;
   createRoom: Room;
@@ -4635,6 +4651,7 @@ export type Mutation = {
   deleteNotifications: Scalars['Boolean']['output'];
   deleteOauth2Client: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
+  deletePreviewLink: Scalars['Boolean']['output'];
   deleteSite: Scalars['Boolean']['output'];
   deleteSpace: Scalars['Boolean']['output'];
   deleteSpaceAsset: Scalars['Boolean']['output'];
@@ -4664,7 +4681,6 @@ export type Mutation = {
   followSpace: Scalars['Boolean']['output'];
   generateCubejsToken: Scalars['String']['output'];
   generateMatrixToken: Scalars['String']['output'];
-  generatePreviewLink: PreviewLinkResponse;
   generateStripeAccountLink: GenerateStripeAccountLinkResponse;
   heartbeatConfigLock: Scalars['Boolean']['output'];
   importPoapDrop: PoapDrop;
@@ -5823,6 +5839,11 @@ export type MutationCreatePostArgs = {
 };
 
 
+export type MutationCreatePreviewLinkArgs = {
+  input: CreatePreviewLinkInput;
+};
+
+
 export type MutationCreateRegistrationArgs = {
   input: Registration;
 };
@@ -6104,6 +6125,11 @@ export type MutationDeletePostArgs = {
 };
 
 
+export type MutationDeletePreviewLinkArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
 export type MutationDeleteSiteArgs = {
   _id: Scalars['MongoID']['input'];
 };
@@ -6246,12 +6272,6 @@ export type MutationGenerateCubejsTokenArgs = {
   events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   site?: InputMaybe<Scalars['MongoID']['input']>;
   user?: InputMaybe<Scalars['MongoID']['input']>;
-};
-
-
-export type MutationGeneratePreviewLinkArgs = {
-  config_id: Scalars['MongoID']['input'];
-  options?: InputMaybe<PreviewLinkOptionsInput>;
 };
 
 
@@ -7605,18 +7625,23 @@ export enum PostVisibility {
   Public = 'PUBLIC'
 }
 
-export type PreviewLinkOptionsInput = {
-  expires_in_hours?: InputMaybe<Scalars['Float']['input']>;
-  password?: InputMaybe<Scalars['String']['input']>;
+export type PreviewLink = {
+  __typename?: 'PreviewLink';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  created_by: Scalars['MongoID']['output'];
+  expires_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  link_type: PreviewLinkType;
+  password?: Maybe<Scalars['String']['output']>;
+  resource_id: Scalars['MongoID']['output'];
+  token: Scalars['String']['output'];
+  view_count: Scalars['Float']['output'];
 };
 
-export type PreviewLinkResponse = {
-  __typename?: 'PreviewLinkResponse';
-  expires_at?: Maybe<Scalars['DateTimeISO']['output']>;
-  id: Scalars['String']['output'];
-  token: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
+export enum PreviewLinkType {
+  Event = 'event',
+  Space = 'space'
+}
 
 export type PricingInfo = {
   __typename?: 'PricingInfo';
@@ -7783,6 +7808,7 @@ export type Query = {
   checkTemplateUpdate: TemplateUpdateInfo;
   checkTicketTypePasscode: Scalars['Boolean']['output'];
   connectionLogs: Array<ConnectionLog>;
+  connectorSlotInfo: ConnectorSlotInfo;
   exportEventApplications: Array<EventApplicationExport>;
   exportEventTickets: ExportedTickets;
   fetchConnectionConfigOptions: Array<ConnectorSelectOption>;
@@ -7979,6 +8005,7 @@ export type Query = {
   listOauth2Clients: Array<OAuth2Client>;
   listPassportSponsors: ListLemonheadSponsorsResponse;
   listPoapDrops: Array<PoapDrop>;
+  listPreviewLinks: Array<PreviewLink>;
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceAssets: Array<FileBase>;
   listSpaceCategories: Array<SpaceCategory>;
@@ -8006,7 +8033,7 @@ export type Query = {
   searchUsers: Array<UserWithEmail>;
   spaceConnections: Array<ConnectionOutput>;
   tgGetMyChannels: ScanChannelsResult;
-  validatePreviewLink?: Maybe<PageConfig>;
+  validatePreviewLink: ValidatePreviewLinkResult;
 };
 
 
@@ -8377,6 +8404,11 @@ export type QueryConnectionLogsArgs = {
   connectionId: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryConnectorSlotInfoArgs = {
+  spaceId: Scalars['String']['input'];
 };
 
 
@@ -9528,6 +9560,12 @@ export type QueryListPoapDropsArgs = {
 };
 
 
+export type QueryListPreviewLinksArgs = {
+  link_type: PreviewLinkType;
+  resource_id: Scalars['MongoID']['input'];
+};
+
+
 export type QueryListSpaceAssetsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -9682,7 +9720,6 @@ export type QueryTgGetMyChannelsArgs = {
 
 
 export type QueryValidatePreviewLinkArgs = {
-  config_id: Scalars['MongoID']['input'];
   password?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
@@ -11793,8 +11830,8 @@ export type SubscriptionVotingUpdatedArgs = {
 
 export type SubscriptionCryptoPrice = {
   __typename?: 'SubscriptionCryptoPrice';
-  amount: Scalars['String']['output'];
-  amount_annual: Scalars['String']['output'];
+  amount?: Maybe<Scalars['String']['output']>;
+  amount_annual?: Maybe<Scalars['String']['output']>;
   chain_id: Scalars['String']['output'];
   token_address: Scalars['String']['output'];
 };
@@ -13134,6 +13171,14 @@ export type UsernameAvailability = {
   available?: Maybe<Scalars['Boolean']['output']>;
   currency?: Maybe<Scalars['String']['output']>;
   price?: Maybe<Scalars['String']['output']>;
+};
+
+export type ValidatePreviewLinkResult = {
+  __typename?: 'ValidatePreviewLinkResult';
+  password_protected: Scalars['Boolean']['output'];
+  resource_id?: Maybe<Scalars['MongoID']['output']>;
+  resource_type?: Maybe<PreviewLinkType>;
+  valid: Scalars['Boolean']['output'];
 };
 
 export type VerifyCodeInput = {
@@ -14611,7 +14656,7 @@ export type GetSpaceSubscriptionQuery = { __typename: 'Query', getSpaceSubscript
 export type ListSubscriptionItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListSubscriptionItemsQuery = { __typename: 'Query', listSubscriptionItems: Array<{ __typename: 'SubscriptionItem', title: string, type: SubscriptionItemType, weekly_email_limit?: number | null, credits_per_month?: number | null, pricing?: { __typename: 'SubscriptionPricing', currency: string, decimals: number, price: string, annual_price: string } | null, crypto_prices?: Array<{ __typename: 'SubscriptionCryptoPrice', chain_id: string, token_address: string, amount: string, amount_annual: string }> | null }> };
+export type ListSubscriptionItemsQuery = { __typename: 'Query', listSubscriptionItems: Array<{ __typename: 'SubscriptionItem', title: string, type: SubscriptionItemType, weekly_email_limit?: number | null, credits_per_month?: number | null, pricing?: { __typename: 'SubscriptionPricing', currency: string, decimals: number, price: string, annual_price: string } | null, crypto_prices?: Array<{ __typename: 'SubscriptionCryptoPrice', chain_id: string, token_address: string, amount?: string | null, amount_annual?: string | null }> | null }> };
 
 export type PreviewUpdateSpaceSubscriptionQueryVariables = Exact<{
   id: Scalars['MongoID']['input'];

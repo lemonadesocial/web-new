@@ -114,8 +114,13 @@ vi.mock(
   }),
 );
 
+// Mock EventCardItem (used by spotlight_event in CardList)
+vi.mock('$lib/components/features/EventList', () => ({
+  EventCardItem: ({ item }: { item: any }) => <div data-testid="event-card-item">{item.title}</div>,
+}));
+
 // Provider mock — returns a controllable state
-let mockState: Record<string, unknown> = { messages: [], thinking: false };
+let mockState: Record<string, unknown> = { messages: [], thinking: false, configs: [], config: '' };
 vi.mock('$lib/components/features/ai/provider', () => ({
   useAIChat: () => [mockState, vi.fn()],
   AIChatActionKind: { add_message: 0 },
@@ -237,7 +242,7 @@ afterEach(() => {
 
 beforeEach(() => {
   localStorageMock.clear();
-  mockState = { messages: [], thinking: false };
+  mockState = { messages: [], thinking: false, configs: [], config: '' };
 });
 
 // ---- EventCard ----
@@ -378,6 +383,27 @@ describe('CardList', () => {
 
     expect(container.innerHTML).toBe('');
   });
+
+  it('renders spotlight_event card type', () => {
+    const cards: CardItem[] = [
+      {
+        type: 'spotlight_event',
+        data: makeEvent({ title: 'Spotlight Event' }),
+      },
+    ];
+
+    render(<CardList cards={cards} />);
+
+    expect(screen.getByTestId('event-card-item')).toBeDefined();
+    expect(screen.getByText('Spotlight Event')).toBeDefined();
+  });
+
+  it('renders title when provided', () => {
+    const cards: CardItem[] = [{ type: 'event', data: makeEvent() }];
+    render(<CardList cards={cards} title="Recommended for you" />);
+
+    expect(screen.getByText('Recommended for you')).toBeDefined();
+  });
 });
 
 // ---- Messages.tsx integration ----
@@ -400,6 +426,8 @@ describe('Messages integration', () => {
         },
       ],
       thinking: false,
+      configs: [],
+      config: '',
     };
 
     render(<Messages />);
@@ -407,6 +435,34 @@ describe('Messages integration', () => {
     // Markdown text renders
     expect(screen.getByText('Here are your events:')).toBeDefined();
     // Card title renders
+    expect(screen.getByText('Summer Music Fest')).toBeDefined();
+  });
+
+  it('renders CardList with title when metadata.title is present', () => {
+    mockState = {
+      messages: [
+        {
+          role: 'assistant',
+          message: 'Check this out:',
+          metadata: {
+            title: 'Featured Events',
+            cards: [
+              {
+                type: 'event',
+                data: makeEvent(),
+              },
+            ],
+          },
+        },
+      ],
+      thinking: false,
+      configs: [],
+      config: '',
+    };
+
+    render(<Messages />);
+
+    expect(screen.getByText('Featured Events')).toBeDefined();
     expect(screen.getByText('Summer Music Fest')).toBeDefined();
   });
 
@@ -420,6 +476,8 @@ describe('Messages integration', () => {
         },
       ],
       thinking: false,
+      configs: [],
+      config: '',
     };
 
     render(<Messages />);

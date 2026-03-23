@@ -10,6 +10,7 @@ type MenuState = {
   toggle: () => void;
   close?: () => void;
   disabled?: boolean;
+  readonly?: boolean;
   placement?: Placement;
   refs?: {
     reference: React.MutableRefObject<ReferenceType | null>;
@@ -24,20 +25,23 @@ const MenuContext = React.createContext<MenuState>({ toggle: () => {} });
 function MenuTrigger({
   children,
   className,
+  disabled: disabledProp,
 }: {
   className?: string;
+  disabled?: boolean;
   children: React.ReactNode | ((props: { toggle: () => void; isOpen?: boolean }) => React.ReactNode);
 }) {
-  const { toggle, isOpen, refs, disabled } = React.useContext(MenuContext);
+  const { toggle, isOpen, refs, disabled: contextDisabled, readonly } = React.useContext(MenuContext);
+  const disabled = disabledProp ?? contextDisabled;
 
   return (
     <div
       ref={refs?.setReference}
       onClick={(e) => {
         e.stopPropagation();
-        toggle();
+        if (!disabled && !readonly) toggle();
       }}
-      className={twMerge(className, clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer'))}
+      className={twMerge(className, clsx(!disabled && !readonly ? 'cursor-pointer' : 'cursor-default'))}
       aria-haspopup="true"
     >
       {typeof children === 'function' ? children({ toggle, isOpen }) : children}
@@ -101,6 +105,7 @@ function MenuRoot({
   children,
   className,
   disabled,
+  readonly,
   placement = 'bottom-end',
   strategy = 'absolute',
   dismissable = true,
@@ -110,6 +115,7 @@ function MenuRoot({
 }: {
   className?: string;
   disabled?: boolean;
+  readonly?: boolean;
   placement?: Placement;
   dismissable?: boolean;
   withFlip?: boolean;
@@ -130,7 +136,7 @@ function MenuRoot({
   };
 
   const toggle = () => {
-    if (!disabled) setIsOpen(!isOpen);
+    if (!disabled && !readonly) setIsOpen(!isOpen);
   };
   const close = () => setIsOpen(false);
 
@@ -160,7 +166,7 @@ function MenuRoot({
     };
   }, [refs.reference, refs.floating]);
 
-  const value = { isOpen, toggle, close, refs, floatingStyles, disabled };
+  const value = { isOpen, toggle, close, refs, floatingStyles, disabled, readonly };
 
   return (
     <MenuContext.Provider value={value}>

@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
@@ -426,9 +427,12 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
                   iconRight={item.shortid === shortid ? <i className="icon-done size-4" /> : undefined}
                   iconLeft={
                     item.new_new_photos_expanded?.[0] ? (
-                      <img
+                      <Image
                         src={generateUrl(item.new_new_photos_expanded?.[0])}
-                        className="w-4 h-4 aspect-square rounded-xs"
+                        width={16}
+                        height={16}
+                        className="rounded-xs aspect-square"
+                        alt={item.title}
                       />
                     ) : (
                       <div className="w-4 h-4 aspect-square rounded-xs border" />
