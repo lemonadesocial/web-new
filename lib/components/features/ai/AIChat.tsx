@@ -11,13 +11,14 @@ import { WelcomeChat } from './WelcomeChat';
 
 type AIChatProps = {
   variant?: 'default' | 'home';
+  allowGuest?: boolean;
 };
 
-export function AIChat({ variant = 'default' }: AIChatProps) {
+export function AIChat({ variant = 'default', allowGuest = false }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
-  if (!me) return null;
+  if (!me && !allowGuest) return null;
 
   return (
     <div className="space-y-8 flex flex-col h-full">

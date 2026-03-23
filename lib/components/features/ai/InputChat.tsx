@@ -23,6 +23,7 @@ import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
+import { useMe } from '$lib/hooks/useMe';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -33,6 +34,7 @@ type InputChatProps = {
 };
 
 export function InputChat({ variant = 'default' }: InputChatProps) {
+  const me = useMe();
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -249,15 +251,17 @@ export function InputChat({ variant = 'default' }: InputChatProps) {
             </Menu.Content>
           </Menu.Root>
           <div className="flex items-center gap-2">
-            <SpaceSelector
-              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id}
-              onSelectSpace={(space) =>
-                dispatch({
-                  type: AIChatActionKind.set_data_run,
-                  payload: { data: { space_id: space._id } },
-                })
-              }
-            />
+            {me && (
+              <SpaceSelector
+                currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id}
+                onSelectSpace={(space) =>
+                  dispatch({
+                    type: AIChatActionKind.set_data_run,
+                    payload: { data: { space_id: space._id } },
+                  })
+                }
+              />
+            )}
             <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
           </div>
         </div>
