@@ -452,6 +452,33 @@ query GetSpaceSendingQuota($space: MongoID!) {
   }
 }
 
+query ListSpaceNewsletters($space: MongoID!, $draft: Boolean, $sent: Boolean, $scheduled: Boolean) {
+  listSpaceNewsletters(space: $space, draft: $draft, sent: $sent, scheduled: $scheduled) {
+    _id
+    created_at
+    custom_body_html
+    custom_subject_html
+    draft
+    opened {
+      email
+      stamp
+    }
+    pending_recipients
+    recipient_filters {
+      join_request_states
+      ticket_types
+      space_members {
+        include_untagged
+        space_tags
+      }
+    }
+    recipient_types
+    recipients
+    scheduled_at
+    sent_at
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -529,6 +556,10 @@ mutation UpdateSpaceNewsletter($input: UpdateSpaceNewsletterInput!) {
 
 mutation DeleteSpaceNewsletter($id: MongoID!) {
   deleteSpaceNewsletter(_id: $id)
+}
+
+mutation SendSpaceNewsletterTestEmails($input: SendSpaceNewsletterTestEmailsInput!) {
+  sendSpaceNewsletterTestEmails(input: $input)
 }
 
 mutation DecideSpaceEventRequests($input: DecideSpaceEventRequestsInput!) {

@@ -15,7 +15,11 @@ import {
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { generateUrl } from '$lib/utils/cnd';
 import { isObjectId } from '$lib/utils/helpers';
-import { Button, Checkbox, InputField, TextAreaField, toast } from '$lib/components/core';
+import { Button } from '$lib/components/core/button/button';
+import { Checkbox } from '$lib/components/core/input/checkbox';
+import { InputField } from '$lib/components/core/input/input-field';
+import { TextAreaField } from '$lib/components/core/input/textarea';
+import { toast } from '$lib/components/core/toast/toast';
 import Header from '$lib/components/layouts/header';
 
 function getVerificationStatusInfo(submission: SpaceVerificationSubmission): {

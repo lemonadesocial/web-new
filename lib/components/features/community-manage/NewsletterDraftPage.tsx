@@ -3,7 +3,10 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button, TextEditor, toast } from '$lib/components/core';
+import { Button } from '$lib/components/core/button/button';
+import { modal } from '$lib/components/core/dialog/modal';
+import TextEditor from '$lib/components/core/text-editor/text-editor';
+import { toast } from '$lib/components/core/toast/toast';
 import {
   DeleteSpaceNewsletterDocument,
   GetSpaceDocument,
@@ -15,8 +18,13 @@ import {
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { isObjectId } from '$lib/utils/helpers';
 import Header from '$lib/components/layouts/header';
+import { useConfirmation } from '$lib/hooks/useConfirmation';
+import { SendNewsletterPreviewModal } from './modals/SendNewsletterPreviewModal';
+import { SendNewsletterModal } from './modals/SendNewsletterModal';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
+const PREVIEW_MODAL_CLASS_NAME = 'w-[340px] max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
+const SEND_MODAL_CLASS_NAME = 'w-[340px] max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
 
 function getPlainText(value: string) {
   return value.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
@@ -61,6 +69,7 @@ function QuotaRing({ available, total }: { available: number; total: number }) {
 
 export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: string }) {
   const router = useRouter();
+  const confirm = useConfirmation();
 
   const spaceVariables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
   const { data: spaceData, loading: loadingSpace } = useQuery(GetSpaceDocument, {
@@ -88,6 +97,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
 
   const [subject, setSubject] = React.useState('');
   const [body, setBody] = React.useState('');
+  const [isHydrated, setIsHydrated] = React.useState(false);
   const [saveStatus, setSaveStatus] = React.useState<SaveStatus>('idle');
   const subjectRef = React.useRef<HTMLTextAreaElement>(null);
 
@@ -116,20 +126,36 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
   });
 
   React.useEffect(() => {
-    if (!newsletter || loadedDraftIdRef.current === newsletter._id) return;
+    loadedDraftIdRef.current = null;
+    lastSavedRef.current = { subject: '', body: '' };
+    setSubject('');
+    setBody('');
+    setIsHydrated(false);
+    setSaveStatus('idle');
+  }, [draftId]);
 
-    loadedDraftIdRef.current = newsletter._id;
+  React.useEffect(() => {
+    if (!newsletter) return;
+
     const nextSubject = newsletter.custom_subject_html || '';
     const nextBody = newsletter.custom_body_html || '';
+    const isNewDraft = loadedDraftIdRef.current !== newsletter._id;
+    const hasLocalEdits = subject !== lastSavedRef.current.subject || body !== lastSavedRef.current.body;
+    const hasFreshServerContent =
+      nextSubject !== lastSavedRef.current.subject || nextBody !== lastSavedRef.current.body;
 
+    if (!isNewDraft && (hasLocalEdits || !hasFreshServerContent)) return;
+
+    loadedDraftIdRef.current = newsletter._id;
     setSubject(nextSubject);
     setBody(nextBody);
     lastSavedRef.current = { subject: nextSubject, body: nextBody };
+    setIsHydrated(true);
     setSaveStatus('idle');
-  }, [newsletter]);
+  }, [body, newsletter, subject]);
 
   React.useEffect(() => {
-    if (!newsletter || readOnly || !hasChanges) return;
+    if (!newsletter || !isHydrated || loadingNewsletter || readOnly || !hasChanges || loadedDraftIdRef.current !== newsletter._id) return;
 
     const timer = setTimeout(async () => {
       setSaveStatus('saving');
@@ -156,7 +182,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [body, hasChanges, newsletter, readOnly, subject, updateDraft]);
+  }, [body, hasChanges, isHydrated, loadingNewsletter, newsletter, readOnly, subject, updateDraft]);
 
   React.useEffect(() => {
     return () => {
@@ -204,7 +230,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
     setSubject(event.target.value);
   };
 
-  if (loadingSpace || loadingNewsletter || !space) {
+  if (loadingSpace || loadingNewsletter || !space || (newsletter && !isHydrated)) {
     return (
       <main className="min-h-dvh bg-page text-primary">
         <div className="flex min-h-dvh items-center justify-center">
@@ -271,7 +297,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
               readOnly={readOnly}
               value={subject}
               placeholder="Subject"
-              className="min-h-12 w-full resize-none overflow-hidden border-0 border-b border-primary/8 bg-transparent px-0 py-2 text-4xl leading-[1.15] font-medium text-primary outline-none placeholder:text-quaternary"
+              className="min-h-12 w-full resize-none overflow-hidden border-0 border-b border-primary/8 bg-transparent px-0 py-2 text-4xl leading-tight font-medium text-primary outline-none placeholder:text-quaternary"
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
                   event.preventDefault();
@@ -304,7 +330,15 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
             variant="tertiary"
             className="size-10 shrink-0 rounded-sm p-0"
             loading={deletingDraft}
-            onClick={handleDelete}
+            onClick={() =>
+              confirm({
+                title: 'Delete Draft',
+                subtitle: 'Are you sure you want to delete this draft? You will not be able to recover it.',
+                icon: 'icon-delete',
+                buttonText: 'Delete',
+                onConfirm: handleDelete,
+              })
+            }
           />
 
           <div className="relative flex items-center gap-2">
@@ -314,10 +348,46 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
               </div>
             )}
 
-            <Button type="button" size="base" variant="tertiary">
+            <Button
+              type="button"
+              size="base"
+              variant="tertiary"
+              onClick={() =>
+                modal.open(SendNewsletterPreviewModal, {
+                  props: {
+                    draftId: newsletter._id,
+                    spaceId: space._id,
+                    subject,
+                    body,
+                  },
+                  className: PREVIEW_MODAL_CLASS_NAME,
+                })
+              }
+            >
               Preview
             </Button>
-            <Button type="button" size="base" variant="secondary" disabled={!hasContent}>
+            <Button
+              type="button"
+              size="base"
+              variant="secondary"
+              disabled={!hasContent || readOnly}
+              onClick={() =>
+                modal.open(SendNewsletterModal, {
+                  dismissible: false,
+                  props: {
+                    uid,
+                    spaceId: space._id,
+                    draftId: newsletter._id,
+                    subject,
+                    body,
+                    adminsCount: space.admins?.length ?? 0,
+                    availableSends,
+                    totalSends: sendingQuota?.total ?? 0,
+                  },
+                  className: SEND_MODAL_CLASS_NAME,
+                })
+              }
+            >
               Continue
             </Button>
           </div>

@@ -10,8 +10,6 @@ import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { Button } from '$lib/components/core';
 // import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { useMe } from '$lib/hooks/useMe';
-import { Button } from '$lib/components/core';
 // import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAuth } from '$lib/hooks/useAuth';
 
