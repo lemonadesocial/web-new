@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.24.0](https://github.com/lemonadesocial/web-new/compare/v10.23.0...v10.24.0) (2026-03-24)
+
+
+### Features
+
+* add standalone newsletter draft and verify manage pages ([500de02](https://github.com/lemonadesocial/web-new/commit/500de0215fb8392027cc0861ae84a5d40c94a591))
+* implement community newsletter management and send workflows ([1a8d429](https://github.com/lemonadesocial/web-new/commit/1a8d429a8341d58784198010aeb9267cbb5abac5))
+
 ## [10.23.0](https://github.com/lemonadesocial/web-new/compare/v10.22.0...v10.23.0) (2026-03-24)
 
 
