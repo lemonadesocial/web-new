@@ -13,6 +13,10 @@ vi.mock('$lib/services/atlas-client', () => ({
   ATLAS_REWARD_HISTORY_QUERY: 'mock-history-query',
 }));
 
+vi.mock('$lib/components/features/modals/GetVerifiedModal', () => ({
+  GetVerifiedModal: () => null,
+}));
+
 import { RewardDashboard } from '../RewardDashboard';
 import { isAtlasEnabled, atlasGraphqlQuery } from '$lib/services/atlas-client';
 

@@ -86,22 +86,22 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
-// Mock the drawer export from core (Messages.tsx imports { Button, drawer })
-vi.mock('$lib/components/core', async (importOriginal) => {
-  const orig = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...orig,
-    drawer: { open: vi.fn() },
-    Button: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<Record<string, unknown>>) => (
-      <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
-        {children}
-      </button>
-    ),
-  };
-});
+// Mock only the core exports this suite exercises.
+vi.mock('$lib/components/core', () => ({
+  drawer: { open: vi.fn() },
+  Button: ({
+    children,
+    iconLeft: _iconLeft,
+    iconRight: _iconRight,
+    variant: _variant,
+    size: _size,
+    ...props
+  }: React.PropsWithChildren<Record<string, unknown>>) => (
+    <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+      {children}
+    </button>
+  ),
+}));
 
 // Mock EventPane and EditEventDrawer (imported by Messages.tsx but not used in tests)
 vi.mock('$lib/components/features/pane', () => ({
@@ -113,6 +113,10 @@ vi.mock(
     EditEventDrawer: () => null,
   }),
 );
+
+vi.mock('$lib/components/features/modals/GetVerifiedModal', () => ({
+  GetVerifiedModal: () => null,
+}));
 
 // Mock EventCardItem (used by spotlight_event in CardList)
 vi.mock('$lib/components/features/EventList', () => ({
