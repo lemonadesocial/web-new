@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.23.0](https://github.com/lemonadesocial/web-new/compare/v10.22.0...v10.23.0) (2026-03-24)
+
+
+### Features
+
+* update proxy preview link ([e95dd43](https://github.com/lemonadesocial/web-new/commit/e95dd43321e4c00290c1dbf03f7aa4affbedc688))
+
+
+### Bug Fixes
+
+* update style PasswordGate ([d383673](https://github.com/lemonadesocial/web-new/commit/d3836736b37cb91d40d81004c93f804e7f9e69bf))
+* wrong value InputField - graphql type ([830ab71](https://github.com/lemonadesocial/web-new/commit/830ab71b1eaa81677fb4b1973ab3a06712b172ab))
+
 ## [10.22.0](https://github.com/lemonadesocial/web-new/compare/v10.21.0...v10.22.0) (2026-03-23)
 
 
