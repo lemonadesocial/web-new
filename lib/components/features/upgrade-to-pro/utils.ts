@@ -3,6 +3,7 @@ import { formatUnits } from 'viem';
 
 import {
   type SubscriptionItem,
+  type SubscriptionPricing,
   SubscriptionItemType,
   type SubscriptionCryptoPrice,
 } from '$lib/graphql/generated/backend/graphql';
@@ -127,6 +128,56 @@ export function hasCryptoPriceForPeriod(
   annual: boolean,
 ): boolean {
   return filterCryptoPricesForPeriod(cryptoPrices, annual).length > 0;
+}
+
+export function getDisplayedMonthlyFiatAmount(
+  pricing: Pick<SubscriptionPricing, 'price' | 'annual_price' | 'decimals'>,
+  annual = false,
+): number {
+  let amount = annual ? Number(pricing.annual_price) / 12 : Number(pricing.price);
+
+  if (pricing.decimals > 0) amount /= 10 ** pricing.decimals;
+
+  return amount;
+}
+
+export function getMonthlyFiatAmount(
+  pricing: Pick<SubscriptionPricing, 'price' | 'decimals'>,
+): number {
+  let amount = Number(pricing.price);
+
+  if (pricing.decimals > 0) amount /= 10 ** pricing.decimals;
+
+  return amount;
+}
+
+export function getDisplayedMonthlyCryptoAmount(
+  cryptoPrice: Pick<SubscriptionCryptoPrice, 'amount' | 'amount_annual'>,
+  tokenDecimals: number,
+  annual: boolean,
+): number | null {
+  const rawAmount = annual ? cryptoPrice.amount_annual : cryptoPrice.amount;
+
+  if (!hasPositiveCryptoAmount(rawAmount)) return null;
+
+  const amount = Number(formatUnits(BigInt(rawAmount), tokenDecimals));
+  return annual ? amount / 12 : amount;
+}
+
+export function getCryptoSavingsAmount(
+  pricing: Pick<SubscriptionPricing, 'price' | 'decimals'>,
+  cryptoPrice: Pick<SubscriptionCryptoPrice, 'amount' | 'amount_annual'>,
+  tokenDecimals: number,
+  annual: boolean,
+): number | null {
+  const fiatMonthlyAmount = getMonthlyFiatAmount(pricing);
+  const cryptoMonthlyAmount = getDisplayedMonthlyCryptoAmount(cryptoPrice, tokenDecimals, annual);
+
+  if (fiatMonthlyAmount <= 0 || cryptoMonthlyAmount === null || cryptoMonthlyAmount >= fiatMonthlyAmount) {
+    return null;
+  }
+
+  return fiatMonthlyAmount - cryptoMonthlyAmount;
 }
 
 export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], uiPlans: WalletUiPlan[]): WalletPlanOption[] {

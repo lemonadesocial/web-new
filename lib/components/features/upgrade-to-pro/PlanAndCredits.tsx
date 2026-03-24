@@ -5,7 +5,6 @@ import { match } from 'ts-pattern';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { formatUnits } from 'viem';
 
 import { Badge, Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
@@ -24,7 +23,10 @@ import { formatNumber } from '$lib/utils/number';
 import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
 import {
   buildWalletPlanOptions,
+  getDisplayedMonthlyCryptoAmount,
+  getCryptoSavingsAmount,
   getFirstCryptoPriceForPeriod,
+  getDisplayedMonthlyFiatAmount,
   hasCryptoPriceForPeriod,
   mergePlansWithSubscriptions,
 } from './utils';
@@ -188,16 +190,35 @@ function renderCompareValue(value: CompareValue) {
 }
 
 function CryptoPlanPriceText({ item, fallbackPrice }: { item: PlanCard; fallbackPrice: string | null }) {
-  const primaryCryptoPrice = getFirstCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual));
+  const annual = Boolean(item.annual);
+  const primaryCryptoPrice = getFirstCryptoPriceForPeriod(item.crypto_prices ?? [], annual);
   const { tokenMetadata } = useTokenMetadata(primaryCryptoPrice?.chain_id, primaryCryptoPrice?.token_address);
 
   if (!primaryCryptoPrice || !tokenMetadata) return <>{fallbackPrice}</>;
 
-  const rawAmount = item.annual ? primaryCryptoPrice.amount_annual : primaryCryptoPrice.amount;
-  const amount = Number(formatUnits(BigInt(rawAmount), tokenMetadata.decimals));
-  const monthlyAmount = item.annual ? amount / 12 : amount;
+  const monthlyAmount = getDisplayedMonthlyCryptoAmount(primaryCryptoPrice, tokenMetadata.decimals, annual);
 
-  return <>{`${formatNumber(monthlyAmount)} ${tokenMetadata.symbol.toUpperCase()}`}</>;
+  if (monthlyAmount === null) return <>{fallbackPrice}</>;
+
+  return <>{`${formatNumber(monthlyAmount)} ${tokenMetadata.symbol}`}</>;
+}
+
+function CryptoPlanSavingsBadge({ item }: { item: PlanCard }) {
+  const annual = Boolean(item.annual);
+  const primaryCryptoPrice = getFirstCryptoPriceForPeriod(item.crypto_prices ?? [], annual);
+  const { tokenMetadata } = useTokenMetadata(primaryCryptoPrice?.chain_id, primaryCryptoPrice?.token_address);
+
+  if (!item.pricing || !primaryCryptoPrice || !tokenMetadata) return null;
+
+  const savingsAmount = getCryptoSavingsAmount(item.pricing, primaryCryptoPrice, tokenMetadata.decimals, annual);
+
+  if (!savingsAmount) return null;
+
+  return (
+    <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
+      Save ~{formatCurrency(Math.round(savingsAmount), item.pricing.currency, 0, false)}
+    </Badge>
+  );
 }
 
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
@@ -447,13 +468,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   }, [syncCompareScroll]);
 
   const calculateFiatPrice = (pricing: SubscriptionPricing, annual?: boolean) => {
-    let price = Number(pricing.price);
-    if (annual) {
-      price = Number(pricing.annual_price) / 12;
-    }
-
-    if (pricing.decimals > 0) price /= 10 ** pricing.decimals;
-
+    const price = getDisplayedMonthlyFiatAmount(pricing, annual);
     return formatCurrency(Math.round(price), pricing.currency, 0);
   };
 
@@ -603,25 +618,33 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
                       <div className="flex flex-col">
                         <div className="flex justify-between items-center flex-1 min-h-[32px]">
-                          {!!item.pricing && (
-                            <div className="flex gap-2 items-end">
-                              <p className="text-2xl">
-                                {item.method === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual))
-                                  ? (
-                                    <CryptoPlanPriceText
-                                      item={item}
-                                      fallbackPrice={calculateFiatPrice(item.pricing, Boolean(item.annual))}
-                                    />
-                                  )
-                                  : calculateFiatPrice(item.pricing, Boolean(item.annual))}
-                              </p>
-                              <p className="text-tertiary">per month</p>
-                            </div>
-                          )}
-                          {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
-                            <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
-                              Save {calculateFiatAnnualSavings(item.pricing)}
-                            </Badge>
+                          {item.method === 'wallet' && item.pricing && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
+                            <>
+                              <div className="flex gap-2 items-end">
+                                <p className="text-2xl">
+                                  <CryptoPlanPriceText
+                                    item={item}
+                                    fallbackPrice={calculateFiatPrice(item.pricing, Boolean(item.annual))}
+                                  />
+                                </p>
+                                <p className="text-tertiary">per month</p>
+                              </div>
+                              <CryptoPlanSavingsBadge item={item} />
+                            </>
+                          ) : (
+                            <>
+                              {!!item.pricing && (
+                                <div className="flex gap-2 items-end">
+                                  <p className="text-2xl">{calculateFiatPrice(item.pricing, Boolean(item.annual))}</p>
+                                  <p className="text-tertiary">per month</p>
+                                </div>
+                              )}
+                              {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
+                                <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
+                                  Save {calculateFiatAnnualSavings(item.pricing)}
+                                </Badge>
+                              )}
+                            </>
                           )}
                         </div>
                         {item.pricing ? (
