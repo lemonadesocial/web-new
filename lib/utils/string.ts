@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { htmlToText } from 'html-to-text';
+import { EMAIL_REGEX } from './regex';
 
 export function formatCurrency(amount = 0, currency?: string, attemptedDecimals = 2, showFree = true): string {
   if (attemptedDecimals > 0) amount /= 10 ** attemptedDecimals;
@@ -54,17 +55,17 @@ export function extractLinks(text: string) {
     : [];
 }
 
-const EmailSchema = z.string().email('Invalid email address format.');
 export function isValidEmail(input: string) {
-  try {
-    EmailSchema.parse(input);
-    return true;
-  } catch (error: unknown) {
-    if (error instanceof z.ZodError) {
-      console.error(`Zod Error for "${input}": ${error.errors[0].message}`);
-    }
-    return false;
-  }
+  return EMAIL_REGEX.test(input.trim());
+}
+
+export function htmlToInlineText(input?: string | null) {
+  if (!input) return '';
+
+  return htmlToText(input, { wordwrap: false })
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**

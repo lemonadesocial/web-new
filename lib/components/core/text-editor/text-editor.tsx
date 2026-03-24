@@ -129,6 +129,17 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
     editor.setEditable(!readOnly);
   }, [editor, readOnly]);
 
+  React.useEffect(() => {
+    if (!editor) return;
+
+    const nextContent = content || '';
+    const currentContent = editor.isEmpty ? '' : editor.getHTML();
+
+    if (currentContent === nextContent) return;
+
+    editor.commands.setContent(nextContent, false);
+  }, [content, editor]);
+
   useImperativeHandle(ref, () => ({
     commands: {
       clearContent: () => editor?.commands.clearContent(),
