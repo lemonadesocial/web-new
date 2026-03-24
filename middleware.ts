@@ -38,6 +38,7 @@ export default async function middleware(req: NextRequest) {
       '/u/',
       '/passport',
       'lemonade-stand',
+      '/preview/',
     ].some((subpath) => path.includes(subpath))
   ) {
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
