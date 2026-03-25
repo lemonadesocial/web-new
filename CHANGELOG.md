@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.25.1](https://github.com/lemonadesocial/web-new/compare/v10.25.0...v10.25.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* cast refreshed events as partials in AI chat ([df0c508](https://github.com/lemonadesocial/web-new/commit/df0c50823ba20e13a7919b6cd19e0f3a4a08a9dd))
+* refine chat UI spacing ([cf4e54a](https://github.com/lemonadesocial/web-new/commit/cf4e54a9c5f0d49d8a21736d88e36dcb10952f7b))
+
 ## [10.25.0](https://github.com/lemonadesocial/web-new/compare/v10.24.0...v10.25.0) (2026-03-25)
 
 
