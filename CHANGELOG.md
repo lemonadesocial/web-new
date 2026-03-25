@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.25.0](https://github.com/lemonadesocial/web-new/compare/v10.24.0...v10.25.0) (2026-03-25)
+
+
+### Features
+
+* add changed-file TypeScript checks to lint CI ([044b149](https://github.com/lemonadesocial/web-new/commit/044b149f2729977629547a5578ddb2adcebe012d))
+
+
+### Bug Fixes
+
+* match home event loading skeleton to communities ([1d9d8d6](https://github.com/lemonadesocial/web-new/commit/1d9d8d66d2af492fc73ef27d812b9ea8e21612de))
+
 ## [10.24.0](https://github.com/lemonadesocial/web-new/compare/v10.23.0...v10.24.0) (2026-03-24)
 
 
