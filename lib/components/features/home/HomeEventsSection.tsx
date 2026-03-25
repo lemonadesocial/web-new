@@ -120,12 +120,8 @@ export function HomeEventsSection() {
           }}
         >
           {eventsLoading &&
-            Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-[168px] rounded-lg bg-overlay-secondary animate-pulse"
-                style={{ minHeight: 168 }}
-              />
+            Array.from({ length: 3 }).map((_, i) => (
+              <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
             ))}
           {!eventsLoading && events.length === 0 && (
             <div
