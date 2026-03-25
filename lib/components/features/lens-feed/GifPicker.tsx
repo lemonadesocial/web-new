@@ -97,7 +97,7 @@ export function GifPicker({ onSelectGif, trigger }: GifPickerProps) {
       <Menu.Trigger className="flex">
         {trigger || <i aria-hidden="true" className="icon-gif size-5 text-[#FACC15]" />}
       </Menu.Trigger>
-      <Menu.Content className="w-[480px] h-[500px] p-0">
+      <Menu.Content className="w-120 h-125 p-0">
         {({ toggle }) => (
           <div className="flex flex-col h-full">
               <Input

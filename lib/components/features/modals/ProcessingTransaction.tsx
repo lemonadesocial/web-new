@@ -10,10 +10,10 @@ export function ProcessingTransaction({ imgSrc, title, description }: { imgSrc: 
               <div className='absolute -inset-1 rounded-full border-2 border-transparent'>
                 <div className='w-full h-full rounded-full border-2 border-tertiary border-t-transparent border-r-transparent animate-spin'></div>
               </div>
-              <img src={imgSrc} alt='Unicorn Logo' className='w-[26px] relative z-10' />
+              <img src={imgSrc} alt='Unicorn Logo' className='w-6.5 relative z-10' />
             </div>
           ) : (
-            <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+            <div className="size-14 flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
               <i className="icon-loader animate-spin" />
             </div>
           )

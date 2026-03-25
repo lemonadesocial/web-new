@@ -49,7 +49,7 @@ export function Content() {
 
   if (!me) {
     return (
-      <div className="w-full h-full max-sm:px-4 max-sm:pt-16 flex items-center justify-between max-w-[1200px]">
+      <div className="w-full h-full max-sm:px-4 max-sm:pt-16 flex items-center justify-between max-w-300">
         <NonLoginContent />
       </div>
     );
@@ -69,13 +69,13 @@ export function Content() {
         </div>
 
         <div>
-          <div className="flex md:flex-col gap-4 min-w-[264px] sticky top-12 overflow-x-auto no-scrollbar">
+          <div className="flex md:flex-col gap-4 min-w-66 sticky top-12 overflow-x-auto no-scrollbar">
             {selfVerificationStatus?.getSelfVerificationStatus?.disclosures?.some((item) => !item.verified) && (
               <CardItem
                 onClick={() => modal.open(GetVerifiedModal)}
                 className="bg-transparent [&_.title]:text-sm"
                 image={
-                  <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                  <div className="bg-accent-400/16 size-9.5 flex items-center justify-center rounded-sm">
                     <i className="icon-verified-outline text-accent-400" />
                   </div>
                 }
@@ -99,7 +99,7 @@ export function Content() {
             {/*   onClick={() => comingSoon()} */}
             {/*   className="bg-transparent [&_.title]:text-sm" */}
             {/*   image={ */}
-            {/*     <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm"> */}
+            {/*     <div className="bg-alert-400/16 size-9.5 flex items-center justify-center rounded-sm"> */}
             {/*       <i className="icon-user-group-outline text-alert-400" /> */}
             {/*     </div> */}
             {/*   } */}
@@ -112,7 +112,7 @@ export function Content() {
             {/*   onClick={() => comingSoon()} */}
             {/*   className="bg-transparent [&_.title]:text-sm" */}
             {/*   image={ */}
-            {/*     <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm"> */}
+            {/*     <div className="bg-success-400/16 size-9.5 flex items-center justify-center rounded-sm"> */}
             {/*       <i className="icon-government text-success-400" /> */}
             {/*     </div> */}
             {/*   } */}
@@ -398,7 +398,7 @@ function NonLoginContent() {
     <div className="flex flex-col gap-2 mb-20">
       <div className="rounded-md outline-2 outline-card-border overflow-hidden">
         <div
-          className="w-full aspect-video max-h-[548px] p-5 md:p-16 flex flex-col justify-between"
+          className="w-full aspect-video max-h-137 p-5 md:p-16 flex flex-col justify-between"
           style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
         >
           <div className="flex flex-col gap-2 md:gap-4">
@@ -464,7 +464,7 @@ function CardItem({
   return (
     <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
       <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
+        {typeof image === 'string' ? <img src={image} className="size-9.5 rounded-sm aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
           {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
@@ -600,7 +600,7 @@ function CompleteYourProfile() {
         onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
         className="block md:hidden bg-transparent [&_.title]:text-sm"
         image={
-          <div className="bg-primary/8 size-[38px] flex items-center justify-center rounded-sm">
+          <div className="bg-primary/8 size-9.5 flex items-center justify-center rounded-sm">
             <i className="icon-account text-primary/56" />
           </div>
         }
@@ -626,7 +626,7 @@ function LemonHeadsZone() {
       <CardItem
         className="bg-transparent [&_.title]:text-sm"
         image={
-          <div className="size-[38px] aspect-square flex items-center justify-center rounded-sm">
+          <div className="size-9.5 aspect-square flex items-center justify-center rounded-sm">
             <img src={data.image} className="w-full h-full rounded-sm" />
           </div>
         }
@@ -642,7 +642,7 @@ function LemonHeadsZone() {
     <CardItem
       className="bg-transparent [&_.title]:text-sm"
       image={
-        <div className="bg-[#A3E635]/16 size-[38px] flex items-center justify-center rounded-sm">
+        <div className="bg-[#A3E635]/16 size-9.5 flex items-center justify-center rounded-sm">
           <i className="icon-lemonade-logo text-[#A3E635]" />
         </div>
       }
@@ -745,7 +745,7 @@ function AllCoins() {
         {loading ? (
           <Card.Root className="min-w-fit">
             <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-              <Skeleton className="size-[38px] rounded-sm" animate />
+              <Skeleton className="size-9.5 rounded-sm" animate />
               <Skeleton className="h-9 w-24 rounded-md" animate />
             </Card.Content>
           </Card.Root>
@@ -784,7 +784,7 @@ function CoinItem({ pool }: { pool: PoolCreated }) {
     return (
       <Card.Root className="min-w-fit">
         <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-          <Skeleton className="size-[38px] rounded-sm" animate />
+          <Skeleton className="size-9.5 rounded-sm" animate />
           <div className="space-y-0.5 flex-1">
             <Skeleton className="h-5 w-24 rounded-md" animate />
             <Skeleton className="h-4 w-32 rounded-md" animate />

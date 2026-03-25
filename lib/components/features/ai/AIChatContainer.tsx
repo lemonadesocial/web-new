@@ -85,7 +85,7 @@ export function AIChatContainer() {
     <div
       className={clsx(
         'flex-1 w-full transition-all ease-in-out duration-300 z-0',
-        state?.content ? 'max-w-[432px] opacity-100' : 'max-w-0 opacity-0',
+        state?.content ? 'max-w-108 opacity-100' : 'max-w-0 opacity-0',
       )}
     >
       {state?.content}
@@ -94,8 +94,8 @@ export function AIChatContainer() {
     <Sheet avoidKeyboard isOpen={!!state?.content} onClose={() => handleClose()}>
       <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
         <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
-          <div className="flex justify-center items-end h-[20px]">
-            <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+          <div className="flex justify-center items-end h-5">
+            <div className="bg-primary/8 rounded-xs w-12 h-1 cursor-row-resize"></div>
           </div>
         </Sheet.Header>
         <Sheet.Content disableDrag>

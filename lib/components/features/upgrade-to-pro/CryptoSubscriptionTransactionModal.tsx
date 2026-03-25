@@ -36,12 +36,12 @@ function CryptoSubscriptionSuccessModal({
   txUrl?: string;
 }) {
   return (
-    <div className="relative size-full w-[340px] max-w-full overflow-hidden rounded-lg border border-card-border bg-overlay-primary shadow-[0px_4px_8px_0px_rgba(0,0,0,0.32)]">
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[240px] bg-gradient-to-b from-[rgba(166,132,255,0)] to-[rgba(166,132,255,0.16)]" />
+    <div className="relative size-full w-85 max-w-full overflow-hidden rounded-lg border border-card-border bg-overlay-primary shadow-[0px_4px_8px_0px_rgba(0,0,0,0.32)]">
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-b from-[rgba(166,132,255,0)] to-[rgba(166,132,255,0.16)]" />
 
       <div className="relative flex flex-col">
         <div className="flex justify-center px-4 pb-8 pt-12">
-          <div className="size-[132px] overflow-hidden rounded-full shadow-[0px_4px_8px_0px_rgba(0,0,0,0.32)]">
+          <div className="size-33 overflow-hidden rounded-full shadow-[0px_4px_8px_0px_rgba(0,0,0,0.32)]">
             <img src={`${ASSET_PREFIX}/assets/images/crypto-success.png`} alt="Payment successful" className="size-full rounded-full object-cover" />
           </div>
         </div>

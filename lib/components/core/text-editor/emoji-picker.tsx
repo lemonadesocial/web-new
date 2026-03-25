@@ -46,7 +46,7 @@ export const EmojiPicker = ({ onSelect, trigger, className }: EmojiPickerProps) 
       <Menu.Trigger className="flex">
         {trigger || <i aria-hidden="true" className="icon-mood size-5 text-[#FB923C]" />}
       </Menu.Trigger>
-      <Menu.Content className={twMerge('w-[320px] h-[400px] p-0', className)}>
+      <Menu.Content className={twMerge('w-80 h-100 p-0', className)}>
         {({ toggle }) => (
           <div className="flex flex-col h-full">
             <div className="flex-1 overflow-y-auto p-1.5">

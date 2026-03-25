@@ -48,7 +48,7 @@ export function OptionsInput({
   return (
     <div className="space-y-2">
       <div
-        className="flex flex-wrap items-center w-full rounded-sm bg-background/64 border-primary/8 hover:border-primary focus:border-primary placeholder-quaternary px-1 h-10 font-medium gap-0.5 h-auto py-1.5 min-h-[40px]"
+        className="flex flex-wrap items-center w-full rounded-sm bg-background/64 border-primary/8 hover:border-primary focus:border-primary placeholder-quaternary px-1 h-10 font-medium gap-0.5 h-auto py-1.5 min-h-10"
         onClick={handleContainerClick}
       >
         {value.map((option, index) => (

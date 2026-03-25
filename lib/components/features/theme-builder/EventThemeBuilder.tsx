@@ -75,13 +75,13 @@ export function EventThemeBuilder({
 
   return (
     <>
-      <div className="flex gap-2 h-[62px]">
+      <div className="flex gap-2 h-15.5">
         <button
           type="button"
           className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left backdrop-blur-sm"
           onClick={() => setToggle(true)}
         >
-          <img src={presets[themeName]?.image} className="w-[51px] h-[38px] rounded-xs" />
+          <img src={presets[themeName]?.image} className="w-12.75 h-9.5 rounded-xs" />
           <div className="flex justify-between items-center flex-1">
             <div>
               <p className="text-xs">Theme</p>
@@ -93,7 +93,7 @@ export function EventThemeBuilder({
         <button
           type="button"
           onClick={() => dispatch({ type: ThemeBuilderActionKind.random })}
-          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
+          className="btn btn-tertiary inline-flex items-center justify-center p-5.25 backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
           <i aria-hidden="true" className="icon-shuffle size-5" />
         </button>
@@ -149,7 +149,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
             <button
               key={key}
               type="button"
-              className="flex flex-col items-center gap-1 min-w-[72px]"
+              className="flex flex-col items-center gap-1 min-w-18"
               onClick={() => {
                 const config: any = {};
                 if (!data.config.color) config.color = getRandomColor();
@@ -165,7 +165,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
                 src={preset.image}
                 alt={preset.name}
                 className={clsx(
-                  'h-[48px] w-[72px] rounded-sm border border-transparent',
+                  'h-12 w-18 rounded-sm border border-transparent',
                   active && 'outline-2 outline-offset-2 outline-primary',
                 )}
               />
@@ -191,7 +191,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[260px]">
+          <Menu.Content className="w-65">
             <div className="grid grid-cols-8 gap-2.5">
               {colors.map((color) => (
                 <button
@@ -218,7 +218,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
               data.theme === 'shader' ? (
                 <div className={twMerge('size-6 rounded-full', `item-color-${data.config.name}`)} />
               ) : data.theme === 'pattern' ? (
-                <div className="size-6 rounded-full p-[2px]">
+                <div className="size-6 rounded-full p-0.5">
                   <div
                     className={twMerge(
                       'pattern w-full h-full rounded-full relative! opacity-100!',
@@ -239,7 +239,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[300px]">
+          <Menu.Content className="w-75">
             {themeName === 'shader' && (
               <div className="grid grid-cols-4 gap-3">
                 {shaders.map((item) => (
@@ -277,7 +277,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
                   >
                     <div
                       className={clsx(
-                        'w-12 h-12 rounded-full p-[2px] border border-transparent',
+                        'w-12 h-12 rounded-full p-0.5 border border-transparent',
                         data.config.name === item && 'border-primary',
                       )}
                     >
@@ -337,7 +337,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[300px]">
+          <Menu.Content className="w-75">
             <div className="grid grid-cols-4 gap-3">
               {Object.entries(emojis).map(([key, item]) => (
                 <button
@@ -376,7 +376,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
+          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-1">
             {Object.entries(fonts.title).map(([key]) => (
               <button
                 key={key}
@@ -409,7 +409,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
+          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-1">
             {Object.entries(fonts.body).map(([key]) => (
               <button
                 key={key}
@@ -447,7 +447,7 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-[220px] p-1">
+          <Menu.Content className="w-55 p-1">
             {modes.map((item) => (
               <button
                 key={item.mode}
@@ -496,7 +496,7 @@ function SettingRow({
     >
       <div className="shrink-0 flex items-center justify-center size-6">{icon}</div>
       <p className="text-tertiary flex-1">{label}</p>
-      <p className="text-tertiary truncate max-w-[92px]">{value}</p>
+      <p className="text-tertiary truncate max-w-23">{value}</p>
       <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary size-3.5" />
     </div>
   );
@@ -590,7 +590,7 @@ function EventBuilderPaneOptions() {
   return (
     <>
       <div
-        className="bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-[94px] md:h-full md:w-[96px] p-2 flex md:justify-center"
+        className="bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-23.5 md:h-full md:w-24 p-2 flex md:justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex md:flex-col gap-1">
@@ -600,7 +600,7 @@ function EventBuilderPaneOptions() {
               setState('template');
             }}
           >
-            <img src={presets[themeName]?.image} className="h-[32px] w-[43px] rounded-xs" />
+            <img src={presets[themeName]?.image} className="h-8 w-10.75 rounded-xs" />
             <p className="text-xs">Template</p>
           </ActionButton>
 
@@ -611,7 +611,7 @@ function EventBuilderPaneOptions() {
           >
             <div
               className={clsx(
-                'size-[32px] rounded-full',
+                'size-8 rounded-full',
                 data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${data.config.color} bg-accent-400`,
               )}
             />
@@ -625,8 +625,8 @@ function EventBuilderPaneOptions() {
           >
             <div
               className={clsx(
-                'size-[32px] bg-quaternary rounded-full',
-                data.theme === 'image' && 'w-[43px] rounded-xs',
+                'size-8 bg-quaternary rounded-full',
+                data.theme === 'image' && 'w-10.75 rounded-xs',
               )}
             >
               <div
@@ -635,7 +635,7 @@ function EventBuilderPaneOptions() {
                   data.theme === 'shader' && `rounded-full item-color-${data.config.name}`,
                   data.theme === 'pattern' &&
                     `pattern rounded-full ${data.config.name} ${data.config.color} relative! opacity-100!`,
-                  data.theme === 'image' && 'h-[32px] w-[43px] rounded-xs bg-cover!',
+                  data.theme === 'image' && 'h-8 w-10.75 rounded-xs bg-cover!',
                 )}
                 style={
                   data.theme === 'image' && data.config.image
@@ -654,15 +654,15 @@ function EventBuilderPaneOptions() {
             onClick={() => setState('effect')}
           >
             {!data.config.effect?.name ? (
-              <div className="size-[32px] bg-quaternary rounded-full" />
+              <div className="size-8 bg-quaternary rounded-full" />
             ) : (
-              <div className="size-[32px] text-2xl">{emojis[data.config.effect.name].emoji}</div>
+              <div className="size-8 text-2xl">{emojis[data.config.effect.name].emoji}</div>
             )}
             <p className="text-xs">Effect</p>
           </ActionButton>
 
           <ActionButton active={state === 'font_title'} onClick={() => setState('font_title')}>
-            <div className="size-[32px]">
+            <div className="size-8">
               <h3 style={{ fontFamily: fonts.title[data.font_title || 'default'] }} className="font-semibold">
                 Ag
               </h3>
@@ -671,7 +671,7 @@ function EventBuilderPaneOptions() {
           </ActionButton>
 
           <ActionButton active={state === 'font_body'} onClick={() => setState('font_body')}>
-            <div className="size-[32px]">
+            <div className="size-8">
               <h3 style={{ fontFamily: fonts.body[data.font_body || 'default'] }} className="font-semibold">
                 Ag
               </h3>
@@ -684,11 +684,11 @@ function EventBuilderPaneOptions() {
             disabled={data.theme && presets[themeName]?.ui?.disabled?.mode}
             onClick={() => setState('mode')}
           >
-            <div className="size-[32px]">
+            <div className="size-8">
               {data.config?.mode === 'dark' ? (
                 <i aria-hidden="true" className="icon-clear-night text-blue-400" />
               ) : (
-                <i aria-hidden="true" className="icon-dark-theme-filled size-[24px] rounded-full" />
+                <i aria-hidden="true" className="icon-dark-theme-filled size-6 rounded-full" />
               )}
             </div>
             <p className="text-xs">Display</p>
@@ -710,7 +710,7 @@ function ThemeTemplate() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
+    <div className="flex md:flex-col items-center gap-3 p-4 md:w-24">
       {Object.entries(presets).map(([key, { image, name }]) => {
         return (
           <div key={key} className="flex flex-col items-center gap-2">
@@ -747,7 +747,7 @@ function ThemeColor() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex md:flex-col items-center overflow-auto w-full md:w-[60px] gap-3 p-4">
+    <div className="flex md:flex-col items-center overflow-auto w-full md:w-15 gap-3 p-4">
       <button
         type="button"
         onClick={(e) => {
@@ -832,7 +832,7 @@ function ThemeFont({
   onClick: (font: string) => void;
 }) {
   return (
-    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
+    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-47 p-4 overflow-auto">
       {Object.entries(fonts).map(([key, font]) => (
         <button
           type="button"
@@ -845,7 +845,7 @@ function ThemeFont({
         >
           <div
             className={clsx(
-              'border-2 border-[var(--color-divider)] rounded-sm px-4 py-2 w-[72px] h-[56px] hover:border-primary',
+              'border-2 border-[var(--color-divider)] rounded-sm px-4 py-2 w-18 h-14 hover:border-primary',
               key === selected.toLowerCase().replaceAll(' ', '_') && 'border border-primary',
             )}
           >
@@ -873,7 +873,7 @@ function ThemeShader() {
   const [state, dispatch] = useEventTheme();
 
   return (
-    <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
+    <div className="flex md:flex-col items-center gap-3 w-full md:w-24 overflow-auto p-4">
       {shaders.map((s) => (
         <button
           type="button"
@@ -892,7 +892,7 @@ function ThemeShader() {
         >
           <div
             className={twMerge(
-              'size-[60px] cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+              'size-15 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
               `item-color-${s.name}`,
               clsx(s.name === state.config.name && 'outline-2'),
             )}
@@ -908,7 +908,7 @@ function ThemePattern() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
+    <div className="flex md:flex-col items-center gap-3 w-full md:w-24 overflow-auto p-4">
       {patterns.map((item) => (
         <button
           type="button"
@@ -959,7 +959,7 @@ function ThemeImage() {
   const images = (data?.getSystemFiles || []) as SystemFile[];
 
   return (
-    <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
+    <div className="flex md:flex-col items-center gap-3 p-4 md:w-24">
       {images.map((item) => {
         return (
           <div key={item._id} className="flex flex-col items-center gap-2">
@@ -1007,12 +1007,12 @@ function ThemeEffect() {
   const [state, dispatch] = useEventTheme();
 
   return (
-    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
+    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-47 p-4 overflow-auto">
       {Object.entries(emojis).map(([key, value]) => (
         <button type="button" key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
           <div
             className={clsx(
-              'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
+              'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-15 h-15 hover:border-primary flex items-center justify-between',
               key === state.config?.effect?.name && 'border border-primary',
             )}
             onClick={(e) => {
@@ -1047,7 +1047,7 @@ const modes = [
 function ThemeMode() {
   const [data, dispatch] = useEventTheme();
   return (
-    <div className="flex md:flex-col items-center w-full md:w-[92px] gap-3 overflow-auto p-4">
+    <div className="flex md:flex-col items-center w-full md:w-23 gap-3 overflow-auto p-4">
       {modes.map((item) => (
         <button
           type="button"
@@ -1091,7 +1091,7 @@ function ActionButton({
         onClick?.();
       }}
       className={clsx(
-        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
+        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover cursor-pointer rounded-sm w-20 font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
         active && 'bg-card-hover!',
       )}
     >

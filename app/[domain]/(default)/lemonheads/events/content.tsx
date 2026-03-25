@@ -225,7 +225,7 @@ export function Content({ initData }: Props) {
           </div>
 
           <div>
-            <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
+            <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-74">
               <Menu.Root>
                 <Menu.Trigger>
                   <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">

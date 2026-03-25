@@ -2,8 +2,8 @@ import { Button } from "$lib/components/core";
 
 export function ErrorModal({ title, message, onRetry, onClose }: { title: string; message: string; onRetry?: () => void, onClose: () => void }) {
   return (
-    <div className="p-4 space-y-4 w-[340px]">
-      <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-400/16">
+    <div className="p-4 space-y-4 w-85">
+      <div className="size-14 flex justify-center items-center rounded-full bg-danger-400/16">
         <i aria-hidden="true" className="icon-error text-danger-400" />
       </div>
       <div className="space-y-2">

@@ -131,7 +131,7 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
           <i aria-hidden="true" className="icon-connector-line size-4 shrink-0" />
           Connectors
         </Link>
-        <i aria-hidden="true" className="icon-chevron-right size-[18px] text-quaternary shrink-0" />
+        <i aria-hidden="true" className="icon-chevron-right size-4.5 text-quaternary shrink-0" />
         <span className="text-secondary">{connectorName}</span>
       </nav>
 
@@ -164,7 +164,7 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
                 aria-label="More options"
               />
             </Menu.Trigger>
-            <Menu.Content className="p-1 min-w-[160px]">
+            <Menu.Content className="p-1 min-w-40">
               {({ toggle }) => (
                 <MenuItem onClick={toggle}>
                   <div className="flex items-center gap-2.5">
@@ -321,7 +321,7 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
                     <Chip
                       size="xs"
                       variant={log.status === 'success' ? 'success' : 'error'}
-                      className="rounded-full px-2 py-[3px]"
+                      className="rounded-full px-2 py-0.75"
                     >
                       {log.status === 'success' ? 'Success' : 'Failed'}
                     </Chip>

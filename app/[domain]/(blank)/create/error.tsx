@@ -19,7 +19,7 @@ export default function CreateFlowError({
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+    <div className="flex flex-col items-center justify-center min-h-100 p-8">
       <div className="max-w-md w-full text-center space-y-4">
         <h2 className="text-2xl font-bold">Something went wrong</h2>
         <p className="text-color-tertiary">

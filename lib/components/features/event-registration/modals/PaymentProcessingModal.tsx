@@ -79,8 +79,8 @@ export function PaymentProcessingModal({ paymentId, paymentSecret, hasJoinReques
   }, [paymentId, paymentSecret, client, processTickets]);
 
   return (
-    <div className="p-4 space-y-4 w-[340px]">
-      <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+    <div className="p-4 space-y-4 w-85">
+      <div className="size-14 flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
         <i aria-hidden="true" className="icon-loader animate-spin" />
       </div>
       <div className="space-y-2">

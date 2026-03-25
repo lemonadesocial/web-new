@@ -20,14 +20,14 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
   };
 
   return (
-    <Card.Root className="w-[360px]">
+    <Card.Root className="w-90">
       <Card.Header className="flex justify-between items-start bg-transparent">
-        <div className="p-3 w-[56px] aspect-square rounded-full bg-success-400/16 flex items-center justify-center">
+        <div className="p-3 w-14 aspect-square rounded-full bg-success-400/16 flex items-center justify-center">
           <i aria-hidden="true" className="icon-richtext-check text-success-400 size-8" />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary-alt" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
-      <Card.Content className="flex flex-col gap-4 max-w-[448px]">
+      <Card.Content className="flex flex-col gap-4 max-w-112">
         <div className="flex flex-col gap-2">
           <p className="text-lg text-tertiary">You’ve Cloned</p>
           <p className="text-lg">{events[0].title}</p>
@@ -67,7 +67,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
         )}
 
         {events.length > 1 && (
-          <div className="flex flex-col gap-1.5 max-h-[300px] overflow-auto no-scrollbar">
+          <div className="flex flex-col gap-1.5 max-h-75 overflow-auto no-scrollbar">
             <Card.Root className="overflow-visible">
               <Card.Content className="flex gap-3 px-3 py-2 items-center">
                 {!!events[0].new_new_photos?.length ? (

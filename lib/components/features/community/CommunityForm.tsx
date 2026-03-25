@@ -218,11 +218,11 @@ export function CommunityFormContent({
               )}
             </FileInput>
 
-            <div className="flex flex-col gap-2 p-4 -mt-[48px]">
+            <div className="flex flex-col gap-2 p-4 -mt-12">
               <FileInput onChange={(files) => handleUpload(files, 'dp')}>
                 {(open) => (
                   <div
-                    className="size-[72px] rounded flex justify-end items-end bg-contain bg-no-repeat bg-center border border-(--color-divider) cursor-pointer"
+                    className="size-18 rounded flex justify-end items-end bg-contain bg-no-repeat bg-center border border-(--color-divider) cursor-pointer"
                     style={{
                       backgroundImage: `url(${dp})`,
                     }}
@@ -314,7 +314,7 @@ export function CommunityFormContent({
           <Card.Content className="space-y-4">
             <p className="text-lg">Location</p>
             <div className="relative">
-              <div className="h-[192px] rounded-md overflow-hidden">
+              <div className="h-48 rounded-md overflow-hidden">
                 <Map customMap />
               </div>
 

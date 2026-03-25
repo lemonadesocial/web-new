@@ -68,7 +68,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
 
             <Skeleton className="h-5 w-10" animate />
 
-            <div className="w-[62px] px-[60px] hidden md:block">
+            <div className="w-15.5 px-15 hidden md:block">
               <Skeleton className="h-5 w-16 rounded-full" animate />
             </div>
           </CardTable.Loading>
@@ -166,7 +166,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
 
             <Skeleton className="h-5 w-10" animate />
 
-            <div className="w-[62px] px-[60px] hidden md:block">
+            <div className="w-15.5 px-15 hidden md:block">
               <Skeleton className="h-5 w-16 rounded-full" animate />
             </div>
           </CardTable.Loading>

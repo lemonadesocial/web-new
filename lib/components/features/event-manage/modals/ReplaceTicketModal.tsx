@@ -98,7 +98,7 @@ export function ReplaceTicketModal({
               </span>
               <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary flex-shrink-0" />
             </Menu.Trigger>
-            <Menu.Content className="w-full p-1 max-h-[200px] overflow-auto no-scrollbar">
+            <Menu.Content className="w-full p-1 max-h-50 overflow-auto no-scrollbar">
               {({ toggle }) => (
                 <>
                   {availableTicketTypes.map((ticketType) => {

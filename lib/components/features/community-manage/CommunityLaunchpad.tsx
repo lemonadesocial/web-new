@@ -88,7 +88,7 @@ export function CommunityLaunchpad() {
           <CoinList filter={filter} hiddenColumns={['community', 'buy']} />
         ) : (
           <div className="flex flex-col justify-center items-center py-10">
-            <i aria-hidden="true" className="icon-token size-[184px] text-quaternary" />
+            <i aria-hidden="true" className="icon-token size-46 text-quaternary" />
             <div className="text-center mt-5 space-y-2">
               <h3 className="text-xl text-tertiary font-semibold">No Coins</h3>
               <p className="text-tertiary">Activate Launchpad to allow members to launch their own coins.</p>

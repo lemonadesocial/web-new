@@ -216,7 +216,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
                 className="w-full md:w-auto"
                 trigger={() => (
                   <Card.Root>
-                    <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
+                    <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-35.5 md:h-21 p-2">
                       <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
                       <p className="block md:hidden">{timezone?.text}</p>
                       <div className="hidden md:block">
@@ -243,7 +243,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
               }}
             />
             {address?.address?.latitude && address?.address?.longitude && (
-              <div className="h-[144px] w-full rounded-sm overflow-hidden">
+              <div className="h-36 w-full rounded-sm overflow-hidden">
                 <Map
                   gestureHandling="greedy"
                   defaultZoom={11}

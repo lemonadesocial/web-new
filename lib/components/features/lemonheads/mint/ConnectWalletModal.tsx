@@ -91,16 +91,16 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     if (!isConnected) return 'icon-wallet';
 
     if (minted && image) {
-      return <img src={image} className="size-[56px] rounded-sm aspect-square" alt="Your minted LemonHead" />;
+      return <img src={image} className="size-14 rounded-sm aspect-square" alt="Your minted LemonHead" />;
     }
 
     if (address) {
       return canMint || sponsor ? (
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
+        <div className="size-14 flex justify-center items-center rounded-full bg-success-500/16" data-icon>
           <i aria-hidden="true" className="icon-done text-success-500 size-8" />
         </div>
       ) : (
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-500/16" data-icon>
+        <div className="size-14 flex justify-center items-center rounded-full bg-warning-500/16" data-icon>
           <i aria-hidden="true" className="icon-info text-warning-500 size-8" />
         </div>
       );
@@ -125,7 +125,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     return (
       <ModalContent
         icon={
-          <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+          <div className="size-14 flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
             <i aria-hidden="true" className="icon-loader animate-spin" />
           </div>
         }
@@ -191,7 +191,7 @@ function MintWhiteList({
           <div className="border-t">
             <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
               <div className="flex gap-2.5">
-                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" alt={`${sponsor.name} logo`} />
+                <img src={sponsor.image_url} className="rounded-sm w-8.5 aspect-square" alt={`${sponsor.name} logo`} />
                 <div>
                   <p>You’ve unlocked a free mint!</p>
                   <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>
@@ -199,7 +199,7 @@ function MintWhiteList({
               </div>
 
               <div className="relative">
-                <div className="w-0 h-0 border-solid border-t-0 border-l-[6px] border-r-[6px] border-b-[6px] border-t-transparent border-r-transparent border-l-transparent border-b-(--btn-tertiary) absolute left-[10px] -top-[6px]" />
+                <div className="w-0 h-0 border-solid border-t-0 border-l-1.5 border-r-1.5 border-b-1.5 border-t-transparent border-r-transparent border-l-transparent border-b-(--btn-tertiary) absolute left-2.5 -top-1.5" />
                 <div className="px-3 py-2 text-sm bg-(--btn-tertiary) rounded-sm">{sponsor.message}</div>
               </div>
             </div>

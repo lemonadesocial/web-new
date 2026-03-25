@@ -125,7 +125,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
       </Pane.Header.Root>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Pane.Content className="p-4 flex flex-col gap-5">
-          <div className="relative h-[172px]">
+          <div className="relative h-43">
             <div className="bg-(--btn-tertiary) aspect-[4/1] rounded-sm">
               {(fileCover || me.cover_expanded) && (
                 <img
@@ -197,7 +197,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                       variant="secondary"
                       onClick={open}
                       loading={uploading}
-                      className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
+                      className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-10 max-h-10"
                     />
                   )}
                 </FileInput>

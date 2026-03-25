@@ -123,7 +123,7 @@ export function SelfIdSettingsModal({ event, onComplete }: SelfIdSettingsModalPr
   };
 
   return (
-    <ModalContent icon="icon-self" className="min-w-[480px]">
+    <ModalContent icon="icon-self" className="min-w-120">
       <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleUpdate)}>
         <div className="space-y-2">
           <p className="text-lg">Self ID Settings</p>

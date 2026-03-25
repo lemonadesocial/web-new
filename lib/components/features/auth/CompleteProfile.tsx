@@ -66,7 +66,7 @@ export function CompleteProfile() {
 
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Avatar src={file ? URL.createObjectURL(file) : userAvatar(me)} className="rounded-full size-[60px]" />
+            <Avatar src={file ? URL.createObjectURL(file) : userAvatar(me)} className="rounded-full size-15" />
             <FileInput
               accept="image/*"
               onChange={files => setFile(files[0])}

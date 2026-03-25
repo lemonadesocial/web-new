@@ -23,8 +23,8 @@ import { SendNewsletterPreviewModal } from './modals/SendNewsletterPreviewModal'
 import { SendNewsletterModal } from './modals/SendNewsletterModal';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
-const PREVIEW_MODAL_CLASS_NAME = 'w-[340px] max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
-const SEND_MODAL_CLASS_NAME = 'w-[340px] max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
+const PREVIEW_MODAL_CLASS_NAME = 'w-85 max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
+const SEND_MODAL_CLASS_NAME = 'w-85 max-w-[calc(100vw-32px)] shadow-[0_4px_8px_rgba(0,0,0,0.32)]';
 
 function getPlainText(value: string) {
   return value.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
@@ -278,13 +278,13 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
       />
 
       <div className="flex flex-1 flex-col px-4">
-        <div className="mx-auto flex w-full max-w-[600px] flex-1 flex-col pt-7 pb-20">
+        <div className="mx-auto flex w-full max-w-150 flex-1 flex-col pt-7 pb-20">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-1 text-sm text-tertiary">
               <span className="truncate font-medium">{space.title}</span>
-              <i aria-hidden="true" className="icon-chevron-right size-[18px] shrink-0" />
+              <i aria-hidden="true" className="icon-chevron-right size-4.5 shrink-0" />
               <span className="font-medium">Newsletters</span>
-              <i aria-hidden="true" className="icon-chevron-right size-[18px] shrink-0" />
+              <i aria-hidden="true" className="icon-chevron-right size-4.5 shrink-0" />
             </div>
 
             <QuotaRing available={availableSends} total={sendingQuota?.total ?? 0} />
@@ -311,7 +311,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
               directory="email"
               content={body}
               placeholder="The beginning of a masterpiece..."
-              containerClass="min-h-[320px] rounded-none border-0 bg-transparent px-0 py-0 text-base leading-7 text-primary hover:border-transparent focus:border-transparent"
+              containerClass="min-h-80 rounded-none border-0 bg-transparent px-0 py-0 text-base leading-7 text-primary hover:border-transparent focus:border-transparent"
               onChange={(value) => {
                 setSaveStatus('idle');
                 setBody(value);
@@ -322,7 +322,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
       </div>
 
       <div className="sticky bottom-0 border-t border-primary/8 bg-page/80 p-4 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-[600px] items-center justify-between gap-4">
+        <div className="mx-auto flex w-full max-w-150 items-center justify-between gap-4">
           <Button
             aria-label="Delete draft"
             icon="icon-delete"
@@ -343,7 +343,7 @@ export function NewsletterDraftPage({ uid, draftId }: { uid: string; draftId: st
 
           <div className="relative flex items-center gap-2">
             {saveStatus !== 'idle' && (
-              <div className="absolute bottom-full right-0 mb-5 rounded-full border border-primary/8 bg-[rgba(32,32,34,0.8)] px-2.5 py-1 text-sm leading-5 text-tertiary backdrop-blur-[8px]">
+              <div className="absolute bottom-full right-0 mb-5 rounded-full border border-primary/8 bg-[rgba(32,32,34,0.8)] px-2.5 py-1 text-sm leading-5 text-tertiary backdrop-blur">
                 <span className="font-medium">{saveStatus === 'saved' ? 'Saved' : 'Saving'}</span>
               </div>
             )}

@@ -64,7 +64,7 @@ export default function AddTagModal({
               <div
                 key={idx}
                 className={clsx(
-                  'size-[35px] aspect-square p-0.5 rounded-full cursor-pointer border-2',
+                  'size-8.75 aspect-square p-0.5 rounded-full cursor-pointer border-2',
                   c === color ? 'border-primary' : 'border-transparent',
                 )}
                 onClick={() => setColor(c)}

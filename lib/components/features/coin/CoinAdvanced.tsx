@@ -146,7 +146,7 @@ function AdvancedRow({ label, children }: { label: string; children: ReactNode }
   return (
     <CardTable.Row>
       <div className="flex gap-4 px-4 py-3">
-        <div className="w-[280px] min-w-[280px]">
+        <div className="w-70 min-w-70">
           <p className="text-tertiary">{label}</p>
         </div>
         <div className="flex-1">
@@ -165,7 +165,7 @@ interface AsyncValueProps<T> {
 
 function AsyncValue<T>({ isLoading, value, children }: AsyncValueProps<T>) {
   if (isLoading) {
-    return <Skeleton className="h-5 w-[200px]" animate />;
+    return <Skeleton className="h-5 w-50" animate />;
   }
 
   if (value === null || value === undefined) {

@@ -15,7 +15,7 @@ function ApiKeyRegeneratedSuccessModal({ secret }: { secret: string }) {
   return (
     <ModalContent
       icon="icon-check"
-      className="w-[480px] max-w-full [&_[data-icon]]:bg-success-400/16 [&_[data-icon]_i]:text-success-400"
+      className="w-120 max-w-full [&_[data-icon]]:bg-success-400/16 [&_[data-icon]_i]:text-success-400"
     >
       <div className="space-y-4">
         <div className="space-y-2">
@@ -79,7 +79,7 @@ export function RegenerateApiKeyModal({ apiKey, onRegenerated }: RegenerateApiKe
   return (
     <ModalContent
       icon="icon-error"
-      className="w-[480px] max-w-full [&_[data-icon]]:bg-warning-300/16 [&_[data-icon]_i]:text-warning-300"
+      className="w-120 max-w-full [&_[data-icon]]:bg-warning-300/16 [&_[data-icon]_i]:text-warning-300"
     >
       <div className="space-y-4">
         <div className="space-y-2">

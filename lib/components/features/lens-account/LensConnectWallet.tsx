@@ -114,7 +114,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
 
   return (
     <div className="rounded-sm border border-divider flex flex-col gap-4 p-4">
-      <div className="hidden size-[56px] md:flex justify-center items-center rounded-full bg-primary/8">
+      <div className="hidden size-14 md:flex justify-center items-center rounded-full bg-primary/8">
         <i aria-hidden="true" className="icon-wallet size-8 text-tertiary" />
       </div>
       <div className="space-y-2">

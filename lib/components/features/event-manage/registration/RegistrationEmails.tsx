@@ -37,8 +37,8 @@ export function RegistrationEmails({ event }: { event: Event }) {
   //         <div className="p-3 space-y-4 bg-card">
   //           <i aria-hidden="true" className="icon-pending size-7 text-warning-400" />
   //           <div className="space-y-2">
-  //             <Skeleton className="h-2.5 w-[240px]" />
-  //             <Skeleton className="h-2.5 w-[96px]" />
+  //             <Skeleton className="h-2.5 w-60" />
+  //             <Skeleton className="h-2.5 w-24" />
   //           </div>
   //         </div>
   //         <div className="px-3 py-2.5">
@@ -53,8 +53,8 @@ export function RegistrationEmails({ event }: { event: Event }) {
   //         <div className="p-3 space-y-4 bg-card">
   //           <i aria-hidden="true" className="icon-check size-7 text-success-500" />
   //           <div className="space-y-2">
-  //             <Skeleton className="h-2.5 w-[240px]" />
-  //             <Skeleton className="h-2.5 w-[96px]" />
+  //             <Skeleton className="h-2.5 w-60" />
+  //             <Skeleton className="h-2.5 w-24" />
   //           </div>
   //         </div>
   //         <div className="px-3 py-2.5">
@@ -66,8 +66,8 @@ export function RegistrationEmails({ event }: { event: Event }) {
   //         <div className="p-3 space-y-4 bg-card">
   //           <i aria-hidden="true" className="icon-cancel size-7 text-error" />
   //           <div className="space-y-2">
-  //             <Skeleton className="h-2.5 w-[240px]" />
-  //             <Skeleton className="h-2.5 w-[96px]" />
+  //             <Skeleton className="h-2.5 w-60" />
+  //             <Skeleton className="h-2.5 w-24" />
   //           </div>
   //         </div>
   //         <div className="px-3 py-2.5">

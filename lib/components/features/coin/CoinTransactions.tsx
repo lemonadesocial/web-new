@@ -99,7 +99,7 @@ function TransactionRow({
   return (
     <CardTable.Row key={swap.blockNumber}>
       <div className="flex gap-3 px-4 py-3 items-center justify-between text-tertiary hover:bg-(--btn-tertiary)">
-        <div className="w-[60px]">
+        <div className="w-15">
           <Chip size="xs" variant={isBuy ? 'success' : 'error'}>
             {isBuy ? 'Buy' : 'Sell'}
           </Chip>
@@ -119,7 +119,7 @@ function TransactionRow({
         <div className="flex-1">
           <p>{formatNumber(Number(tokenValue), true)}</p>
         </div>
-        <div className="w-[144px]">
+        <div className="w-36">
           <p>{timeAgo}</p>
         </div>
         {txUrl && (
@@ -179,21 +179,21 @@ export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
     <CardTable.Root loading={isLoading} data={swaps}>
       <CardTable.Header>
         <div className="flex gap-3 px-4 py-3 w-full">
-          <p className="w-[60px]">Action</p>
+          <p className="w-15">Action</p>
           <p className="flex-1">Made By</p>
           <p className="flex-1">ETH</p>
           <p className="flex-1">{tokenData?.symbol ?? 'Token'}</p>
-          <p className="w-[144px]">Date</p>
-          <p className="w-[16px]"></p>
+          <p className="w-36">Date</p>
+          <p className="w-4"></p>
         </div>
       </CardTable.Header>
 
       <CardTable.Loading rows={10}>
-        <Skeleton className="h-6 w-[60px] rounded-full" animate />
+        <Skeleton className="h-6 w-15 rounded-full" animate />
         <Skeleton className="h-5 flex-1" animate />
         <Skeleton className="h-5 flex-1" animate />
         <Skeleton className="h-5 flex-1" animate />
-        <Skeleton className="h-5 w-[144px]" animate />
+        <Skeleton className="h-5 w-36" animate />
       </CardTable.Loading>
 
       <CardTable.EmptyState

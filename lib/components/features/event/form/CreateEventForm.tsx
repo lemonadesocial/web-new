@@ -65,12 +65,12 @@ export function CreateEventForm({
   return (
     <div
       className={clsx(
-        'grid gap-[36px] grid-cols-1 pb-10 ',
+        'grid gap-9 grid-cols-1 pb-10 ',
         state.theme && state.config.color,
-        !mobile && 'md:flex md:gap-[72px]',
+        !mobile && 'md:flex md:gap-18',
       )}
     >
-      <div className={clsx('flex-col gap-6', !mobile && 'md:w-[296px]')}>
+      <div className={clsx('flex-col gap-6', !mobile && 'md:w-74')}>
         <Controller
           control={control}
           name="cover"
@@ -91,7 +91,7 @@ export function CreateEventForm({
                 />
                 <Button
                   icon="icon-upload-sharp"
-                  className="rounded-full size-[40px]! absolute bottom-2.5 right-2.5 border-[var(--btn-secondary-content)]!"
+                  className="rounded-full size-10! absolute bottom-2.5 right-2.5 border-[var(--btn-secondary-content)]!"
                   variant="secondary"
                   loading={uploading}
                   onClick={() => fileInputRef.current?.click()}
@@ -114,7 +114,7 @@ export function CreateEventForm({
                 <Menu.Root placement="bottom-start">
                   <Menu.Trigger>
                     <Button size="sm" variant="tertiary" iconRight="icon-chevron-down">
-                      <div className="flex items-center gap-1.5 flex-1 line-clamp-1 w-[110px]">
+                      <div className="flex items-center gap-1.5 flex-1 line-clamp-1 w-27.5">
                         <div className="size-4 rounded-xs overflow-hidden relative">
                           <img
                             className="w-full h-full outline outline-tertiary/4 rounded-xs"
@@ -133,11 +133,11 @@ export function CreateEventForm({
                       </div>
                     </Button>
                   </Menu.Trigger>
-                  <Menu.Content className="w-[272px] p-1">
+                  <Menu.Content className="w-68 p-1">
                     {({ toggle }) => (
                       <>
                         <p className="text-xs text-tertiary py-1 px-2">Choose the community of the event:</p>
-                        <div className="max-h-[210px] overflow-auto no-scrollbar">
+                        <div className="max-h-52.5 overflow-auto no-scrollbar">
                           {spaces.map((item) => (
                             <div
                               key={item._id}
@@ -184,14 +184,14 @@ export function CreateEventForm({
                   <Button
                     size="sm"
                     variant="tertiary"
-                    className="w-[112px]"
+                    className="w-28"
                     iconLeft={PUBLIC_OPTIONS.find((item) => item.private === field.value)?.icon}
                     iconRight="icon-chevron-down"
                   >
                     {!field.value ? 'Public' : 'Private'}
                   </Button>
                 </Menu.Trigger>
-                <Menu.Content className="w-[280px] p-1">
+                <Menu.Content className="w-70 p-1">
                   {({ toggle }) => (
                     <>
                       {PUBLIC_OPTIONS.map((item, idx) => (
@@ -227,7 +227,7 @@ export function CreateEventForm({
             <Input
               data-testid="event-create-title"
               value={field.value}
-              className="bg-transparent rounded-none border-none text-3xl p-0 h-[68px]"
+              className="bg-transparent rounded-none border-none text-3xl p-0 h-17"
               placeholder="Event Title"
               onChange={field.onChange}
             />
@@ -256,7 +256,7 @@ export function CreateEventForm({
                 className="w-full md:w-auto"
                 trigger={() => (
                   <Card.Root>
-                    <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
+                    <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-35.5 md:h-21 p-2">
                       <i aria-hidden="true" className="icon-globe size-5" />
                       <p className="block md:hidden">{timezone?.text}</p>
                       <div className="hidden md:block">
@@ -377,7 +377,7 @@ export function CreateEventForm({
         </div>
 
         {address?.latitude && address?.longitude && (
-          <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+          <div className="aspect-video h-60 rounded-sm overflow-hidden">
             <Map
               gestureHandling="greedy"
               defaultZoom={11}
@@ -504,7 +504,7 @@ export function CreateEventForm({
 function VirtualModal({ url, onConfirm }: { url?: string; onConfirm?: (url: string) => void }) {
   const [value, setValue] = React.useState(url);
   return (
-    <Card.Root className="w-[480px]">
+    <Card.Root className="w-120">
       <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Add Virtual Link</p>
         <Button
@@ -543,9 +543,9 @@ function VirtualModal({ url, onConfirm }: { url?: string; onConfirm?: (url: stri
 function CapacityModal({ value: limit = 0, onSetLimit }: { value?: number; onSetLimit: (value: number) => void }) {
   const [value, setValue] = React.useState(limit);
   return (
-    <Card.Root className="w-[340px]">
+    <Card.Root className="w-85">
       <Card.Header className="flex justify-between items-start bg-transparent">
-        <div className="size-[56px] rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
+        <div className="size-14 rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
           <i aria-hidden="true" className="icon-vertical-align-top" />
         </div>
 
@@ -609,9 +609,9 @@ function CapacityModal({ value: limit = 0, onSetLimit }: { value?: number; onSet
 function InviteByGuestModal({ value: limit = 0, onSetLimit }: { value?: number; onSetLimit: (value: number) => void }) {
   const [value, setValue] = React.useState(limit);
   return (
-    <Card.Root className="w-[340px]">
+    <Card.Root className="w-85">
       <Card.Header className="flex justify-between items-start bg-transparent">
-        <div className="size-[56px] rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
+        <div className="size-14 rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
           <i aria-hidden="true" className="icon-user-plus" />
         </div>
 

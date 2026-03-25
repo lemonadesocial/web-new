@@ -66,8 +66,8 @@ export function BottomSheetContainer() {
         className={twMerge('bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl', options.containerClass)}
       >
         <Sheet.Header className="rounded-tl-lg rounded-tr-lg bg-overlay-primary/80 backdrop-blur-2xl">
-          <div className="flex justify-center items-end h-[20px]">
-            <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+          <div className="flex justify-center items-end h-5">
+            <div className="bg-primary/8 rounded-xs w-12 h-1 cursor-row-resize"></div>
           </div>
         </Sheet.Header>
         <Sheet.Content disableDrag className={twMerge('bg-overlay-primary/80 backdrop-blur-2xl', options.contentClass)}>

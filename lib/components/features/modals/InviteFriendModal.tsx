@@ -37,7 +37,7 @@ export function InviteFriendModal({ event }: { event: Event }) {
   ];
 
   return (
-    <ModalContent icon="icon-share" className="w-[480px]">
+    <ModalContent icon="icon-share" className="w-120">
       <div className="space-y-4">
         <div className="space-y-2">
           <p className="text-lg">Invite a Friend</p>

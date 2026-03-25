@@ -96,11 +96,11 @@ export function ColorTool({
                 key={c.value}
                 onClick={() => onSelect(c)}
                 className={clsx(
-                  'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
+                  'w-7 h-7 aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
                   selected === c.key ? 'border-primary' : 'border-transparent',
                 )}
               >
-                <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+                <div className="w-5 h-5 rounded-full aspect-square" style={{ background: c.value }} />
               </div>
             ))}
           </div>
@@ -111,7 +111,7 @@ export function ColorTool({
       </div>
       <div className="hidden md:flex absolute bottom-0 left-0 right-0 flex items-center justify-between p-4 bg-transparent">
         {!!colors.length ? (
-          <Card.Root className="max-h-[52px] rounded-full p-3 bg-overlay-secondary">
+          <Card.Root className="max-h-13 rounded-full p-3 bg-overlay-secondary">
             <Card.Content className="p-0">
               <div className="flex gap-1 rounded-full w-full overflow-x-auto no-scrollbar">
                 {colors.map((c) => (
@@ -119,11 +119,11 @@ export function ColorTool({
                     key={c.value}
                     onClick={() => onSelect(c)}
                     className={clsx(
-                      'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
+                      'w-7 h-7 aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
                       selected === c.key ? 'border-primary' : 'border-transparent',
                     )}
                   >
-                    <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+                    <div className="w-5 h-5 rounded-full aspect-square" style={{ background: c.value }} />
                   </div>
                 ))}
               </div>

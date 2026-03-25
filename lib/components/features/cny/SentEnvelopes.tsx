@@ -209,7 +209,7 @@ export const SentEnvelopes = () => {
                     : 'Opened'}
               </Button>
             </Menu.Trigger>
-            <Menu.Content className="min-w-[180px] p-1">
+            <Menu.Content className="min-w-45 p-1">
               {({ toggle }) => (
                 <>
                   <MenuItem
@@ -256,7 +256,7 @@ export const SentEnvelopes = () => {
                     : 'Status'}
               </Button>
             </Menu.Trigger>
-            <Menu.Content className="min-w-[180px] p-1">
+            <Menu.Content className="min-w-45 p-1">
               {({ toggle }) => (
                 <>
                   <MenuItem

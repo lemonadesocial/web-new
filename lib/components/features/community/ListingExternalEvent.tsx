@@ -112,7 +112,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
   };
 
   return (
-    <div className="w-[350] md:w-[480] max-h-[700px] overflow-auto no-scrollbar">
+    <div className="w-[350] md:w-[480] max-h-175 overflow-auto no-scrollbar">
       <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
@@ -170,7 +170,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
                     }}
                   />
                   {location?.address?.latitude && location?.address?.longitude && (
-                    <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+                    <div className="aspect-video h-60 rounded-sm overflow-hidden">
                       <Map
                         gestureHandling="greedy"
                         defaultZoom={11}
@@ -315,7 +315,7 @@ function InputFieldCustom({
         </div>
       </div>
 
-      <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] focus-within:border-primary">
+      <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-11 focus-within:border-primary">
         <input
           className="flex-1 outline-none"
           value={value}
@@ -347,7 +347,7 @@ function InputField({
       <label className="text-sm text-secondary font-medium">{label}</label>
       <div
         className={twMerge(
-          'bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] focus-within:border-primary',
+          'bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-11 focus-within:border-primary',
           clsx(iconLeft && 'px-3.5 gap-2.5'),
         )}
       >
@@ -415,13 +415,13 @@ function DateTimeWithTimeZone({
         trigger={() => (
           <button
             type="button"
-            className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
+            className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-10 pl-3.5 pr-2.5"
           >
             <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
-              <i aria-hidden="true" className="icon-globe size-[20px]" />
+              <i aria-hidden="true" className="icon-globe size-5" />
               <span className="truncate w-fit">{zone?.text}</span>
             </div>
-            <i aria-hidden="true" className="icon-chevron-down size-[20px]" />
+            <i aria-hidden="true" className="icon-chevron-down size-5" />
           </button>
         )}
         onSelect={(data) => {

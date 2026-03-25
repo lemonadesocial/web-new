@@ -15,7 +15,7 @@ export function LemonHeadPreview({
 }) {
   return (
     <Card.Root className={twMerge('w-full', className)}>
-      <Card.Content className="p-0 max-w-[692px] aspect-square relative">
+      <Card.Content className="p-0 max-w-173 aspect-square relative">
         {TraitOrders.map((traitType) => {
           const trait = traits?.find((i) => i?.type === traitType);
           if (!trait?.image) return null;

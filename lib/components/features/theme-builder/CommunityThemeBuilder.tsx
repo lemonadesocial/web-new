@@ -79,7 +79,7 @@ function CommunityThemeBuilderDrawer({
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ duration: 0.3 }}
-      className="fixed right-0 top-0 bottom-0 w-[280px] bg-overlay-primary backdrop-blur-md border-l border-divider"
+      className="fixed right-0 top-0 bottom-0 w-70 bg-overlay-primary backdrop-blur-md border-l border-divider"
       style={{
         zIndex: 10000,
         // @ts-expect-error accept variables
@@ -228,8 +228,8 @@ function CommunityThemeBuilderPane({
 
         <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
-            <div className="flex justify-center items-end h-[20px]">
-              <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+            <div className="flex justify-center items-end h-5">
+              <div className="bg-primary/8 rounded-xs w-12 h-1 cursor-row-resize"></div>
             </div>
           </Sheet.Header>
           <Sheet.Content disableDrag>
@@ -507,7 +507,7 @@ export function CommunityThemeContentBuilder({
   const themeName = getThemeName(state);
 
   return (
-    <div className={twMerge('flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4', className)}>
+    <div className={twMerge('flex flex-col gap-6 max-w-270 m-auto py-6 px-4', className)}>
       <ThemeTemplate />
 
       <div className="flex flex-col gap-2">
@@ -557,7 +557,7 @@ export function CommunityThemeContentBuilder({
 
 function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
   return (
-    <div className="p-4 flex flex-col gap-4 max-w-[308px]">
+    <div className="p-4 flex flex-col gap-4 max-w-77">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">
         <i aria-hidden="true" className="icon-info text-danger-400" />
       </div>

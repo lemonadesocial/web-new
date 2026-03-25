@@ -103,7 +103,7 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
     editorProps: {
       attributes: {
         class: twMerge(
-          'tiptap border hover:border-quaternary focus:border-primary px-3 py-2.5 min-h-[110px] rounded-sm outline-none',
+          'tiptap border hover:border-quaternary focus:border-primary px-3 py-2.5 min-h-27.5 rounded-sm outline-none',
           containerClass,
         ),
       },
@@ -167,7 +167,7 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
           <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
         )
       }
-      <div className="flex flex-col gap-[6px]">
+      <div className="flex flex-col gap-1.5">
         {label && <label className="text-secondary text-sm font-medium">{label}</label>}
         <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
       </div>

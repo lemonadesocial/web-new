@@ -84,7 +84,7 @@ export function EventsContent() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10 mt-6 md:mt-11">
+    <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-18 items-start pb-10 mt-6 md:mt-11">
       <div className="flex flex-col gap-5 flex-1 w-full">
         <PageTitle title="Events">
           <div className="flex gap-2 items-center justify-between w-full md:w-fit">
@@ -101,7 +101,7 @@ export function EventsContent() {
             </div>
 
             <div className="flex gap-2">
-              <Menu.Root className="w-[132px]">
+              <Menu.Root className="w-33">
                 <Menu.Trigger>
                   <div className="btn btn-tertiary rounded-sm">
                     <MenuItem iconRight="icon-chevrons-up-down">

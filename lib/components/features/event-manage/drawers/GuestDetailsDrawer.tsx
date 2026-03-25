@@ -245,7 +245,7 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
                   <p className="text-tertiary text-sm">Registration Time</p>
                   <p>{format(new Date(guestInfo.ticket.created_at), 'MMM d \'at\' h:mm a')}</p>
                 </div>
-                <div className="w-1 h-[44px] border-l border-l-divider" />
+                <div className="w-1 h-11 border-l border-l-divider" />
                 <div>
                   <p className="text-tertiary text-sm">Ticket</p>
                   <p>{guestInfo.ticket?.type_expanded?.title}</p>
@@ -416,7 +416,7 @@ function TimelineItem({
           <i aria-hidden="true" className={`${icon} size-3.5`} />
         </div>
         {!isLast && (
-          <div className="absolute top-7 left-1/2 -translate-x-1/2 w-[1px] bottom-0 bg-primary/8" />
+          <div className="absolute top-7 left-1/2 -translate-x-1/2 w-px bottom-0 bg-primary/8" />
         )}
       </div>
       <div className="flex-1 min-w-0 pb-3">
@@ -436,7 +436,7 @@ function PaymentItem({ payment }: { payment: EventGuestPayment }) {
 
   return (
     <div className="flex items-start justify-between gap-3 px-3.5 py-2.5">
-      <div className="space-y-[2px]">
+      <div className="space-y-0.5">
         <p>{payment.formatted_total_amount} {payment.currency}</p>
         {
           (payment.crypto_payment_info?.tx_hash || payment.stripe_payment_info) && (

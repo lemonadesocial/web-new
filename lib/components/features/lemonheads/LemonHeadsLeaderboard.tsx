@@ -54,11 +54,11 @@ export function LemonHeadsLeaderboard() {
                 <p>{getUsernameOrWallet(myLemonheadRank?.user as LemonheadUserInfo)}</p>
                 <Badge title="Your Rank" color="var(--color-tertiary)" className="rounded-full" />
               </div>
-              <p className="md:w-[96px]">{myLemonheadRank?.invitations_count}</p>
+              <p className="md:w-24">{myLemonheadRank?.invitations_count}</p>
 
               <div
                 className={clsx(
-                  'w-[62px] hidden md:flex justify-end',
+                  'w-15.5 hidden md:flex justify-end',
                   !!myLemonheadRank?.invitations_count && myLemonheadRank?.invitations_count === 5 && 'invisible',
                 )}
               >
@@ -82,7 +82,7 @@ export function LemonHeadsLeaderboard() {
                 <p className="w-8 text-sm text-tertiary">Rank</p>
                 <p className="flex-1 text-sm text-tertiary">Inviter</p>
                 <p className="text-sm text-tertiary">Invites</p>
-                {/* <div className="hidden md:block w-[62px]" /> */}
+                {/* <div className="hidden md:block w-15.5" /> */}
               </Card.Header>
             )}
 
@@ -120,7 +120,7 @@ export function LemonHeadsLeaderboard() {
 
                           <Skeleton className="h-5 w-10" animate />
 
-                          {/* <div className="w-[62px] px-[60px] hidden md:block"> */}
+                          {/* <div className="w-15.5 px-15 hidden md:block"> */}
                           {/*   <Skeleton className="h-5 w-16 rounded-full" animate /> */}
                           {/* </div> */}
                         </motion.div>
@@ -149,7 +149,7 @@ export function LemonHeadsLeaderboard() {
                             <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
                           </div>
                           <p className="">{item?.invitations_count}</p>
-                          {/* <div className="w-[62px] hidden md:block"> */}
+                          {/* <div className="w-15.5 hidden md:block"> */}
                           {/*   <Button variant="tertiary-alt" size="sm" className="rounded-full"> */}
                           {/*     Follow */}
                           {/*   </Button> */}

@@ -18,7 +18,7 @@ export function LimitsAndRestrictions({ event }: { event: Event }) {
           });
         }}
       >
-        <div className="size-[38px] flex items-center justify-center rounded-sm bg-success-500/16">
+        <div className="size-9.5 flex items-center justify-center rounded-sm bg-success-500/16">
           <i aria-hidden="true" className="icon-ticket text-success-500" />
         </div>
         <div>
@@ -37,7 +37,7 @@ export function LimitsAndRestrictions({ event }: { event: Event }) {
           });
         }}
       >
-        <div className="size-[38px] flex items-center justify-center rounded-sm bg-warning-300/16">
+        <div className="size-9.5 flex items-center justify-center rounded-sm bg-warning-300/16">
           <i aria-hidden="true" className="icon-list-check text-warning-300" />
         </div>
         <div>
@@ -56,7 +56,7 @@ export function LimitsAndRestrictions({ event }: { event: Event }) {
           });
         }}
       >
-        <div className="size-[38px] flex items-center justify-center rounded-sm bg-[#FB923C]/16">
+        <div className="size-9.5 flex items-center justify-center rounded-sm bg-[#FB923C]/16">
           <i aria-hidden="true" className="icon-vertical-align-top text-[#FB923C]" />
         </div>
         <div>

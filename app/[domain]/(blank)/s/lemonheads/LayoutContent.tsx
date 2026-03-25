@@ -28,9 +28,9 @@ export function LayoutContent({ space, children }: LayoutContentProps) {
         >
           <Sidebar space={space} />
           <div>
-            <Header hideLogo className="h-[64px]" />
-            <div className="lg:pl-[97px]">
-              <div className="max-w-[1256px] mx-auto px-4 xl:px-0 pt-6 w-full">{children}</div>
+            <Header hideLogo className="h-16" />
+            <div className="lg:pl-24.25">
+              <div className="max-w-314 mx-auto px-4 xl:px-0 pt-6 w-full">{children}</div>
             </div>
           </div>
           <Footer space={space} />

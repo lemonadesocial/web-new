@@ -119,7 +119,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
                   </button>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-0 min-w-[372px]">
+              <Menu.Content className="p-0 min-w-93">
                 {({ toggle }) => (
                   <>
                     <div className="p-1">

@@ -28,7 +28,7 @@ export function EventSearchPane({ events, total, sources }: EventSearchPaneProps
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+      <div className="flex flex-col gap-2 max-h-100 overflow-y-auto">
         {events.map((event) => (
           <AtlasEventCard
             key={event.id}

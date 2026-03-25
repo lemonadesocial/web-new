@@ -32,7 +32,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
         <p className="truncate text-lg">
           {attending ? (
             <>
-              {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-[18px]" />
+              {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-4.5" />
             </>
           ) : (
             'Register to See Address'

@@ -23,7 +23,7 @@ export const RedEnvelopesSidebar = () => {
   };
 
   return (
-    <div className="hidden lg:block fixed left-0 top-0 h-screen p-4 border-r z-[9] bg-[#450A0A]">
+    <div className="hidden lg:block fixed left-0 top-0 h-screen p-4 border-r z-9 bg-[#450A0A]">
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-center h-12 cursor-pointer" onClick={() => router.push('/')}>
           <i aria-hidden="true" className="icon-lemonade-logo text-[#FDE047]" />
@@ -41,7 +41,7 @@ export const RedEnvelopesSidebar = () => {
                 icon={item.icon}
                 iconSize="size-8"
                 size="lg"
-                className="w-full h-[64px] md:max-h-[64px]"
+                className="w-full h-16 md:max-h-16"
               />
             </div>
           );

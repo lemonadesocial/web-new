@@ -33,7 +33,7 @@ export function EventOverview() {
                 className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
                 onClick={() => modal.open(InviteGuestsModal, { props: { event }, dismissible: true })}
               >
-                <div className="size-[38px] aspect-square rounded-sm bg-blue-400/16 flex items-center justify-center">
+                <div className="size-9.5 aspect-square rounded-sm bg-blue-400/16 flex items-center justify-center">
                   <i aria-hidden="true" className="icon-person-add size-5 text-blue-400" />
                 </div>
                 <p>Invite Guests</p>
@@ -42,7 +42,7 @@ export function EventOverview() {
                 className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
                 onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
               >
-                <div className="size-[38px] aspect-square rounded-sm bg-success-500/16 flex items-center justify-center">
+                <div className="size-9.5 aspect-square rounded-sm bg-success-500/16 flex items-center justify-center">
                   <i aria-hidden="true" className="icon-qr size-5 text-success-500" />
                 </div>
                 <p>Check In Guests</p>
@@ -51,7 +51,7 @@ export function EventOverview() {
                 className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
                 onClick={() => modal.open(BlastAdvancedModal, { dismissible: false, props: { event, message: '' } })}
               >
-                <div className="size-[38px] aspect-square rounded-sm bg-[#C084FC]/16 flex items-center justify-center">
+                <div className="size-9.5 aspect-square rounded-sm bg-[#C084FC]/16 flex items-center justify-center">
                   <i aria-hidden="true" className="icon-email size-5 text-[#C084FC]" />
                 </div>
                 <p>Send a Blast</p>
@@ -61,7 +61,7 @@ export function EventOverview() {
                 onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
               >
                 <div
-                  className="size-[38px] aspect-square rounded-sm flex items-center justify-center"
+                  className="size-9.5 aspect-square rounded-sm flex items-center justify-center"
                   style={{ background: 'rgba(244, 114, 182, 0.16)' }}
                 >
                   <i aria-hidden="true" className="icon-person-add size-5 text-[#F472B6]" />

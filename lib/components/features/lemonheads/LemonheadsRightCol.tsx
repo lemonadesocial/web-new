@@ -25,7 +25,7 @@ export function LemonHeadsRightCol({
         {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
       </div>
 
-      <div className="hidden md:block w-full max-w-[296px]">
+      <div className="hidden md:block w-full max-w-74">
         <div className="sticky top-0 flex flex-col gap-4">
           {/* {options.passport && <PassportCard />} */}
           {options.nft && <LemonHeadsNFTCard />}

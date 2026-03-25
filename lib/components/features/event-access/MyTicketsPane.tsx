@@ -93,7 +93,7 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
               <div className="flex items-center gap-2">
                 <p className="font-medium">{additionalTickets.length} Additional Tickets</p>
                 {unassignedTickets.length > 0 && (
-                   <div className="px-[6px] py-[1px] bg-warning-300/16 rounded-full">
+                   <div className="px-1.5 py-px bg-warning-300/16 rounded-full">
                      <p className="text-xs text-warning-300 leading-4.5">{unassignedTickets.length} unassigned</p>
                    </div>
                 )}

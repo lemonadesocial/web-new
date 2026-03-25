@@ -21,9 +21,9 @@ export function FeaturedCommunityHubs() {
         .with(true, () => (
           <div className="flex gap-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="min-w-[384px] flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
+              <div key={i} className="min-w-96 flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
                 <Skeleton animate className="w-12 h-12 rounded-sm" />
-                <Skeleton animate className="h-[28px] w-[200px]" />
+                <Skeleton animate className="h-7 w-50" />
                 <Skeleton animate className="h-4 w-full" />
               </div>
             ))}

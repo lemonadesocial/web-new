@@ -75,7 +75,7 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
   };
 
   const content = (
-    <div className="space-y-4 max-h-[648px] overflow-auto p-4">
+    <div className="space-y-4 max-h-162 overflow-auto p-4">
       <div className="space-y-2">
         <p className="text-lg">Preview Links</p>
         <p className="text-secondary text-sm">
@@ -120,7 +120,7 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
                 <Button
                   icon="icon-copy"
                   variant="tertiary-alt"
-                  className="size-[40px] aspect-square"
+                  className="size-10 aspect-square"
                   onClick={() => copy(url, () => toast.success('Copied to clipboard! 📋'))}
                 />
                 <Menu.Root placement="bottom-end">
@@ -129,7 +129,7 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
                       <Button
                         icon="icon-more-horiz"
                         variant="tertiary-alt"
-                        className="size-[40px] aspect-square"
+                        className="size-10 aspect-square"
                         onClick={() => toggle()}
                       />
                     )}

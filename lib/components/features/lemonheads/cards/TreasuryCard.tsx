@@ -14,7 +14,7 @@ export function LemonHeadsTreasuryCard() {
 
       <div className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border rounded-md flex-col gap-3">
         <div className="flex justify-between">
-          <div className="flex justify-center items-center rounded-full bg-success-500/16 size-[48px] aspect-square">
+          <div className="flex justify-center items-center rounded-full bg-success-500/16 size-12 aspect-square">
             <i aria-hidden="true" className="icon-account-balance-outline text-success-500" />
           </div>
 

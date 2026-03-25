@@ -25,7 +25,7 @@ export function NewsletterEmailPreviewModal({
   const dateLabel = formatDateLabel(newsletter);
 
   return (
-    <div className="w-[480px] max-w-full overflow-hidden rounded-[18px] border border-card-border bg-overlay-primary shadow-[0_8px_24px_rgba(0,0,0,0.32)]">
+    <div className="w-120 max-w-full overflow-hidden rounded-[18px] border border-card-border bg-overlay-primary shadow-[0_8px_24px_rgba(0,0,0,0.32)]">
       <div className="border-b border-primary/8 px-4 py-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -45,7 +45,7 @@ export function NewsletterEmailPreviewModal({
         </div>
       </div>
 
-      <div className="max-h-[420px] overflow-auto bg-white text-[#111111] p-7">
+      <div className="max-h-105 overflow-auto bg-white text-[#111111] p-7">
         <div
           className="
             [&_a]:text-[#2563eb]

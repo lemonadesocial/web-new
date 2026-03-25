@@ -168,7 +168,7 @@ export function DrawerContainer() {
                     }
                   }}
                   className={twMerge(
-                    'bg-overlay-primary backdrop-blur-md rounded-sm flex-1 w-full max-w-sm md:max-w-[528px] z-10',
+                    'bg-overlay-primary backdrop-blur-md rounded-sm flex-1 w-full max-w-sm md:max-w-132 z-10',
                     drawer.options.contentClass,
                   )}
                   style={{

@@ -86,7 +86,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <Header
           hideLogo
-          className="hidden md:block sticky top-0 left-0 w-full h-[64px] z-[9] border-b backdrop-blur-md"
+          className="hidden md:block sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
           title={
             isChat ? (
               <div className="flex items-center gap-3">
@@ -103,7 +103,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
           }
         />
 
-        <Header className="md:hidden sticky top-0 left-0 w-full h-[64px] z-[11] border-b backdrop-blur-md" />
+        <Header className="md:hidden sticky top-0 left-0 w-full h-16 z-11 border-b backdrop-blur-md" />
         {isChat && (
           <>
             <div className="md:hidden flex items-center gap-3 py-3 px-4 border-b bg-background z-10">
@@ -156,7 +156,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="md:hidden absolute top-[120px] left-0 right-0 z-50 overflow-hidden bg-background/80 backdrop-blur-md border-b"
+                  className="md:hidden absolute top-30 left-0 right-0 z-50 overflow-hidden bg-background/80 backdrop-blur-md border-b"
                 >
                   <div className="max-h-[calc(100dvh-120px)] flex flex-col">
                     <div className="flex-1 overflow-y-auto py-4 no-scrollbar">
@@ -172,8 +172,8 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
         <LoadMoreWrapper className="flex-1 overflow-auto no-scrollbar">
           <div
             className={clsx(
-              !isChat && 'lg:pl-[97px]',
-              'md:pt-[64px]',
+              !isChat && 'lg:pl-24.25',
+              'md:pt-16',
               isChat && 'h-full',
               'pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0',
             )}

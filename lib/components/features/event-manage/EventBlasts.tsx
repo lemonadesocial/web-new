@@ -207,7 +207,7 @@ function BlastsInput({ event }: { event: Event }) {
     <div className="transition-all flex border border-(--color-card-border) hover:border-card-hover focus-within:border-card-hover bg-(--color-card) rounded-sm px-4 py-3 gap-3">
       <img src={userAvatar(me)} className="size-7 aspect-square rounded-full" />
       <div className="mt-0.5 flex-1 flex flex-col gap-4">
-        <div className="max-h-[150px] overflow-auto">
+        <div className="max-h-37.5 overflow-auto">
           <TextEditor
             onFocus={toggleFocus}
             content={message}

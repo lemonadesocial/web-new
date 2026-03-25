@@ -122,7 +122,7 @@ const BackgroundStatCard = ({
   backgroundImage: string;
 }) => (
   <div
-    className="relative overflow-hidden rounded-md h-[216px] flex flex-col justify-end items-center p-2 bg-cover bg-center bg-no-repeat"
+    className="relative overflow-hidden rounded-md h-54 flex flex-col justify-end items-center p-2 bg-cover bg-center bg-no-repeat"
     style={{ backgroundImage: `url(${backgroundImage})` }}
   >
     <div

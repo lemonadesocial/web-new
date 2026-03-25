@@ -71,7 +71,7 @@ export function LemonHeadCreate() {
   if (currentStep !== LemonHeadStep.create) return null;
 
   return (
-    <div className="flex flex-col h-full md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden max-sm:justify-end">
+    <div className="flex flex-col h-full md:flex-row-reverse flex-1 w-full md:w-147 gap-2 overflow-hidden max-sm:justify-end">
       <Card.Root className="md:flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
@@ -89,7 +89,7 @@ export function LemonHeadCreate() {
         </Card.Content>
       </Card.Root>
 
-      <Card.Root className="w-full max-h-fit md:w-[96px] overflow-auto no-scrollbar">
+      <Card.Root className="w-full max-h-fit md:w-24 overflow-auto no-scrollbar">
         <Card.Content className="flex md:flex-col gap-1 p-1 md:p-2">
           {Object.entries(tabs).map(([key, item]) => {
             if (body?.value === 'alien' && key === 'face') return;
@@ -98,7 +98,7 @@ export function LemonHeadCreate() {
               <div
                 key={key}
                 className={clsx(
-                  'flex md:flex-col items-center justify-center text-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-[72px]',
+                  'flex md:flex-col items-center justify-center text-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-18',
                   key === selected && 'bg-card-hover',
                 )}
                 onClick={() => {
@@ -203,8 +203,8 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
     <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar p-4', className)}>
       {Array.from({ length: 15 }).map((_, idx) => (
         <div key={idx} className="flex flex-col gap-2">
-          <Skeleton className="w-full min-w-[80px] aspect-square" animate />
-          <Skeleton className="w-full min-w-[80px] h-4 rounded-xs" animate />
+          <Skeleton className="w-full min-w-20 aspect-square" animate />
+          <Skeleton className="w-full min-w-20 h-4 rounded-xs" animate />
         </div>
       ))}
     </div>
@@ -300,7 +300,7 @@ function SubContent({
                   key={dt._id}
                   label={dt.value}
                   active={dt.value === trait?.value && dt.type === trait?.type}
-                  className="min-w-[80px] max-w-[80px] md:max-w-full"
+                  className="min-w-20 max-w-20 md:max-w-full"
                   onClick={() => {
                     const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                     if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {

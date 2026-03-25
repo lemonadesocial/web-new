@@ -59,7 +59,7 @@ export function SharedModal({ hostname = '' }: { hostname?: string }) {
   };
 
   return (
-    <ModalContent icon="icon-share" className="w-sm md:w-[448px]">
+    <ModalContent icon="icon-share" className="w-sm md:w-112">
       <div className="flex flex-col gap-4">
         <div className="space-y-2">
           <p className="text-lg">Share Community</p>

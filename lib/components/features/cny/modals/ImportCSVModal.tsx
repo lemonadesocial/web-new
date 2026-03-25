@@ -37,7 +37,7 @@ export function ImportCSVModal({ addresses: initialAddresses, onImport, onImport
   };
 
   return (
-    <div className="w-[480px] max-w-full flex flex-col">
+    <div className="w-120 max-w-full flex flex-col">
       <div className="px-4 py-3 border-b border-divider flex justify-between items-center bg-card">
         <p className="text-lg">Import CSV</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />

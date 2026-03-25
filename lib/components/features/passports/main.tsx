@@ -35,7 +35,7 @@ function Content() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="w-full max-w-[1200px] h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
+        <div className="w-full max-w-300 h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
           <Comp />
           {state.currentStep !== PassportStep.celebrate && <PassportPreview />}
         </div>

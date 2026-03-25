@@ -117,7 +117,7 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
 
   if (step === 'sealing') {
     return (
-      <div className="p-4 w-[340px] max-w-full">
+      <div className="p-4 w-85 max-w-full">
         <div className="flex justify-end">
           <i aria-hidden="true" className="icon-loader animate-spin text-tertiary size-6" />
         </div>
@@ -126,7 +126,7 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
             <img
               src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/sending.png`}
               alt="Sealing envelopes"
-              className="w-[197px] h-full object-contain"
+              className="w-49.25 h-full object-contain"
             />
           </div>
           <div className="space-y-2">
@@ -142,12 +142,12 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
 
   if (step === 'success') {
     return (
-      <div className="p-4 w-[340px] max-w-full space-y-6">
+      <div className="p-4 w-85 max-w-full space-y-6">
         <div className="flex justify-center">
           <img
             src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/sent.png`}
             alt="Sealed envelopes"
-            className="w-[185px] h-full object-contain"
+            className="w-46.25 h-full object-contain"
           />
         </div>
         <div className="space-y-4">
@@ -171,7 +171,7 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
         <img
           src={getAsset(selectedRows.length)}
           alt="Red envelopes"
-          className="w-full max-w-[144px] h-auto object-contain"
+          className="w-full max-w-36 h-auto object-contain"
         />
       </div>
       <div className="space-y-4 text-center">

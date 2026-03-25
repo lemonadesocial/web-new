@@ -55,12 +55,12 @@ export function UserProfilePane({ username, address }: Props) {
         <div className="px-4">
           <UserProfileHero
             address={address}
-            containerClass={clsx('md:hidden [&>.user-dp]:size-18', user?.cover_expanded ? 'h-[140px]!' : 'h-[80px]!')}
+            containerClass={clsx('md:hidden [&>.user-dp]:size-18', user?.cover_expanded ? 'h-35!' : 'h-20!')}
             user={user}
           />
           <UserProfileHero
             address={address}
-            containerClass={clsx('hidden md:block [&>.user-dp]:size-24', user?.cover_expanded ? 'h-[200px]!' : 'h-32!')}
+            containerClass={clsx('hidden md:block [&>.user-dp]:size-24', user?.cover_expanded ? 'h-50!' : 'h-32!')}
             user={user}
           />
           <UserProfileInfo user={user} address={address} />

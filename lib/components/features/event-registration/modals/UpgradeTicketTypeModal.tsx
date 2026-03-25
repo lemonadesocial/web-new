@@ -154,14 +154,14 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
                 </Card.Root>
 
                 <div className="relative h-2 flex items-center justify-center">
-                  <div className="bg-(--btn-secondary) text-primary-invert flex items-center justify-center rounded-full p-[5px] w-fit absolute z-10 -top-2">
+                  <div className="bg-(--btn-secondary) text-primary-invert flex items-center justify-center rounded-full p-1.25 w-fit absolute z-10 -top-2">
                     <i aria-hidden="true" className="size-3.5 icon-arrow-back-sharp -rotate-90" />
                   </div>
                 </div>
 
                 <Card.Root className="bg-(--btn-tertiary-hover) border-secondary">
                   <Card.Content className="py-2 px-3">
-                    <div className="absolute right-0 top-0 rounded-bl-sm rounded-tr-sm bg-secondary px-2 py-[3px] text-primary-invert text-xs">
+                    <div className="absolute right-0 top-0 rounded-bl-sm rounded-tr-sm bg-secondary px-2 py-0.75 text-primary-invert text-xs">
                       <p>Upgrade</p>
                     </div>
                     <div className="flex gap-3">

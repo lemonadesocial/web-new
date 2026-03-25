@@ -37,7 +37,7 @@ export function FeedPostGallery({ attachments, className }: { attachments: strin
         className="rounded-sm object-cover border border-card-border h-full w-full"
       />
       {current > 0 && (
-        <div className="absolute inset-y-0 left-[14px] flex items-center">
+        <div className="absolute inset-y-0 left-3.5 flex items-center">
           <Button
             type="button"
             onClick={prev}
@@ -48,7 +48,7 @@ export function FeedPostGallery({ attachments, className }: { attachments: strin
           />
         </div>
       )}
-      <div className="absolute inset-y-0 right-[14px] flex items-center">
+      <div className="absolute inset-y-0 right-3.5 flex items-center">
         <Button
           type="button"
           onClick={next}

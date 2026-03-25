@@ -141,7 +141,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <img src={watchedValues.image ? URL.createObjectURL(watchedValues.image) : ''} alt="Preview" className="size-[34px] rounded-sm object-cover" />
+            <img src={watchedValues.image ? URL.createObjectURL(watchedValues.image) : ''} alt="Preview" className="size-8.5 rounded-sm object-cover" />
             <p className="text-sm">{watchedValues.name}</p>
           </div>
 
@@ -159,7 +159,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
                   value={field.value}
                   onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   variant="outlined"
-                  className='w-[96px]'
+                  className='w-24'
                   type='number'
                   error={!!errors.totalQuantity}
                 />
@@ -246,7 +246,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
                     </div>
                   </Menu.Trigger>
 
-                  <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
+                  <Menu.Content className="p-1 w-full max-h-45 overflow-y-auto no-scrollbar">
                     {({ toggle }) => poapEnabledChains.map((chain) => (
                       <MenuItem
                         key={chain.chain_id}

@@ -102,7 +102,7 @@ export default function UserProfileEvents({ user }: { user: User }) {
               />
             </div>
             <div className="flex gap-2">
-              <Menu.Root className="w-[132px]">
+              <Menu.Root className="w-33">
                 <Menu.Trigger>
                   <div className="btn btn-tertiary rounded-sm">
                     <MenuItem iconRight="icon-chevrons-up-down">

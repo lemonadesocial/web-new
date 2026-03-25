@@ -13,7 +13,7 @@ export function AgentsSidebar() {
   if (state.configs.length <= 1) return null;
 
   return (
-    <div className="hidden md:flex w-[320px] border-r h-full flex-col bg-background">
+    <div className="hidden md:flex w-80 border-r h-full flex-col bg-background">
       <div className="p-6">
         <h2 className="text-xl font-semibold">Agents</h2>
         <p className="text-sm text-tertiary mt-1">

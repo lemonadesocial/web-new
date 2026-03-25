@@ -37,7 +37,7 @@ export function DateTimeGroup({
       <Card.Content className="pl-3.5 py-1 pr-1">
         <div className="flex relative flex-col">
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-4 z-10">
-            <div className="size-2 backdrop-blur-lg bg-quaternary rounded-full -ml-[5px] -mt-1 absolute">
+            <div className="size-2 backdrop-blur-lg bg-quaternary rounded-full -ml-1.25 -mt-1 absolute">
               <div className="size-2 rounded-full bg-quaternary" />
             </div>
           </div>
@@ -66,7 +66,7 @@ export function DateTimeGroup({
         <Spacer className="h-1" />
         <div className="flex flex-col relative">
           <div className="border-dashed border-l-2 border-l-transparent absolute h-full left-1 top-3.5 z-10">
-            <div className="size-2 border rounded-full -ml-[5px] absolute border-quaternary">
+            <div className="size-2 border rounded-full -ml-1.25 absolute border-quaternary">
               <div className="size-2 rounded-full " />
             </div>
           </div>
@@ -147,13 +147,13 @@ export function DateTimePicker({
           <Button
             variant="tertiary"
             size="sm"
-            className={clsx('min-w-[110px]! text-primary! min-h-[36px]! text-base', showTime && 'rounded-e-none!')}
+            className={clsx('min-w-27.5! text-primary! min-h-9! text-base', showTime && 'rounded-e-none!')}
           >
             {format(date, 'EEE, dd MMM')}
           </Button>
         </Menu.Trigger>
         <FloatingPortal>
-          <Menu.Content className="w-[296px] p-0 rounded-lg">
+          <Menu.Content className="w-74 p-0 rounded-lg">
             {({ toggle }) => (
               <Calendar
                 minDate={minDate}
@@ -177,13 +177,13 @@ export function DateTimePicker({
             <Button
               variant="tertiary"
               size="sm"
-              className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]! text-base"
+              className="rounded-s-none! min-w-21 text-primary! min-h-9! text-base"
             >
               {format(date, 'hh:mm a')}
             </Button>
           </Menu.Trigger>
           <FloatingPortal>
-            <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+            <Menu.Content className="w-25 no-scrollbar rounded-lg overflow-auto h-50 p-2">
               {({ toggle }) => {
                 return (
                   <div>
@@ -252,8 +252,8 @@ export function Timezone({
                 }}
               />
             </Card.Header>
-            <Card.Content className="p-0 md:w-[446px]">
-              <div className="p-1 overflow-auto h-[170px]">
+            <Card.Content className="p-0 md:w-111.5">
+              <div className="p-1 overflow-auto h-42.5">
                 {zones.map((zone, i) => {
                   return (
                     <div

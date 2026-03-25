@@ -123,7 +123,7 @@ export function SpotlightEventsPane({ space, selectedEvents = [], onSave }: Prop
                   </Button>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-1 min-w-[120px]">
+              <Menu.Content className="p-1 min-w-30">
                 {({ toggle }) => (
                   <>
                     <MenuItem
@@ -173,7 +173,7 @@ export function SpotlightEventsPane({ space, selectedEvents = [], onSave }: Prop
                   </Button>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-1 min-w-[140px]">
+              <Menu.Content className="p-1 min-w-35">
                 {({ toggle }) => (
                   <>
                     <MenuItem

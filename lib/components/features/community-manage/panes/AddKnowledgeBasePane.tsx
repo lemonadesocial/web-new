@@ -213,7 +213,7 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
         </div>
       </Menu.Trigger>
 
-      <Menu.Content className="w-full p-1 max-h-[300px] overflow-y-auto">
+      <Menu.Content className="w-full p-1 max-h-75 overflow-y-auto">
         {loading ? (
           <div className="flex flex-col gap-2 p-2">
             {Array.from({ length: 3 }).map((_, i) => (

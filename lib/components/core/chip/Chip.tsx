@@ -4,8 +4,8 @@ import { twMerge } from 'tailwind-merge'
 
 const chipSizes = {
   s: 'px-2.5 py-1.5 text-sm rounded-sm',
-  xs: 'px-2 py-[3px] text-xs rounded-xs',
-  xxs: 'px-1.5 py-[1px] text-xs rounded-xs',
+  xs: 'px-2 py-0.75 text-xs rounded-xs',
+  xxs: 'px-1.5 py-px text-xs rounded-xs',
 }
 
 const iconOnlySizes = {

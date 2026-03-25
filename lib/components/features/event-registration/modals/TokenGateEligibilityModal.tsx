@@ -163,7 +163,7 @@ export function TokenGateEligibilityModal({
   if (showInsufficient) return (
     <ModalContent
       icon={
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-500/16" data-icon>
+        <div className="size-14 flex justify-center items-center rounded-full bg-danger-500/16" data-icon>
           <i aria-hidden="true" className="icon-info text-danger-500 size-8" />
         </div>
       }
@@ -206,7 +206,7 @@ export function TokenGateEligibilityModal({
     <ModalContent
       onClose={() => registrationModal.close()}
       icon={
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+        <div className="size-14 flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
           <i aria-hidden="true" className="icon-loader animate-spin" />
         </div>
       }

@@ -23,7 +23,7 @@ export function RedEnvelopesBottomBar() {
   };
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-[#5c1515] z-[9] bg-[#450A0A]">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-[#5c1515] z-9 bg-[#450A0A]">
       <div className="flex w-full gap-4 px-6 py-3">
         {menu.map((item) => {
           const content = (

@@ -41,7 +41,7 @@ export function RootMenu() {
   const pathName = usePathname();
 
   return (
-    <nav className="hidden md:flex md:flex-3_1_auto w-[1080px]">
+    <nav className="hidden md:flex md:flex-3_1_auto w-270">
       <ul className="flex flex-1 gap-5">
         {menu.map((item, idx) => (
           <li key={idx} className="inline-flex items-center">
@@ -74,7 +74,7 @@ export default function Header({
   if (!showUI) return null;
 
   return (
-    <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
+    <div className={twMerge('p-4 h-14 flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">
         {!hideLogo &&
           (leftIcon ? (

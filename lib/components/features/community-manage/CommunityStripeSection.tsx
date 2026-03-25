@@ -116,8 +116,8 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
       <Card.Root className="w-full">
         {loading && !stripeAttachedToSpace ? (
           <div className="p-4 space-y-4">
-            <Skeleton animate className="w-full min-h-[60px]" />
-            <Skeleton animate className="w-full min-h-[40px]" />
+            <Skeleton animate className="w-full min-h-15" />
+            <Skeleton animate className="w-full min-h-10" />
           </div>
         ) : !stripeAttachedToSpace ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">

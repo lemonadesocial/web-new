@@ -35,7 +35,7 @@ export function ApiKeySecretModal({ secret }: ApiKeySecretModalProps) {
   return (
     <ModalContent
       icon="icon-check"
-      className="w-[480px] max-w-full [&_[data-icon]]:bg-success-400/16 [&_[data-icon]_i]:text-success-400"
+      className="w-120 max-w-full [&_[data-icon]]:bg-success-400/16 [&_[data-icon]_i]:text-success-400"
     >
       <div className="space-y-4">
         <div className="space-y-1">
@@ -113,7 +113,7 @@ export function CreateApiKeyModal({ spaceId, availableScopes, onCreated }: Creat
   };
 
   return (
-    <ModalContent icon="icon-key" onClose={() => modal.close()} className="w-[480px] max-w-full">
+    <ModalContent icon="icon-key" onClose={() => modal.close()} className="w-120 max-w-full">
       <div className="space-y-4">
         <div className="space-y-1">
           <p className="text-lg">Create API Key</p>

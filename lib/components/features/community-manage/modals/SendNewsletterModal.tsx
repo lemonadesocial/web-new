@@ -236,7 +236,7 @@ function RecipientDropdown({
         </Menu.Trigger>
 
         <FloatingPortal>
-          <Menu.Content className="w-[308px] max-w-[calc(100vw-40px)] overflow-hidden p-0 shadow-[0_4px_8px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+          <Menu.Content className="w-77 max-w-[calc(100vw-40px)] overflow-hidden p-0 shadow-[0_4px_8px_rgba(0,0,0,0.32)] backdrop-blur-xl">
             <div className="border-b border-card-border bg-card px-3 py-2">
               <input
                 value={query}
@@ -246,7 +246,7 @@ function RecipientDropdown({
               />
             </div>
 
-            <div className="max-h-[280px] overflow-y-auto p-1 no-scrollbar">
+            <div className="max-h-70 overflow-y-auto p-1 no-scrollbar">
               {visibleTypeOptions.map((option) => (
                 <RecipientItem
                   key={option.key}
@@ -319,7 +319,7 @@ function ScheduleInput({
             </Menu.Trigger>
 
             <FloatingPortal>
-              <Menu.Content className="w-[296px] rounded-lg p-0">
+              <Menu.Content className="w-74 rounded-lg p-0">
                 {({ toggle }) => (
                   <Calendar
                     minDate={new Date()}
@@ -338,7 +338,7 @@ function ScheduleInput({
             </FloatingPortal>
           </Menu.Root>
 
-          <Menu.Root className="-ml-px w-[108px]" placement="top-start">
+          <Menu.Root className="-ml-px w-27" placement="top-start">
             <Menu.Trigger className="block w-full">
               <div className="flex h-10 w-full items-center rounded-r-sm border border-primary/8 bg-background/64 px-3.5">
                 <span className="truncate text-base font-medium text-primary">{format(date, 'hh:mm a')}</span>
@@ -346,7 +346,7 @@ function ScheduleInput({
             </Menu.Trigger>
 
             <FloatingPortal>
-              <Menu.Content className="h-[200px] w-[108px] overflow-auto rounded-lg p-2 no-scrollbar">
+              <Menu.Content className="h-50 w-27 overflow-auto rounded-lg p-2 no-scrollbar">
                 {({ toggle }) => (
                   <div>
                     {SCHEDULE_TIMES.map((time) => (
@@ -577,7 +577,7 @@ export function SendNewsletterModal({
   };
 
   return (
-    <div className="w-[340px] max-w-full">
+    <div className="w-85 max-w-full">
       <div className="flex items-start justify-between p-4 pb-0">
         <div className="flex size-14 items-center justify-center rounded-full bg-primary/8 text-tertiary">
           <i aria-hidden="true" className="icon-email size-8" />
@@ -604,7 +604,7 @@ export function SendNewsletterModal({
           <div className="inline-flex items-center gap-2 text-sm font-medium text-secondary">
             <MiniQuotaRing available={availableSends} total={totalSends} />
             <span>{formatCount(availableSends) || 0} Sends Available</span>
-            <i aria-hidden="true" className="icon-chevron-right size-[18px] text-tertiary" />
+            <i aria-hidden="true" className="icon-chevron-right size-4.5 text-tertiary" />
           </div>
         </div>
 

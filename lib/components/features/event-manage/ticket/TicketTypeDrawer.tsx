@@ -355,7 +355,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                       <FileInput accept="image/*" onChange={(files) => setTicketTypePhotos(files)}>
                         {(open) => (
                           <div
-                            className="size-[60px] aspect-square rounded-sm relative flex items-center justify-center bg-(--btn-tertiary) cursor-pointer overflow-hidden"
+                            className="size-15 aspect-square rounded-sm relative flex items-center justify-center bg-(--btn-tertiary) cursor-pointer overflow-hidden"
                             onClick={() => {
                               if (!isSubmitting) open();
                             }}

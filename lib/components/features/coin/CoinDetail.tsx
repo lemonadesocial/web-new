@@ -85,7 +85,7 @@ function TabSection({ chain, address }: CoinPageProps) {
   return (
     <Card.Root className="bg-transparent border-none">
       <Card.Content className="p-0">
-        <ul className="flex gap-4 overflow-auto no-scrollbar pt-1 border-b text-tertiary h-[42px]">
+        <ul className="flex gap-4 overflow-auto no-scrollbar pt-1 border-b text-tertiary h-10.5">
           {Object.entries(tabs).map(([key, _]) => (
             <li
               key={key}

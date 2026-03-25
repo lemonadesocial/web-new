@@ -69,7 +69,7 @@ const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(
     );
 
     return (
-      <div className={twMerge('min-h-[24px] max-h-[200px] overflow-auto', className)}>
+      <div className={twMerge('min-h-6 max-h-50 overflow-auto', className)}>
         <TextEditor
           ref={editorRef}
           directory="post"
@@ -77,7 +77,7 @@ const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(
           onChange={handleChange}
           placeholder={placeholder}
           toolbar={simpleToolbar}
-          containerClass="border-none hover:border-none focus:border-none px-0 py-0 min-h-[24px] font-medium text-lg"
+          containerClass="border-none hover:border-none focus:border-none px-0 py-0 min-h-6 font-medium text-lg"
           readOnly={disabled}
           onFocus={onFocus}
           onBlur={onBlur}

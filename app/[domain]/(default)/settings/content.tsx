@@ -70,13 +70,13 @@ export function Content() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11 max-w-[532px]">
+    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11 max-w-133">
       <PageTitle title="Settings" subtitle="Choose how you are displayed as a host or guest." />
 
       <Card.Content className="bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">
-        <div className="px-[18px] py-4 flex flex-col gap-4">
+        <div className="px-4.5 py-4 flex flex-col gap-4">
           <div className="flex justify-between items-start">
-            <div className="size-[60px]">
+            <div className="size-15">
               <Avatar
                 className="w-full h-full"
                 src={userAvatar(me)}

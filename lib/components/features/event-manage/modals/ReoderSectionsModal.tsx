@@ -26,7 +26,7 @@ export function ReoderSectionsModal({ list = [], onChange }: { list?: string[]; 
   }, []);
 
   return (
-    <Card.Root className="w-[308px] border-none bg-transparent">
+    <Card.Root className="w-77 border-none bg-transparent">
       <Card.Header className="flex justify-between">
         <p>Reorder Sections</p>
         <Button size="xs" icon="icon-x" className="rounded-full" variant="tertiary-alt" onClick={() => modal.close()} aria-label="Close" />

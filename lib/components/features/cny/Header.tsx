@@ -21,7 +21,7 @@ export const RedEnvelopesHeader = ({ showHomeLogo = false, className }: RedEnvel
     <div className={twMerge(
       'flex items-center p-4 gap-3 justify-between',
       clsx(
-        !showHomeLogo && 'md:ml-[89px]',
+        !showHomeLogo && 'md:ml-22.25',
         showHomeLogo ? 'md:justify-between' : 'md:justify-end'
       ),
       className

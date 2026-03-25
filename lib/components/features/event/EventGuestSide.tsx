@@ -54,8 +54,8 @@ export function EventGuestSideContent({ event }: { event: Event }) {
   const router = useRouter();
 
   return (
-    <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
-      <div className="hidden md:flex w-[296px] flex-col gap-6">
+    <div className={clsx('flex gap-18', state.theme && state.config.color)}>
+      <div className="hidden md:flex w-74 flex-col gap-6">
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] ? (
             <img

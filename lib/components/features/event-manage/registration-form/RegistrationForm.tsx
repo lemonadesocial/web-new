@@ -115,7 +115,7 @@ export function RegistrationForm() {
             <i aria-hidden="true" className="icon-info size-5 text-success-500" />
             <p>Personal Information</p>
           </div>
-          <div className="grid grid-cols-2 gap-3.5 max-w-[654px]">
+          <div className="grid grid-cols-2 gap-3.5 max-w-163.5">
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
               <i aria-hidden="true" className="icon-person-outline size-5 text-tertiary" />
               <p className="flex-1">Name</p>
@@ -135,7 +135,7 @@ export function RegistrationForm() {
             <p>Web3 Identity</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5 max-w-[654px]">
+          <div className="grid grid-cols-2 gap-3.5 max-w-163.5">
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
               <i aria-hidden="true" className="icon-eth size-5 text-tertiary" />
               <p className="flex-1">ETH Address</p>
@@ -148,7 +148,7 @@ export function RegistrationForm() {
                     </button>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-1 min-w-[120px]">
+                <Menu.Content className="p-1 min-w-30">
                   {({ toggle }) => (
                     <>
                       <MenuItem
@@ -189,7 +189,7 @@ export function RegistrationForm() {
                     </button>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-1 min-w-[120px]">
+                <Menu.Content className="p-1 min-w-30">
                   {({ toggle }) => (
                     <>
                       <MenuItem

@@ -132,7 +132,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
   }
 
   return (
-    <ModalContent icon="icon-ticket-plus" onClose={() => modal.close()} className="w-[480px]">
+    <ModalContent icon="icon-ticket-plus" onClose={() => modal.close()} className="w-120">
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-2">
           <p>Token Details</p>
@@ -149,7 +149,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
               </div>
             </Menu.Trigger>
 
-            <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
+            <Menu.Content className="p-1 w-full max-h-45 overflow-y-auto no-scrollbar">
               {({ toggle }) => listChains.map((chain) => (
                 <MenuItem
                   key={chain.chain_id}
@@ -212,7 +212,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
                     <p className="text-sm text-secondary">Min Token Balance</p>
                     <Input
                       variant="outlined"
-                      className="w-[150px]"
+                      className="w-37.5"
                       placeholder="0"
                       {...register('min')}
                     />
@@ -236,7 +236,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
                       <p className="text-sm text-secondary">Min Token Balance</p>
                       <Input
                         variant="outlined"
-                        className="w-[150px]"
+                        className="w-37.5"
                         placeholder="0"
                         {...register('min')}
                       />
@@ -245,7 +245,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
                       <p className="text-sm text-secondary">Max Token Balance</p>
                       <Input
                         variant="outlined"
-                        className="w-[150px]"
+                        className="w-37.5"
                         placeholder="0"
                         {...register('max')}
                       />

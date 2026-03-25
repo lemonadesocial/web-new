@@ -67,7 +67,7 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
           <img 
             src={poapDrop.image_url || generateUrl(poapDrop.image_expanded, 'PROFILE')} 
             alt="Preview" 
-            className="size-[34px] rounded-sm object-cover" 
+            className="size-8.5 rounded-sm object-cover"
           />
           <p className="text-sm">{poapDrop.name}</p>
         </div>
@@ -86,7 +86,7 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                 variant="outlined"
-                className='w-[96px]'
+                className='w-24'
                 type='number'
                 error={!!errors.totalQuantity}
               />

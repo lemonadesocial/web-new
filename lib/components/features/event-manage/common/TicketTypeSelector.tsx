@@ -61,7 +61,7 @@ export function TicketTypeSelector({
     <Menu.Root className={className}>
       <Menu.Trigger>
         <fieldset className="input-field">
-          <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto! w-full">
+          <div className="control px-1.5! py-1! flex items-center min-h-10 h-auto! w-full">
             <div className="flex-1 w-full flex flex-wrap gap-1">
               {isAllSelected ? (
                 <Badge
@@ -98,7 +98,7 @@ export function TicketTypeSelector({
       <Menu.Content className="w-full p-0">
         {({ toggle }) => (
           <>
-            <div className="p-1 max-h-[200px] overflow-auto no-scrollbar">
+            <div className="p-1 max-h-50 overflow-auto no-scrollbar">
               <MenuItem
                 title="All Tickets"
                 iconRight={isAllSelected ? 'text-primary! icon-check-filled' : 'icon-circle-outline'}

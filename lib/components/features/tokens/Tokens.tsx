@@ -216,7 +216,7 @@ function Toolbar() {
       <div className="flex gap-2">
         <div className="text-sm flex gap-1 px-2.5 py-1.5 bg-(--btn-tertiary) w-fit rounded-sm">
           <p className="text-tertiary">Quick Buy Size:</p>
-          <p className="text-secondary w-[75px] text-right">{formattedSize} ETH</p>
+          <p className="text-secondary w-18.75 text-right">{formattedSize} ETH</p>
         </div>
         <Button icon="icon-arrow-down rotate-180" size="sm" variant="tertiary-alt" onClick={incrementQuickBuy} />
         <Button
@@ -266,7 +266,7 @@ function NewTokensList() {
   const pools = data?.PoolCreated || [];
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
       <Card.Header>
         <p>New Tokens</p>
       </Card.Header>
@@ -342,7 +342,7 @@ function GraduatingTokensList() {
   }, [pools, fairLaunches]);
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
       <Card.Header>
         <p>Graduating Tokens</p>
       </Card.Header>
@@ -416,7 +416,7 @@ function RecentlyGraduatedTokensList() {
   }, [pools, fairLaunches]);
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
       <Card.Header>
         <p>Recently Graduated</p>
       </Card.Header>
@@ -439,7 +439,7 @@ function TokenCardSkeleton() {
     <Card.Root>
       <Card.Content className="py-3">
         <div className="flex gap-4">
-          <Skeleton className="size-[114px] aspect-square rounded-sm" animate />
+          <Skeleton className="size-28.5 aspect-square rounded-sm" animate />
           <div className="text-tertiary text-sm w-full">
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-between">
@@ -496,9 +496,9 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
       <Card.Content className="py-3">
         <div className="flex gap-4">
           {isLoadingTokenData ? (
-            <Skeleton className="size-[114px] aspect-square rounded-sm" animate />
+            <Skeleton className="size-28.5 aspect-square rounded-sm" animate />
           ) : (
-            <div className="h-[114px] max-w-[114px] w-full rounded-sm bg-gray-300 overflow-hidden">
+            <div className="h-28.5 max-w-28.5 w-full rounded-sm bg-gray-300 overflow-hidden">
               {tokenData?.metadata?.imageUrl && (
                 <img src={tokenData.metadata.imageUrl} alt={displaySymbol} className="w-full h-full object-cover" />
               )}

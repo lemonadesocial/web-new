@@ -201,7 +201,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
   const rootClassName =
     variant === 'home'
-      ? 'backdrop-blur-[8px]! border border-white bg-[rgba(20,19,23,0.64)] rounded-[16px] overflow-visible'
+      ? 'backdrop-blur! border border-white bg-[rgba(20,19,23,0.64)] rounded-lg overflow-visible'
       : 'backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible';
 
   return (
@@ -243,7 +243,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
                   </Button>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-1 w-[192px] backdrop-blur-md!">
+              <Menu.Content className="p-1 w-48 backdrop-blur-md!">
                 {({ toggle }) => (
                   <>
                     {state.tools.map((tool) => (
@@ -347,14 +347,14 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
                 className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
-              <p className="text-sm max-w-[132px] truncate text-tertiary">
+              <p className="text-sm max-w-33 truncate text-tertiary">
                 {selectedSpace?.title || 'Select community'}
               </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
             </div>
           )}
         </Menu.Trigger>
-        <Menu.Content className="p-1 w-[224px] max-h-[280px] overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
+        <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
           {() => (
             <>
               {spaces.map((space) => (

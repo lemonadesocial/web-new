@@ -8,7 +8,7 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "oxlint",
-    "typecheck:changed": "node scripts/typecheck-changed-files.mjs",
+    "typecheck:changed": "node scripts/typecheck-changed-wrapper.mjs",
     "lint:staged": "lint-staged",
     "prepare": "husky",
     "e2e": "playwright test",

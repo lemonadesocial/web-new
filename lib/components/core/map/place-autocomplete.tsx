@@ -122,7 +122,7 @@ export function PlaceAutoComplete({
                 className="flex gap-2.5 px-2 py-1.5 items-center hover:bg-[var(--btn-tertiary)] rounded-xs"
                 onClick={() => handleSelect(prediction)}
               >
-                <i aria-hidden="true" className="icon-location-outline size-[20px] text-tertiary" />
+                <i aria-hidden="true" className="icon-location-outline size-5 text-tertiary" />
                 <div>
                   <p className="text-primary text-sm">{prediction?.structured_formatting?.main_text || ''}</p>
                   <p className="text-tertiary text-xs">{prediction?.structured_formatting?.secondary_text || ''}</p>

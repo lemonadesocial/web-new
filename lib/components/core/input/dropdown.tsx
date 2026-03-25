@@ -99,13 +99,13 @@ export function DropdownTags(props: DropdownTagsProps) {
       <Menu.Trigger>
         <fieldset className="input-field">
           {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
-          <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto! w-full">
+          <div className="control px-1.5! py-1! flex items-center min-h-10 h-auto! w-full">
             <div className="flex-1 w-full flex flex-wrap gap-1">
               {selected?.map((item) => (
                 <Badge
                   key={item.key}
                   title={item.value}
-                  className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-[200px]"
+                  className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-50"
                   onClose={(e) => {
                     e.stopPropagation();
                     handleRemove(item);
@@ -121,7 +121,7 @@ export function DropdownTags(props: DropdownTagsProps) {
         {({ toggle }) => (
           <>
             <fieldset className="input-field border-b">
-              <div className="control px-1.5! py-1! flex items-center border-none! h-[40px] rounded-none! bg-card!">
+              <div className="control px-1.5! py-1! flex items-center border-none! h-10 rounded-none! bg-card!">
                 <input
                   className=" outline-none!"
                   placeholder="Search"
@@ -130,7 +130,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                 />
               </div>
             </fieldset>
-            <div className="p-2 max-h-[200px] overflow-auto no-scrollbar">
+            <div className="p-2 max-h-50 overflow-auto no-scrollbar">
               {options.map((item) => (
                 <MenuItem
                   key={item.key}

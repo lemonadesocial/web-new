@@ -167,7 +167,7 @@ type ProgressBarProps = {
 export function CollectibleProgressBar({ progress }: ProgressBarProps) {
   return (
     <div
-      className="relative w-full h-[4px]"
+      className="relative w-full h-1"
       style={{
         backgroundImage:
           "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='199' height='5' viewBox='0 0 199 5' fill='none'><path d='M3.32812 2.66602H196.328' stroke='white' stroke-opacity='0.08' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' stroke-dasharray='4 8'/></svg>\")",
@@ -176,7 +176,7 @@ export function CollectibleProgressBar({ progress }: ProgressBarProps) {
       }}
     >
       <div
-        className="absolute top-0 left-0 h-[4px] rounded"
+        className="absolute top-0 left-0 h-1 rounded"
         style={{
           width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
           background: "white",

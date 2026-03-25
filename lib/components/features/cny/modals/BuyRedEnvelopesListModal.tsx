@@ -96,7 +96,7 @@ export function BuyRedEnvelopesListModal() {
     <ModalContent
       onClose={() => modal.close()}
       icon="icon-plus"
-      className="w-[340px] max-w-full flex flex-col"
+      className="w-85 max-w-full flex flex-col"
     >
       <div className="space-y-1.5">
         <p className="text-lg">Buy Red Envelopes</p>

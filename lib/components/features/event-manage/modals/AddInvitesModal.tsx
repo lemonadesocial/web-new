@@ -55,7 +55,7 @@ export function AddInvitesModal({
     );
 
   return (
-    <div className="w-full max-w-[448px]">
+    <div className="w-full max-w-112">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
@@ -76,7 +76,7 @@ export function AddInvitesModal({
           </div>
           <textarea
             value={message}
-            className="w-full min-h-[80px] border-none outline-none font-medium placeholder:text-tertiary resize-none px-3.5 py-2.5 bg-white/8 block"
+            className="w-full min-h-20 border-none outline-none font-medium placeholder:text-tertiary resize-none px-3.5 py-2.5 bg-white/8 block"
             placeholder="Add a custom message here..."
             onChange={(e) => setMessage(e.target.value)}
           />
@@ -85,7 +85,7 @@ export function AddInvitesModal({
 
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-[34px] min-w-[34px] rounded-sm bg-primary/8">
+            <div className="flex items-center justify-center size-8.5 min-w-8.5 rounded-sm bg-primary/8">
               <i aria-hidden="true" className="icon-ticket size-4.5 text-tertiary" />
             </div>
             <div>

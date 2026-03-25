@@ -57,22 +57,22 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
     <CardTable.Root loading={isLoading} data={holders}>
       <CardTable.Header>
         <div className="flex gap-4 px-4 py-3 w-full">
-          <p className="w-[50px]">Rank</p>
-          <p className="w-[100px]">Wallet ID</p>
-          <p className="w-[100px]">%</p>
+          <p className="w-12.5">Rank</p>
+          <p className="w-25">Wallet ID</p>
+          <p className="w-25">%</p>
           <p className="flex-1">Amount</p>
-          {/* <p className="w-[96px] text-right">Value</p> */}
-          <p className="w-[16px]"></p>
+          {/* <p className="w-24 text-right">Value</p> */}
+          <p className="w-4"></p>
         </div>
       </CardTable.Header>
 
       <CardTable.Loading rows={10}>
-        <Skeleton className="h-5 w-[40px]" animate />
-        <Skeleton className="h-5 w-[100px]" animate />
-        <Skeleton className="h-5 w-[50px]" animate />
+        <Skeleton className="h-5 w-10" animate />
+        <Skeleton className="h-5 w-25" animate />
+        <Skeleton className="h-5 w-12.5" animate />
         <Skeleton className="h-5 flex-1" animate />
-        <Skeleton className="h-5 w-[96px]" animate />
-        <Skeleton className="h-5 w-[16px]" animate />
+        <Skeleton className="h-5 w-24" animate />
+        <Skeleton className="h-5 w-4" animate />
       </CardTable.Loading>
 
       <CardTable.EmptyState
@@ -94,18 +94,18 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
         return (
           <CardTable.Row key={holder.id}>
             <div className="flex gap-4 px-4 py-3 items-center justify-between text-tertiary">
-              <div className="w-[50px]">
+              <div className="w-12.5">
                 <p>{rank}</p>
               </div>
-              <div className="w-[100px]">
+              <div className="w-25">
                 <p className="text-primary">{formatWallet(holder.holder, 4)}</p>
               </div>
-              <div className="w-[100px]">
+              <div className="w-25">
                 <p>{formatNumber(percentage)}%</p>
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-nowrap min-w-[80px]">{formatNumber(balanceNumber)}</p>
+                  <p className="text-nowrap min-w-20">{formatNumber(balanceNumber)}</p>
                   <div className="flex-1 relative h-2 rounded-full bg-quaternary overflow-hidden">
                     <div
                       className="absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300"
@@ -114,7 +114,7 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
                   </div>
                 </div>
               </div>
-              {/* <div className="w-[96px] text-right">
+              {/* <div className="w-24 text-right">
                 <p>$412.3K</p>
               </div> */}
               {addressUrl && (

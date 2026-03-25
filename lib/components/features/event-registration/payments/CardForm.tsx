@@ -127,7 +127,7 @@ export const CardForm: React.FC = () => {
             />
           </div>
 
-          <div className="w-[72px] h-10 flex items-center flex-shrink-0">
+          <div className="w-18 h-10 flex items-center flex-shrink-0">
             <CardExpiryElement
               onFocus={handleFocus('cardExpiry')}
               onBlur={handleBlur}
@@ -136,7 +136,7 @@ export const CardForm: React.FC = () => {
             />
           </div>
 
-          <div className="w-[40px] h-10 flex items-center flex-shrink-0">
+          <div className="w-10 h-10 flex items-center flex-shrink-0">
             <CardCvcElement
               onFocus={handleFocus('cardCvc')}
               onBlur={handleBlur}

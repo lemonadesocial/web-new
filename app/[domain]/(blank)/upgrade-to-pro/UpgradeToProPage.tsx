@@ -64,7 +64,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
       <div className="h-dvh flex flex-col md:flex-row">
         <div
           className={clsx(
-            'md:flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3',
+            'md:flex flex-col flex-1 bg-overlay-primary max-w-70 p-3 gap-3',
             toggleMenuMobile ? 'max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:max-w-full flex' : 'max-sm:hidden',
           )}
         >
@@ -76,7 +76,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
             <Menu.Trigger>
               {() => (
                 <MenuItem
-                  className="bg-(--btn-tertiary) h-[40px] rounded-sm! max-w-full"
+                  className="bg-(--btn-tertiary) h-10 rounded-sm! max-w-full"
                   iconLeft={
                     <div className="size-5 object-cover aspect-square rounded-xs overflow-hidden bg-tertiary">
                       {space?.image_avatar && (

@@ -47,7 +47,7 @@ export function CheckMintedLemonheadModal({provider, onContinue }: { onContinue:
     return (
       <ModalContent>
         <div className="flex flex-col gap-4">
-          <img src={passport.image} className="rounded-sm w-[90px]" alt="Passport" />
+          <img src={passport.image} className="rounded-sm w-22.5" alt="Passport" />
 
           <div>
             <p className="text-lg">Passport already claimed!</p>
