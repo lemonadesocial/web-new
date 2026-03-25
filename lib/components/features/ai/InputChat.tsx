@@ -109,7 +109,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
             });
             if (res.data?.getEvent) {
               client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
-              updateEvent(res.data.getEvent);
+              updateEvent(res.data.getEvent as Partial<Event>);
             }
           })
           .with('publish_event', async () => {
@@ -121,7 +121,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
             });
             if (res.data?.getEvent) {
               client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
-              updateEvent(res.data.getEvent);
+              updateEvent(res.data.getEvent as Partial<Event>);
             }
           })
           .with('create_space', async () => {
