@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Card } from '$lib/components/core';
@@ -45,19 +44,8 @@ const cards = [
   },
 ];
 
-type NonLoginContentProps = {
-  onGetStarted?: () => void;
-};
-
-export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
+export function NonLoginContent() {
   const signIn = useSignIn();
-  const handleGetStarted = React.useCallback(() => {
-    if (onGetStarted) {
-      onGetStarted();
-      return;
-    }
-    signIn();
-  }, [onGetStarted, signIn]);
 
   return (
     <div className="w-full pb-10 md:pb-20">
@@ -65,7 +53,6 @@ export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
         <Card.Root className="rounded-[24px] border-card-border bg-background overflow-hidden">
           <Card.Content
             className="h-full min-h-[300px] md:min-h-[480px] p-7 md:p-14 flex flex-col justify-between gap-10"
-            style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
           >
             <div className="flex flex-col gap-4">
               <h3 className="font-title text-4xl md:text-[60px] font-semibold leading-[1.15] md:leading-[72px] max-w-[420px]">
@@ -77,7 +64,7 @@ export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
             </div>
 
             <div className="flex items-end justify-between gap-4">
-              <Button size="lg" variant="secondary" onClick={handleGetStarted}>
+              <Button size="lg" variant="secondary" onClick={() => signIn()}>
                 Get Started
               </Button>
               <img

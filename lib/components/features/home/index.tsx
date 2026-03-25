@@ -62,7 +62,7 @@ export function Home() {
       )}
       {!chatExpanded && (
         <div className="relative z-10 w-full px-4 md:px-6 xl:px-8">
-          {loggedIn ? <HomeEventsSection /> : <NonLoginContent onGetStarted={() => signIn()} />}
+          {loggedIn ? <HomeEventsSection /> : <NonLoginContent />}
         </div>
       )}
     </div>
