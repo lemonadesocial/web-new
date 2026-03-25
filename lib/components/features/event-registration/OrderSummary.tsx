@@ -100,7 +100,7 @@ export function OrderSummary() {
         {
           event.new_new_photos_expanded?.[0] && (
             <img
-              className="aspect-square object-contain rounded-sm border border-divider size-[54px]"
+              className="aspect-square object-contain rounded-sm border border-divider size-13.5"
               src={generateUrl(event.new_new_photos_expanded[0], {
                 resize: { height: 120, width: 120, fit: 'cover' },
               })}

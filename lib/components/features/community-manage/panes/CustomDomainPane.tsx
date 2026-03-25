@@ -326,7 +326,7 @@ function AddSubDomain({
               </div>
               <div className="flex items-center pb-2 border-b">
                 <input
-                  className="w-[84px] bg-transparent border-0 outline-none placeholder:text-quaternary font-medium"
+                  className="w-21 bg-transparent border-0 outline-none placeholder:text-quaternary font-medium"
                   placeholder="subdomain"
                   type="text"
                   onChange={(e) => handleSubdomainChange(idx, e.target.value)}

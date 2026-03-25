@@ -153,7 +153,7 @@ function ListActions({ spaceId, hostname }: { spaceId: string; hostname?: string
                 item.backgroundIcon,
               )}
             >
-              <i aria-hidden="true" className={twMerge('size-[22px] aspect-square', item.icon)} />
+              <i aria-hidden="true" className={twMerge('size-5.5 aspect-square', item.icon)} />
             </div>
             <p>{item.title}</p>
           </Card.Content>
@@ -241,7 +241,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
 
           <Skeleton className="h-5 w-10" animate />
 
-          <div className="w-[62px] px-[60px] hidden md:block">
+          <div className="w-15.5 px-15 hidden md:block">
             <Skeleton className="h-5 w-16 rounded-full" animate />
           </div>
         </CardTable.Loading>
@@ -347,7 +347,7 @@ function FeaturedHubSection({ spaceId }: { spaceId: string }) {
 
           <Skeleton className="h-5 w-10" animate />
 
-          <div className="w-[62px] px-[60px] hidden md:block">
+          <div className="w-15.5 px-15 hidden md:block">
             <Skeleton className="h-5 w-16 rounded-full" animate />
           </div>
         </CardTable.Loading>
@@ -462,7 +462,7 @@ function SubFeatureHubs({ spaceId }: { spaceId: string }) {
             >
               <Card.Content className="py-3 flex items-center gap-3">
                 <Avatar
-                  className="size-[38px] rounded-sm!"
+                  className="size-9.5 rounded-sm!"
                   src={generateUrl(i.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}
                 />
 

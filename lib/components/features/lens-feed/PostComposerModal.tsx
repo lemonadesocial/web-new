@@ -212,7 +212,7 @@ export function PostComposerModal({
         initial={{ height: '100%' }}
         animate={{ height: isMobileOnly && isFocus ? `calc(100dvh - ${height - 140}px)` : '100%' }}
       >
-        <Card.Root className="w-full h-full md:h-auto md:w-[640px] flex flex-col overflow-visible">
+        <Card.Root className="w-full h-full md:h-auto md:w-160 flex flex-col overflow-visible">
           <Card.Header className="bg-transparent flex justify-between items-center w-full px-4 py-3 md:hidden">
             <Button
               icon="icon-chevron-left"
@@ -263,7 +263,7 @@ export function PostComposerModal({
                               className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
                               onClick={() => setGif(undefined)}
                             >
-                              <i aria-hidden="true" className="icon-x text-tertiary size-[14px]" />
+                              <i aria-hidden="true" className="icon-x text-tertiary size-3.5" />
                             </button>
                           </div>
                         )
@@ -356,7 +356,7 @@ export function FeedOptions({
           {FEED_OPTIONS[selected].label}
         </Button>
       </Menu.Trigger>
-      <Menu.Content className="p-1 min-w-[180px]">
+      <Menu.Content className="p-1 min-w-45">
         {({ toggle }) => (
           <>
             {Object.entries(FEED_OPTIONS).map(([key, item]) => (

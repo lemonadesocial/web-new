@@ -10,7 +10,7 @@ export default function SwipePage() {
   const router = useRouter();
 
   return (
-    <div className="max-w-[1080px] mx-auto pt-11 flex flex-col items-center">
+    <div className="max-w-270 mx-auto pt-11 flex flex-col items-center">
       <div
         className="h-[296] flex items-end justify-center w-full"
         style={{
@@ -27,22 +27,22 @@ export default function SwipePage() {
       </p>
 
       <div className="flex items-center justify-center mt-14">
-        <div className="flex flex-col items-center justify-center size-[88px] gap-3 rounded-md bg-primary/8">
+        <div className="flex flex-col items-center justify-center size-22 gap-3 rounded-md bg-primary/8">
           <i className="icon-swipe size-8 text-[#FBBF24]" />
           <p className="text-sm text-secondary">Swipe</p>
         </div>
         <hr className="w-5 border border-t-divider" />
-        <div className="flex flex-col items-center justify-center size-[88px] gap-3 rounded-md bg-primary/8">
+        <div className="flex flex-col items-center justify-center size-22 gap-3 rounded-md bg-primary/8">
           <i className="icon-heart size-8 text-[#F472B6]" />
           <p className="text-sm text-secondary">Match</p>
         </div>
         <hr className="w-5 border border-t-divider" />
-        <div className="flex flex-col items-center justify-center size-[88px] gap-3 rounded-md bg-primary/8">
+        <div className="flex flex-col items-center justify-center size-22 gap-3 rounded-md bg-primary/8">
           <i className="icon-chat size-8 text-[#51A2FF]" />
           <p className="text-sm text-secondary">Chat</p>
         </div>
         <hr className="w-5 border border-t-divider" />
-        <div className="flex flex-col items-center justify-center size-[88px] gap-3 rounded-md bg-primary/8">
+        <div className="flex flex-col items-center justify-center size-22 gap-3 rounded-md bg-primary/8">
           <i className="icon-collab size-8 text-[#A684FF]" />
           <p className="text-sm text-secondary">Collab</p>
         </div>

@@ -235,7 +235,7 @@ export function CommunityAgents({ space }: Props) {
                   </Button>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-1 min-w-[200px]">
+              <Menu.Content className="p-1 min-w-50">
                 {({ toggle }) => (
                   <>
                     <MenuItem

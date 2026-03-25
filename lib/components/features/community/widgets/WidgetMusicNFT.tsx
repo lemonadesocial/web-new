@@ -47,7 +47,7 @@ export function WidgetMusicNFT({ space }: Props) {
   return (
     <WidgetContent space={space} title="Music Player" className="col-span-2">
       <div className="p-6 flex items-center gap-8">
-        <div className="bg-gray-50 size-[228px] aspect-square rounded-sm overflow-hidden">
+        <div className="bg-gray-50 size-57 aspect-square rounded-sm overflow-hidden">
           {track?.cover_image_url && (
             <img src={track.cover_image_url} alt="Album Cover" className="w-full h-full object-cover" />
           )}

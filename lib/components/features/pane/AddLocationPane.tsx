@@ -44,7 +44,7 @@ export function AddLocationPane({
 
           {selectedAddress?.address?.latitude && selectedAddress?.address?.longitude && (
             <>
-              <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+              <div className="aspect-video h-60 rounded-sm overflow-hidden">
                 <Map
                   gestureHandling="greedy"
                   defaultZoom={11}

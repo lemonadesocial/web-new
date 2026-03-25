@@ -79,7 +79,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
         )}
 
-        <div className={clsx('flex items-end justify-between', space?.image_cover ? '-mt-[30px] md:-mt-[68px]' : '')}>
+        <div className={clsx('flex items-end justify-between', space?.image_cover ? '-mt-7.5 md:-mt-17' : '')}>
           <div className="relative size-20 md:size-32 rounded-md overflow-hidden">
             <img
               className="w-full h-full outline outline-tertiary/4 rounded-md"

@@ -29,7 +29,7 @@ export function AddJobTitleQuestion({ field }: AddJobTitleQuestionProps) {
   return (
     <ModalContent
       title={'Add Question'}
-      className="w-[480px] max-w-full"
+      className="w-120 max-w-full"
       onClose={() => modal.close()}
       onBack={() => {
         modal.close();

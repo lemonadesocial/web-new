@@ -37,7 +37,7 @@ function UserProfileLayout({ children }: React.PropsWithChildren) {
         {children}
       </div>
 
-      <div className="w-[296px]">
+      <div className="w-74">
         <div className="sticky top-10 flex flex-col gap-4">
           <LemonadeStandCard />
           {user?._id && <UpcomingEventsCard userId={user?._id} />}

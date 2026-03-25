@@ -24,7 +24,7 @@ function Page({ children }: React.PropsWithChildren) {
   }, [me, session, mounted]);
 
   return (
-    <div className="max-w-[1080px] mx-auto">
+    <div className="max-w-270 mx-auto">
       <UserProfileLayout>{children}</UserProfileLayout>
     </div>
   );

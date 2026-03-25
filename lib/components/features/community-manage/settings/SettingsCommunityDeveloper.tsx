@@ -123,24 +123,24 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
           <>
             <Card.Root className="overflow-visible">
               <div>
-                <div className="min-w-[920px]">
+                <div className="min-w-230">
                   <div className="flex gap-4 px-4">
-                    <div className="flex-1 min-w-[220px] py-2">
+                    <div className="flex-1 min-w-55 py-2">
                       <p className="text-sm text-tertiary">Name</p>
                     </div>
-                    <div className="w-[160px] py-2">
+                    <div className="w-40 py-2">
                       <p className="text-sm text-tertiary">Scopes</p>
                     </div>
-                    <div className="w-[216px] py-2">
+                    <div className="w-54 py-2">
                       <p className="text-sm text-tertiary">Key ID</p>
                     </div>
-                    <div className="w-[120px] py-2">
+                    <div className="w-30 py-2">
                       <p className="text-sm text-tertiary">Created On</p>
                     </div>
-                    <div className="w-[120px] py-2">
+                    <div className="w-30 py-2">
                       <p className="text-sm text-tertiary">Expires On</p>
                     </div>
-                    <div className="w-[132px] py-2">
+                    <div className="w-33 py-2">
                       <p className="text-sm text-tertiary">Status</p>
                     </div>
                     <div className="w-5 py-2" />
@@ -153,15 +153,15 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
                         openMenuId === apiKey._id ? 'z-30' : 'z-0'
                       }`}
                     >
-                      <div className="flex-1 min-w-[220px] py-3">
+                      <div className="flex-1 min-w-55 py-3">
                         <p className="text-md text-primary truncate">{apiKey.name}</p>
                       </div>
 
-                      <div className="w-[160px] py-3">
+                      <div className="w-40 py-3">
                         <p className="text-md text-tertiary whitespace-pre-line">{apiKey.scopes.join('\n')}</p>
                       </div>
 
-                      <div className="w-[216px] py-3">
+                      <div className="w-54 py-3">
                         <button
                           className="flex items-center gap-1 cursor-pointer"
                           onClick={() => {
@@ -174,15 +174,15 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
                         </button>
                       </div>
 
-                      <div className="w-[120px] py-3">
+                      <div className="w-30 py-3">
                         <p className="text-md text-tertiary">{formatApiDate(apiKey.createdAt)}</p>
                       </div>
 
-                      <div className="w-[120px] py-3">
+                      <div className="w-30 py-3">
                         <p className="text-md text-tertiary">{formatApiDate(apiKey.expires_at)}</p>
                       </div>
 
-                      <div className="w-[132px] py-3">
+                      <div className="w-33 py-3">
                         <Chip size="xs" variant={getStatusVariant(apiKey.status)} className="inline-flex w-fit">
                           {formatStatusLabel(apiKey.status)}
                         </Chip>
@@ -200,7 +200,7 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
                               <i aria-hidden="true" className="icon-more-horiz size-5 text-tertiary" />
                             </button>
                           </Menu.Trigger>
-                          <Menu.Content className="p-1 w-[180px] bg-overlay-primary backdrop-blur-none!">
+                          <Menu.Content className="p-1 w-45 bg-overlay-primary backdrop-blur-none!">
                             {({ toggle }) => (
                               <>
                                 <MenuItem

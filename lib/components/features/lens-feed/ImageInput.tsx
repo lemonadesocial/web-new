@@ -32,7 +32,7 @@ export function ImageInput({ value, onChange }: { value: File[]; onChange: (file
               className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
               onClick={() => handleRemove(idx)}
             >
-              <i aria-hidden="true" className="icon-x text-tertiary size-[14px]" />
+              <i aria-hidden="true" className="icon-x text-tertiary size-3.5" />
             </button>
           </div>
         );

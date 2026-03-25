@@ -453,7 +453,7 @@ export function CreateCoin() {
   const isAvandedMode = launchMode === 'advanced';
 
   return (
-    <div className="max-w-[720px] mx-auto pb-10 px-4">
+    <div className="max-w-180 mx-auto pb-10 px-4">
       <style jsx>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
@@ -598,7 +598,7 @@ export function CreateCoin() {
                 <div className="flex flex-col gap-1.5">
                   <p className="text-secondary text-sm">Ticker</p>
                   <div className="relative">
-                    <p className={clsx('absolute top-[8px] left-[11px]', !watch('ticker') && 'text-tertiary')}>$</p>
+                    <p className={clsx('absolute top-2 left-2.75', !watch('ticker') && 'text-tertiary')}>$</p>
                     <Input
                       value={watch('ticker')}
                       onChange={(e) => {
@@ -1098,7 +1098,7 @@ export function CreateCoin() {
                           <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                         </div>
                       </Menu.Trigger>
-                      <Menu.Content className="w-[296px] p-0 rounded-lg">
+                      <Menu.Content className="w-74 p-0 rounded-lg">
                         {({ toggle }) => {
                           const launchDate = watch('launchDate');
                           return (
@@ -1129,7 +1129,7 @@ export function CreateCoin() {
                           <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                         </div>
                       </Menu.Trigger>
-                      <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+                      <Menu.Content className="w-25 no-scrollbar rounded-lg overflow-auto h-50 p-2">
                         {({ toggle }) => {
                           const launchDate = watch('launchDate');
                           const times = Array.from({ length: 24 }, (_, hour) => {

@@ -76,7 +76,7 @@ export function HeroSection(props: { space?: Space }) {
   };
 
   return (
-    <div className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}>
+    <div className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-38.5 md:h-96' : 'h-24 md:h-36')}>
       {space?.image_cover ? (
         <>
           <img
@@ -167,7 +167,7 @@ export function HeroSectionProfile({ space }: { space?: Space }) {
     <div
       className={clsx(
         'relative w-full overflow-hidden',
-        space?.image_cover ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+        space?.image_cover ? 'h-38.5 md:h-70' : 'h-24 md:h-36',
       )}
     >
       {space?.image_cover ? (

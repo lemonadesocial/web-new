@@ -37,7 +37,7 @@ export function PendingApprovalsOverview({ event, titleClassName }: PendingAppro
           variant="tertiary"
           iconRight="icon-chevron-right"
           size="sm"
-          onClick={() => drawer.open(ApplicantsDrawer, { props: { event }, contentClass: "max-w-[784px]" })}
+          onClick={() => drawer.open(ApplicantsDrawer, { props: { event }, contentClass: "max-w-196" })}
         >
           All Applicants
         </Button>

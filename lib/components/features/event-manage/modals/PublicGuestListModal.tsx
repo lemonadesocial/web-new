@@ -14,7 +14,7 @@ export function PublicGuestListModal({ event }: { event: Event }) {
   });
 
   return (
-    <Card.Root className="*:bg-overlay-primary border-none w-[340px]">
+    <Card.Root className="*:bg-overlay-primary border-none w-85">
       <Card.Header className="flex justify-between items-start">
         <div className="rounded-full bg-(--btn-tertiary) text-tertiary flex items-center justify-center size-14">
           <i aria-hidden="true" className="size-8 icon-user-group-outline" />

@@ -23,7 +23,7 @@ export function WidgetCollectibles({ space, title, subtitle }: Props) {
           <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-collectibles.png`} alt="Collectibles template" />
         </div>
 
-        <Spacer className="h-[152px]" />
+        <Spacer className="h-38" />
 
         <div className="text-center">
           <h3 className="text-lg font-semibold">{title}</h3>

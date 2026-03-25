@@ -99,7 +99,7 @@ export function CheckWhiteListModal({
     return (
       <ModalContent>
         <div className="space-y-4">
-          <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-300/16">
+          <div className="size-14 flex justify-center items-center rounded-full bg-warning-300/16">
             <i aria-hidden="true" className="icon-error text-warning-300" />
           </div>
           <div className="space-y-2">
@@ -149,7 +149,7 @@ export function CheckWhiteListModal({
   return (
     <ModalContent>
       <div className="space-y-4">
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-300/16">
+        <div className="size-14 flex justify-center items-center rounded-full bg-warning-300/16">
           <i aria-hidden="true" className="icon-error text-warning-300" />
         </div>
         <div className="space-y-2">

@@ -41,16 +41,16 @@ export function SentEnvelopeDetailModal({
     : `You shared a red envelope with ${recipient} containing ${amountLabel}.`;
 
   return (
-    <ModalContent onClose={() => modal.close()} className="w-[480px]">
+    <ModalContent onClose={() => modal.close()} className="w-120">
       <div className="relative flex justify-center">
         <img
           src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/red-envelope.png`}
           alt="Red Envelope"
-          className="w-[300px] h-auto object-contain"
+          className="w-75 h-auto object-contain"
         />
         {envelope.amount && (
           <div
-            className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 flex justify-center items-center gap-2 py-4 px-5 rounded-full border bg-woodsmoke-950/64 backdrop-blur-[12px]"
+            className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 flex justify-center items-center gap-2 py-4 px-5 rounded-full border bg-woodsmoke-950/64 backdrop-blur-md"
           >
             <p className="text-2xl">${amount}</p>
           </div>
@@ -59,7 +59,7 @@ export function SentEnvelopeDetailModal({
 
       {hasMessage && (
         <div className="relative flex justify-center mt-6">
-          <div className="max-w=[320px] lex justify-center items-center gap-2 py-2 px-3 rounded-md bg-[var(--btn-secondary)] relative before:content-[''] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:-translate-y-full before:w-0 before:h-0 before:border-l-[10px] before:border-l-transparent before:border-r-[10px] before:border-r-transparent before:border-b-[10px] before:border-b-[var(--btn-secondary)]">
+          <div className="max-w=[320px] lex justify-center items-center gap-2 py-2 px-3 rounded-md bg-[var(--btn-secondary)] relative before:content-[''] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:-translate-y-full before:w-0 before:h-0 before:border-l-2.5 before:border-l-transparent before:border-r-2.5 before:border-r-transparent before:border-b-2.5 before:border-b-[var(--btn-secondary)]">
             <p className="text-[var(--btn-secondary-content)]">{envelope.message}</p>
           </div>
         </div>

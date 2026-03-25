@@ -90,7 +90,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
         }}
       >
         <div className="flex justify-between">
-          <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-[48px] aspect-square">
+          <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-12 aspect-square">
             <i aria-hidden="true" className="icon-user-plus text-alert-400" />
           </div>
 
@@ -317,7 +317,7 @@ export function InviteFriendModal() {
       title={step === 'invite_form' ? 'Invite a Friend' : ''}
       onBack={step === 'invite_form' ? () => setStep('default') : undefined}
       onClose={() => modal.close()}
-      className="w-full max-w-[448px] h-auto transition-all ease-in-out"
+      className="w-full max-w-112 h-auto transition-all ease-in-out"
     >
       <AnimatePresence mode="wait">
         <motion.div

@@ -113,7 +113,7 @@ export function CommunitySubmissions({ space }: Props) {
               <p className="w-[18%] min-w-0 shrink-0 hidden lg:block text-sm text-tertiary">Starts On</p>
               <p className="w-[22%] min-w-0 shrink-0 hidden md:block text-sm text-tertiary">Submitted By</p>
               <p className="w-[12%] min-w-0 shrink-0 hidden lg:block text-sm text-tertiary">Submitted On</p>
-              <div className="w-[13%] min-w-[72px] shrink-0" />
+              <div className="w-[13%] min-w-18 shrink-0" />
             </div>
           </CardTable.Header>
 
@@ -126,7 +126,7 @@ export function CommunitySubmissions({ space }: Props) {
 
           <CardTable.EmptyState>
             <div className="flex flex-col gap-5 pt-12 pb-20 items-center justify-center text-tertiary">
-              <i aria-hidden="true" className="icon-calendar size-44 md:size-[184px] text-quaternary" />
+              <i aria-hidden="true" className="icon-calendar size-44 md:size-46 text-quaternary" />
               <div className="space-y-2 text-center">
                 <h3 className="text-xl font-semibold">No Submissions</h3>
                 <p>
@@ -227,7 +227,7 @@ function SubmissionRow({
           </p>
         </div>
 
-        <div className="flex gap-1 w-[13%] min-w-[72px] shrink-0 justify-end" onClick={(e) => e.stopPropagation()}>
+        <div className="flex gap-1 w-[13%] min-w-18 shrink-0 justify-end" onClick={(e) => e.stopPropagation()}>
           {item.state === SpaceEventRequestState.Pending && (
             <>
               <Button

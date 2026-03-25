@@ -58,7 +58,7 @@ export function CreatePreviewLinkModal({
             label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="[&_div.control]:pr-1.5! [&_div.control]:items-center [&_button]:bg-(--btn-tertiary) [&_button]:p-[7px] [&_button]:justify-center [&_button]:hover:bg-(--btn-tertiary-hover) [&_button]:rounded-xs [&_button]:flex [&_button]:items-center"
+            className="[&_div.control]:pr-1.5! [&_div.control]:items-center [&_button]:bg-(--btn-tertiary) [&_button]:p-1.75 [&_button]:justify-center [&_button]:hover:bg-(--btn-tertiary-hover) [&_button]:rounded-xs [&_button]:flex [&_button]:items-center"
             right={
               password
                 ? {
@@ -77,14 +77,14 @@ export function CreatePreviewLinkModal({
               {({ toggle, isOpen }) => (
                 <div
                   onClick={toggle}
-                  className="cursor-pointer bg-background/64 w-[150px] h-10 flex items-center px-3.5 border rounded-sm justify-between"
+                  className="cursor-pointer bg-background/64 w-37.5 h-10 flex items-center px-3.5 border rounded-sm justify-between"
                 >
                   <p>{expired?.label}</p>
                   <i className={clsx('icon-chevron-down size-5 text-quaternary', isOpen && 'rotate-180')} />
                 </div>
               )}
             </Menu.Trigger>
-            <Menu.Content className="max-w-[110px] p-1">
+            <Menu.Content className="max-w-27.5 p-1">
               {({ toggle }) => {
                 return expiredList.map((item) => (
                   <MenuItem

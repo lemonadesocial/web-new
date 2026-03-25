@@ -104,18 +104,18 @@ function EventListSkeleton() {
     <div className="flex flex-col gap-10">
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div key={date}>
-          <SkeletonLine animate className="w-[96px] h-[16px] bg-card rounded-lg" />
+          <SkeletonLine animate className="w-24 h-4 bg-card rounded-lg" />
           <Divider className="mt-3 mb-4" />
 
           <div className="flex flex-col gap-5">
             {data.map((item) => (
               <div key={item} className="transition flex gap-4 rounded-md">
-                <SkeletonLine className="w-[64px] h-[20px] bg-card rounded-lg" />
+                <SkeletonLine className="w-16 h-5 bg-card rounded-lg" />
                 <div className="flex flex-col gap-2">
-                  <SkeletonLine animate className="w-[360px] h-[20px] bg-card rounded-lg" />
+                  <SkeletonLine animate className="w-90 h-5 bg-card rounded-lg" />
                   <div className="flex gap-2">
-                    <SkeletonLine className="size-[16px] bg-card rounded-lg" />
-                    <SkeletonLine className="w-[120px] h-[16px] bg-card rounded-lg" />
+                    <SkeletonLine className="size-4 bg-card rounded-lg" />
+                    <SkeletonLine className="w-30 h-4 bg-card rounded-lg" />
                   </div>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export function EventListCard({
                 idx === 0 && 'mt-2 pt-0!',
               )}
             >
-              <div className="size-2 backdrop-blur-lg rounded-full -ml-[5px] absolute">
+              <div className="size-2 backdrop-blur-lg rounded-full -ml-1.25 absolute">
                 <div className="size-2 rounded-full bg-(--color-divider)" />
               </div>
             </div>
@@ -231,7 +231,7 @@ export function EventCardItem({
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
-        <div className="text-tertiary flex-1 w-[173px] flex flex-col gap-2">
+        <div className="text-tertiary flex-1 w-43.25 flex flex-col gap-2">
           <div>
             <div className="flex gap-2 text-sm md:text-base font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
@@ -325,7 +325,7 @@ export function EventCardItem({
             <div className="flex gap-2 items-center">
               {status === 'going' && (
                 <>
-                  <div className="bg-[#096] w-fit py-[3px] px-2 rounded-xs backdrop-blur-sm">
+                  <div className="bg-[#096] w-fit py-0.75 px-2 rounded-xs backdrop-blur-sm">
                     <p className="text-xs text-primary">Going</p>
                   </div>
 
@@ -348,7 +348,7 @@ export function EventCardItem({
 
         {!!item?.new_new_photos_expanded?.[0] && (
           <img
-            className="aspect-square object-contain rounded-lg size-[90px] md:size-[120px]"
+            className="aspect-square object-contain rounded-lg size-22.5 md:size-30"
             src={generateUrl(item?.new_new_photos_expanded[0], {
               resize: { height: 120, width: 120, fit: 'cover' },
             })}
@@ -372,14 +372,14 @@ function EventListCardSkeleton() {
               idx === 0 && 'mt-2 pt-0!',
             )}
           >
-            <div className="size-2 backdrop-blur-lg rounded-full -ml-[5px] absolute">
+            <div className="size-2 backdrop-blur-lg rounded-full -ml-1.25 absolute">
               <div className="size-2 rounded-full bg-(--color-divider)" />
             </div>
           </div>
 
           <div className="ml-4 w-full">
             <div className="flex flex-col gap-4">
-              <SkeletonLine animate className="mt-1 h-4 w-[96px] rounded-full" />
+              <SkeletonLine animate className="mt-1 h-4 w-24 rounded-full" />
 
               <div className="flex flex-col gap-4">
                 {data.map((item) => (
@@ -400,22 +400,22 @@ function EventCardSkeleton() {
     <Card.Root className="bg-transparent border">
       <Card.Content className="flex gap-6">
         <div className="flex-1 flex flex-col gap-4">
-          <SkeletonLine className="h-4 w-[64px] rounded-full bg-card" />
-          <SkeletonLine animate className="h-[28px] w-full md:w-[400px] rounded" />
+          <SkeletonLine className="h-4 w-16 rounded-full bg-card" />
+          <SkeletonLine animate className="h-7 w-full md:w-100 rounded" />
 
           <div className="flex flex-col gap-4">
             <div className="inline-flex items-center gap-2">
               <SkeletonLine className="size-4 rounded-full bg-card" />
-              <SkeletonLine className="h-4 w-[64px] rounded-full bg-card" />
+              <SkeletonLine className="h-4 w-16 rounded-full bg-card" />
             </div>
 
             <div className="inline-flex items-center gap-2">
               <SkeletonLine className="size-4 rounded-full bg-card" />
-              <SkeletonLine className="h-4 w-[120px] rounded-full bg-card" />
+              <SkeletonLine className="h-4 w-30 rounded-full bg-card" />
             </div>
           </div>
         </div>
-        <div className="size-[80px] md:size-[124px] bg-card rounded-lg"></div>
+        <div className="size-20 md:size-31 bg-card rounded-lg"></div>
       </Card.Content>
     </Card.Root>
   );
@@ -450,7 +450,7 @@ function getLocation(event?: Event | null, me?: User | null) {
 function EmptyComp() {
   return (
     <div className="flex flex-col items-center flex-1 gap-5 mt-10 mb-20">
-      <i aria-hidden="true" className="icon-dashboard w-[184px] h-[184px] text-primary/16 blur-md" />
+      <i aria-hidden="true" className="icon-dashboard w-46 h-46 text-primary/16 blur-md" />
       <div className="text-center">
         <p className="font-title text-tertiary font-semibold! text-xl">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to keep up with new events.</p>

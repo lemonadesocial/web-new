@@ -105,7 +105,7 @@ export function VerifyCommunityPage({ uid }: { uid: string }) {
           )}
 
           {!loadingSpace && !space && (
-            <div className="max-w-[512px] rounded-md border border-card-border bg-card px-4 py-3 flex items-center gap-3">
+            <div className="max-w-128 rounded-md border border-card-border bg-card px-4 py-3 flex items-center gap-3">
               <i aria-hidden="true" className="icon-alert-outline size-9 text-warning-400" />
               <div className="space-y-0.5">
                 <p>Community Not Found</p>
@@ -239,7 +239,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
   };
 
   return (
-    <form onSubmit={onSubmit} className="max-w-[512px] w-full flex flex-col gap-6">
+    <form onSubmit={onSubmit} className="max-w-128 w-full flex flex-col gap-6">
       <div className="rounded-md border border-card-border bg-card px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-sm border border-card-border overflow-hidden shrink-0 bg-(--btn-tertiary) flex items-center justify-center">
@@ -273,7 +273,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
                 className="inline-flex items-center gap-1 text-sm text-accent-400 hover:text-accent-300 transition-colors"
               >
                 <span>Complete Community Info</span>
-                <i aria-hidden="true" className="icon-arrow-outward size-[18px]" />
+                <i aria-hidden="true" className="icon-arrow-outward size-4.5" />
               </Link>
             </div>
           </div>
@@ -290,7 +290,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
         <InputField
           type="number"
           min={1}
-          className="max-w-[160px]"
+          className="max-w-40"
           placeholder="100"
           value={values.number_of_recipients}
           onChangeText={(value) => setValues((prev) => ({ ...prev, number_of_recipients: value }))}

@@ -87,7 +87,7 @@ export function BottomBar() {
             <div
               key={item.path}
               className={clsx(
-                'h-[44px] min-w-[44px] flex items-center justify-center rounded-full cursor-pointer',
+                'h-11 min-w-11 flex items-center justify-center rounded-full cursor-pointer',
                 isActive(item) && 'bg-[var(--btn-secondary)]',
               )}
               onClick={() => router.push(item.path as string)}

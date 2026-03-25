@@ -50,7 +50,7 @@ export function TicketComparePane({ comparisons, onSelectTicket }: TicketCompare
         {comparisons.map((comp) => (
           <div
             key={comp.event.id}
-            className="flex flex-col gap-2 min-w-[240px] max-w-[300px] rounded-md border border-card-border bg-overlay-secondary p-3 shrink-0"
+            className="flex flex-col gap-2 min-w-60 max-w-75 rounded-md border border-card-border bg-overlay-secondary p-3 shrink-0"
           >
             <div className="space-y-1">
               <p className="text-primary text-sm font-medium truncate">{comp.event.title}</p>

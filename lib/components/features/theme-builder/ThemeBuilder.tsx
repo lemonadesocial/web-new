@@ -65,7 +65,7 @@ export function PopoverColor({ disabled }: { disabled?: boolean }) {
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
             className={clsx(
-              'size-[24px] rounded-full',
+              'size-6 rounded-full',
               state.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${state.config.color} bg-accent-400`,
             )}
           />
@@ -114,7 +114,7 @@ export function PopoverStyle() {
     <Menu.Root disabled className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <div className="size-[24px] rounded-full bg-quaternary" />
+          <div className="size-6 rounded-full bg-quaternary" />
           <span className="text-left flex-1 font-general-sans">Style</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">-</span>
@@ -135,9 +135,9 @@ export function PopoverEffect() {
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           {!state.config?.effect?.name ? (
-            <i aria-hidden="true" className="icon-wand-shine-outline-sharp size-[24px] text-primary" />
+            <i aria-hidden="true" className="icon-wand-shine-outline-sharp size-6 text-primary" />
           ) : (
-            <div className="size-[24px] text-center">{emojis[state.config?.effect.name]?.emoji}</div>
+            <div className="size-6 text-center">{emojis[state.config?.effect.name]?.emoji}</div>
           )}
           <span className="text-left flex-1 font-general-sans">Effect</span>
           <p className="flex items-center gap-1">
@@ -148,12 +148,12 @@ export function PopoverEffect() {
       </Menu.Trigger>
       <FloatingPortal>
         <Menu.Content>
-          <div className="grid grid-cols-4 items-center gap-3 w-[324px] max-h-[250px] md:max-h-[550px] p-4 overflow-auto no-scrollbar">
+          <div className="grid grid-cols-4 items-center gap-3 w-81 max-h-62.5 md:max-h-137.5 p-4 overflow-auto no-scrollbar">
             {Object.entries(emojis).map(([key, value]) => (
               <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
                 <div
                   className={clsx(
-                    'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
+                    'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-15 h-15 hover:border-primary flex items-center justify-between',
                     key === state.config?.effect?.name && 'border border-primary',
                   )}
                   onClick={(e) => {
@@ -214,7 +214,7 @@ export function PopoverFont({
         </div>
       </Menu.Trigger>
       <FloatingPortal>
-        <Menu.Content className="max-h-80 w-[370px] overflow-scroll no-scrollbar">
+        <Menu.Content className="max-h-80 w-92.5 overflow-scroll no-scrollbar">
           <div className="flex gap-4 flex-wrap">
             {Object.entries(fonts).map(([key, font]) => (
               <div
@@ -224,7 +224,7 @@ export function PopoverFont({
               >
                 <div
                   className={clsx(
-                    'border rounded px-4 py-2 w-[72px] h-[56px]',
+                    'border rounded px-4 py-2 w-18 h-14',
                     key === selected.toLowerCase().replaceAll(' ', '_') && 'border border-primary',
                   )}
                 >
@@ -249,7 +249,7 @@ function PopoverShaderColor() {
     <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <div className={twMerge('size-[24px] rounded-full', `item-color-${state.config.name}`)} />
+          <div className={twMerge('size-6 rounded-full', `item-color-${state.config.name}`)} />
 
           <span className="text-left flex-1  font-general-sans">Style</span>
           <p className="flex items-center gap-1">
@@ -291,7 +291,7 @@ function PopoverPattern() {
     <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <div className="w-[24px] h-[24px] rounded-full">
+          <div className="w-6 h-6 rounded-full">
             <div
               className={twMerge(
                 'pattern w-full h-full rounded-full relative! opacity-100!',
@@ -309,7 +309,7 @@ function PopoverPattern() {
         </div>
       </Menu.Trigger>
       <FloatingPortal>
-        <Menu.Content className="flex gap-3 max-w-[356px] flex-wrap">
+        <Menu.Content className="flex gap-3 max-w-89 flex-wrap">
           {patterns.map((item) => (
             <button
               key={item}
@@ -369,7 +369,7 @@ function PopoverImage() {
     <Menu.Root placement="top" strategy="fixed" className="flex-1">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <img src={state.config?.image?.url} className="size-[24px] aspect-square rounded" />
+          <img src={state.config?.image?.url} className="size-6 aspect-square rounded" />
           <span className="text-left flex-1  font-general-sans">Background</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{state.config?.image?.name || '-'}</span>
@@ -401,7 +401,7 @@ function PopoverImage() {
             }}
           >
             <div className={clsx('rounded-sm outline-offset-2', item._id === state.config?.image?._id && 'outline-2')}>
-              <img src={item.url} className="aspect-[4/3] h-[48px] rounded-sm self-stretch" loading="lazy" />
+              <img src={item.url} className="aspect-[4/3] h-12 rounded-sm self-stretch" loading="lazy" />
             </div>
             <p className="text-xs font-normal text-tertiary">{item.name}</p>
           </div>
@@ -427,7 +427,7 @@ export function PopoverDisplay() {
       <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
         <i
           className={clsx(
-            'size-[24px] rounded-full',
+            'size-6 rounded-full',
             modes.find((item) => item.mode === mode)?.icon,
             modes.find((item) => item.mode === mode)?.active,
           )}
@@ -440,7 +440,7 @@ export function PopoverDisplay() {
       </div>
     </Menu.Trigger>
     <FloatingPortal>
-      <Menu.Content className="w-[300px]">
+      <Menu.Content className="w-75">
         {modes.map((item) => (
           <MenuItem
             key={item.mode}

@@ -16,7 +16,7 @@ type RecipientRow = {
 };
 
 type NewsletterListItem = ListSpaceNewslettersQuery['listSpaceNewsletters'][number];
-const EMAIL_PREVIEW_MODAL_CLASS_NAME = 'w-[480px] max-w-[calc(100vw-32px)]';
+const EMAIL_PREVIEW_MODAL_CLASS_NAME = 'w-120 max-w-[calc(100vw-32px)]';
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();

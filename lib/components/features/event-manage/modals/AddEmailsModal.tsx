@@ -101,7 +101,7 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
   const checkedCount = addedEmails.filter((item) => item.selected).length;
 
   return (
-    <Card.Root className="w-sm max-w-full md:w-[448px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-112 *:bg-overlay-primary border-none">
       <Card.Header className="flex justify-between items-start ">
         <div className="rounded-full bg-(--btn-tertiary) text-tertiary flex items-center justify-center size-14">
           <i aria-hidden="true" className="size-8 icon-email" />
@@ -153,7 +153,7 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
         )}
 
         {addedEmails.length > 0 && (
-          <div className="flex flex-col pt-2 px-4 pb-4 max-h-[378px] overflow-y-auto no-scrollbar">
+          <div className="flex flex-col pt-2 px-4 pb-4 max-h-94.5 overflow-y-auto no-scrollbar">
             {addedEmails
               .filter((item) => (query ? item.email.includes(query.toLowerCase()) : true))
               .map(({ email, selected }) => (

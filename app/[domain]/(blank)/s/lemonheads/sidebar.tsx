@@ -23,7 +23,7 @@ const Sidebar = ({ space }: { space: Space }) => {
   const pathname = usePathname();
 
   return (
-    <div className="hidden lg:block fixed left-0 top-0 w-[88px] h-screen border-r z-[9] bg-[var(--color-sidebar)]">
+    <div className="hidden lg:block fixed left-0 top-0 w-22 h-screen border-r z-9 bg-[var(--color-sidebar)]">
       <div className="flex flex-col h-full justify-between divide-y">
         <div className="flex flex-1 flex-col gap-2 p-3">
           <div className="tooltip tooltip-right">
@@ -49,7 +49,7 @@ const Sidebar = ({ space }: { space: Space }) => {
                     icon={item.icon}
                     iconSize="size-8"
                     size="lg"
-                    className="h-[64px] md:max-h-[64px] aspect-square"
+                    className="h-16 md:max-h-16 aspect-square"
                   ></Button>
                 </div>
               </Link>
@@ -63,7 +63,7 @@ const Sidebar = ({ space }: { space: Space }) => {
               <Button
                 variant={pathname === '/s/lemonheads/profile' ? 'secondary' : 'flat'}
                 size="lg"
-                className="max-h-[64px]! aspect-square"
+                className="max-h-16! aspect-square"
               >
                 <Avatar
                   className="size-8 rounded-full aspect-square"

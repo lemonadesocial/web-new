@@ -60,7 +60,7 @@ export function CommunityLaunchpad() {
         </div>
       </div>
       {isLoadingTokenIds ? (
-        <Skeleton className="h-[225px] w-[348px]" animate />
+        <Skeleton className="h-56.25 w-87" animate />
       ) : (
         <div className="p-4 rounded-md space-y-4 border border-card-border bg-card">
           <SubCoinsList filter={filter} />
@@ -121,7 +121,7 @@ function CommunityCoin({ stakingToken, chain }: { stakingToken: string; chain: C
         } : undefined
       }
     >
-      <div className="absolute w-full h-full rounded-md inset-0 bg-overlay-secondary backdrop-blur-[24px] -z-10" />
+      <div className="absolute w-full h-full rounded-md inset-0 bg-overlay-secondary blur-xl -z-10" />
 
       <div className="py-2.5 px-4 border-b border-card-border">
         <p className="text-secondary text-sm">Community Coin</p>
@@ -374,7 +374,7 @@ function SubCoinsList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
                 <Card.Root key={i} className="flex-1">
                   <Card.Content className="p-0">
                     <div className="flex gap-4 p-4">
-                      <Skeleton className="w-[118px] h-[118px] rounded-sm" animate />
+                      <Skeleton className="w-29.5 h-29.5 rounded-sm" animate />
                       <div className="flex flex-col gap-2 flex-1">
                         <Skeleton className="h-6 w-24" animate />
                         <Skeleton className="h-4 w-32" animate />

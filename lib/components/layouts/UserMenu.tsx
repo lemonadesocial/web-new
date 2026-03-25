@@ -24,7 +24,7 @@ export const UserMenu = () => {
           <Avatar size="lg" src={userAvatar(me)} />
         </div>
       </Menu.Trigger>
-      <Menu.Content className="p-0 min-w-[228px]">
+      <Menu.Content className="p-0 min-w-57">
         {({ toggle }) => (
           <>
             <div

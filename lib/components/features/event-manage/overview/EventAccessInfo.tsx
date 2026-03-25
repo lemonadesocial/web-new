@@ -63,7 +63,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
   return (
     <div className="rounded-md border border-card-border bg-card p-3 flex flex-col md:grid grid-cols-2 gap-5">
       <div className="space-y-4">
-        <div className="h-[320px] rounded-sm overflow-hidden relative">
+        <div className="h-80 rounded-sm overflow-hidden relative">
           <div className="absolute scale-50 origin-top-left w-[200%]">
             <EventThemeProvider themeData={event.theme_data}>
               <EventThemeLayout>
@@ -114,7 +114,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
               </div>
               <div className="truncate">
                 <p className="truncate">
-                  {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-[18px]" />
+                  {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-4.5" />
                 </p>
                 <span className="text-sm text-secondary">
                   {[event.address.city || event.address.region, event.address.country].filter(Boolean).join(', ')}

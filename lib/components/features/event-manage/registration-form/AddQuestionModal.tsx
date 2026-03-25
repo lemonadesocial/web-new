@@ -10,7 +10,7 @@ import { AddTermsQuestion } from './AddTermsQuestion';
 
 export function AddQuestionModal() {
   return (
-    <ModalContent icon="icon-question" className="w-[480px] max-w-full" onClose={() => modal.close()}>
+    <ModalContent icon="icon-question" className="w-120 max-w-full" onClose={() => modal.close()}>
       <div className="space-y-4">
         <div className="space-y-1">
           <p className="text-lg">Add Question</p>

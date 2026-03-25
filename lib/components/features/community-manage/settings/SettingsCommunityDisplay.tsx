@@ -231,7 +231,7 @@ export function CommunityDetailForm({ space }: { space: Space }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {isDirty && (
-        <div data-submit-content className="px-4 md:px-0 bg-warning-300/16 backdrop-blur-sm sticky top-[156px] z-50">
+        <div data-submit-content className="px-4 md:px-0 bg-warning-300/16 backdrop-blur-sm sticky top-39 z-50">
           <div className="page mx-auto flex justify-between py-3 items-center">
             <p className="text-warning-300">You have unsaved changes.</p>
             <Button type="submit" size="sm" loading={isSubmitting} className="rounded-full" variant="warning">
@@ -270,11 +270,11 @@ export function CommunityDetailForm({ space }: { space: Space }) {
                   )}
                 </FileInput>
 
-                <div className="flex flex-col gap-2 p-4 -mt-[48px]">
+                <div className="flex flex-col gap-2 p-4 -mt-12">
                   <FileInput onChange={(files) => handleUpload(files, 'dp')}>
                     {(open) => (
                       <div
-                        className="size-[72px] rounded flex justify-end items-end bg-contain bg-no-repeat bg-center border border-(--color-divider) cursor-pointer"
+                        className="size-18 rounded flex justify-end items-end bg-contain bg-no-repeat bg-center border border-(--color-divider) cursor-pointer"
                         style={{
                           backgroundImage: `url(${dp})`,
                         }}
@@ -366,7 +366,7 @@ export function CommunityDetailForm({ space }: { space: Space }) {
               <Card.Content className="space-y-4">
                 <p className="text-lg">Location</p>
                 <div className="relative">
-                  <div className="h-[192px] rounded-md overflow-hidden">
+                  <div className="h-48 rounded-md overflow-hidden">
                     <Map customMap />
                   </div>
 

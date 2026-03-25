@@ -36,7 +36,7 @@ export function ChangeStatusModal({ space }: { space: Space }) {
   };
 
   return (
-    <ModalContent icon="icon-calendar" onClose={() => modal.close()} className="w-full max-w-sm md:max-w-[330px]">
+    <ModalContent icon="icon-calendar" onClose={() => modal.close()} className="w-full max-w-sm md:max-w-82.5">
       <div className="flex flex-col gap-4">
         <div className="space-y-2">
           <p className="text-lg">Change Status</p>

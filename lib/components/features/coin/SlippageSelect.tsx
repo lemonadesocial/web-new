@@ -81,7 +81,7 @@ export function SlippageSelect({ value, onChange }: SlippageSelectProps) {
                 onChange={(e) => handleCustomChange(e.target.value)}
                 onBlur={handleCustomBlur}
                 onClick={(e) => e.stopPropagation()}
-                className="w-[60px] h-[30px] py-1 px-2 rounded-l-sm text-primary text-sm outline-none border-none bg-background/64"
+                className="w-15 h-7.5 py-1 px-2 rounded-l-sm text-primary text-sm outline-none border-none bg-background/64"
                 placeholder="0"
               />
               <Button

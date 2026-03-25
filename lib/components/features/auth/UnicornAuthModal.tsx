@@ -51,7 +51,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
           <div className='absolute -inset-1 rounded-full border-2 border-transparent'>
             <div className='w-full h-full rounded-full border-2 border-tertiary border-t-transparent border-r-transparent animate-spin'></div>
           </div>
-          <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
+          <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-6.5 relative z-10' />
         </div>
         <div className='space-y-1'>
           <p className='text-lg'>Authenticating With ETHDenver</p>
@@ -81,7 +81,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
     <ModalContent>
       <div className='space-y-4'>
         <div className='size-14 flex items-center justify-center rounded-full bg-primary/8'>
-          <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
+          <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-6.5 relative z-10' />
         </div>
         <p className='text-lg'>Let's Get You Started</p>
         <div className='space-y-3'>

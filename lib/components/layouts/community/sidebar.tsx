@@ -16,20 +16,20 @@ const Sidebar = ({ space }: { space: Space }) => {
   const isChat = pathname?.endsWith('/chat');
 
   return (
-    <div className="hidden lg:flex z-[100]">
-      <div className="w-[88px] h-screen p-3 border-r">
+    <div className="hidden lg:flex z-100">
+      <div className="w-22 h-screen p-3 border-r">
         <div className="flex flex-col gap-2">
           <Link
             href="/"
             aria-label="Lemonade"
-            className="text-tertiary hover:text-primary w-[64px] h-[64px] aspect-square flex items-center justify-center"
+            className="text-tertiary hover:text-primary w-16 h-16 aspect-square flex items-center justify-center"
           >
             <i aria-hidden="true" className="icon-lemonade size-6" />
           </Link>
 
           {menu.map((item) => {
             return (
-              <Link href={`/s/${uid}/${item.path}`} key={item.path} className="w-[64px] h-[64px] aspect-square">
+              <Link href={`/s/${uid}/${item.path}`} key={item.path} className="w-16 h-16 aspect-square">
                 <div className={clsx(' w-full', item?.label && 'tooltip tooltip-right')}>
                   {item?.label && (
                     <div className="tooltip-content">
@@ -41,7 +41,7 @@ const Sidebar = ({ space }: { space: Space }) => {
                     icon={item.icon}
                     iconSize="size-8"
                     size="lg"
-                    className="w-full min-h-[64px]!"
+                    className="w-full min-h-16!"
                   ></Button>
                 </div>
               </Link>

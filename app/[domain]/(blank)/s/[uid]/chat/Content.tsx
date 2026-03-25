@@ -15,7 +15,7 @@ export default function Content({ space }: { space: Space }) {
   }, [space?._id, dispatch]);
 
   return (
-    <div className="md:w-[720px] px-3 md:px-0 w-full h-full mx-auto">
+    <div className="md:w-180 px-3 md:px-0 w-full h-full mx-auto">
       <AIChat showTools={false} readOnly={true} />
     </div>
   );

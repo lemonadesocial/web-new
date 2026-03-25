@@ -58,7 +58,7 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
   };
 
   return (
-    <div className="w-[480px] max-w-full">
+    <div className="w-120 max-w-full">
       <div className="p-4 space-y-3">
         <PostHeader post={post} />
         <PostContent post={post} />

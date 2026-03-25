@@ -76,7 +76,7 @@ export function ClaimAccountModal() {
     >
       <div className="flex items-center justify-center">
         <div className="relative">
-          <Avatar src={file ? URL.createObjectURL(file) : randomUserImage()} className="rounded-full size-[108px]" />
+          <Avatar src={file ? URL.createObjectURL(file) : randomUserImage()} className="rounded-full size-27" />
           <FileInput
             accept="image/*"
             onChange={files => setFile(files[0])}
@@ -105,7 +105,7 @@ export function ClaimAccountModal() {
           placeholder="Share a little about your background and interests."
           value={bio}
           onChange={e => setBio(e.target.value)}
-          className="w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-3.5 py-2.5 hover:border hover:border-tertiary min-h-[80px] font-medium bg-primary/8 text-base"
+          className="w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-3.5 py-2.5 hover:border hover:border-tertiary min-h-20 font-medium bg-primary/8 text-base"
         />
       </LabeledInput>
       <Button

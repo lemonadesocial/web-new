@@ -37,7 +37,7 @@ export function EventInvites({ event }: { event: Event }) {
       {
         stats?.total ? (
           <div className="flex gap-2 flex-col md:flex-row">
-            <div className="flex flex-col justify-between py-3 px-4 rounded-md border border-card-border bg-card gap-3 md:min-h-[170px] md:w-[300px]">
+            <div className="flex flex-col justify-between py-3 px-4 rounded-md border border-card-border bg-card gap-3 md:min-h-42.5 md:w-75">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1 items-end">

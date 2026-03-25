@@ -35,8 +35,8 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
   if (loading) return (
     <ModalContent icon="icon-stripe">
       <div className="space-y-4">
-        <Skeleton animate className="w-full min-h-[60px]" />
-        <Skeleton animate className="w-full min-h-[40px]" />
+        <Skeleton animate className="w-full min-h-15" />
+        <Skeleton animate className="w-full min-h-10" />
       </div>
     </ModalContent>
   );

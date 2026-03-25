@@ -62,7 +62,7 @@ export function UpdateVisibilityModal({ event }: UpdateVisibilityModalProps) {
               <span className="font-medium">{isPrivate ? 'Private' : 'Public'}</span>
               <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary ml-auto" />
             </Menu.Trigger>
-            <Menu.Content className="w-[300px] p-1">
+            <Menu.Content className="w-75 p-1">
               {({ toggle }) => (
                 <>
                   <MenuItem

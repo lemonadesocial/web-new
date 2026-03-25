@@ -58,7 +58,7 @@ function EmailChipInput({
         placeholder={value.length === 0 ? 'name@email.com' : ''}
         className={
           value.length === 0
-            ? 'h-8 min-w-[120px] flex-1 bg-transparent px-2 py-1 text-sm font-medium outline-none placeholder:text-quaternary'
+            ? 'h-8 min-w-30 flex-1 bg-transparent px-2 py-1 text-sm font-medium outline-none placeholder:text-quaternary'
             : 'h-8 min-w-12 flex-[1_1_48px] bg-transparent px-2 py-1 text-sm font-medium outline-none placeholder:text-quaternary'
         }
         onChange={(event) => setDraftValue(event.target.value)}
@@ -126,7 +126,7 @@ export function SendNewsletterPreviewModal({
   };
 
   return (
-    <div className="w-[340px] max-w-full p-4">
+    <div className="w-85 max-w-full p-4">
       <div className="space-y-4">
         <div className="flex size-14 items-center justify-center rounded-full bg-primary/8 text-tertiary">
           <i aria-hidden="true" className="icon-email size-8" />

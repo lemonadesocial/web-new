@@ -14,7 +14,7 @@ interface AtlasEventGridProps {
 function SkeletonCard() {
   return (
     <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-overlay-secondary animate-pulse">
-      <div className="size-[38px] rounded-sm bg-overlay-secondary border border-card-border shrink-0" />
+      <div className="size-9.5 rounded-sm bg-overlay-secondary border border-card-border shrink-0" />
       <div className="flex-1 min-w-0 space-y-2">
         <div className="h-3.5 w-3/4 rounded bg-overlay-secondary" />
         <div className="h-3 w-1/2 rounded bg-overlay-secondary" />

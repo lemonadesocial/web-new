@@ -86,7 +86,7 @@ export function LemonHeadGetStarted() {
   if (state.currentStep !== LemonHeadStep.getstarted) return null;
 
   return (
-    <div className="flex-1 max-w-[588px] flex flex-col gap-5 md:gap-8">
+    <div className="flex-1 max-w-147 flex flex-col gap-5 md:gap-8">
       <div className="flex flex-col gap-2">
         <h3 className="text-2xl md:text-3xl font-semibold">Lemonheads</h3>
         <p className="text-sm md:text-base text-tertiary">

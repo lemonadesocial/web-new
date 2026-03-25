@@ -135,10 +135,10 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
               <img
                 src={poapInfo.getPoapDropInfoById.image_url}
                 alt={poapInfo.getPoapDropInfoById.name}
-                className="size-[34px] rounded-sm object-cover"
+                className="size-8.5 rounded-sm object-cover"
               />
             ) : (
-              <div className="size-[34px] rounded-sm bg-primary/8" />
+              <div className="size-8.5 rounded-sm bg-primary/8" />
             )}
             <div>
               <p className="text-sm">{poapInfo?.getPoapDropInfoById?.name}</p>
@@ -154,7 +154,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
               value={totalQuantity}
               onChange={(e) => setTotalQuantity(e.target.valueAsNumber)}
               variant="outlined"
-              className='w-[96px]'
+              className='w-24'
               type='number'
             />
           </div>

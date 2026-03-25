@@ -87,7 +87,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
             </Card.Root>
           ))}
           <div className="w-full">
-            <div className="bg-background/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center h-[44px] focus-within:border-primary">
+            <div className="bg-background/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center h-11 focus-within:border-primary">
               <input
                 className="flex-1 outline-none px-1.5"
                 value={linkEvent}
@@ -168,7 +168,7 @@ export function AddTags({
           </Button>
         </Menu.Trigger>
       </div>
-      <Menu.Content className="w-[252px] max-h-[300px] overflow-auto p-0">
+      <Menu.Content className="w-63 max-h-75 overflow-auto p-0">
         <input
           className="outline-none bg-card text-md px-2.5 py-2 w-full"
           placeholder="Search Tag"

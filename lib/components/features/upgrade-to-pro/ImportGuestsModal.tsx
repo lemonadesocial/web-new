@@ -94,7 +94,7 @@ export function ImportGuestsModal({
   };
 
   return (
-    <div className="w-[400px] max-w-full rounded-2xl overflow-hidden border border-card-border bg-overlay-secondary backdrop-blur-xl shadow-lg">
+    <div className="w-100 max-w-full rounded-2xl overflow-hidden border border-card-border bg-overlay-secondary backdrop-blur-xl shadow-lg">
       <div className="flex items-start justify-between p-4">
         <div className="relative size-14 rounded-full bg-primary/8 flex items-center justify-center shrink-0">
           <i aria-hidden="true" className="icon-upload-sharp size-8 text-primary" />

@@ -21,9 +21,9 @@ export function SkeletonCard() {
     <Card.Root>
       <Card.Header className="h-10" />
       <Card.Content>
-        <Skeleton animate className="h-4 w-[100px] rounded-full" />
-        <Skeleton animate className="h-6 w-[300px] rounded-full mt-2" />
-        <Skeleton animate className="h-4 w-[200px] rounded-full mt-4" />
+        <Skeleton animate className="h-4 w-25 rounded-full" />
+        <Skeleton animate className="h-6 w-75 rounded-full mt-2" />
+        <Skeleton animate className="h-4 w-50 rounded-full mt-4" />
         <Skeleton className="h-10 rounded-sm mt-4" />
       </Card.Content>
     </Card.Root>

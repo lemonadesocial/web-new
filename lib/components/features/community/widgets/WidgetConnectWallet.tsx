@@ -55,7 +55,7 @@ export function WidgetConnectWallet({ space, title, subtitle }: Props) {
             />
           </div>
 
-          <Spacer className="h-[88px]" />
+          <Spacer className="h-22" />
 
           <div className="text-center">
             <h3 className="text-xl font-semibold">{title}</h3>

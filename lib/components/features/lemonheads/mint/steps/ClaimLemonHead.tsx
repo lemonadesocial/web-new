@@ -48,7 +48,7 @@ export function ClaimLemonHead() {
   }, [videoRef.current, isMobile]);
 
   return (
-    <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">
+    <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-360 h-full">
       <div className="relative z-10 flex flex-col items-center gap-5 md:gap-11 text-center h-full">
         <div>
           <p className="text-secondary md:text-xl">Welcome to</p>
@@ -65,7 +65,7 @@ export function ClaimLemonHead() {
             className="border border-primary"
           />
 
-          <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
+          <div className="flex flex-wrap gap-5 w-full max-w-300 justify-center md:justify-between">
             <div className="flex items-center gap-2">
               <Button
                 variant="tertiary-alt"
@@ -217,7 +217,7 @@ export function SharedLemonheadsPane({
             ]}
           />
 
-          <div className="flex flex-row justify-between overflow-x-auto no-scrollbar h-[40px] gap-1 items-center px-1">
+          <div className="flex flex-row justify-between overflow-x-auto no-scrollbar h-10 gap-1 items-center px-1">
             {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
               <div
                 key={key}
@@ -227,7 +227,7 @@ export function SharedLemonheadsPane({
                   onSelectColor?.(key);
                 }}
               >
-                <div className="rounded-full aspect-square w-[30px]" style={{ backgroundColor: value.fg }} />
+                <div className="rounded-full aspect-square w-7.5" style={{ backgroundColor: value.fg }} />
               </div>
             ))}
           </div>
@@ -280,8 +280,8 @@ export function LemonHeadsImageLazyLoad({
   return (
     <div className="relative flex items-center justify-center w-full">
       {!imageLoaded && mounted && (
-        <div className="absolute size-[56px] aspect-square rounded-full bg-(--input-bg) flex items-center justify-center">
-          <i aria-hidden="true" className="icon-loader animate-spin size-[32px]" />
+        <div className="absolute size-14 aspect-square rounded-full bg-(--input-bg) flex items-center justify-center">
+          <i aria-hidden="true" className="icon-loader animate-spin size-8" />
         </div>
       )}
 

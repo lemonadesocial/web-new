@@ -14,7 +14,7 @@ export function AddTextQuestion({ applicationQuestion }: { applicationQuestion?:
   return (
     <ModalContent
       title={applicationQuestion ? 'Edit Question' : 'Add Question'}
-      className="w-[480px] max-w-full"
+      className="w-120 max-w-full"
       onClose={() => modal.close()}
       onBack={applicationQuestion ? undefined : () => {
         modal.close();

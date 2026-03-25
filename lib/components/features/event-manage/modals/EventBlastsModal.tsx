@@ -155,7 +155,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
   }, [event]);
 
   return (
-    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-120 *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-email" />
       <Card.Content className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -178,7 +178,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
           label="Message"
           content={body}
           onChange={(content) => setBody(content)}
-          containerClass="bg-background/64 max-h-[200px] overflow-auto"
+          containerClass="bg-background/64 max-h-50 overflow-auto"
           placeholder="Share a message with your guests..."
         />
 
@@ -269,7 +269,7 @@ export function EventReminderModal({ event, reminderEmails = [] }: { event: Even
   const availabled = reminderEmails.filter((item) => !item.sent_at).length > 0;
 
   return (
-    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-120 *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-bell" />
       <Card.Content className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -396,7 +396,7 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
   };
 
   return (
-    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-120 *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-star-outline" />
       <Card.Content className="flex flex-col gap-4">
         <p className="text-lg">Schedule Feedback Email</p>

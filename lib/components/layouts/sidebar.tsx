@@ -195,7 +195,7 @@ const Sidebar = () => {
                         <p className="text-sm">Rewards</p>
                         <p className="text-quaternary text-xs">Earn credits for your hubs</p>
                       </div>
-                      <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+                      <div className="p-2 bg-warning-600 rounded-full w-7.5 h-7.5 aspect-square flex items-center justify-center">
                         <i className="icon-gift-line w-4 h-4" />
                       </div>
                     </>
@@ -228,7 +228,7 @@ const Sidebar = () => {
                         <p className="text-sm">Upgrade to Pro</p>
                         <p className="text-quaternary text-xs">Unlock more benefits</p>
                       </div>
-                      <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+                      <div className="p-2 bg-alert-500 rounded-full w-7.5 h-7.5 aspect-square flex items-center justify-center">
                         <i className="icon-flash w-4 h-4 aspect-square" />
                       </div>
                     </>
@@ -254,7 +254,7 @@ const Sidebar = () => {
                     </div>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-0 min-w-[228px] backdrop-blur-md!">
+                <Menu.Content className="p-0 min-w-57 backdrop-blur-md!">
                   {({ toggle }) => (
                     <>
                       <div className="p-1">
@@ -325,12 +325,12 @@ export function CreatingModal() {
   };
 
   return (
-    <Card.Root className="w-full lg:w-[480px] border-none bg-[#202022]">
+    <Card.Root className="w-full lg:w-120 border-none bg-[#202022]">
       <Card.Header className="bg-transparent justify-between w-full flex items-start py-4">
         <Button
           icon="icon-plus size-8"
           size="lg"
-          className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-[56px]"
+          className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-14"
           variant="tertiary"
         />
         <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} />
@@ -420,7 +420,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
               </div>
               <p className="text-secondary line-clamp-1">{item.title}</p>
             </div>
-            <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-[1px]">
+            <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-px">
               <i aria-hidden="true" className="icon-draft-outline w-3 h-3 aspect-square" />
               <p>Draft</p>
             </Badge>

@@ -82,7 +82,7 @@ export default function Page() {
   if (!data?.getSpace) {
     return (
       <div className="page mx-auto py-7 px-4 md:px-0 font-default">
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
+        <div className="flex flex-col items-center justify-center min-h-100 text-center space-y-6">
           <div className="w-16 h-16 bg-warning-500/16 rounded-full flex items-center justify-center">
             <i className="icon-alert-outline size-8 text-warning-500" />
           </div>
@@ -105,7 +105,7 @@ export default function Page() {
   if (!canManage) {
     return (
       <div className="page mx-auto py-7 px-4 md:px-0 font-default">
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
+        <div className="flex flex-col items-center justify-center min-h-100 text-center space-y-6">
           <div className="w-16 h-16 bg-warning-500/16 rounded-full flex items-center justify-center">
             <i className="icon-lock size-8 text-warning-500" />
           </div>

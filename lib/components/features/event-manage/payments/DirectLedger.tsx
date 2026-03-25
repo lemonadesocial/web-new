@@ -344,11 +344,11 @@ export function DirectLedger() {
                   }}
                 />
                 <p className="flex-1">Guest</p>
-                <p className="w-[124px]">date</p>
-                <p className="w-[60px]">Ticket</p>
-                <p className="w-[108px]">Coupon</p>
-                <p className="w-[128px]">Amount</p>
-                <p className="w-[96px]">Status</p>
+                <p className="w-31">date</p>
+                <p className="w-15">Ticket</p>
+                <p className="w-27">Coupon</p>
+                <p className="w-32">Amount</p>
+                <p className="w-24">Status</p>
               </div>
             </CardTable.Header>
 
@@ -358,7 +358,7 @@ export function DirectLedger() {
 
               <Skeleton className="h-5 w-10" animate />
 
-              <div className="w-[62px] px-[60px] hidden md:block">
+              <div className="w-15.5 px-15 hidden md:block">
                 <Skeleton className="h-5 w-16 rounded-full" animate />
               </div>
             </CardTable.Loading>
@@ -405,20 +405,20 @@ export function DirectLedger() {
                       <p className="truncate">{item.buyer_user?.email || item.buyer_info?.email}</p>
                     </div>
 
-                    <div className="w-[124px]">
+                    <div className="w-31">
                       <p>
                         {isValid(new Date(item.stamps['initialized']))
                           ? format(new Date(item.stamps['initialized']), 'dd/MM/yyyy')
                           : ''}
                       </p>
                     </div>
-                    <div className="w-[60px]">
+                    <div className="w-15">
                       <Badge color="var(--color-secondary)" className="rounded-full flex gap-1">
                         <i aria-hidden="true" className="icon-ticket size-3 aspect-square" />
                         <span className="text-xs">{sumBy(item.ref_data.items || [], 'count')}</span>
                       </Badge>
                     </div>
-                    <div className="w-[108px]">
+                    <div className="w-27">
                       {item.ref_data.discount ? (
                         <Badge
                           color="var(--color-accent-400)"
@@ -431,7 +431,7 @@ export function DirectLedger() {
                         <span>-</span>
                       )}
                     </div>
-                    <div className="flex gap-2 items-center w-[128px]">
+                    <div className="flex gap-2 items-center w-32">
                       {item.account_expanded?.provider === NewPaymentProvider.Stripe ? (
                         <i aria-hidden="true" className="icon-stripe size-5 aspect-square" />
                       ) : (
@@ -443,7 +443,7 @@ export function DirectLedger() {
                         {item.account_expanded?.provider !== NewPaymentProvider.Stripe && item.currency}
                       </p>
                     </div>
-                    <div className="w-[96px]">
+                    <div className="w-24">
                       <Badge
                         color={match(item.state)
                           .with(NewPaymentState.Succeeded, () => 'var(--color-success-400)')
@@ -481,7 +481,7 @@ function CardItem({ icon, title, subtitle }: { icon: string; title: string | num
     <Card.Root className="flex-1 min-w-fit">
       <Card.Content className="px-3 py-2 flex gap-3 items-center">
         <div className="flex items-center justify-center rounded-sm p-2 bg-(--btn-tertiary)">
-          <i aria-hidden="true" className={clsx('text-tertiary size-[22px]', icon)} />
+          <i aria-hidden="true" className={clsx('text-tertiary size-5.5', icon)} />
         </div>
         <div>
           <p>{title}</p>

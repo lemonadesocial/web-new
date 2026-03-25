@@ -83,7 +83,7 @@ function VerifySelf() {
       <Card.Root>
         <Card.Content className="py-3 flex items-center gap-3">
           <div className="flex items-center justify-center p-2 rounded-sm bg-accent-400/16 aspect-square">
-            <i aria-hidden="true" className="icon-verified-outline size-[22px] text-accent-400" />
+            <i aria-hidden="true" className="icon-verified-outline size-5.5 text-accent-400" />
           </div>
           <div className="space-y-0.5 flex-1">
             <p className="text-accent-400">Verified</p>
@@ -97,7 +97,7 @@ function VerifySelf() {
     <Card.Root>
       <Card.Content className="py-3 flex items-center gap-3">
         <div className="flex items-center justify-center p-2 rounded-sm bg-(--btn-tertiary) aspect-square">
-          <i aria-hidden="true" className="icon-verified-outline size-[22px]" />
+          <i aria-hidden="true" className="icon-verified-outline size-5.5" />
         </div>
         <div className="space-y-0.5 flex-1">
           <p>Get Verified</p>
@@ -145,14 +145,14 @@ function UploadPhoto() {
     <Card.Root>
       <Card.Content className="py-3 flex items-center gap-3">
         {state.photo ? (
-          <img src={state.photo} className="w-[38px] h-[38px] object-cover rounded-sm border border-divider" />
+          <img src={state.photo} className="w-9.5 h-9.5 object-cover rounded-sm border border-divider" />
         ) : uploading ? (
           <div className="flex items-center justify-center p-2 rounded-sm bg-(--btn-tertiary) aspect-square">
-            <Skeleton animate className="w-[22px] h-[22px] rounded" />
+            <Skeleton animate className="w-5.5 h-5.5 rounded" />
           </div>
         ) : (
           <div className="flex items-center justify-center p-2 rounded-sm bg-(--btn-tertiary) aspect-square">
-            <i aria-hidden="true" className="icon-image size-[22px]" />
+            <i aria-hidden="true" className="icon-image size-5.5" />
           </div>
         )}
         <div className="space-y-0.5 flex-1">

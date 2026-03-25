@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Card } from '$lib/components/core';
@@ -45,39 +44,27 @@ const cards = [
   },
 ];
 
-type NonLoginContentProps = {
-  onGetStarted?: () => void;
-};
-
-export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
+export function NonLoginContent() {
   const signIn = useSignIn();
-  const handleGetStarted = React.useCallback(() => {
-    if (onGetStarted) {
-      onGetStarted();
-      return;
-    }
-    signIn();
-  }, [onGetStarted, signIn]);
 
   return (
     <div className="w-full pb-10 md:pb-20">
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-4">
-        <Card.Root className="rounded-[24px] border-card-border bg-background overflow-hidden">
+        <Card.Root className="rounded-xl border-card-border bg-background overflow-hidden">
           <Card.Content
-            className="h-full min-h-[300px] md:min-h-[480px] p-7 md:p-14 flex flex-col justify-between gap-10"
-            style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
+            className="h-full min-h-75 md:min-h-120 p-7 md:p-14 flex flex-col justify-between gap-10"
           >
             <div className="flex flex-col gap-4">
-              <h3 className="font-title text-4xl md:text-[60px] font-semibold leading-[1.15] md:leading-[72px] max-w-[420px]">
+              <h3 className="font-title text-4xl md:text-[60px] font-semibold leading-[1.15] md:leading-[72px] max-w-105">
                 Create your Lemonade Stand
               </h3>
-              <p className="text-lg md:text-[24px] md:leading-9 text-secondary max-w-[420px]">
+              <p className="text-lg md:text-[24px] md:leading-9 text-secondary max-w-105">
                 Your space for events, communities, and everything in between.
               </p>
             </div>
 
             <div className="flex items-end justify-between gap-4">
-              <Button size="lg" variant="secondary" onClick={handleGetStarted}>
+              <Button size="lg" variant="secondary" onClick={() => signIn()}>
                 Get Started
               </Button>
               <img
@@ -92,9 +79,9 @@ export function NonLoginContent({ onGetStarted }: NonLoginContentProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {cards.map((item, idx) => (
-            <Card.Root key={idx} className="rounded-[24px] border-card-border bg-background">
+            <Card.Root key={idx} className="rounded-xl border-card-border bg-background">
               <Card.Content className="p-7 flex flex-col gap-6 h-full">
-                <div className={twMerge('size-14 flex items-center justify-center rounded-[8px]', item.color)}>
+                <div className={twMerge('size-14 flex items-center justify-center rounded-sm', item.color)}>
                   <i aria-hidden className={twMerge('size-8 text-white', item.icon)} />
                 </div>
 

@@ -110,7 +110,7 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
                 variant="outlined"
                 type="number"
                 min={0}
-                className="w-[152px]"
+                className="w-38"
                 placeholder="Unlimited"
               />
             </div>
@@ -122,7 +122,7 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
                 variant="outlined"
                 type="number"
                 min={0}
-                className="w-[152px]"
+                className="w-38"
                 placeholder="Unlimited"
               />
             </div>

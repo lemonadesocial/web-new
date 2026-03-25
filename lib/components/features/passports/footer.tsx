@@ -172,7 +172,7 @@ export function Footer() {
 
   return (
     <>
-      <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
+      <div className="md:hidden flex items-center gap-2 min-h-16 px-4 z-10">
         {state.currentStep !== PassportStep.celebrate && (
           <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         )}
@@ -181,7 +181,7 @@ export function Footer() {
         </Button>
       </div>
 
-      <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
+      <div className="hidden md:flex justify-between items-center min-h-16 px-4 bg-background/80 backdrop-blur-md">
         <div className="flex-1">
           {state.currentStep !== PassportStep.celebrate && (
             <Button variant="tertiary" size="sm" onClick={handlePrev}>

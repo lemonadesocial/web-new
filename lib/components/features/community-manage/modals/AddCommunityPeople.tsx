@@ -77,7 +77,7 @@ interface CommonProps {
 
 function DefaultContent({ form }: CommonProps) {
   return (
-    <ModalContent className="w-[480px]" icon="icon-user-group-outline-2" onClose={() => modal.close()}>
+    <ModalContent className="w-120" icon="icon-user-group-outline-2" onClose={() => modal.close()}>
       <p className="text-lg">Add People</p>
       <p className="text-sm text-secondary">Import your subscribers into your community.</p>
 
@@ -133,7 +133,7 @@ function ImportCsvContent({ form }: CommonProps) {
   };
 
   return (
-    <ModalContent className="w-[480px]" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
+    <ModalContent className="w-120" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
         {!list.length && (
           <a
@@ -178,7 +178,7 @@ function ImportCsvContent({ form }: CommonProps) {
         </FileInput>
 
         {!!list.length && (
-          <Card.Root className="max-h-[456px] overflow-auto no-scrollbar">
+          <Card.Root className="max-h-114 overflow-auto no-scrollbar">
             <Card.Content className="p-3 flex flex-col gap-1.5">
               {list.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center gap-3">
@@ -227,13 +227,13 @@ function AddManualContent({ form }: CommonProps) {
   });
 
   return (
-    <ModalContent className="w-[480px]" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
+    <ModalContent className="w-120" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
         <p className="text-sm text-secondary">
           Pro tip: You can paste multiple emails into a single input, separated by comma or space.
         </p>
 
-        <Card.Root className="max-h-[484px] overflow-auto no-scrollbar bg-transparent">
+        <Card.Root className="max-h-121 overflow-auto no-scrollbar bg-transparent">
           <Card.Content className="p-0 overflow-hidden divide-y divide-(--color-divider)">
             {controlledFields.map((item, idx) => {
               const canRemove = controlledFields.length > 1 && idx < controlledFields.length - 1;
@@ -248,7 +248,7 @@ function AddManualContent({ form }: CommonProps) {
                         append({ email: '', user_name: '' });
                       }
                     }}
-                    className="[&_.control]:border-none! [&_.control]:rounded-none! w-full max-w-[160px] md:max-w-[202px]"
+                    className="[&_.control]:border-none! [&_.control]:rounded-none! w-full max-w-40 md:max-w-50.5"
                     placeholder="Email Address"
                   />
                   <InputField
@@ -289,7 +289,7 @@ function ConfirmImport({ form, spaceId }: CommonProps) {
 
   return (
     <ModalContent
-      className="w-[480px]"
+      className="w-120"
       title="Confirm Import"
       onBack={() => form.setValue('view', view.split('.')[0] as ContentKey)}
       onClose={() => modal.close()}

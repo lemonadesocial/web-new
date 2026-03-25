@@ -19,7 +19,7 @@ export function InsufficientFundsModal({ message, onRetry }: Props) {
   return (
     <ModalContent
       icon={
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-400/16" data-icon>
+        <div className="size-14 flex justify-center items-center rounded-full bg-danger-400/16" data-icon>
           <i aria-hidden="true" className="icon-info text-danger-400 size-8" />
         </div>
       }

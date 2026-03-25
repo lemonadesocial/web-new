@@ -124,7 +124,7 @@ function ManageLayoutContent() {
             >
               <div
                 data-mode={isDesignOrPreview ? state.device : undefined}
-                className={clsx('w-[440px] h-full pl-4', isDesignOrPreview && 'pt-3')}
+                className={clsx('w-110 h-full pl-4', isDesignOrPreview && 'pt-3')}
               >
                 <SidebarComp />
               </div>

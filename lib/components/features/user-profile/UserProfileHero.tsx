@@ -96,7 +96,7 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
     <div
       className={clsx(
         'relative w-full overflow-hidden',
-        user?.cover_expanded || user?.coverPicture ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+        user?.cover_expanded || user?.coverPicture ? 'h-38.5 md:h-70' : 'h-24 md:h-36',
         containerClass,
       )}
     >

@@ -37,7 +37,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
   if (!chain) return notFound();
 
   return (
-    <div className="max-w-[1256px] mx-auto">
+    <div className="max-w-314 mx-auto">
       <div className="gap-4 items-start hidden md:flex">
         <div className="flex flex-col gap-4 w-full">
           <Stats chain={chain!} address={address} />
@@ -46,7 +46,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
           <CoinTabs chain={chain} address={address} />
         </div>
 
-        <div className="flex flex-col gap-4 max-w-[336px] w-full">
+        <div className="flex flex-col gap-4 max-w-84 w-full">
           <SwapCoin chain={chain} address={address} />
           <CoinInfo chain={chain} address={address} />
         </div>
@@ -136,7 +136,7 @@ function CoinTabs({ chain, address }: { chain: Chain; address: string }) {
   return (
     <Card.Root>
       <Card.Content className="p-0">
-        <ul className="flex gap-4 overflow-auto px-4 pt-1 border-b text-tertiary h-[42px]">
+        <ul className="flex gap-4 overflow-auto px-4 pt-1 border-b text-tertiary h-10.5">
           {Object.entries(tabs).map(([key, _]) => (
             <li
               key={key}
@@ -179,7 +179,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
       <Card.Root className="w-full">
         <Card.Content className="p-4 space-y-4">
           <div className="flex gap-3">
-            <Skeleton className="size-[76px] rounded-sm" animate />
+            <Skeleton className="size-19 rounded-sm" animate />
             <Skeleton className="h-5 w-32 rounded-md" animate />
           </div>
           <Skeleton className="h-15 w-full rounded-md" animate />
@@ -203,10 +203,10 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
               <img
                 src={tokenData.metadata.imageUrl}
                 alt={tokenData.name}
-                className="size-[76px] aspect-square rounded-sm object-cover"
+                className="size-19 aspect-square rounded-sm object-cover"
               />
             ) : (
-              <div className="size-[76px] aspect-square rounded-sm bg-gray-500" />
+              <div className="size-19 aspect-square rounded-sm bg-gray-500" />
             )}
 
             <div className="flex flex-col gap-2 w-full">

@@ -102,7 +102,7 @@ export function InviteGuestsModal({
   }
 
   return (
-    <div className="w-[480px] max-w-full">
+    <div className="w-120 max-w-full">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
@@ -138,7 +138,7 @@ export function InviteGuestsModal({
       )}
 
       {addedEmails.length > 0 && (
-        <div className="flex flex-col pt-2 px-4 pb-4 max-h-[378px] overflow-y-auto no-scrollbar">
+        <div className="flex flex-col pt-2 px-4 pb-4 max-h-94.5 overflow-y-auto no-scrollbar">
           {addedEmails
             .filter((item) => (query ? item.email.includes(query.toLowerCase()) : true))
             .map(({ email, selected }) => (

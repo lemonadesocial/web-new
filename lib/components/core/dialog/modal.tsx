@@ -185,14 +185,14 @@ interface ModalContentProps {
 
 export function ModalContent({ children, onClose, title, icon, className, onBack }: ModalContentProps) {
   return (
-    <div className={twMerge('p-4 space-y-4 w-[340px] max-w-full', className)}>
+    <div className={twMerge('p-4 space-y-4 w-85 max-w-full', className)}>
       {(title || icon || onClose || onBack) && (
         <div className={clsx('flex justify-between', icon ? 'items-start' : 'items-center')}>
           {onBack && (
             <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} aria-label="Go back" />
           )}
           {icon && (
-            <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8" data-icon>
+            <div className="size-14 flex justify-center items-center rounded-full bg-primary/8" data-icon>
               {typeof icon === 'string' ? <i aria-hidden="true" className={clsx(icon, 'size-8 text-tertiary')} /> : icon}
             </div>
           )}

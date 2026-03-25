@@ -9,7 +9,7 @@ export function CoinPageClient({ spaceId }: { spaceId: string }) {
 
   if (isLoading) {
     return (
-      <div className="max-w-[1256px] mx-auto">
+      <div className="max-w-314 mx-auto">
         <Skeleton className="h-64 w-full" />
       </div>
     );

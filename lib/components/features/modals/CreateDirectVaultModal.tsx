@@ -213,7 +213,7 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
                     </div>
                   </Menu.Trigger>
 
-                  <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
+                  <Menu.Content className="p-1 w-full max-h-45 overflow-y-auto no-scrollbar">
                     {({ toggle }) =>
                       chains.map((chain) => (
                         <MenuItem

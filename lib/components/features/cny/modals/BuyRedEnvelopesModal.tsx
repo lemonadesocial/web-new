@@ -119,7 +119,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
 
   if (step === 'packing') {
     return (
-      <div className="p-4 w-[340px] max-w-full">
+      <div className="p-4 w-85 max-w-full">
         <div className="flex justify-end">
           <i aria-hidden="true" className="icon-loader animate-spin text-tertiary size-6" />
         </div>
@@ -128,7 +128,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
             <img
               src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/packing.png`}
               alt="Packing box"
-              className="w-[184px] h-full object-contain"
+              className="w-46 h-full object-contain"
             />
           </div>
           <div className="space-y-2">
@@ -144,12 +144,12 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
 
   if (step === 'ready') {
     return (
-      <div className="p-4 w-[340px] max-w-full space-y-6">
+      <div className="p-4 w-85 max-w-full space-y-6">
         <div className="flex justify-center">
           <img
             src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/ready.png`}
             alt="Packing box"
-            className="w-[232px] h-full object-contain"
+            className="w-58 h-full object-contain"
           />
         </div>
         <div className="space-y-4">
@@ -179,7 +179,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
         <img
           src={getAsset(pack.quantity)}
           alt={quantityLabel}
-          className="w-full max-w-[144px] h-auto object-contain"
+          className="w-full max-w-36 h-auto object-contain"
         />
       </div>
       <div className="space-y-4 text-center">

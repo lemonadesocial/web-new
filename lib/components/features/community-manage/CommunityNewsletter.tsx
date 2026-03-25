@@ -219,7 +219,7 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
           {isLoadingVerification ? (
             <>
               <DraftListSkeleton />
-              <Skeleton animate className="h-9 w-[104px] rounded-sm" />
+              <Skeleton animate className="h-9 w-26 rounded-sm" />
             </>
           ) : !isVerified ? (
             <div className="flex flex-col gap-3 rounded-md border border-card-border bg-warning-300/16 px-4 py-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
@@ -424,7 +424,7 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
                                 props: {
                                   newsletter,
                                 },
-                                contentClass: 'md:max-w-[544px]',
+                                contentClass: 'md:max-w-136',
                               })
                             }
                           >
@@ -437,7 +437,7 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-5 py-12 text-tertiary md:py-20">
-                  <i aria-hidden="true" className="icon-email-open size-44 text-quaternary md:size-[184px]" />
+                  <i aria-hidden="true" className="icon-email-open size-44 text-quaternary md:size-46" />
 
                   <div className="max-w-xl space-y-2 text-center">
                     <h4 className="font-title text-xl font-semibold">No Newsletters</h4>
@@ -463,7 +463,7 @@ function DraftListSkeleton() {
         >
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <Skeleton animate className="h-6 w-[180px] shrink-0 rounded-xs" />
+              <Skeleton animate className="h-6 w-45 shrink-0 rounded-xs" />
               <Skeleton animate className="h-6 min-w-0 flex-1 rounded-xs" />
             </div>
 
@@ -486,8 +486,8 @@ function NewsletterListSkeleton({ rows }: { rows: number }) {
           className={`flex items-start gap-3 px-4 py-3 ${index > 0 ? 'border-t border-primary/8' : ''}`}
         >
           <div className="min-w-0 flex-1">
-            <Skeleton animate className="h-6 w-[240px] rounded-xs" />
-            <Skeleton animate className="mt-2 h-5 w-[320px] max-w-full rounded-xs" />
+            <Skeleton animate className="h-6 w-60 rounded-xs" />
+            <Skeleton animate className="mt-2 h-5 w-80 max-w-full rounded-xs" />
           </div>
 
           <Skeleton animate className="mt-0.5 size-5 shrink-0 rounded-full" />
@@ -504,8 +504,8 @@ function PublishedListSkeleton() {
         <div key={index} className="overflow-hidden rounded-md border border-card-border bg-card">
           <div className="flex items-start gap-3 px-4 py-3">
             <div className="min-w-0 flex-1">
-              <Skeleton animate className="h-6 w-[240px] rounded-xs" />
-              <Skeleton animate className="mt-2 h-5 w-[280px] max-w-full rounded-xs" />
+              <Skeleton animate className="h-6 w-60 rounded-xs" />
+              <Skeleton animate className="mt-2 h-5 w-70 max-w-full rounded-xs" />
             </div>
 
             <Skeleton animate className="mt-0.5 size-5 shrink-0 rounded-full" />
@@ -513,11 +513,11 @@ function PublishedListSkeleton() {
 
           <div className="flex items-center justify-between gap-3 border-t border-primary/8 bg-primary/4 px-4 py-3">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              <Skeleton animate className="h-10 w-[82px] rounded-xs" />
-              <Skeleton animate className="h-10 w-[96px] rounded-xs" />
+              <Skeleton animate className="h-10 w-20.5 rounded-xs" />
+              <Skeleton animate className="h-10 w-24 rounded-xs" />
             </div>
 
-            <Skeleton animate className="h-9 w-[104px] rounded-sm" />
+            <Skeleton animate className="h-9 w-26 rounded-sm" />
           </div>
         </div>
       ))}
@@ -604,7 +604,7 @@ function PublishedMetric({
   meta?: string;
 }) {
   return (
-    <div className="flex min-w-[58px] flex-col">
+    <div className="flex min-w-14.5 flex-col">
       <span className="text-xs leading-4 text-quaternary">{label}</span>
       <div className="flex items-baseline gap-1">
         <span className="text-sm leading-5 font-medium text-primary">{value}</span>
@@ -636,7 +636,7 @@ function NewsletterActionsMenu({
       </Menu.Trigger>
 
       <FloatingPortal>
-        <Menu.Content className="z-[100001] min-w-[132px] rounded-sm p-1 shadow-[0_4px_8px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+        <Menu.Content className="z-100001 min-w-33 rounded-sm p-1 shadow-[0_4px_8px_rgba(0,0,0,0.32)] backdrop-blur-xl">
           {onReschedule ? <MenuActionItem icon="icon-clock" label="Reschedule" onClick={onReschedule} /> : null}
           {onEdit ? <MenuActionItem icon="icon-edit-square" label="Edit" onClick={onEdit} /> : null}
           {onDuplicate ? <MenuActionItem icon="icon-copy" label="Duplicate" onClick={onDuplicate} /> : null}

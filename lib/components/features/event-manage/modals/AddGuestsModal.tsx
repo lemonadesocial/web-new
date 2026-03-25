@@ -49,7 +49,7 @@ export function AddGuestsModal({
   };
 
   return (
-    <div className="max-w-full w-[448px]">
+    <div className="max-w-full w-112">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
@@ -71,7 +71,7 @@ export function AddGuestsModal({
               <div className="flex flex-1">
                 <div className="w-1/3 h-3.5 rounded-xs bg-primary/8" />
               </div>
-              <div className="px-2.5 py-[1px] rounded-xs bg-success-500/16">
+              <div className="px-2.5 py-px rounded-xs bg-success-500/16">
                 <span className="text-sm text-success-500">Going</span>
               </div>
             </div>
@@ -79,7 +79,7 @@ export function AddGuestsModal({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-[34px] rounded-sm bg-success-500/16">
+          <div className="flex items-center justify-center size-8.5 rounded-sm bg-success-500/16">
             <i aria-hidden="true" className="icon-person-add text-success-500 size-4.5" />
           </div>
           <p className="flex-1 text-sm">Guests will be added to the guest list, bypassing registration and payment.</p>

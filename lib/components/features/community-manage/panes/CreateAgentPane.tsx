@@ -210,7 +210,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                 >
                   {(open) => (
                     <>
-                      <div className="size-[62px] rounded-full flex items-center justify-center border-2 border-card-border">
+                      <div className="size-15.5 rounded-full flex items-center justify-center border-2 border-card-border">
                         <img
                           src={avatar ? URL.createObjectURL(avatar) : (config?.avatar || `${ASSET_PREFIX}/assets/images/agent.png`)}
                           alt="Agent avatar"
@@ -252,7 +252,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                         />
                       )}
                     </Menu.Trigger>
-                    <Menu.Content className="p-1 min-w-[120px]">
+                    <Menu.Content className="p-1 min-w-30">
                       {({ toggle }) => (
                         <>
                           <MenuItem
@@ -351,7 +351,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     </Button>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-1 min-w-[200px]">
+                <Menu.Content className="p-1 min-w-50">
                   {({ toggle }) => (
                     <>
                       <MenuItem
@@ -625,7 +625,7 @@ function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selected
         </div>
       </Menu.Trigger>
 
-      <Menu.Content className="w-full p-1 max-h-[300px] overflow-y-auto">
+      <Menu.Content className="w-full p-1 max-h-75 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center py-4">
             <i aria-hidden="true" className="icon-loader animate-spin size-5 text-tertiary" />

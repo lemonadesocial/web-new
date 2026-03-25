@@ -29,7 +29,7 @@ export default function Page() {
 
   return (
     <div className="md:pt-8 space-y-4">
-      <div className="max-w-[1200px] mx-auto">
+      <div className="max-w-300 mx-auto">
         <div className="flex items-start justify-between">
           <h1 className="text-2xl font-bold">Envelopes</h1>
           <Button
@@ -45,7 +45,7 @@ export default function Page() {
       </div>
 
       <div className="w-full">
-        <div className="flex gap-4 overflow-auto no-scrollbar pt-3 max-w-[1200px] mx-auto">
+        <div className="flex gap-4 overflow-auto no-scrollbar pt-3 max-w-300 mx-auto">
           {tabs.map((tab) => (
             <div
               key={tab.key}
@@ -62,7 +62,7 @@ export default function Page() {
           ))}
         </div>
         <hr className="border -mx-4" />
-        <div className="mt-6 max-w-[1200px] mx-auto">{renderTabContent()}</div>
+        <div className="mt-6 max-w-300 mx-auto">{renderTabContent()}</div>
       </div>
     </div>
   );

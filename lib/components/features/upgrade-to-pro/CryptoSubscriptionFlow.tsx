@@ -181,7 +181,7 @@ function CryptoSubscriptionFlowContent({
         </Button>
       </div>
 
-      <div className="flex flex-col gap-8 overflow-auto md:overflow-visible md:w-[372px] p-4 md:p-0 pt-16 md:pt-0">
+      <div className="flex flex-col gap-8 overflow-auto md:overflow-visible md:w-93 p-4 md:p-0 pt-16 md:pt-0">
         <div className="flex flex-col gap-4">
           <h3 className="text-2xl font-semibold">Your Info</h3>
           <div className="flex items-center gap-3">
@@ -226,7 +226,7 @@ function CryptoSubscriptionFlowContent({
                 </button>
               </Menu.Trigger>
 
-              <Menu.Content className="w-full p-1 max-h-[220px] overflow-auto no-scrollbar">
+              <Menu.Content className="w-full p-1 max-h-55 overflow-auto no-scrollbar">
                 {({ toggle }) => (
                   <>
                     {activeCryptoPrices.map((price) => {
@@ -276,11 +276,11 @@ function CryptoSubscriptionFlowContent({
         </div>
       </div>
 
-      <div className="px-4 pb-4 md:px-0 md:pb-0 md:w-[340px]">
+      <div className="px-4 pb-4 md:px-0 md:pb-0 md:w-85">
         <div className="overflow-hidden rounded-lg border border-card-border">
           <div className="space-y-2 p-4">
             <div className="flex items-center gap-3">
-              <div className="size-[54px] overflow-hidden rounded-sm border border-card-border bg-tertiary">
+              <div className="size-13.5 overflow-hidden rounded-sm border border-card-border bg-tertiary">
                 <img
                   src={communityAvatar(space)}
                   alt={space.title}
@@ -309,7 +309,7 @@ function CryptoSubscriptionFlowContent({
             </div>
 
             {isSelectingPlan && (
-              <div className="flex max-h-[260px] flex-col gap-2 overflow-y-auto pb-3 pr-1 no-scrollbar">
+              <div className="flex max-h-65 flex-col gap-2 overflow-y-auto pb-3 pr-1 no-scrollbar">
                 {planOptions.map((option) => {
                   const optionPrice = getFirstCryptoPriceForPeriod(option.cryptoPrices, option.annual);
                   const isSelected = selectedPlanOption?.key === option.key;

@@ -95,7 +95,7 @@ export function EventPane({ eventId }: { eventId: string }) {
         <div className="p-4 flex flex-col gap-6">
           {loading ? (
             <div className="p-4">
-              <div className="w-[280px] h-[280px] bg-card rounded-md m-auto" />
+              <div className="w-70 h-70 bg-card rounded-md m-auto" />
             </div>
           ) : (
             event?.new_new_photos_expanded?.[0] && (
@@ -103,7 +103,7 @@ export function EventPane({ eventId }: { eventId: string }) {
                 <img
                   src={generateUrl(event.new_new_photos_expanded[0], 'TICKET_PHOTO')}
                   alt={event.title}
-                  className="mx-auto object-contain size-[280px] border rounded-md"
+                  className="mx-auto object-contain size-70 border rounded-md"
                   loading="lazy"
                 />
               </div>

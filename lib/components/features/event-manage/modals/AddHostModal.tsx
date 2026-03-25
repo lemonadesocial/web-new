@@ -76,7 +76,7 @@ export function AddHostModal({ event }: { event: Event }) {
         placeholder="Search by name or email..."
       />
       <Spacer className="h-2" />
-      <div className="h-[140px] overflow-auto no-scrollbar flex flex-col">
+      <div className="h-35 overflow-auto no-scrollbar flex flex-col">
         {
           (isValidEmail && users.length === 0) && (
             <div
@@ -98,11 +98,11 @@ export function AddHostModal({ event }: { event: Event }) {
           )
         }
         {usersLoading ? (
-          <div className="w-[216px] self-center flex flex-col justify-center h-full">
+          <div className="w-54 self-center flex flex-col justify-center h-full">
             <p className="text-tertiary text-center">Searching...</p>
           </div>
         ) : users.length === 0 && !isValidEmail ? (
-          <div className="w-[216px] self-center flex flex-col justify-center h-full">
+          <div className="w-54 self-center flex flex-col justify-center h-full">
             <p className="text-tertiary text-center">No Suggestions Found</p>
             <p className="text-sm text-tertiary text-center">You can invite hosts by entering their email address.</p>
           </div>

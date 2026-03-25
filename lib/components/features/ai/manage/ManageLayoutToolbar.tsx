@@ -249,7 +249,7 @@ function ManageLayoutToolbar() {
                       </Button>
                     )}
                   </Menu.Trigger>
-                  <Menu.Content className="p-0 w-[480px]">
+                  <Menu.Content className="p-0 w-120">
                     <PreviewLinkPopup />
                   </Menu.Content>
                 </Menu.Root>
@@ -285,7 +285,7 @@ function ManageLayoutToolbar() {
           <button
             type="button"
             aria-label="Go to home"
-            className="cursor-pointer shrink-0 w-[42px] h-[42px] aspect-square"
+            className="cursor-pointer shrink-0 w-10.5 h-10.5 aspect-square"
             onClick={() => router.push('/')}
           >
             <i className="icon-lemonade-logo size-5" />

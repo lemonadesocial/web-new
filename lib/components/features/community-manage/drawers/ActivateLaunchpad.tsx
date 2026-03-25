@@ -190,7 +190,7 @@ export function ActivateLaunchpad() {
       </Pane.Header.Root>
       <Pane.Content className="p-4 flex flex-col gap-5">
         <div className="flex flex-col gap-4">
-          <div className="size-[56px] flex items-center justify-center bg-primary/8 rounded-full">
+          <div className="size-14 flex items-center justify-center bg-primary/8 rounded-full">
             <i aria-hidden="true" className="icon-rocket size-8 text-tertiary" />
           </div>
           <div>
@@ -302,7 +302,7 @@ export function ActivateLaunchpad() {
                   </div>
                 )}
               </Menu.Trigger>
-              <Menu.Content className="p-0 w-full min-w-[320px]">
+              <Menu.Content className="p-0 w-full min-w-80">
                 {({ toggle }) => (
                   <div className="flex flex-col">
                     <input
@@ -342,7 +342,7 @@ export function ActivateLaunchpad() {
                     {filteredCoins.length > 0 && (
                       <div className="border-t border-card-border p-1">
                         <p className="px-2 py-1 text-sm text-tertiary">Your Coins</p>
-                        <div className="max-h-[200px] overflow-y-auto">
+                        <div className="max-h-50 overflow-y-auto">
                           {filteredCoins.map((coin: PoolCreated) => (
                             <CoinListItem
                               key={coin.id}

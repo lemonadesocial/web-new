@@ -100,7 +100,7 @@ export function CommunityVaultsSection({ space, items, loading, refetch }: Commu
       <Card.Root className="w-full">
         <div className="overflow-x-auto">
           <div
-            className="grid min-w-[640px] gap-x-4"
+            className="grid min-w-160 gap-x-4"
             style={{ gridTemplateColumns: '1fr 80px 100px 70px 70px 70px' }}
           >
             <div

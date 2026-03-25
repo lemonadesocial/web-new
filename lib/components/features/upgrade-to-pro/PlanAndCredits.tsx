@@ -153,9 +153,9 @@ const COMPARE_COLUMNS: Array<{ key: ComparePlan; label: string }> = [
   { key: 'max', label: 'Max' },
   { key: 'enterprise', label: 'Enterprise' },
 ];
-const COMPARE_TABLE_MIN_WIDTH = 'min-w-[860px] md:min-w-[980px]';
-const COMPARE_LABEL_COL_CLASS = 'w-[240px] md:w-[320px]';
-const COMPARE_VALUE_COL_CLASS = 'w-[155px] md:w-[170px]';
+const COMPARE_TABLE_MIN_WIDTH = 'min-w-215 md:min-w-245';
+const COMPARE_LABEL_COL_CLASS = 'w-60 md:w-80';
+const COMPARE_VALUE_COL_CLASS = 'w-38.75 md:w-42.5';
 const CREDIT_ANIMATION_DURATION = 0.9;
 
 function AnimatedCreditCount({ value }: { value: number }) {
@@ -554,7 +554,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
                 <div className="flex flex-wrap items-center gap-1.5 min-w-0">
                   <p className="text-primary">Credits Remaining</p>
-                  <div className="bg-(--btn-tertiary) tooltip tooltip-bottom w-fit px-1.5 py-[1px] rounded-full">
+                  <div className="bg-(--btn-tertiary) tooltip tooltip-bottom w-fit px-1.5 py-px rounded-full">
                     <p className="text-xs">What is this?</p>
                     <div className="tooltip-content text-left! max-w-86!">
                       <p>
@@ -617,7 +617,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                       </div>
 
                       <div className="flex flex-col">
-                        <div className="flex justify-between items-center flex-1 min-h-[32px]">
+                        <div className="flex justify-between items-center flex-1 min-h-8">
                           {item.method === 'wallet' && item.pricing && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
                             <>
                               <div className="flex gap-2 items-end">

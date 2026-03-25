@@ -24,10 +24,10 @@ export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string
     <ModalContent title="Verify Wallet" onClose={() => registrationModal.close()}>
       <div className="space-y-2">
         <div className="flex gap-3">
-          <div className="size-[34px] flex justify-center items-center rounded-full bg-primary/8">
-            <i aria-hidden="true" className="icon-wallet text-tertiary size-[18px]" />
+          <div className="size-8.5 flex justify-center items-center rounded-full bg-primary/8">
+            <i aria-hidden="true" className="icon-wallet text-tertiary size-4.5" />
           </div>
-          <div className="space-y-[2px]">
+          <div className="space-y-0.5">
             <p className="text-xs text-tertiary">Connected Wallet</p>
             <p>{formatWallet(address!)}</p>
           </div>

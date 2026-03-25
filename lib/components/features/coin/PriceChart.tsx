@@ -149,7 +149,7 @@ export function PriceChart({ chain, address }: PriceChartProps) {
         </div>
 
 
-        <div className="h-[300px] w-full relative">
+        <div className="h-75 w-full relative">
           {isLoading ? (
             <div className="h-full flex items-center justify-center">
               <p className="text-tertiary">Loading...</p>

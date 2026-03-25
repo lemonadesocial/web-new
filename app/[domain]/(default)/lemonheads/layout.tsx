@@ -21,7 +21,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="max-w-[1080px] mx-auto">
+    <div className="max-w-270 mx-auto">
       <div className="flex flex-col gap-2 pt-6 pb-2">
         <h3 className="text-2xl md:text-3xl font-semibold">LemonHeads Zone</h3>
         <p className="max-sm:text-sm text-tertiary">

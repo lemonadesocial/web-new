@@ -49,7 +49,7 @@ export function PendingApprovalEmaillModal({ setting, event }: { setting: EmailS
   return (
     <ModalContent
       icon="icon-check"
-      className="w-[480px] max-w-full"
+      className="w-120 max-w-full"
       onClose={() => modal.close()}
     >
       <div className="space-y-4">

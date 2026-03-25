@@ -85,7 +85,7 @@ export function ClaimRedEnvelopeModal({
 
   if (step === 'claiming') {
     return (
-      <div className="p-4 w-[340px] max-w-full">
+      <div className="p-4 w-85 max-w-full">
         <div className="flex justify-end">
           <i aria-hidden="true" className="icon-loader animate-spin text-tertiary size-6" />
         </div>
@@ -94,7 +94,7 @@ export function ClaimRedEnvelopeModal({
             <img
               src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/packing.png`}
               alt="Claiming envelope"
-              className="w-[184px] h-full object-contain"
+              className="w-46 h-full object-contain"
             />
           </div>
           <div className="space-y-2">
@@ -110,12 +110,12 @@ export function ClaimRedEnvelopeModal({
 
   if (step === 'success') {
     return (
-      <div className="p-4 w-[340px] max-w-full space-y-6">
+      <div className="p-4 w-85 max-w-full space-y-6">
         <div className="flex justify-center">
           <img
             src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/sent.png`}
             alt="Claimed envelope"
-            className="w-[232px] h-full object-contain"
+            className="w-58 h-full object-contain"
           />
         </div>
         <div className="space-y-4">
@@ -135,7 +135,7 @@ export function ClaimRedEnvelopeModal({
 
   if (step === 'entry') {
     return (
-      <ModalContent onClose={() => modal.close()} className="w-[480px]">
+      <ModalContent onClose={() => modal.close()} className="w-120">
         <div
           role="button"
           tabIndex={0}
@@ -147,7 +147,7 @@ export function ClaimRedEnvelopeModal({
             <img
               src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/unclaimed.png`}
               alt="Red Envelope"
-              className="w-[240px] h-auto object-contain"
+              className="w-60 h-auto object-contain"
             />
           </div>
           <div className="space-y-2 text-center">
@@ -164,16 +164,16 @@ export function ClaimRedEnvelopeModal({
     : `You've received ${amountLabel} from ${ownerDisplay} as a gift of good fortune.`;
 
   return (
-    <ModalContent onClose={() => modal.close()} className="w-[480px]">
+    <ModalContent onClose={() => modal.close()} className="w-120">
       <div className="flex flex-col items-center gap-4">
         <div className="relative flex justify-center">
           <img
             src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/red-envelope.png`}
             alt="Red Envelope"
-            className="w-[300px] h-auto object-contain"
+            className="w-75 h-auto object-contain"
           />
           {envelope.amount && (
-            <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 flex justify-center items-center gap-2 py-4 px-5 rounded-full border bg-woodsmoke-950/64 backdrop-blur-[12px]">
+            <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 flex justify-center items-center gap-2 py-4 px-5 rounded-full border bg-woodsmoke-950/64 backdrop-blur-md">
               <p className="text-2xl">${amount}</p>
             </div>
           )}
@@ -181,7 +181,7 @@ export function ClaimRedEnvelopeModal({
 
         {hasMessage && (
           <div className="relative flex justify-center">
-            <div className="flex justify-center items-center gap-2 py-2 px-3 rounded-md bg-[var(--btn-secondary)] relative before:content-[''] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:-translate-y-full before:w-0 before:h-0 before:border-l-[10px] before:border-l-transparent before:border-r-[10px] before:border-r-transparent before:border-b-[10px] before:border-b-[var(--btn-secondary)]">
+            <div className="flex justify-center items-center gap-2 py-2 px-3 rounded-md bg-[var(--btn-secondary)] relative before:content-[''] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:-translate-y-full before:w-0 before:h-0 before:border-l-2.5 before:border-l-transparent before:border-r-2.5 before:border-r-transparent before:border-b-2.5 before:border-b-[var(--btn-secondary)]">
               <p className="text-[var(--btn-secondary-content)]">{envelope.message}</p>
             </div>
           </div>

@@ -231,14 +231,14 @@ export function LemonHeadFooter() {
 
   return (
     <>
-      <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
+      <div className="md:hidden flex items-center gap-2 min-h-16 px-4 z-10">
         <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         <Button variant="secondary" className="w-full" onClick={handleNext} loading={disabled}>
           {currentStep?.btnText}
         </Button>
       </div>
 
-      <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
+      <div className="hidden md:flex justify-between items-center min-h-16 px-4 bg-background/80 backdrop-blur-md">
         <div className="flex-1">
           <Button variant="tertiary" size="sm" onClick={handlePrev}>
             {state.currentStep === LemonHeadStep.getstarted ? 'Exit' : 'Back'}
@@ -295,7 +295,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
             <Link href="" target="_blank" className="text-accent-400 text-sm">
               View Full Terms of Use
             </Link>
-            <i aria-hidden="true" className="icon-arrow-outward size-[18px] text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-outward size-4.5 text-quaternary" />
           </div>
         </div>
 
@@ -453,7 +453,7 @@ function MintModal({
     return (
       <ModalContent
         icon={
-          <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+          <div className="size-14 flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
             {done ? <p>{count}</p> : <i aria-hidden="true" className="icon-loader animate-spin" />}
           </div>
         }
@@ -485,7 +485,7 @@ function MintModal({
 
   return (
     <ModalContent
-      icon={<LemonHeadPreview className="size-[56px]" traits={traits} />}
+      icon={<LemonHeadPreview className="size-14" traits={traits} />}
       onClose={() => modal.close()}
       className="**:data-icon:rounded-md"
     >
@@ -502,7 +502,7 @@ function MintModal({
           <div className="border-t">
             <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
               <div className="flex gap-2.5">
-                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" alt={`${sponsor.name} logo`} />
+                <img src={sponsor.image_url} className="rounded-sm w-8.5 aspect-square" alt={`${sponsor.name} logo`} />
                 <div>
                   <p>You’ve unlocked a free mint!</p>
                   <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>
@@ -510,7 +510,7 @@ function MintModal({
               </div>
 
               <div className="relative">
-                <div className="w-0 h-0 border-solid border-t-0 border-l-[6px] border-r-[6px] border-b-[6px] border-t-transparent border-r-transparent border-l-transparent border-b-(--btn-tertiary) absolute left-[10px] -top-[6px]" />
+                <div className="w-0 h-0 border-solid border-t-0 border-l-1.5 border-r-1.5 border-b-1.5 border-t-transparent border-r-transparent border-l-transparent border-b-(--btn-tertiary) absolute left-2.5 -top-1.5" />
                 <div className="px-3 py-2 text-sm bg-(--btn-tertiary) rounded-sm">{sponsor.message}</div>
               </div>
             </div>
@@ -530,7 +530,7 @@ function MintedModal({ image }: { image: string }) {
 
   return (
     <ModalContent
-      icon={<img src={image} className="size-[56px] rounded-sm aspect-square" alt="Your minted LemonHead" />}
+      icon={<img src={image} className="size-14 rounded-sm aspect-square" alt="Your minted LemonHead" />}
       onClose={() => modal.close()}
     >
       <MintedContent address={address} />

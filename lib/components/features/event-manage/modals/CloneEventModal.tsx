@@ -107,9 +107,9 @@ export function CloneEventModal({ event }: { event: Event }) {
     );
 
   return (
-    <Card.Root className="w-full md:w-[350px] overflow-visible bg-none">
+    <Card.Root className="w-full md:w-87.5 overflow-visible bg-none">
       <Card.Header className="bg-transparent flex justify-between items-start">
-        <div className="size-[56px] rounded-full flex items-center justify-center bg-(--btn-tertiary)">
+        <div className="size-14 rounded-full flex items-center justify-center bg-(--btn-tertiary)">
           <i aria-hidden="true" className="icon-duplicate " />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
@@ -160,7 +160,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                       />
                     </Menu.Trigger>
 
-                    <Menu.Content className="w-full p-2 max-h-[200px] overflow-auto">
+                    <Menu.Content className="w-full p-2 max-h-50 overflow-auto">
                       {({ toggle }) =>
                         communities.map((item) => {
                           return (
@@ -257,7 +257,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                             <Button
                               icon="icon-x"
                               variant="tertiary"
-                              className="size-[36px]!"
+                              className="size-9!"
                               onClick={() =>
                                 setValue(
                                   'dates',
@@ -309,13 +309,13 @@ export function CloneEventModal({ event }: { event: Event }) {
                   trigger={() => (
                     <button
                       type="button"
-                      className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
+                      className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-10 pl-3.5 pr-2.5"
                     >
                       <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5 truncate">
-                        <i aria-hidden="true" className="icon-globe size-[20px]" />
+                        <i aria-hidden="true" className="icon-globe size-5" />
                         <span className="truncate w-fit">{zone?.text}</span>
                       </div>
-                      <i aria-hidden="true" className="icon-chevron-down size-[20px]" />
+                      <i aria-hidden="true" className="icon-chevron-down size-5" />
                     </button>
                   )}
                   onSelect={(data) => {
@@ -410,7 +410,7 @@ function Recurrence({
   };
 
   return (
-    <Card.Root className="w-full md:w-[350px] overflow-visible bg-transparent">
+    <Card.Root className="w-full md:w-87.5 overflow-visible bg-transparent">
       <Card.Header className="bg-transparent flex justify-between items-center">
         <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} aria-label="Go back" />
         <p className="flex-1 text-center">Choose Times</p>
@@ -465,7 +465,7 @@ function Recurrence({
                 <div className="flex justify-between gap-1">
                   {weekDays.map((item) => (
                     <Button
-                      className="rounded-full w-[40px]"
+                      className="rounded-full w-10"
                       key={item.getDay()}
                       onClick={() => toggleDay(item.getDay())}
                       variant={field.value.includes(item.getDay()) ? 'primary' : 'tertiary'}
@@ -517,7 +517,7 @@ function Recurrence({
 
         <div className="flex justify-between gap-2 border-2 border-dashed rounded-sm p-1">
           {loading ? (
-            <Skeleton className="h-[68px] w-full rounded-sm" animate />
+            <Skeleton className="h-17 w-full rounded-sm" animate />
           ) : (
             <RecurrenceDates dates={data?.generateRecurringDates} />
           )}
@@ -592,7 +592,7 @@ export function CancelEventModal({
 }) {
   const [loading, setLoading] = React.useState(false);
   return (
-    <div className="p-4 flex flex-col gap-4 max-w-[448px]">
+    <div className="p-4 flex flex-col gap-4 max-w-112">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">
         <i aria-hidden="true" className="icon-ticket text-danger-400" />
       </div>

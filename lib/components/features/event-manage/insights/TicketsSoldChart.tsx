@@ -107,13 +107,13 @@ export function TicketsSoldChart() {
             <Menu.Root>
               <Menu.Trigger>
                 <Button size="sm" variant="tertiary" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
-                  <span className="w-[72px] text-left truncate">{filterLabel}</span>
+                  <span className="w-18 text-left truncate">{filterLabel}</span>
                 </Button>
               </Menu.Trigger>
-              <Menu.Content className="w-[240px] p-0">
+              <Menu.Content className="w-60 p-0">
                 {({ toggle }) => (
                   <>
-                    <div className="p-1 max-h-[200px] overflow-auto no-scrollbar">
+                    <div className="p-1 max-h-50 overflow-auto no-scrollbar">
                       <MenuItem
                         title="All Tickets"
                         iconLeft={selectedTicketType === null ? 'icon-done' : 'icon-done opacity-0'}
@@ -133,7 +133,7 @@ export function TicketsSoldChart() {
                           }}
                         >
                           <div className="flex items-center gap-2">
-                            <p className="text-sm truncate w-[172px]">{ticketType.title}</p>
+                            <p className="text-sm truncate w-43">{ticketType.title}</p>
                             <p className="text-sm text-tertiary">{ticketCountByType[ticketType._id] || 0}</p>
                           </div>
                         </MenuItem>
@@ -153,7 +153,7 @@ export function TicketsSoldChart() {
           />
         </div>
 
-        <div className="h-[300px] w-full relative">
+        <div className="h-75 w-full relative">
           {loading ? (
             <div className="h-full flex items-center justify-center">
               <p className="text-tertiary">Loading...</p>

@@ -53,7 +53,7 @@ export function EditApiKeyModal({ apiKey, availableScopes, onUpdated }: EditApiK
   };
 
   return (
-    <ModalContent icon="icon-key" onClose={() => modal.close()} className="w-[480px] max-w-full">
+    <ModalContent icon="icon-key" onClose={() => modal.close()} className="w-120 max-w-full">
       <div className="space-y-4">
         <div className="space-y-1">
           <p className="text-lg">Edit API Key</p>

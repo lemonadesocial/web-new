@@ -89,7 +89,7 @@ export function Connectors({ space }: ConnectorsProps) {
             <Card.Root key={i}>
               <Card.Content className="flex flex-col gap-4">
                 <div className="flex justify-between items-start">
-                  <Skeleton className="size-[48px] rounded-sm shrink-0" animate />
+                  <Skeleton className="size-12 rounded-sm shrink-0" animate />
                   <Skeleton className="h-6 w-16 rounded-full" animate />
                 </div>
                 <div className="space-y-2">
@@ -205,7 +205,7 @@ function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceCon
     <Card.Root onClick={isConnected ? undefined : handleConnect}>
       <Card.Content className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
-          <div className="size-[48px] flex items-center justify-center rounded-sm bg-overlay-primary overflow-hidden">
+          <div className="size-12 flex items-center justify-center rounded-sm bg-overlay-primary overflow-hidden">
             {logo ? (
               <img src={logo} alt="" className="size-full object-contain" />
             ) : (
@@ -229,7 +229,7 @@ function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceCon
                       loading={disconnecting}
                     />
                   </Menu.Trigger>
-                  <Menu.Content className="p-1 min-w-[160px]">
+                  <Menu.Content className="p-1 min-w-40">
                     {({ toggle }) => (
                       <>
                         <MenuItem
@@ -311,10 +311,10 @@ function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModa
   };
 
   return (
-    <div className="w-[480px] max-w-full rounded-md p-4 space-y-4">
+    <div className="w-120 max-w-full rounded-md p-4 space-y-4">
       <div className="flex items-start justify-between">
         {CONNECTOR_ICON_MAP[item.icon] && (
-          <img src={CONNECTOR_ICON_MAP[item.icon]} alt="" className="size-[56px] rounded-sm object-contain" />
+          <img src={CONNECTOR_ICON_MAP[item.icon]} alt="" className="size-14 rounded-sm object-contain" />
         )
         }
         <Button

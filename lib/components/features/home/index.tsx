@@ -42,18 +42,18 @@ export function Home() {
       )}
 
       {chatExpanded ? (
-        <div className="relative z-10 w-full max-w-[720px] h-screen px-4 md:px-0">
+        <div className="relative z-10 w-full max-w-180 h-screen px-4 md:px-0">
           <AIChat variant="home" />
         </div>
       ) : (
         <div className="relative z-10 w-full min-h-[calc(100vh-100px)] shrink-0 flex justify-center">
-          <div className="w-full max-w-[720px] px-4 md:px-0 flex flex-col justify-center relative">
+          <div className="w-full max-w-180 px-4 md:px-0 flex flex-col justify-center relative">
             <AIChat variant="home" allowGuest={!loggedIn} />
             {!loggedIn && (
               <button
                 type="button"
                 onClick={() => signIn()}
-                className="absolute inset-0 z-20 rounded-[16px] bg-transparent cursor-pointer"
+                className="absolute inset-0 z-20 rounded-lg bg-transparent cursor-pointer"
                 aria-label="Sign in to use LemonAI chat"
               />
             )}
@@ -62,7 +62,7 @@ export function Home() {
       )}
       {!chatExpanded && (
         <div className="relative z-10 w-full px-4 md:px-6 xl:px-8">
-          {loggedIn ? <HomeEventsSection /> : <NonLoginContent onGetStarted={() => signIn()} />}
+          {loggedIn ? <HomeEventsSection /> : <NonLoginContent />}
         </div>
       )}
     </div>

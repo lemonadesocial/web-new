@@ -78,7 +78,7 @@ function LaunchSoon({ title, subtitle, provider }: { title: string; subtitle: st
         />
       </div>
 
-      <Spacer className="h-[148px]" />
+      <Spacer className="h-37" />
 
       <div className="text-center">
         <h3 className="text-xl font-semibold">{title}</h3>
@@ -117,10 +117,10 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
             <img
               src={tokenData?.metadata.imageUrl}
               alt={tokenData?.name}
-              className="size-[48px] aspect-square rounded-sm object-cover"
+              className="size-12 aspect-square rounded-sm object-cover"
             />
           ) : (
-            <div className="size-[48px] aspect-square rounded-sm bg-gray-500" />
+            <div className="size-12 aspect-square rounded-sm bg-gray-500" />
           )}
           <div>
             <h3 className="text-xl font-semibold">${tokenData?.symbol}</h3>

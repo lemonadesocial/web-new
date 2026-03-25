@@ -20,7 +20,7 @@ export function LemonHeadsProgressBar() {
           }}
         />
 
-        <div className="-ml-[1px]">
+        <div className="-ml-px">
           <div className="size-6 border-8 aspect-square rounded-full border-(--color-lemonheads-progress-bar)"></div>
         </div>
 

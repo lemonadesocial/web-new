@@ -64,7 +64,7 @@ export default function TextEdiorFloatingMenu({ editor, toolbar, directory = 'ev
     >
       <Menu.Root placement="bottom-start">
         <Menu.Trigger>
-          <Button variant="tertiary" size="xs" icon="icon-plus" className="p-[2px] backdrop-blur-2xl" />
+          <Button variant="tertiary" size="xs" icon="icon-plus" className="p-0.5 backdrop-blur-2xl" />
         </Menu.Trigger>
         <Menu.Content className="p-0">
           {({ toggle }) => {

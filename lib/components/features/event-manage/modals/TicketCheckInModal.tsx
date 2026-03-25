@@ -91,7 +91,7 @@ export function TicketCheckInModal({ event, shortId, onClose }: TicketCheckInMod
   }
 
   return (
-    <ModalContent className="w-[480px] p-0">
+    <ModalContent className="w-120 p-0">
       <div className="flex items-center gap-3 py-3 px-4 border-b">
         <Avatar
           src={assignee?.image_avatar || randomUserImage(assigneeEmail || '')}

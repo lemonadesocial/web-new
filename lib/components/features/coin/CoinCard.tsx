@@ -36,7 +36,7 @@ export function CoinCard({ pool }: { pool: PoolCreated }) {
     <Card.Root className="flex-1 cursor-pointer" onClick={handleClick}>
       <Card.Content className="p-0">
         <div className="flex gap-4 p-4">
-          <div className="w-[125px] h-[125px] rounded-sm bg-quaternary overflow-hidden flex-shrink-0 aspect-square">
+          <div className="w-31.25 h-31.25 rounded-sm bg-quaternary overflow-hidden flex-shrink-0 aspect-square">
             {tokenData?.metadata?.imageUrl ? (
               <img
                 src={tokenData.metadata.imageUrl}

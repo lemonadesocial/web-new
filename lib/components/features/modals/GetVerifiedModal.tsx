@@ -101,10 +101,10 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
   };
 
   if (showSuccess) return (
-    <div className="w-[340px] max-w-full p-4 flex flex-col gap-4">
+    <div className="w-85 max-w-full p-4 flex flex-col gap-4">
       <div className="flex justify-between items-start">
         <div className="relative">
-          <img src={userAvatar(me)} className="size-[56px] rounded-full" />
+          <img src={userAvatar(me)} className="size-14 rounded-full" />
           <i aria-hidden="true" className="icon-verified text-accent-400 absolute bottom-0 right-0 size-4" />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
@@ -151,9 +151,9 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
   );
 
   return (
-    <div className="w-[340px] max-w-full p-4 flex flex-col gap-4">
+    <div className="w-85 max-w-full p-4 flex flex-col gap-4">
       <div className="flex justify-between items-start">
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-violet-400/16">
+        <div className="size-14 flex justify-center items-center rounded-full bg-violet-400/16">
           <i aria-hidden="true" className="icon-verified text-accent-400" />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />

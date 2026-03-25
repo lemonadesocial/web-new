@@ -183,7 +183,7 @@ export function TicketSelectItem({
         </div>
         {ticketType.limit > 1 && (
           <div className="pt-4 border-t border-card-border flex justify-between gap-3">
-            <div className="flex justify-center items-center size-[28px] rounded-sm bg-card">
+            <div className="flex justify-center items-center size-7 rounded-sm bg-card">
               <i aria-hidden="true" className="icon-tag size-4 text-tertiary" />
             </div>
             <p className="font-medium flex-1">Tickets</p>

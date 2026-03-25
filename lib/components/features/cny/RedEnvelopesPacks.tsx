@@ -78,14 +78,14 @@ const PackCard = ({ pack }: { pack: Pack }) => {
       onClick={handleClick}
     >
       {pack.discountLabel && (
-        <div className="absolute top-[-4px] right-2.5 w-[64px] h-[64px]">
+        <div className="absolute top--1 right-2.5 w-16 h-16">
           <img src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/discount-tag.png`} alt="" className=":w-full h-full object-contain" />
           <p className="absolute inset-0 flex items-center justify-center text-warning-400 text-sm">
             {pack.discountLabel}
           </p>
         </div>
       )}
-      <div className="px-[38px] py-6 flex-1 flex items-center justify-center">
+      <div className="px-9.5 py-6 flex-1 flex items-center justify-center">
         <img
           src={pack.asset}
           alt={quantityLabel}

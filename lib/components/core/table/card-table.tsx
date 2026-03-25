@@ -131,10 +131,10 @@ const EmptyState = ({
     <>
       {children || (
         <div className="flex flex-col justify-center items-center aspect-video py-12">
-          <i aria-hidden="true" className={twMerge('size-[120px] md:size-[184px] aspect-square text-quaternary', icon)} />
+          <i aria-hidden="true" className={twMerge('size-30 md:size-46 aspect-square text-quaternary', icon)} />
           <div className="space-y-2 text-center">
             <h3 className="text-xl text-tertiary font-semibold">{title}</h3>
-            {subtile && <p className="text-tertiary max-sm:text-xs max-sm:w-xs md:w-[480px]">{subtile} </p>}
+            {subtile && <p className="text-tertiary max-sm:text-xs max-sm:w-xs md:w-120">{subtile} </p>}
           </div>
         </div>
       )}

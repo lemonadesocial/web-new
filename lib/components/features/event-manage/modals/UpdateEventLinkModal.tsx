@@ -49,7 +49,7 @@ export function UpdateEventLinkModal({ event }: { event: Event }) {
   };
 
   return (
-    <ModalContent icon="icon-link" onClose={() => modal.close()} className="min-w-[480px]">
+    <ModalContent icon="icon-link" onClose={() => modal.close()} className="min-w-120">
       <div className="space-y-4">
         <div className="space-y-2">
           <p>Event Link</p>

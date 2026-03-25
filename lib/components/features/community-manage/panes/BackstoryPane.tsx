@@ -16,7 +16,7 @@ export function BackstoryPane({ initialValue = '', onSave }: Props) {
   };
 
   return (
-    <div className="w-[480px] max-w-full">
+    <div className="w-120 max-w-full">
       <div className="flex justify-between items-center px-5 py-3 border-b bg-card">
         <p className="text-lg">Backstory</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
