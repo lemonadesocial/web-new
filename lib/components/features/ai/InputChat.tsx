@@ -163,8 +163,11 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   );
 
   React.useEffect(() => {
-    if (textareaRef.current && input) {
+    if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
+    }
+
+    if (textareaRef.current && input) {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [input]);
@@ -197,19 +200,19 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
 
   const typingText = isIdle ? PLACEHOLDER_PHRASES[phraseIndex].slice(0, charCount) : '';
   const textareaBaseClass =
-    'w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium';
+    'relative min-h-6 w-full resize-none overflow-y-auto bg-transparent text-base leading-6 text-primary font-medium outline-none';
   const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
   const rootClassName =
     variant === 'home'
-      ? 'backdrop-blur! border border-white bg-[rgba(20,19,23,0.64)] rounded-lg overflow-visible'
-      : 'backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible';
+      ? 'backdrop-blur! rounded-lg border border-white bg-[rgba(20,19,23,0.64)]'
+      : 'backdrop-blur-none! rounded-lg border-0 bg-(--btn-tertiary)';
 
   return (
     <Card.Root className={rootClassName}>
-      <Card.Content className="space-y-4 flex flex-col">
+      <Card.Content className="flex flex-col space-y-2 p-4">
         <div className="relative w-full">
           {isIdle && (
-            <div className="absolute inset-0 pointer-events-none text-quaternary overflow-hidden" aria-hidden>
+            <div className="pointer-events-none absolute inset-0 overflow-hidden text-base leading-6 text-quaternary" aria-hidden>
               <span className="font-medium">
                 Ask LemonAI to <span>{typingText}</span>
               </span>
@@ -227,42 +230,45 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
             placeholder="Ask anything..."
           />
         </div>
-        <div className="flex justify-between items-center">
-          {showTools && (
-            <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <Button
-                    variant="tertiary-alt"
-                    onClick={() => toggle()}
-                    size="sm"
-                    icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
-                    iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
-                  >
-                    {state.selectedTool?.label}
-                  </Button>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-1 w-48 backdrop-blur-md!">
-                {({ toggle }) => (
-                  <>
-                    {state.tools.map((tool) => (
-                      <MenuItem
-                        key={tool.key}
-                        iconLeft={tool.icon}
-                        title={tool.label}
-                        onClick={() => {
-                          dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: tool } });
-                          toggle();
-                        }}
-                      />
-                    ))}
-                  </>
-                )}
-              </Menu.Content>
-            </Menu.Root>
-          )}
-          <div className="flex items-center gap-2 flex-1 justify-end">
+        <div className="flex items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            {showTools && (
+              <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <Button
+                      variant="tertiary-alt"
+                      onClick={() => toggle()}
+                      size="sm"
+                      icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
+                      iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                    >
+                      {state.selectedTool?.label}
+                    </Button>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="w-48 p-1 backdrop-blur-md!">
+                  {({ toggle }) => (
+                    <>
+                      {state.tools.map((tool) => (
+                        <MenuItem
+                          key={tool.key}
+                          iconLeft={tool.icon}
+                          title={tool.label}
+                          onClick={() => {
+                            dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: tool } });
+                            toggle();
+                          }}
+                        />
+                      ))}
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
             {me && (
               <SpaceSelector
                 readOnly={readOnly}

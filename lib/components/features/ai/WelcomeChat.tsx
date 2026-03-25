@@ -10,11 +10,11 @@ export function WelcomeChat() {
     <div className="space-y-2">
       <div className="flex gap-3 items-center">
         {!isGuest && <i aria-hidden="true" className="icon-lemon-ai text-warning-300 size-8" />}
-        <h3 className={isGuest ? 'font-title text-[32px] leading-10 font-semibold' : 'text-2xl font-semibold'}>
+        <h3 className="font-title text-[32px] leading-10 font-semibold">
           {isGuest ? 'Where great events begin.' : `Hi ${displayName}`}
         </h3>
       </div>
-      <p className="text-tertiary">
+      <p className="text-base leading-6 text-tertiary">
         {me
           ? 'I can help with events, communities, tokens, and more.'
           : 'Create event pages, sell tickets, and build your community, just by chatting.'}
