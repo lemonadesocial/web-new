@@ -27,11 +27,19 @@ export function getConnectorErrorMessage(errorParam: string) {
   }
 }
 
-export const CONNECTOR_ICON_MAP: Record<string, string> = {
+export const CONNECTOR_ICONS: Record<string, string> = {
+  api: `${ASSET_PREFIX}/assets/images/connectors/api.svg`,
   airtable: `${ASSET_PREFIX}/assets/images/connectors/airtable.png`,
+  dice: `${ASSET_PREFIX}/assets/images/connectors/dice.png`,
+  'generic-api': `${ASSET_PREFIX}/assets/images/connectors/api.svg`,
+  'generic-webhook': `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
+  eventbrite: `${ASSET_PREFIX}/assets/images/connectors/eventbrite.png`,
+  'google-sheets': `${ASSET_PREFIX}/assets/images/connectors/google-sheets.png`,
+  luma: `${ASSET_PREFIX}/assets/images/connectors/luma.png`,
+  meetup: `${ASSET_PREFIX}/assets/images/connectors/meetup.svg`,
+  'resident-advisor': `${ASSET_PREFIX}/assets/images/connectors/resident-advisor.png`,
   'firecrawl': `${ASSET_PREFIX}/assets/images/connectors/connector-firecrawl.png`,
   github: `${ASSET_PREFIX}/assets/images/connectors/connector-github.png`,
-  'google-sheets': `${ASSET_PREFIX}/assets/images/connectors/google-sheets.png`,
   granola: `${ASSET_PREFIX}/assets/images/connectors/connector-granola.png`,
   linear: `${ASSET_PREFIX}/assets/images/connectors/connector-linear.png`,
   mcp: `${ASSET_PREFIX}/assets/images/connectors/connector-mcp.png`,
@@ -41,6 +49,7 @@ export const CONNECTOR_ICON_MAP: Record<string, string> = {
   stripe: `${ASSET_PREFIX}/assets/images/connectors/connector-stripe.png`,
   supabase: `${ASSET_PREFIX}/assets/images/connectors/connector-supabase.png`,
   'eleven-labs': `${ASSET_PREFIX}/assets/images/connectors/connector-eleven-labs.png`,
+  webhook: `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
 };
 
 export function getProcessingMessage(status: string) {

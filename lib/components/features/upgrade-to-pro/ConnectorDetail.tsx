@@ -23,7 +23,7 @@ import {
   type ConnectionLog,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { CONNECTOR_ICON_MAP } from './utils';
+import { CONNECTOR_ICONS } from './utils';
 import { ExportGuestsModal } from './ExportGuestsModal';
 import { ImportGuestsModal } from './ImportGuestsModal';
 
@@ -104,7 +104,7 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
         </Link>
         <Card.Root>
           <Card.Content className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-secondary">Connection not found or you don't have access to it.</p>
+            <p className="text-secondary">Connection not found or you don&apos;t have access to it.</p>
             <Link href={connectorsHref}>
               <Button variant="secondary" size="sm" className="mt-4">
                 Back to Connectors
@@ -118,7 +118,7 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
 
   const connector = connection.connector;
   const connectorName = connector?.name ?? connection.connectorType ?? 'Connector';
-  const logo = connector ? CONNECTOR_ICON_MAP[connector.icon] : null;
+  const icon = connector ? CONNECTOR_ICONS[connector.id] ?? CONNECTOR_ICONS[connector.icon] : null;
   const actionById = new Map(connector?.actions?.map((a) => [a.id, a]) ?? []);
 
   return (
@@ -137,8 +137,8 @@ export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps)
 
       <div className="flex items-start justify-between gap-4 w-full">
         <div className="size-12 rounded-sm border border-card-border overflow-hidden shrink-0 bg-overlay-primary">
-          {logo ? (
-            <img src={logo} alt="" className="size-full object-cover" />
+          {icon ? (
+            <img src={icon} alt="" className="size-full object-contain" />
           ) : (
             <span className="size-full flex items-center justify-center text-sm font-medium uppercase text-tertiary">
               {connectorName.slice(0, 2)}

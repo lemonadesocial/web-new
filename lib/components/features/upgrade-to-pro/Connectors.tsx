@@ -18,7 +18,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { getErrorMessage } from '$lib/utils/error';
 
-import { CONNECTOR_ICON_MAP, getConnectorErrorMessage } from './utils';
+import { CONNECTOR_ICONS, getConnectorErrorMessage } from './utils';
 
 type ConnectorsProps = {
   space: Space;
@@ -141,7 +141,7 @@ type ConnectorCardProps = {
 
 function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceConnections }: ConnectorCardProps) {
   const router = useRouter();
-  const logo = CONNECTOR_ICON_MAP[item.icon];
+  const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
     onError: (error) => {
@@ -206,8 +206,8 @@ function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceCon
       <Card.Content className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div className="size-12 flex items-center justify-center rounded-sm bg-overlay-primary overflow-hidden">
-            {logo ? (
-              <img src={logo} alt="" className="size-full object-contain" />
+            {icon ? (
+              <img src={icon} alt="" className="size-full object-contain" />
             ) : (
               <span className="text-xs font-medium uppercase">{item.name?.slice(0, 2) ?? item.icon}</span>
             )}
@@ -284,6 +284,7 @@ type ApiKeyModalProps = {
 
 function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModalProps) {
   const [apiKey, setApiKey] = React.useState('');
+  const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
 
   const [submitApiKey, { loading }] = useMutation(SubmitApiKeyDocument, {
     onError: (error) => {
@@ -313,8 +314,8 @@ function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModa
   return (
     <div className="w-120 max-w-full rounded-md p-4 space-y-4">
       <div className="flex items-start justify-between">
-        {CONNECTOR_ICON_MAP[item.icon] && (
-          <img src={CONNECTOR_ICON_MAP[item.icon]} alt="" className="size-14 rounded-sm object-contain" />
+        {icon && (
+          <img src={icon} alt="" className="size-14 rounded-sm object-contain" />
         )
         }
         <Button
