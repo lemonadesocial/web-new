@@ -1,10 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-type Props = {
+interface Props extends HTMLAttributes<HTMLInputElement> {
   label?: string;
   value?: string | null;
   placeholder?: string;
@@ -24,12 +24,16 @@ type Props = {
   className?: string;
   min?: number | string;
   max?: number | string;
-};
+}
 
 export function InputField(props: Props) {
   return (
     <fieldset className={twMerge('input-field relative', props.className)}>
-      {props.label && <label htmlFor={props.name} className="text-secondary text-sm font-medium">{props.label}</label>}
+      {props.label && (
+        <label htmlFor={props.name} className="text-secondary text-sm font-medium">
+          {props.label}
+        </label>
+      )}
       <div className={clsx('control', props.error && 'border-error!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
         {typeof props.iconLeft === 'string' ? (
@@ -53,7 +57,12 @@ export function InputField(props: Props) {
           }}
         />
         {props.right && (
-          <button type="button" aria-label="Clear" className="appearance-none bg-transparent border-none p-0 cursor-pointer" onClick={props.right.onClick}>
+          <button
+            type="button"
+            aria-label="Clear"
+            className="appearance-none bg-transparent border-none p-0 cursor-pointer flex justify-center items-center"
+            onClick={props.right.onClick}
+          >
             <i className={twMerge('size-5 text-tertiary', props.right.icon)} />
           </button>
         )}

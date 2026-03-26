@@ -87,17 +87,17 @@ export default async function Page({ params }: Props) {
 
   const result = await validateToken(token, password);
 
-  if (!result) return notFound();
+  if (!result) return <PasswordGate isExpired />;
 
   // Password protected but no password provided yet
   if (result.password_protected && !result.valid) {
     const hasAttemptedPassword = !!password;
 
-    return <PasswordGate token={token} error={hasAttemptedPassword} />;
+    return <PasswordGate error={hasAttemptedPassword} />;
   }
 
   // Link expired or invalid
-  if (!result.valid) return notFound();
+  if (!result.valid) return <PasswordGate isExpired />;
 
   const client = getClient();
 
