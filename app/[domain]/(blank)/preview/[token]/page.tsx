@@ -134,7 +134,7 @@ export default async function Page({ params }: Props) {
     if (!space) return notFound();
 
     let themeData = defaultTheme;
-    let emptyTheme = null;
+    let emptyTheme = undefined;
 
     if (space.theme_data) {
       themeData = merge({}, defaultTheme, {
@@ -157,7 +157,7 @@ export default async function Page({ params }: Props) {
       }
     } else {
       if (space.theme_name && space.theme_name !== 'default') {
-        emptyTheme = defaultPassportConfig[space.theme_name as string] || null;
+        emptyTheme = defaultPassportConfig[space.theme_name as string] || undefined;
       }
     }
 
