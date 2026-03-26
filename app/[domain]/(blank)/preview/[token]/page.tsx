@@ -87,17 +87,17 @@ export default async function Page({ params }: Props) {
 
   const result = await validateToken(token, password);
 
-  if (!result) return notFound();
+  if (!result) return <PasswordGate isExpired />;
 
   // Password protected but no password provided yet
   if (result.password_protected && !result.valid) {
     const hasAttemptedPassword = !!password;
 
-    return <PasswordGate token={token} error={hasAttemptedPassword} />;
+    return <PasswordGate error={hasAttemptedPassword} />;
   }
 
   // Link expired or invalid
-  if (!result.valid) return notFound();
+  if (!result.valid) return <PasswordGate isExpired />;
 
   const client = getClient();
 
@@ -134,7 +134,7 @@ export default async function Page({ params }: Props) {
     if (!space) return notFound();
 
     let themeData = defaultTheme;
-    let emptyTheme = null;
+    let emptyTheme = undefined;
 
     if (space.theme_data) {
       themeData = merge({}, defaultTheme, {
@@ -157,7 +157,7 @@ export default async function Page({ params }: Props) {
       }
     } else {
       if (space.theme_name && space.theme_name !== 'default') {
-        emptyTheme = defaultPassportConfig[space.theme_name as string] || null;
+        emptyTheme = defaultPassportConfig[space.theme_name as string] || undefined;
       }
     }
 

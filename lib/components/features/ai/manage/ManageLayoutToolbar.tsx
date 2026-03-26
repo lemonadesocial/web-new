@@ -241,7 +241,7 @@ function ManageLayoutToolbar() {
 
             {['design', 'preview'].includes(state.activeTab) && (
               <>
-                <Menu.Root placement="bottom-end" dismissable={false}>
+                <Menu.Root placement="bottom-end" dismissable={false} className="z-100">
                   <Menu.Trigger>
                     {({ toggle }) => (
                       <Button size="sm" variant="secondary" iconLeft="icon-share" onClick={toggle}>
@@ -249,7 +249,7 @@ function ManageLayoutToolbar() {
                       </Button>
                     )}
                   </Menu.Trigger>
-                  <Menu.Content className="p-0 w-120">
+                  <Menu.Content className="p-0 w-120 rounded-md border-none">
                     <PreviewLinkPopup />
                   </Menu.Content>
                 </Menu.Root>
@@ -362,16 +362,7 @@ function ManageLayoutToolbar() {
                 variant="secondary"
                 icon="icon-share"
                 className="rounded-full"
-                onClick={() =>
-                  modal.open(PreviewLinkPopup, {
-                    props: { hideCard: true },
-                    component: (props) => (
-                      <ModalContent icon="icon-link">
-                        <PreviewLinkPopup {...props} />
-                      </ModalContent>
-                    ),
-                  })
-                }
+                onClick={() => modal.open(PreviewLinkPopup)}
               >
                 Share Preview
               </Button>

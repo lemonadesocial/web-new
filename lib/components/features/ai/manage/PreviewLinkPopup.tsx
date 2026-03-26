@@ -17,7 +17,7 @@ import { CreatePreviewLinkModal } from './CreatePreviewLinkModal';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { useStoreManageLayout } from './store';
 
-export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
+export function PreviewLinkPopup() {
   const event = useEvent();
   const state = useStoreManageLayout();
 
@@ -55,16 +55,12 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
     },
   });
   const [deleteLink] = useMutation(DeletePreviewLinkDocument, {
-    onError: (error, _variables, context: any) => {
+    onError: () => {
       toast.error('Failed to delete link');
-      if (context?.previousLinks) {
-        setLinks(context.previousLinks);
-      }
     },
   });
 
   const handleDelete = (id: string) => {
-    const previousLinks = [...links];
     setLinks((prev) => prev.filter((i) => i._id !== id));
     deleteLink({
       variables: { id },
@@ -75,7 +71,7 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
   };
 
   const content = (
-    <div className="space-y-4 max-h-162 overflow-auto p-4">
+    <div className="space-y-4 max-h-162 overflow-auto p-4 no-scrollbar">
       <div className="space-y-2">
         <p className="text-lg">Preview Links</p>
         <p className="text-secondary text-sm">
@@ -193,8 +189,6 @@ export function PreviewLinkPopup({ hideCard }: { hideCard?: boolean }) {
       </div>
     </div>
   );
-
-  if (hideCard) return content;
 
   return (
     <Card.Root>

@@ -41,7 +41,7 @@ export function CreatePreviewLinkModal({
   });
 
   return (
-    <ModalContent icon="icon-link">
+    <ModalContent icon="icon-link" onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
         <div className="space-y-2">
           <p className="text-lg">Create Preview Link</p>
@@ -57,7 +57,15 @@ export function CreatePreviewLinkModal({
           <InputField
             label="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            onKeyDown={(e) => {
+              if (e.key === ' ') {
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => {
+              setPassword(e.target.value?.trim()?.replace(/\s/g, ''));
+            }}
             className="[&_div.control]:pr-1.5! [&_div.control]:items-center [&_button]:bg-(--btn-tertiary) [&_button]:p-1.75 [&_button]:justify-center [&_button]:hover:bg-(--btn-tertiary-hover) [&_button]:rounded-xs [&_button]:flex [&_button]:items-center"
             right={
               password
