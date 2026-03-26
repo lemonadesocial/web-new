@@ -41,7 +41,8 @@ function ManageLayoutContent() {
     variables: { shortid },
     skip: !shouldFetchEvent,
   });
-  const event = (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
+  const event =
+    (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
   useQuery(
@@ -116,15 +117,15 @@ function ManageLayoutContent() {
         <AnimatePresence initial={false}>
           {state.showSidebarLeft && (
             <motion.div
-              initial={{ width: 0, opacity: 0, marginRight: 0 }}
-              animate={{ width: 440, opacity: 1, marginRight: 16 }}
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 440, opacity: 1 }}
               exit={{ width: 0, opacity: 0, marginRight: 0 }}
               transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
               className="overflow-hidden shrink-0 hidden md:block"
             >
               <div
                 data-mode={isDesignOrPreview ? state.device : undefined}
-                className={clsx('w-110 h-full pl-4', isDesignOrPreview && 'pt-3')}
+                className={clsx('w-110 h-full', isDesignOrPreview && 'pt-3')}
               >
                 <SidebarComp />
               </div>

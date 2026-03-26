@@ -4,7 +4,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from '../button';
 
-interface SegmentItem<T> {
+export interface SegmentItem<T> {
   label?: string;
   value: T;
   icon?: string;
@@ -14,7 +14,7 @@ interface SegmentItem<T> {
   ignore?: boolean;
 }
 
-interface SegmentProps<T> {
+export interface SegmentProps<T> {
   items: SegmentItem<T>[];
   selected?: T;
   onSelect?: (item: SegmentItem<T>) => void;

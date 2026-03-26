@@ -206,7 +206,9 @@ function ManageLayoutToolbar() {
                 </Button>
               ))}
             </div>
+          </div>
 
+          <div className="flex-1 flex items-center justify-center gap-2">
             {['design', 'preview'].includes(state.activeTab) && (
               <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
                 {Object.entries(devices).map(([key, item]) => (
