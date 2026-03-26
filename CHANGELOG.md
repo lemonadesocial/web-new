@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.25.2](https://github.com/lemonadesocial/web-new/compare/v10.25.1...v10.25.2) (2026-03-26)
+
+
+### Bug Fixes
+
+* guard nullable crypto amounts in wallet plan utils ([eb8adf9](https://github.com/lemonadesocial/web-new/commit/eb8adf9b2863afd67293ab67676612a588b9b6d8))
+* lint code ([81d828d](https://github.com/lemonadesocial/web-new/commit/81d828da511a5ff67782035b26c5a0b4426bd95c))
+* polish ui link preview ([af24527](https://github.com/lemonadesocial/web-new/commit/af24527cd0d4d9a6c1657ec7439ed5de5bb3bea9))
+
 ## [10.25.1](https://github.com/lemonadesocial/web-new/compare/v10.25.0...v10.25.1) (2026-03-25)
 
 
