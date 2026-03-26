@@ -12,7 +12,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { getErrorMessage } from '$lib/utils/error';
 
-import { CONNECTOR_ICON_MAP } from './utils';
+import { CONNECTOR_ICONS } from './utils';
 
 type ExportGuestsModalProps = {
   spaceId: string;
@@ -52,7 +52,7 @@ export function ExportGuestsModal({
     onError: (error) => {
       toast.error(getErrorMessage(error, 'Export failed. Please try again.'));
     },
-    onComplete: (_client, data) => {
+    onComplete: () => {
       toast.success('Export completed successfully.');
       modal.close();
     },
@@ -63,7 +63,7 @@ export function ExportGuestsModal({
       (!isAirtable || baseId.trim()) &&
       (!isGoogleSheets || spreadsheetId.trim())
   );
-  const logo = connectorIcon ? CONNECTOR_ICON_MAP[connectorIcon] : CONNECTOR_ICON_MAP['google-sheets'];
+  const icon = CONNECTOR_ICONS[connector.id] ?? CONNECTOR_ICONS[connectorIcon];
 
   const handleExport = () => {
     if (!canExport || !selectedEvent) return;
@@ -100,9 +100,9 @@ export function ExportGuestsModal({
       <div className="flex items-start justify-between p-4">
         <div className="relative size-14 rounded-full bg-primary/8 flex items-center justify-center shrink-0">
           <i aria-hidden="true" className="icon-upload-sharp size-8 text-primary" />
-          {logo && (
-            <div className="absolute -bottom-0.5 -right-0.5 size-4 rounded-xs border-2 border-overlay-secondary overflow-hidden bg-overlay-primary">
-              <img src={logo} alt="" className="size-full object-contain" />
+          {icon && (
+            <div className="absolute -bottom-0.5 -right-0.5 size-4 rounded-xs border-2 border-overlay-secondary overflow-hidden bg-overlay-primary flex items-center justify-center">
+              <img src={icon} alt="" className="size-full object-contain" />
             </div>
           )}
         </div>

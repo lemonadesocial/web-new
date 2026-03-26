@@ -27,11 +27,19 @@ export function getConnectorErrorMessage(errorParam: string) {
   }
 }
 
-export const CONNECTOR_ICON_MAP: Record<string, string> = {
+export const CONNECTOR_ICONS: Record<string, string> = {
+  api: `${ASSET_PREFIX}/assets/images/connectors/api.svg`,
   airtable: `${ASSET_PREFIX}/assets/images/connectors/airtable.png`,
+  dice: `${ASSET_PREFIX}/assets/images/connectors/dice.png`,
+  'generic-api': `${ASSET_PREFIX}/assets/images/connectors/api.svg`,
+  'generic-webhook': `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
+  eventbrite: `${ASSET_PREFIX}/assets/images/connectors/eventbrite.png`,
+  'google-sheets': `${ASSET_PREFIX}/assets/images/connectors/google-sheets.png`,
+  luma: `${ASSET_PREFIX}/assets/images/connectors/luma.png`,
+  meetup: `${ASSET_PREFIX}/assets/images/connectors/meetup.svg`,
+  'resident-advisor': `${ASSET_PREFIX}/assets/images/connectors/resident-advisor.png`,
   'firecrawl': `${ASSET_PREFIX}/assets/images/connectors/connector-firecrawl.png`,
   github: `${ASSET_PREFIX}/assets/images/connectors/connector-github.png`,
-  'google-sheets': `${ASSET_PREFIX}/assets/images/connectors/google-sheets.png`,
   granola: `${ASSET_PREFIX}/assets/images/connectors/connector-granola.png`,
   linear: `${ASSET_PREFIX}/assets/images/connectors/connector-linear.png`,
   mcp: `${ASSET_PREFIX}/assets/images/connectors/connector-mcp.png`,
@@ -41,6 +49,7 @@ export const CONNECTOR_ICON_MAP: Record<string, string> = {
   stripe: `${ASSET_PREFIX}/assets/images/connectors/connector-stripe.png`,
   supabase: `${ASSET_PREFIX}/assets/images/connectors/connector-supabase.png`,
   'eleven-labs': `${ASSET_PREFIX}/assets/images/connectors/connector-eleven-labs.png`,
+  webhook: `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
 };
 
 export function getProcessingMessage(status: string) {
@@ -158,7 +167,7 @@ export function getDisplayedMonthlyCryptoAmount(
 ): number | null {
   const rawAmount = annual ? cryptoPrice.amount_annual : cryptoPrice.amount;
 
-  if (!hasPositiveCryptoAmount(rawAmount)) return null;
+  if (!rawAmount || !hasPositiveCryptoAmount(rawAmount)) return null;
 
   const amount = Number(formatUnits(BigInt(rawAmount), tokenDecimals));
   return annual ? amount / 12 : amount;
@@ -223,8 +232,13 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
 
       if (!aPrice || !bPrice) return a.index - b.index;
 
-      const aAmount = BigInt(a.option.annual ? aPrice.amount_annual : aPrice.amount);
-      const bAmount = BigInt(b.option.annual ? bPrice.amount_annual : bPrice.amount);
+      const aRawAmount = a.option.annual ? aPrice.amount_annual : aPrice.amount;
+      const bRawAmount = b.option.annual ? bPrice.amount_annual : bPrice.amount;
+
+      if (!aRawAmount || !bRawAmount) return a.index - b.index;
+
+      const aAmount = BigInt(aRawAmount);
+      const bAmount = BigInt(bRawAmount);
 
       if (aAmount === bAmount) return a.index - b.index;
       return aAmount < bAmount ? -1 : 1;
