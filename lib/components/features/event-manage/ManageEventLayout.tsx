@@ -110,7 +110,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
     <div className="relative h-full overflow-auto">
       <div className="sticky top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-2 font-default">
-          <div className="page mx-auto px-4 md:px-0">
+          <div className="w-full max-w-[69.5rem] mx-auto px-4">
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
               {Object.entries(tabs).map(([key, item]) => {
                 return (
@@ -130,7 +130,9 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <Comp />
+      <div className="px-4">
+        <Comp />
+      </div>
     </div>
   );
 }
