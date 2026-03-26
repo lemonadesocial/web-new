@@ -167,7 +167,7 @@ export function getDisplayedMonthlyCryptoAmount(
 ): number | null {
   const rawAmount = annual ? cryptoPrice.amount_annual : cryptoPrice.amount;
 
-  if (!hasPositiveCryptoAmount(rawAmount)) return null;
+  if (!rawAmount || !hasPositiveCryptoAmount(rawAmount)) return null;
 
   const amount = Number(formatUnits(BigInt(rawAmount), tokenDecimals));
   return annual ? amount / 12 : amount;
@@ -232,8 +232,13 @@ export function buildWalletPlanOptions(subscriptionItems: SubscriptionItem[], ui
 
       if (!aPrice || !bPrice) return a.index - b.index;
 
-      const aAmount = BigInt(a.option.annual ? aPrice.amount_annual : aPrice.amount);
-      const bAmount = BigInt(b.option.annual ? bPrice.amount_annual : bPrice.amount);
+      const aRawAmount = a.option.annual ? aPrice.amount_annual : aPrice.amount;
+      const bRawAmount = b.option.annual ? bPrice.amount_annual : bPrice.amount;
+
+      if (!aRawAmount || !bRawAmount) return a.index - b.index;
+
+      const aAmount = BigInt(aRawAmount);
+      const bAmount = BigInt(bRawAmount);
 
       if (aAmount === bAmount) return a.index - b.index;
       return aAmount < bAmount ? -1 : 1;
