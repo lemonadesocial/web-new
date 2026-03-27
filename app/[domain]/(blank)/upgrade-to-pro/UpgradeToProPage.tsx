@@ -12,6 +12,7 @@ import {
   Space,
   SubscriptionItem,
 } from '$lib/graphql/generated/backend/graphql';
+import type { FeatureConfig } from '$lib/components/features/upgrade-to-pro/utils';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -25,9 +26,10 @@ import {
 type UpgradeToProPageProps = {
   activeSection: UpgradeToProSectionKey;
   subscriptionData?: SubscriptionItem[];
+  featureConfigs?: FeatureConfig[];
 };
 
-function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageProps) {
+function UpgradeToProPage({ activeSection, subscriptionData, featureConfigs }: UpgradeToProPageProps) {
   const search = useSearchParams();
   const spaceId = search.get('space') ?? '';
 
@@ -165,7 +167,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
 
         {space && (
           <div className="w-full flex-1 overflow-auto no-scrollbar p-4 md:p-12">
-            <ActiveSection space={space} subscriptionData={subscriptionData} />
+            <ActiveSection space={space} subscriptionData={subscriptionData} featureConfigs={featureConfigs} />
           </div>
         )}
       </div>
