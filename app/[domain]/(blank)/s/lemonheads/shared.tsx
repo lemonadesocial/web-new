@@ -40,6 +40,7 @@ import { match } from 'ts-pattern';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { openEventPane } from '$lib/components/features/pane';
 
 export function HeroSection(props: { space?: Space }) {
   const me = useMe();
@@ -469,7 +470,7 @@ function renderTextWithLinks(text?: string) {
     // Create a link element for the match
     elements.push(
       <a key={match.index} href={match.url} target="_blank" rel="noopener noreferrer" className="underline">
-        {match.raw}
+        {match.text}
       </a>,
     );
 
@@ -517,13 +518,14 @@ export function UpcomingEventsCard({ userId }: { userId?: string }) {
               alt={item.title}
             />
           )}
-          <div>
-            <p
-              className="line-clamp-1 cursor-pointer hover:underline"
-              onClick={() => router.push(`/e/${item.shortid}`)}
+          <div className="min-w-0">
+            <button
+              type="button"
+              className="line-clamp-1 cursor-pointer hover:underline text-left"
+              onClick={() => openEventPane(item._id)}
             >
               {item.title}
-            </p>
+            </button>
             <p className="text-tertiary text-sm">
               {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
             </p>
