@@ -232,7 +232,7 @@ function ManageLayoutToolbar() {
                 outlined
                 iconLeft="icon-arrow-shape-up-stack-outline"
                 onClick={() => {
-                  router.push('/upgrade-to-pro');
+                  router.push(`/upgrade/${event?.space}`);
                 }}
               >
                 Upgrade

@@ -14,7 +14,12 @@ import { userAvatar } from '$lib/utils/user';
 import { Badge, Button, Menu, MenuItem, Card, Divider, modal, drawer } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
-import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
+import {
+  GetHostingEventsSidebarLelfDocument,
+  GetListMySpacesDocument,
+  GetSpacesDocument,
+  Space,
+} from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useLogOut } from '$lib/hooks/useLogout';
@@ -34,6 +39,9 @@ const Sidebar = () => {
 
   const logOut = useLogOut();
   const signIn = useSignIn();
+
+  const { data: dataSpaces } = useQuery(GetListMySpacesDocument, { variables: { limit: 10 }, skip: !me });
+  const mySpaces = (dataSpaces?.listMySpaces?.items || []) as Space[];
 
   const mainMenu = useMemo(() => {
     const menu = [
@@ -212,7 +220,7 @@ const Sidebar = () => {
               )}
               onClick={() => {
                 if (me || account) {
-                  router.push('/upgrade-to-pro');
+                  if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
                 } else {
                   signIn();
                 }

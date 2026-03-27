@@ -1,17 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import {
-  GetListMySpacesDocument,
-  GetSpaceDocument,
-  Space,
-  SubscriptionItem,
-} from '$lib/graphql/generated/backend/graphql';
+import { GetListMySpacesDocument, Space, SubscriptionItem } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -25,16 +20,14 @@ import {
 type UpgradeToProPageProps = {
   activeSection: UpgradeToProSectionKey;
   subscriptionData?: SubscriptionItem[];
+  space: Space;
 };
 
-function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageProps) {
-  const search = useSearchParams();
-  const spaceId = search.get('space') ?? '';
-
+function UpgradeToProPage({ space, activeSection, subscriptionData }: UpgradeToProPageProps) {
   const router = useRouter();
   const me = useMe();
 
-  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string>(spaceId);
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string>(space._id);
   const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
 
   const activeMenuItem = getUpgradeToProSection(activeSection);
@@ -45,12 +38,6 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
     skip: !me,
   });
   const spaces = (data?.listMySpaces?.items || []) as Space[];
-
-  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: selectedSpaceId },
-    skip: !selectedSpaceId,
-  });
-  const space = dataGetSpace?.getSpace as Space;
 
   React.useEffect(() => {
     if (spaces.length && !selectedSpaceId) {
@@ -134,9 +121,7 @@ function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageP
                   )}
                   onClick={() => {
                     setToggleMenuMobile(false);
-                    const params = new URLSearchParams(search.toString());
-                    params.set('space', selectedSpaceId);
-                    router.push(getUpgradeToProSectionHref(item.key) + '?' + params.toString());
+                    router.push(getUpgradeToProSectionHref(space.slug || space._id, item.key));
                   }}
                 >
                   <i className={clsx('w-5 h-5 aspect-square', item.icon)}></i>
