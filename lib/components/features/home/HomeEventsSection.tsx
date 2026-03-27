@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, drawer, Segment } from '$lib/components/core';
+import { Button, Segment } from '$lib/components/core';
 import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
 import { EventCardItem } from '$lib/components/features/EventCardItem';
 import {
@@ -20,7 +20,7 @@ import { useQuery } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-import { EventPane } from '../pane';
+import { openEventPane } from '../pane';
 
 export function HomeEventsSection() {
   const me = useMe();
@@ -130,14 +130,12 @@ export function HomeEventsSection() {
                 key={item._id}
                 item={item}
                 me={me}
-                onClick={() => router.push(`/e/${item.shortid}`)}
+                onClick={() => openEventPane(item._id)}
                 onManage={
                   [item.host, ...(item.cohosts || [])].includes(me?._id)
                     ? (e) => {
                         e.stopPropagation();
-                        drawer.open(EventPane, {
-                          props: { eventId: item._id },
-                        });
+                        openEventPane(item._id);
                       }
                     : undefined
                 }

@@ -17,6 +17,7 @@ import { truncateMiddle } from '$lib/utils/string';
 import { generateUrl } from '$lib/utils/cnd';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { formatWithTimezone } from '$lib/utils/date';
+import { openEventPane } from '../pane';
 // import { PassportCard } from '$lib/components/features/passport/PassportCard';
 
 const FROM_NOW = new Date().toISOString();
@@ -95,13 +96,14 @@ export function LemonHeadsHubRightCol({
                     alt={item.title}
                   />
                 )}
-                <div>
-                  <p
-                    className="group-hover:underline line-clamp-1 cursor-pointer"
-                    onClick={() => router.push(`/e/${item.shortid}`)}
+                <div className="min-w-0">
+                  <button
+                    type="button"
+                    className="group-hover:underline line-clamp-1 cursor-pointer text-left"
+                    onClick={() => openEventPane(item._id)}
                   >
                     {item.title}
-                  </p>
+                  </button>
                   <p className="text-tertiary text-sm">
                     {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
                   </p>
