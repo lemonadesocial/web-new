@@ -18,8 +18,6 @@ export function EventGuests() {
     <div className="page mx-auto py-7 px-4 md:px-0">
       <div className="space-y-8">
         <div className="space-y-5">
-          <h2 className="text-xl font-semibold">At a Glance</h2>
-          <GuestStats event={event} />
           <div className="flex gap-2 overflow-auto no-scrollbar">
             <Card.Root className="flex-1 min-w-fit" onClick={() => modal.open(InviteGuestsModal, { props: { event } })}>
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
@@ -71,6 +69,8 @@ export function EventGuests() {
               </Card.Content>
             </Card.Root>
           </div>
+          <h2 className="text-xl font-semibold">At a Glance</h2>
+          <GuestStats event={event} />
         </div>
 
         <PendingApprovalsOverview event={event} />
