@@ -83,7 +83,7 @@ function MessageItem({ message: item }: { message: Message }) {
             <CardList title={item.metadata.title} cards={item.metadata.cards} overflow={item.metadata.overflow} />
           )}
 
-          {!item.metadata?.actions?.length && (
+          {item.metadata?.actions?.length > 0 && (
             <div className="flex gap-2">
               {item.metadata?.actions.map(
                 (action: { type: string; props?: { onClick: () => void; icon: string; label: string } }, idx: number) =>
