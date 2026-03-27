@@ -64,7 +64,7 @@ function MessageItem({ message: item }: { message: Message }) {
               src={currentAgent.avatar}
               width={24}
               height={24}
-              className="rounded-full object-cover"
+              className="rounded-full object-cover aspect-square"
               alt={currentAgent.name || 'Agent'}
             />
           ) : (
