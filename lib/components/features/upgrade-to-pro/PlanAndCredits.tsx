@@ -24,6 +24,8 @@ import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
 import {
   buildCompareSections,
   buildWalletPlanOptions,
+  type ComparePlan,
+  type CompareSection,
   type FeatureConfig,
   getDisplayedMonthlyCryptoAmount,
   getCryptoSavingsAmount,
@@ -31,7 +33,6 @@ import {
   getDisplayedMonthlyFiatAmount,
   hasCryptoPriceForPeriod,
   mergePlansWithSubscriptions,
-  type CompareSection,
 } from './utils';
 
 type PlanCard = {

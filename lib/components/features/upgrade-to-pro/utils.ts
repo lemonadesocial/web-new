@@ -26,7 +26,7 @@ export type FeatureConfig = {
   tiers: Record<string, FeatureConfigTier>;
 };
 
-type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
+export type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
 type CompareValue = string | boolean;
 
 type CompareRow = {
