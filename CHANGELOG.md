@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.26.1](https://github.com/lemonadesocial/web-new/compare/v10.26.0...v10.26.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* improve coins pagination and column height ([5b7c4b1](https://github.com/lemonadesocial/web-new/commit/5b7c4b1323322009a5db99a53d90d1ee16a99285))
+* sync wallet toggle across upgrade plans ([dca61dd](https://github.com/lemonadesocial/web-new/commit/dca61dd7b3a0921fe811e98f7d385428ea1ab43d))
+
 ## [10.26.0](https://github.com/lemonadesocial/web-new/compare/v10.25.2...v10.26.0) (2026-03-27)
 
 
