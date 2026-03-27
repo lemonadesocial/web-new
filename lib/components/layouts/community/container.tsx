@@ -86,7 +86,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <Header
           hideLogo
-          className="hidden md:block sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
+          className="hidden md:flex sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
           title={
             isChat ? (
               <div className="flex items-center gap-3">

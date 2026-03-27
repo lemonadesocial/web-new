@@ -93,7 +93,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return config;
   });
 
-  let emptyTheme = null;
+  let emptyTheme;
 
   let themeData = defaultTheme;
   // NOTE: adapt existing config
