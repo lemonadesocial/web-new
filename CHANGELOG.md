@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.26.2](https://github.com/lemonadesocial/web-new/compare/v10.26.1...v10.26.2) (2026-03-27)
+
+
+### Bug Fixes
+
+* lint correct type ([94e34a0](https://github.com/lemonadesocial/web-new/commit/94e34a00f01e6cf71b5205ea6983c58690cacbb0))
+* open event side pane from event cards ([ade6672](https://github.com/lemonadesocial/web-new/commit/ade6672afe6955edd9b07bca726e927131832d3e))
+* use linkify match text in lemonheads links ([64862fc](https://github.com/lemonadesocial/web-new/commit/64862fcfa74afa8143e685854f21c5a851ca26d4))
+
 ## [10.26.1](https://github.com/lemonadesocial/web-new/compare/v10.26.0...v10.26.1) (2026-03-27)
 
 
