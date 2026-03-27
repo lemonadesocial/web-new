@@ -22,7 +22,11 @@ import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
 import { formatNumber } from '$lib/utils/number';
 import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
 import {
+  buildCompareSections,
   buildWalletPlanOptions,
+  type ComparePlan,
+  type CompareSection,
+  type FeatureConfig,
   getDisplayedMonthlyCryptoAmount,
   getCryptoSavingsAmount,
   getFirstCryptoPriceForPeriod,
@@ -45,21 +49,7 @@ type PlanCard = {
 };
 
 type PaymentMethod = 'card' | 'wallet';
-
-type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
 type CompareValue = string | boolean;
-
-type CompareRow = {
-  label: string;
-  values: Record<ComparePlan, CompareValue>;
-};
-
-type CompareSection = {
-  id: string;
-  title: string;
-  icon: string;
-  rows: CompareRow[];
-};
 
 const pricingPlans: PlanCard[] = [
   {
@@ -219,7 +209,7 @@ function CryptoPlanSavingsBadge({ item }: { item: PlanCard }) {
   );
 }
 
-export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
+export function PlanAndCredits({ space, data: subscriptionItems = [], featureConfigs = [] }: { space: Space; data?: SubscriptionItem[]; featureConfigs?: FeatureConfig[] }) {
   const router = useRouter();
   const mergedPlans = React.useMemo(() => mergePlansWithSubscriptions(pricingPlans, subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
@@ -255,158 +245,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     },
   });
 
-  const compareSections = React.useMemo<CompareSection[]>(() => {
-    const planByType = new Map(mergedPlans.map((item) => [item.type, item]));
-    const getCredits = (type: PlanCard['type']) =>
-      planByType.get(type)?.credits_per_month?.toLocaleString('en-US') ?? 'Custom';
-
-    return [
-      {
-        id: 'ai_agents',
-        title: 'AI & Agents',
-        icon: 'icon-robot',
-        rows: [
-          {
-            label: 'AI credits / month',
-            values: {
-              pro: getCredits(SubscriptionItemType.Pro),
-              plus: getCredits(SubscriptionItemType.Plus),
-              max: getCredits(SubscriptionItemType.Max),
-              enterprise: getCredits('enterprise'),
-            },
-          },
-          {
-            label: 'Top-up multiplier bonus',
-            values: {
-              pro: '1x (no bonus)',
-              plus: '1.5x',
-              max: '2x',
-              enterprise: 'Custom',
-            },
-          },
-          {
-            label: 'Advanced AI models (Sonnet, GPT-4o, Gemini Pro)',
-            values: { pro: 'Unlimited', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'Premium AI models (Opus)',
-            values: { pro: false, plus: true, max: true, enterprise: true },
-          },
-          {
-            label: 'Custom AI agents',
-            values: { pro: '1', plus: '3', max: '10', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'AI tool categories',
-            values: {
-              pro: 'Basic, Standard',
-              plus: 'Basic, Standard, Advanced',
-              max: 'Basic, Standard, Advanced',
-              enterprise: 'All',
-            },
-          },
-          {
-            label: 'AI page generations / month',
-            values: { pro: '20', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'domain_branding',
-        title: 'Domain & Branding',
-        icon: 'icon-globe',
-        rows: [
-          { label: 'Custom event slug', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Custom domain', values: { pro: false, plus: true, max: true, enterprise: true } },
-          { label: 'Remove Lemonade branding', values: { pro: true, plus: true, max: true, enterprise: true } },
-        ],
-      },
-      {
-        id: 'design_page_builder',
-        title: 'Design & Page Builder',
-        icon: 'icon-palette-outline',
-        rows: [
-          {
-            label: 'Premium themes',
-            values: { pro: '10', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'Page builder sections',
-            values: {
-              pro: 'All sections',
-              plus: 'All sections + Containers',
-              max: 'All sections + Containers',
-              enterprise: 'Full access',
-            },
-          },
-          {
-            label: 'Custom code injection',
-            values: { pro: 'CSS', plus: 'CSS', max: 'CSS, HTML', enterprise: 'CSS, HTML, JS' },
-          },
-        ],
-      },
-      {
-        id: 'newsletter_email',
-        title: 'Newsletter & Email',
-        icon: 'icon-email',
-        rows: [
-          { label: 'Newsletter access', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Sends / month', values: { pro: '4', plus: '12', max: '30', enterprise: 'Unlimited' } },
-          {
-            label: 'Recipients / send',
-            values: { pro: '1,000', plus: '5,000', max: '25,000', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'integrations',
-        title: 'Integrations',
-        icon: 'icon-connector-line',
-        rows: [
-          {
-            label: 'Connectors',
-            values: { pro: 'Google Sheets, Airtable', plus: 'All', max: 'All', enterprise: 'All' },
-          },
-          { label: 'API access', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Marketplace seller', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Referral stablecoin rewards', values: { pro: true, plus: true, max: true, enterprise: true } },
-          {
-            label: 'Config version history',
-            values: { pro: '20', plus: '50', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'api_access',
-        title: 'API access',
-        icon: 'icon-api',
-        rows: [
-          { label: 'Max API keys', values: { pro: '3', plus: '10', max: '25', enterprise: '999' } },
-          { label: 'Rate limit / min', values: { pro: '60', plus: '120', max: '300', enterprise: '1,000' } },
-          { label: 'Burst / sec', values: { pro: '3', plus: '5', max: '15', enterprise: '50' } },
-          { label: 'Max page size', values: { pro: '50', plus: '100', max: '100', enterprise: '250' } },
-          {
-            label: 'Monthly quota',
-            values: { pro: '10,000', plus: '50,000', max: '200,000', enterprise: '1,000,000' },
-          },
-          {
-            label: 'Overage enabled',
-            values: { pro: false, plus: '($2.00 / 1k)', max: '($1.50 / 1k)', enterprise: '($1.00 / 1k)' },
-          },
-          { label: 'Hard cap', values: { pro: '10,500', plus: '100,000', max: '500,000', enterprise: 'Unlimited' } },
-          {
-            label: 'Scopes',
-            values: {
-              pro: 'events: read',
-              plus: 'events: read, write subscribers: read, write',
-              max: 'events: read, write subscribers: read, write',
-              enterprise: 'events: read, write subscribers: read, write',
-            },
-          },
-        ],
-      },
-    ];
-  }, [mergedPlans]);
+  const compareSections = React.useMemo<CompareSection[]>(
+    () => buildCompareSections(featureConfigs),
+    [featureConfigs],
+  );
 
   const previewSection = compareSections[0];
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
