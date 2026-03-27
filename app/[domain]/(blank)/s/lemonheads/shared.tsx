@@ -470,7 +470,7 @@ function renderTextWithLinks(text?: string) {
     // Create a link element for the match
     elements.push(
       <a key={match.index} href={match.url} target="_blank" rel="noopener noreferrer" className="underline">
-        {match.raw}
+        {match.text}
       </a>,
     );
 
