@@ -184,12 +184,12 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
 export function Tokens() {
   return (
     <QuickBuyProvider>
-      <div className="flex flex-col gap-6 pt-16 md:pt-12 px-8 max-sm:px-4 pb-12 flex flex-col">
+      <div className="flex min-h-full flex-col gap-6 px-8 pb-12 pt-16 max-sm:px-4 md:h-full md:pt-12">
         <h1 className="text-2xl font-semibold">Coins</h1>
-        <div className="flex flex-col gap-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-3">
           <Toolbar />
 
-          <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
+          <div className="flex flex-col gap-4 md:grid md:min-h-0 md:flex-1 md:grid-cols-3 md:items-stretch">
             <NewTokensList />
             <GraduatingTokensList />
             <RecentlyGraduatedTokensList />
@@ -266,12 +266,12 @@ function NewTokensList() {
   const pools = data?.PoolCreated || [];
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
+    <Card.Root className="flex flex-1 flex-col max-sm:max-h-175 md:h-full md:min-h-0">
       <Card.Header>
         <p>New Tokens</p>
       </Card.Header>
 
-      <div className="flex-1 overflow-auto no-scrollbar">
+      <div className="min-h-0 flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
             {loading
@@ -342,12 +342,12 @@ function GraduatingTokensList() {
   }, [pools, fairLaunches]);
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
+    <Card.Root className="flex flex-1 flex-col max-sm:max-h-175 md:h-full md:min-h-0">
       <Card.Header>
         <p>Graduating Tokens</p>
       </Card.Header>
 
-      <div className="flex-1 overflow-auto no-scrollbar">
+      <div className="min-h-0 flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
             {loading
@@ -416,12 +416,12 @@ function RecentlyGraduatedTokensList() {
   }, [pools, fairLaunches]);
 
   return (
-    <Card.Root className="flex flex-col flex-1 max-sm:max-h-175 h-full">
+    <Card.Root className="flex flex-1 flex-col max-sm:max-h-175 md:h-full md:min-h-0">
       <Card.Header>
         <p>Recently Graduated</p>
       </Card.Header>
 
-      <div className="flex-1 overflow-auto no-scrollbar">
+      <div className="min-h-0 flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
             {loading
