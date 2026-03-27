@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.26.0](https://github.com/lemonadesocial/web-new/compare/v10.25.2...v10.26.0) (2026-03-27)
+
+
+### Features
+
+* update lemonade stand ui ([bd5283f](https://github.com/lemonadesocial/web-new/commit/bd5283f226a69cbddfc57b9342d96a3e6f323313))
+
+
+### Bug Fixes
+
+* open connector actions when clicking connected cards ([51abdc6](https://github.com/lemonadesocial/web-new/commit/51abdc64bc7169a3fbcc453a165898ddf902c61a))
+
 ## [10.25.2](https://github.com/lemonadesocial/web-new/compare/v10.25.1...v10.25.2) (2026-03-26)
 
 
