@@ -11,21 +11,27 @@ import {
   SubscriptionItem,
 } from '$lib/graphql/generated/backend/graphql';
 import { isObjectId } from '$lib/utils/helpers';
+import { cookies } from 'next/headers';
 
 export default async function Page({ params }: { params: Promise<{ section: string; uid: string }> }) {
-  const section = (await params).section;
+  const client = getClient();
+  const cookieStore = await cookies();
+
+  const { uid, section } = await params;
+  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+
+  const { data: dataGetSpace } = await client.query({
+    query: GetSpaceDocument,
+    variables,
+    headers: { Cookie: decodeURIComponent(cookieStore?.toString()) },
+    fetchPolicy: 'network-only',
+  });
+  const space = dataGetSpace?.getSpace as Space;
+  if (!space) return notFound();
+
   const activeSection = getUpgradeToProSectionKey(section);
 
   if (!activeSection) return notFound();
-
-  const client = getClient();
-  const uid = (await params).uid;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
-  console.log(uid);
-
-  const { data: dataGetSpace } = await client.query({ query: GetSpaceDocument, variables });
-  const space = dataGetSpace?.getSpace as Space;
-  if (!space) return notFound();
 
   const { data } = await client.query({ query: ListSubscriptionItemsDocument });
   const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
