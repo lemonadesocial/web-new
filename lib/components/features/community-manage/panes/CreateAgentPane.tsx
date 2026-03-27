@@ -2,9 +2,17 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Button, Textarea, FileInput, Card, Menu, MenuItem, Input, Divider, drawer, modal, toast } from '$lib/components/core';
+import { Button, Textarea, FileInput, Menu, MenuItem, Input, Divider, drawer, modal, toast } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { Space, Event, SearchSpacesDocument } from '$lib/graphql/generated/backend/graphql';
+import {
+  Space,
+  Event,
+  GetEventsDocument,
+  GetSpacesDocument,
+  SearchSpacesDocument,
+  SpaceFragmentDoc,
+} from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { CreateAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { WelcomeMessagePane } from './WelcomeMessagePane';
 import { BackstoryPane } from './BackstoryPane';
@@ -14,14 +22,15 @@ import { AnswerStylePane, AnswerStyleValue, ANSWER_STYLES } from './AnswerStyleP
 import { OpenAIKeyPane } from './OpenAIKeyPane';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useQuery, useMutation } from '$lib/graphql/request';
+import { getDefaultActiveSpaces, getScopeSpace, type AiManageScope } from '$lib/components/features/ai/manage/shared';
 import { communityAvatar } from '$lib/utils/community';
 import { uploadFiles } from '$lib/utils/file';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import type { Config, Document } from '$lib/graphql/generated/ai/graphql';
-import { GetEventsDocument } from '$lib/graphql/generated/backend/graphql';
+import type { SpaceFragment } from '$lib/graphql/generated/backend/graphql';
 
 interface Props {
-  space: Space;
+  scope: AiManageScope;
   config?: Config;
   onCreated?: () => void;
 }
@@ -59,27 +68,56 @@ function getAnswerStyleFromConfig(temperature?: number | null, topP?: number | n
   return undefined;
 }
 
-export function CreateAgentPane({ space, config, onCreated }: Props) {
+export function CreateAgentPane({ scope, config, onCreated }: Props) {
   const [avatar, setAvatar] = React.useState<File | null>(null);
   const isEditMode = !!config;
+  const scopeSpace = getScopeSpace(scope);
+  const defaultActiveSpaces = React.useMemo(() => getDefaultActiveSpaces(scope), [scope]);
+  const nameInputId = React.useId();
+  const jobTitleInputId = React.useId();
+  const shortBioInputId = React.useId();
+  const activeInLabelId = React.useId();
 
   const welcomeMetadata = config?.welcomeMetadata as { events?: string[] } | null | undefined;
   const spotlightEventIds = welcomeMetadata?.events || [];
-
-  const { data: eventsData } = useQuery(GetEventsDocument, {
-    variables: {
+  const eventQueryVariables = React.useMemo(
+    () => ({
       id: spotlightEventIds.length > 0 ? spotlightEventIds : undefined,
       limit: spotlightEventIds.length || 100,
-    },
+    }),
+    [spotlightEventIds],
+  );
+
+  const { data: eventsData } = useQuery(GetEventsDocument, {
+    variables: eventQueryVariables,
     skip: !isEditMode || spotlightEventIds.length === 0,
-  }, aiChatClient);
+  });
 
   const initialSpotlightEvents = React.useMemo(() => {
     if (!isEditMode || !eventsData?.getEvents) return [];
     return eventsData.getEvents as Event[];
   }, [isEditMode, eventsData]);
 
-  const { register, watch, setValue, handleSubmit, formState: { errors }, reset } = useForm<AgentFormData>({
+  const shouldLoadActiveSpaces = isEditMode && (config?.spaces?.length ?? 0) > 0;
+  const mySpacesQueryVariables = React.useMemo(() => ({ with_my_spaces: true }), []);
+  const { data: mySpacesData } = useQuery(GetSpacesDocument, {
+    variables: mySpacesQueryVariables,
+    skip: !shouldLoadActiveSpaces,
+    fetchPolicy: 'network-only',
+  });
+
+  const resolvedActiveSpaces = React.useMemo(() => {
+    if (!shouldLoadActiveSpaces) {
+      return null;
+    }
+
+    const allSpaces = (mySpacesData?.listSpaces as Space[]) || [];
+    const activeSpaceIds = new Set(config?.spaces ?? []);
+
+    return allSpaces.filter((item) => activeSpaceIds.has(item._id));
+  }, [config?.spaces, mySpacesData?.listSpaces, shouldLoadActiveSpaces]);
+
+  const { register, watch, setValue, handleSubmit, formState: { errors } } = useForm<AgentFormData>({
     defaultValues: {
       name: config?.name || '',
       jobTitle: config?.job || '',
@@ -88,18 +126,40 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
       welcomeMessage: config?.welcomeMessage || '',
       backstory: config?.backstory || '',
       spotlightEvents: [],
-      activeIn: [space],
+      activeIn: defaultActiveSpaces,
       answerStyle: getAnswerStyleFromConfig(config?.temperature, config?.topP),
       openAIKey: config?.openaiApiKey || undefined,
       documents: (config?.documentsExpanded ?? []).map((d) => ({ _id: d._id, title: d.title, text: d.text })),
     },
   });
+  const setFormValue = setValue as (
+    field: keyof AgentFormData,
+    value: AgentFormData[keyof AgentFormData],
+  ) => void;
 
   React.useEffect(() => {
     if (isEditMode && initialSpotlightEvents.length > 0) {
-      setValue('spotlightEvents', initialSpotlightEvents);
+      setFormValue('spotlightEvents', initialSpotlightEvents);
     }
-  }, [isEditMode, initialSpotlightEvents, setValue]);
+  }, [initialSpotlightEvents, isEditMode, setValue]);
+
+  React.useEffect(() => {
+    if (!resolvedActiveSpaces) {
+      return;
+    }
+
+    setFormValue('activeIn', resolvedActiveSpaces.length > 0 ? resolvedActiveSpaces : defaultActiveSpaces);
+  }, [defaultActiveSpaces, resolvedActiveSpaces, setValue]);
+
+  const avatarPreviewUrl = React.useMemo(() => (avatar ? URL.createObjectURL(avatar) : null), [avatar]);
+
+  React.useEffect(() => {
+    return () => {
+      if (avatarPreviewUrl) {
+        URL.revokeObjectURL(avatarPreviewUrl);
+      }
+    };
+  }, [avatarPreviewUrl]);
 
   const [createAgent, { loading: creating }] = useMutation(CreateAiConfigDocument, {
     onComplete: () => {
@@ -133,6 +193,13 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
   const activeIn = watch('activeIn') || [];
   const spotlightEvents = watch('spotlightEvents') || [];
   const documents = watch('documents') || [];
+  const appendDocument = React.useCallback((document: Pick<Document, '_id' | 'title' | 'text'>) => {
+    const nextDocuments: AgentFormData['documents'] = [
+      ...documents,
+      { _id: document._id, title: document.title, text: document.text },
+    ];
+    setFormValue('documents', nextDocuments);
+  }, [documents, setFormValue]);
 
   const onSubmit = async (data: AgentFormData) => {
     try {
@@ -212,7 +279,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     <>
                       <div className="size-15.5 rounded-full flex items-center justify-center border-2 border-card-border">
                         <img
-                          src={avatar ? URL.createObjectURL(avatar) : (config?.avatar || `${ASSET_PREFIX}/assets/images/agent.png`)}
+                          src={avatarPreviewUrl || config?.avatar || `${ASSET_PREFIX}/assets/images/agent.png`}
                           alt="Agent avatar"
                           className="size-full rounded-full object-cover"
                         />
@@ -230,11 +297,12 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
               </div>
 
               <div className="flex-1 flex flex-col gap-2">
-                <label className="text-sm font-medium text-secondary">
+                <label htmlFor={nameInputId} className="text-sm font-medium text-secondary">
                   Name <span className="text-error-500">*</span>
                 </label>
                 <div className="flex gap-2">
                   <Input
+                    id={nameInputId}
                     variant="outlined"
                     {...register('name', { required: 'Name is required' })}
                     placeholder="Culture Fest Agent"
@@ -260,7 +328,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                             iconLeft="icon-globe"
                             iconRight={isPublic ? 'icon-done' : ''}
                             onClick={() => {
-                              setValue('isPublic', true);
+                              setFormValue('isPublic', true);
                               toggle();
                             }}
                           />
@@ -269,7 +337,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                             iconLeft="icon-sparkles"
                             iconRight={!isPublic ? 'icon-done' : ''}
                             onClick={() => {
-                              setValue('isPublic', false);
+                              setFormValue('isPublic', false);
                               toggle();
                             }}
                           />
@@ -286,12 +354,13 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1">
-                <label className="text-sm font-medium text-secondary">
+                <label htmlFor={jobTitleInputId} className="text-sm font-medium text-secondary">
                   Job Title <span className="text-error-500">*</span>
                 </label>
                 <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <Input
+                id={jobTitleInputId}
                 variant="outlined"
                 {...register('jobTitle', { required: 'Job Title is required' })}
                 placeholder="General Assistant"
@@ -304,12 +373,13 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1">
-                <label className="text-sm font-medium text-secondary">
+                <label htmlFor={shortBioInputId} className="text-sm font-medium text-secondary">
                   Short Bio <span className="text-error-500">*</span>
                 </label>
                 <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <Textarea
+                id={shortBioInputId}
                 {...register('shortBio', { required: 'Short Bio is required' })}
                 rows={3}
                 variant="outlined"
@@ -322,13 +392,15 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1">
-                <label className="text-sm font-medium text-secondary">Active In</label>
+                <p id={activeInLabelId} className="text-sm font-medium text-secondary">
+                  Active In
+                </p>
                 <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <CommunitySelector
+                labelledById={activeInLabelId}
                 selectedSpaces={activeIn}
-                onSpacesChange={(spaces) => setValue('activeIn', spaces)}
-                space={space}
+                onSpacesChange={(spaces) => setFormValue('activeIn', spaces)}
               />
             </div>
           </div>
@@ -358,13 +430,13 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                         title="Create New Knowledge Base"
                         iconLeft="icon-plus"
                         onClick={() => {
-                          toggle();
+                        toggle();
                         drawer.open(AddKnowledgeBasePane, {
                           props: {
-                            space,
+                            scope,
                             skipAvailableTo: true,
                             onCreated: (document) => {
-                              setValue('documents', [...documents, { _id: document._id, title: document.title, text: document.text }]);
+                              appendDocument(document);
                             },
                           },
                         });
@@ -377,9 +449,10 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                           toggle();
                           drawer.open(SelectExistingKnowledgeBasePane, {
                             props: {
+                              scope,
                               currentDocumentIds: documents.map(d => d._id),
                               onSelected: (document) => {
-                                setValue('documents', [...documents, { _id: document._id, title: document.title, text: document.text }]);
+                                appendDocument(document);
                               },
                             },
                           });
@@ -390,7 +463,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                 </Menu.Content>
               </Menu.Root>
             </div>
-            <div className="flex flex-col divide-y divide-(--color-divider) bg-card rounded-md border border-card-border">
+            <div className="flex flex-col divide-y divide-card-border rounded-md border border-card-border bg-card">
               <div className="flex items-center gap-3 px-4 py-3">
                 <div className="size-7 rounded-sm flex items-center justify-center bg-card">
                   <i aria-hidden="true" className="icon-info size-4 text-tertiary" />
@@ -419,10 +492,14 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                   <Menu.Root>
                     <Menu.Trigger>
                       {({ toggle }) => (
-                        <i
-                          className="icon-more-horiz cursor-pointer size-5 text-tertiary hover:text-primary"
+                        <button
+                          type="button"
+                          aria-label={`Open actions for ${doc.title || 'knowledge base'}`}
+                          className="text-tertiary hover:text-primary"
                           onClick={toggle}
-                        />
+                        >
+                          <i aria-hidden="true" className="icon-more-horiz size-5" />
+                        </button>
                       )}
                     </Menu.Trigger>
                     <Menu.Content className="p-1">
@@ -431,7 +508,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                           title="Remove"
                           iconLeft="icon-delete"
                           onClick={() => {
-                            setValue(
+                            setFormValue(
                               'documents',
                               documents.filter((d) => d._id !== doc._id),
                             );
@@ -450,17 +527,17 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
 
           <div className="flex flex-col gap-4">
             <p className="text-lg">Advanced Settings</p>
-            <div className="bg-card rounded-md border border-card-border divide-y divide-(--color-divider)">
+            <div className="rounded-md border border-card-border bg-card divide-y divide-card-border">
               <button
                 onClick={() => {
                   drawer.open(WelcomeMessagePane, {
                     props: {
                       initialValue: welcomeMessage,
                       initialSpotlightEvents: spotlightEvents,
-                      space,
+                      space: activeIn[0] || scopeSpace,
                       onSave: (value: string, spotlightEvents: Event[]) => {
-                        setValue('welcomeMessage', value);
-                        setValue('spotlightEvents', spotlightEvents);
+                        setFormValue('welcomeMessage', value);
+                        setFormValue('spotlightEvents', spotlightEvents);
                       },
                     },
                   });
@@ -482,7 +559,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     props: {
                       initialValue: backstory,
                       onSave: (value: string) => {
-                        setValue('backstory', value);
+                        setFormValue('backstory', value);
                       },
                     },
                   });
@@ -504,7 +581,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     props: {
                       initialValue: answerStyle,
                       onSave: (value: AnswerStyleValue) => {
-                        setValue('answerStyle', value);
+                        setFormValue('answerStyle', value);
                       },
                     },
                   });
@@ -526,7 +603,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     props: {
                       initialValue: openAIKey ?? '',
                       onSave: (value: string) => {
-                        setValue('openAIKey', value);
+                        setFormValue('openAIKey', value);
                       },
                     },
                   });
@@ -561,27 +638,39 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
   );
 }
 
-function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selectedSpaces: Space[]; onSpacesChange: (spaces: Space[]) => void; space: Space }) {
+function CommunitySelector({
+  labelledById,
+  selectedSpaces,
+  onSpacesChange,
+}: {
+  labelledById: string;
+  selectedSpaces: Space[];
+  onSpacesChange: (spaces: Space[]) => void;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
-
-  const { data, loading } = useQuery(SearchSpacesDocument, {
-    variables: {
+  const searchSpacesVariables = React.useMemo(
+    () => ({
       input: { with_my_spaces: true },
       limit: 50,
       skip: 0,
-    },
+    }),
+    [],
+  );
+
+  const { data, loading } = useQuery(SearchSpacesDocument, {
+    variables: searchSpacesVariables,
     skip: !isOpen,
     fetchPolicy: 'network-only',
   });
+  const searchableSpaces = useFragment(SpaceFragmentDoc, data?.searchSpaces?.items ?? []);
 
   const availableSpaces = React.useMemo(() => {
-    const spaces = data?.searchSpaces?.items || [];
     const selectedIds = new Set(selectedSpaces.map(s => s._id));
-    return spaces.filter(space => !selectedIds.has(space._id));
-  }, [data, selectedSpaces]);
+    return searchableSpaces.filter(space => !selectedIds.has(space._id));
+  }, [searchableSpaces, selectedSpaces]);
 
-  const handleSelectSpace = (space: Space) => {
-    onSpacesChange([...selectedSpaces, space]);
+  const handleSelectSpace = (space: SpaceFragment) => {
+    onSpacesChange([...selectedSpaces, space as Space]);
   };
 
   const handleRemoveSpace = (spaceId: string) => {
@@ -592,15 +681,23 @@ function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selected
     <Menu.Root isOpen={isOpen} onOpenChange={setIsOpen} placement="bottom-start">
       <Menu.Trigger className="w-full">
         <div
-          className="h-10 w-full rounded-sm bg-background/64 border border-primary/8 hover:border-primary focus-within:border-primary p-1 flex items-center gap-2 cursor-pointer transition-colors"
-          onClick={() => setIsOpen(true)}
+          className="relative h-10 w-full rounded-sm border border-primary/8 bg-background/64 p-1 transition-colors hover:border-primary focus-within:border-primary"
         >
-          <div className="flex-1 flex flex-wrap gap-0.5 items-center">
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-haspopup="menu"
+            aria-labelledby={labelledById}
+            className="absolute inset-0 rounded-sm"
+            onClick={() => setIsOpen(true)}
+          />
+          <div className="relative z-10 flex h-full items-center gap-2">
+            <div className="flex-1 flex flex-wrap gap-0.5 items-center min-w-0">
             {selectedSpaces.length > 0 ? (
               selectedSpaces.map((space) => (
                 <div
                   key={space._id}
-                  className="flex items-center gap-1.5 bg-card rounded-xs px-2.5 py-1.5"
+                  className="pointer-events-none flex items-center gap-1.5 rounded-xs bg-card px-2.5 py-1.5"
                 >
                   <img
                     src={communityAvatar(space)}
@@ -608,20 +705,25 @@ function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selected
                     className="size-4 rounded-xs object-cover"
                   />
                   <span className="text-sm">{space.title}</span>
-                  <i
-                    className="icon-x size-4 text-tertiary cursor-pointer hover:text-secondary transition-colors"
+                  <button
+                    type="button"
+                    aria-label={`Remove ${space.title || 'community'}`}
+                    className="pointer-events-auto text-tertiary transition-colors hover:text-secondary"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemoveSpace(space._id);
                     }}
-                  />
+                  >
+                    <i aria-hidden="true" className="icon-x size-4" />
+                  </button>
                 </div>
               ))
             ) : (
-              <span className="text-tertiary font-medium ml-2">Select communities</span>
+              <span className="ml-2 pointer-events-none font-medium text-tertiary">Select communities</span>
             )}
+            </div>
+            <i aria-hidden="true" className="icon-chevron-down pointer-events-none size-5 shrink-0 text-tertiary" />
           </div>
-          <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary shrink-0" />
         </div>
       </Menu.Trigger>
 
@@ -642,7 +744,7 @@ function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selected
               className="flex items-center gap-3 px-3 py-2 text-left w-full hover:bg-background/64 transition-colors"
             >
               <img
-                src={communityAvatar(space)}
+                src={communityAvatar(space as Space)}
                 alt={space.title || ''}
                 className="size-8 rounded-sm object-cover"
               />

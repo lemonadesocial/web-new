@@ -4,31 +4,39 @@ import clsx from 'clsx';
 
 import { Button, drawer, toast, Card, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { ListDocumentsDocument, type Document } from '$lib/graphql/generated/ai/graphql';
+import { GetAiDocumentsDocument, type Document } from '$lib/graphql/generated/ai/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
+import { getAiDocumentFilter, type AiManageScope } from '$lib/components/features/ai/manage/shared';
 
 interface Props {
   currentDocumentIds: string[];
+  scope: AiManageScope;
   onSelected: (document: Pick<Document, '_id' | 'title' | 'text'>) => void;
 }
 
-export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected }: Props) {
+export function SelectExistingKnowledgeBasePane({ currentDocumentIds, scope, onSelected }: Props) {
   const [selectedDocumentIds, setSelectedDocumentIds] = React.useState<string[]>([]);
+  const queryVariables = React.useMemo(() => ({ filter: getAiDocumentFilter(scope) }), [scope]);
 
   const { data, loading } = useQuery(
-    ListDocumentsDocument,
-    {},
+    GetAiDocumentsDocument,
+    {
+      variables: queryVariables,
+      fetchPolicy: 'network-only',
+    },
     aiChatClient,
   );
 
-  const allDocuments = data?.listDocuments?.items ?? [];
+  const allDocuments = data?.documents?.items ?? [];
+  const currentDocumentIdSet = React.useMemo(() => new Set(currentDocumentIds), [currentDocumentIds]);
+  const selectedDocumentIdSet = React.useMemo(() => new Set(selectedDocumentIds), [selectedDocumentIds]);
 
   const availableDocuments = React.useMemo(() => {
     return allDocuments
-      .filter((doc) => !currentDocumentIds.includes(doc._id))
+      .filter((doc) => !currentDocumentIdSet.has(doc._id))
       .map((doc) => ({ _id: doc._id, title: doc.title, text: doc.text }));
-  }, [allDocuments, currentDocumentIds]);
+  }, [allDocuments, currentDocumentIdSet]);
 
   const handleToggleDocument = (documentId: string) => {
     setSelectedDocumentIds((prev) => {
@@ -46,7 +54,7 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
     }
 
     const documentsToAdd = availableDocuments.filter((doc) =>
-      selectedDocumentIds.includes(doc._id)
+      selectedDocumentIdSet.has(doc._id)
     );
 
     if (documentsToAdd.length !== selectedDocumentIds.length) {
@@ -106,11 +114,13 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
         ) : (
           <div className="flex flex-col gap-2">
             {availableDocuments.map((doc) => (
-              <div
+              <button
                 key={doc._id}
+                type="button"
+                aria-pressed={selectedDocumentIdSet.has(doc._id)}
                 className={clsx(
                   'flex items-center gap-3 p-3 rounded-md bg-card hover:bg-card/80 transition-colors cursor-pointer border',
-                  selectedDocumentIds.includes(doc._id) ? 'border-primary' : 'border-transparent'
+                  selectedDocumentIdSet.has(doc._id) ? 'border-primary' : 'border-transparent'
                 )}
                 onClick={() => handleToggleDocument(doc._id)}
               >
@@ -124,13 +134,13 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
                   </p>
                 </div>
                 <div className="relative flex items-center justify-center shrink-0">
-                  {selectedDocumentIds.includes(doc._id) ? (
+                  {selectedDocumentIdSet.has(doc._id) ? (
                     <i aria-hidden="true" className="icon-check size-5 text-primary" />
                   ) : (
                     <i aria-hidden="true" className="icon-circle-outline size-5 text-quaternary" />
                   )}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}

@@ -15,7 +15,7 @@ interface SegmentItem<T> {
 }
 
 interface SegmentProps<T> {
-  items: SegmentItem<T>[];
+  items: readonly SegmentItem<T>[];
   selected?: T;
   onSelect?: (item: SegmentItem<T>) => void;
   className?: string;

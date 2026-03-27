@@ -13,7 +13,7 @@ import { PaymentLinkCard } from './PaymentLinkCard';
 import { AtlasReceiptCard } from './AtlasReceiptCard';
 import { TicketComparePane } from '../panes/TicketComparePane';
 import type { CardItem, OverflowData } from './utils';
-import { EventCardItem } from '$lib/components/features/EventList';
+import { EventCardItem } from '$lib/components/features/EventCardItem';
 import Link from 'next/link';
 
 interface CardListProps {
