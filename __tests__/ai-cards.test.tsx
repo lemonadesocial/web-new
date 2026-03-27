@@ -119,7 +119,7 @@ vi.mock('$lib/components/features/modals/GetVerifiedModal', () => ({
 }));
 
 // Mock EventCardItem (used by spotlight_event in CardList)
-vi.mock('$lib/components/features/EventList', () => ({
+vi.mock('$lib/components/features/EventCardItem', () => ({
   EventCardItem: ({ item }: { item: any }) => <div data-testid="event-card-item">{item.title}</div>,
 }));
 

@@ -98,3 +98,28 @@ query ListDocuments($skip: Int, $limit: Int) {
     total
   }
 }
+
+query GetAiDocuments($filter: DocumentFilter, $limit: Int, $startAfter: String, $endBefore: String) {
+  documents(filter: $filter, limit: $limit, startAfter: $startAfter, endBefore: $endBefore) {
+    items {
+      _id
+      createdAt
+      updatedAt
+      metadata
+      title
+      text
+      isPublic
+      user
+      userExpanded {
+        _id
+        name
+        image_avatar
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+    }
+  }
+}
