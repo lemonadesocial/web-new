@@ -6,7 +6,8 @@ import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Segment } from '$lib/components/core';
-import { EventCardItem } from '$lib/components/features/EventList';
+import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
+import { EventCardItem } from '$lib/components/features/EventCardItem';
 import {
   Event,
   GetSpacesDocument,
@@ -19,8 +20,6 @@ import { useQuery } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-
-import { PageCardItem, PageCardItemSkeleton } from '../../../../app/[domain]/(default)/shared';
 
 export function HomeEventsSection() {
   const me = useMe();
@@ -121,7 +120,7 @@ export function HomeEventsSection() {
         >
           {eventsLoading &&
             Array.from({ length: 3 }).map((_, i) => (
-              <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+              <CommunityHubCardSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
             ))}
           {!eventsLoading && events.length === 0 && (
             <div
@@ -162,7 +161,7 @@ export function HomeEventsSection() {
         >
           {spacesLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+              <CommunityHubCardSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
             ))}
           {!spacesLoading && spaces.length === 0 && (
             <div
@@ -177,7 +176,7 @@ export function HomeEventsSection() {
             spaces
               .sort((a, _) => (a.personal ? -1 : 1))
               .map((item) => (
-                <PageCardItem
+                <CommunityHubCard
                   key={item._id}
                   title={item.title}
                   subtitle={`${item.followers_count || 0} Subscribers`}

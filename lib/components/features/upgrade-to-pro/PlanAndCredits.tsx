@@ -38,12 +38,13 @@ type PlanCard = {
   price?: number | null;
   annual: boolean | null;
   featureTitle: string;
-  method?: 'card' | 'wallet';
   features: string[];
   pricing?: SubscriptionItem['pricing'];
   credits_per_month?: number | null;
   crypto_prices?: SubscriptionItem['crypto_prices'];
 };
+
+type PaymentMethod = 'card' | 'wallet';
 
 type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
 type CompareValue = string | boolean;
@@ -66,7 +67,6 @@ const pricingPlans: PlanCard[] = [
     description: 'More AI, more reach — for organizers who are scaling up.',
     annual: false,
     featureTitle: 'All features in Pro, and:',
-    method: 'card',
     features: [
       '{{credits_per_month}} AI credits per month (with 1.5x top-up bonus)',
       'Premium AI models (Opus)',
@@ -88,7 +88,6 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Pro,
     description: 'For creators and organizers ready to build, sell, and grow.',
     annual: false,
-    method: 'card',
     featureTitle: 'All features in Free, and:',
     features: [
       '{{credits_per_month}} monthly AI credits',
@@ -113,7 +112,6 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Max,
     description: 'High-volume tools for serious event businesses. No compromises.',
     annual: false,
-    method: 'card',
     featureTitle: 'All features in Plus, and:',
     features: [
       '{{credits_per_month}} AI credits per month (with 2x top-up bonus)',
@@ -228,6 +226,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     [subscriptionItems],
   );
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>('card');
   const [optimisticSubscriptionTier, setOptimisticSubscriptionTier] = React.useState<SubscriptionItemType | null>(null);
   const [optimisticSubscriptionAnnual, setOptimisticSubscriptionAnnual] = React.useState<boolean | null>(null);
   const activeSubscriptionTier = optimisticSubscriptionTier ?? (space.subscription_tier || SubscriptionItemType.Free);
@@ -485,9 +484,21 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       0,
     );
 
+  const getPlanPaymentMethod = React.useCallback(
+    (item: PlanCard): PaymentMethod => {
+      const annual = Boolean(item.annual);
+      return paymentMethod === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)
+        ? 'wallet'
+        : 'card';
+    },
+    [paymentMethod],
+  );
+
   const handlePlanCheckout = React.useCallback(
     (item: PlanCard, tier: SubscriptionTierEnum) => {
-      if (item.method === 'wallet') {
+      const selectedPaymentMethod = getPlanPaymentMethod(item);
+
+      if (selectedPaymentMethod === 'wallet') {
         const annual = Boolean(item.annual);
 
         if (!hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
@@ -522,7 +533,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
       handleUpgrade(tier, Boolean(item.annual));
     },
-    [data, handleUpgrade, router, space, subscriptionItems],
+    [data, getPlanPaymentMethod, handleUpgrade, router, space, subscriptionItems],
   );
 
   return (
@@ -614,6 +625,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           {[...data]
             .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
             .map((item) => {
+              const selectedPaymentMethod = getPlanPaymentMethod(item);
+
               return (
                 <Card.Root key={item.type}>
                   <Card.Content className="p-0">
@@ -625,7 +638,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
                       <div className="flex flex-col">
                         <div className="flex justify-between items-center flex-1 min-h-8">
-                          {item.method === 'wallet' &&
+                          {selectedPaymentMethod === 'wallet' &&
                           item.pricing &&
                           hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
                             <>
@@ -648,7 +661,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                   <p className="text-tertiary">per month</p>
                                 </div>
                               )}
-                              {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
+                              {item.annual && item.pricing?.annual_price && selectedPaymentMethod !== 'wallet' && (
                                 <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
                                   Save {calculateFiatAnnualSavings(item.pricing)}
                                 </Badge>
@@ -676,16 +689,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                 setData((prev) =>
                                   prev.map((i) => {
                                     if (i.type === activeSubscriptionTier) return i;
-                                    const nextItem = { ...i, annual: value };
-
-                                    if (
-                                      nextItem.method === 'wallet' &&
-                                      !hasCryptoPriceForPeriod(nextItem.crypto_prices ?? [], value)
-                                    ) {
-                                      return { ...nextItem, method: 'card' };
-                                    }
-
-                                    return nextItem;
+                                    return { ...i, annual: value };
                                   }),
                                 );
                               }}
@@ -718,14 +722,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                 return;
                               }
 
-                              setData((prev) =>
-                                prev.map((i) => {
-                                  if (i.type !== item.type) return i;
-                                  return { ...i, method: method.value as 'card' | 'wallet' };
-                                }),
-                              );
+                              setPaymentMethod(method.value as PaymentMethod);
                             }}
-                            selected={item.method}
+                            selected={selectedPaymentMethod}
                             size="sm"
                           />
                         </div>

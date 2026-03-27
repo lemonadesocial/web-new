@@ -3,22 +3,23 @@ import React from 'react';
 import { Button, Textarea, Input, drawer, toast, Menu, MenuItem, Avatar, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { CreateDocumentDocument, GetListAiConfigDocument, UpdateAiConfigDocument, type Config, type Document, type CreateDocumentMutation } from '$lib/graphql/generated/ai/graphql';
-import { Space } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { randomEventDP } from '$lib/utils/user';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { getAiConfigFilter, getConfigAvatarSrc, type AiManageScope } from '$lib/components/features/ai/manage/shared';
 
 interface Props {
-  space: Space;
+  scope: AiManageScope;
   onCreated: (document: Document) => void;
   skipAvailableTo?: boolean;
 }
 
-export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false }: Props) {
+export function AddKnowledgeBasePane({ scope, onCreated, skipAvailableTo = false }: Props) {
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
   const [selectedConfigs, setSelectedConfigs] = React.useState<Config[]>([]);
+  const titleInputId = React.useId();
+  const availableToLabelId = React.useId();
+  const contentInputId = React.useId();
 
   const [createDocument, { loading: creating }] = useMutation(CreateDocumentDocument, {
     onError: (error) => {
@@ -94,8 +95,11 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-secondary">Title</label>
+          <label htmlFor={titleInputId} className="text-sm font-medium text-secondary">
+            Title
+          </label>
           <Input
+            id={titleInputId}
             variant="outlined"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -106,9 +110,12 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
 
         {!skipAvailableTo && (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-secondary">Available To</label>
+            <p id={availableToLabelId} className="text-sm font-medium text-secondary">
+              Available To
+            </p>
             <ConfigSelector
-              space={space}
+              labelledById={availableToLabelId}
+              scope={scope}
               selectedConfigs={selectedConfigs}
               onConfigsChange={setSelectedConfigs}
             />
@@ -116,8 +123,11 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-secondary">Content</label>
+          <label htmlFor={contentInputId} className="text-sm font-medium text-secondary">
+            Content
+          </label>
           <Textarea
+            id={contentInputId}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={5}
@@ -144,16 +154,25 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
   );
 }
 
-function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Space; selectedConfigs: Config[]; onConfigsChange: (configs: Config[]) => void }) {
+function ConfigSelector({
+  labelledById,
+  scope,
+  selectedConfigs,
+  onConfigsChange,
+}: {
+  labelledById: string;
+  scope: AiManageScope;
+  selectedConfigs: Config[];
+  onConfigsChange: (configs: Config[]) => void;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const configQueryVariables = React.useMemo(() => ({ filter: getAiConfigFilter(scope) }), [scope]);
 
   const { data: configsData, loading } = useQuery(
     GetListAiConfigDocument,
     {
-      variables: {
-        filter: { spaces_in: [space._id] },
-      },
-      skip: !isOpen || !space?._id,
+      variables: configQueryVariables,
+      skip: !isOpen,
       fetchPolicy: 'network-only',
     },
     aiChatClient,
@@ -178,38 +197,51 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
     <Menu.Root isOpen={isOpen} onOpenChange={setIsOpen} placement="bottom-start">
       <Menu.Trigger className="w-full">
         <div
-          className="h-10 w-full rounded-sm bg-background/64 border border-primary/8 hover:border-primary focus-within:border-primary p-1 flex items-center gap-2 cursor-pointer transition-colors"
-          onClick={() => setIsOpen(true)}
+          className="relative h-10 w-full rounded-sm border border-primary/8 bg-background/64 p-1 transition-colors hover:border-primary focus-within:border-primary"
         >
-          <div className="flex-1 flex flex-wrap gap-0.5 items-center">
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-haspopup="menu"
+            aria-labelledby={labelledById}
+            className="absolute inset-0 rounded-sm"
+            onClick={() => setIsOpen(true)}
+          />
+          <div className="relative z-10 flex h-full items-center gap-2">
+            <div className="flex-1 flex flex-wrap gap-0.5 items-center min-w-0">
             {selectedConfigs.length > 0 ? (
               selectedConfigs.map((config) => {
-                const avatarSrc = config.avatar || randomEventDP(config._id);
+                const avatarSrc = getConfigAvatarSrc(config);
                 return (
                   <div
                     key={config._id}
-                    className="flex items-center gap-1.5 bg-card rounded-xs px-2.5 py-1.5"
+                    className="pointer-events-none flex items-center gap-1.5 rounded-xs bg-card px-2.5 py-1.5"
                   >
                     <Avatar
                       src={avatarSrc}
                       className="size-4 rounded-xs object-cover"
                     />
                     <span className="text-sm">{config.name}</span>
-                    <i
-                      className="icon-x size-4 text-tertiary cursor-pointer hover:text-secondary transition-colors"
+                    <button
+                      type="button"
+                      aria-label={`Remove ${config.name || 'agent'}`}
+                      className="pointer-events-auto text-tertiary transition-colors hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemoveConfig(config._id);
                       }}
-                    />
+                    >
+                      <i aria-hidden="true" className="icon-x size-4" />
+                    </button>
                   </div>
                 );
               })
             ) : (
-              <span className="text-tertiary font-medium ml-2">Select agents</span>
+              <span className="ml-2 pointer-events-none font-medium text-tertiary">Select agents</span>
             )}
+            </div>
+            <i aria-hidden="true" className="icon-chevron-down pointer-events-none size-5 shrink-0 text-tertiary" />
           </div>
-          <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary shrink-0" />
         </div>
       </Menu.Trigger>
 
@@ -232,7 +264,7 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
           </div>
         ) : (
           availableConfigs.map((config) => {
-            const avatarSrc = config.avatar || randomEventDP(config._id) || `${ASSET_PREFIX}/assets/images/agent.png`;
+            const avatarSrc = getConfigAvatarSrc(config);
             return (
               <MenuItem
                 key={config._id}

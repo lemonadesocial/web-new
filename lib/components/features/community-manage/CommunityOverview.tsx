@@ -35,7 +35,7 @@ import {
 } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import { PendingApprovalEvents } from './PendingApprovalEvents';
-import { EventCardItem } from '../EventList';
+import { EventCardItem } from '../EventCardItem';
 import { match } from 'ts-pattern';
 import { userAvatar } from '$lib/utils/user';
 import { useMe } from '$lib/hooks/useMe';
@@ -48,7 +48,6 @@ import { ConfirmModal } from '../modals/ConfirmModal';
 import { Pane } from '$lib/components/core/pane/pane';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { ReOrderFeatureHubs } from './modals/ReOrderFeatureHubs';
-import { sub } from 'date-fns';
 import { SharedModal } from './modals/SharedModal';
 
 const LIMIT = 2;
@@ -284,7 +283,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
                         });
 
                         if (error) {
-                          toast.error(error.message);
+                          toast.error(error instanceof Error ? error.message : 'Failed to remove admin');
                           return;
                         }
 
