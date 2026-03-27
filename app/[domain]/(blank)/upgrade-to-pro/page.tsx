@@ -1,25 +1,13 @@
 import { DEFAULT_UPGRADE_TO_PRO_SECTION } from '$lib/components/features/upgrade-to-pro/sections';
 import UpgradeToProPage from './UpgradeToProPage';
 
-import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { parse } from 'graphql';
-
-import { ListSubscriptionItemsDocument, SubscriptionItem } from '$lib/graphql/generated/backend/graphql';
+import {
+  ListSubscriptionItemsDocument,
+  ListSubscriptionFeatureConfigsDocument,
+  SubscriptionItem,
+} from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import type { FeatureConfig } from '$lib/components/features/upgrade-to-pro/utils';
-
-// TODO: replace with ListSubscriptionFeatureConfigsDocument from codegen after BE deploys
-const ListSubscriptionFeatureConfigsDocument = parse(`
-  query ListSubscriptionFeatureConfigs {
-    listSubscriptionFeatureConfigs {
-      feature_code
-      feature_type
-      display_label
-      description
-      tiers
-    }
-  }
-`) as TypedDocumentNode<{ listSubscriptionFeatureConfigs: FeatureConfig[] }>;
 
 export default async function Page() {
   const client = getClient();
