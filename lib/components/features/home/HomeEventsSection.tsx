@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, Segment } from '$lib/components/core';
+import { Button, drawer, Segment } from '$lib/components/core';
 import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
 import { EventCardItem } from '$lib/components/features/EventCardItem';
 import {
@@ -20,6 +20,7 @@ import { useQuery } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
+import { EventPane } from '../pane';
 
 export function HomeEventsSection() {
   const me = useMe();
@@ -48,13 +49,8 @@ export function HomeEventsSection() {
   };
 
   return (
-    <section
-      className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl"
-    >
-      <header
-        className="flex items-center justify-between w-full"
-        style={{ height: 32, minHeight: 32 }}
-      >
+    <section className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl">
+      <header className="flex items-center justify-between w-full" style={{ height: 32, minHeight: 32 }}>
         <Segment
           items={[
             { label: 'Events', value: 'events' },
@@ -65,10 +61,7 @@ export function HomeEventsSection() {
           size="sm"
           className="rounded-[var(--radius-sm)]"
         />
-        <div
-          className="flex items-center gap-2"
-          style={{ gap: 8 }}
-        >
+        <div className="flex items-center gap-2" style={{ gap: 8 }}>
           {tab === 'events' && (
             <>
               <Link
@@ -142,7 +135,9 @@ export function HomeEventsSection() {
                   [item.host, ...(item.cohosts || [])].includes(me?._id)
                     ? (e) => {
                         e.stopPropagation();
-                        router.push(`/e/manage/${item.shortid}`);
+                        drawer.open(EventPane, {
+                          props: { eventId: item._id },
+                        });
                       }
                     : undefined
                 }
