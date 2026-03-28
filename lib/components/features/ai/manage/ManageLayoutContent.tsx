@@ -41,7 +41,8 @@ function ManageLayoutContent() {
     variables: { shortid },
     skip: !shouldFetchEvent,
   });
-  const event = (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
+  const event =
+    (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
   useQuery(
@@ -66,6 +67,7 @@ function ManageLayoutContent() {
     if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
       aiChatDispatch({ type: AIChatActionKind.reset });
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
+      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { standId: event.space } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
 
