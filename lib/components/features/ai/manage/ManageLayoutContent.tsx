@@ -96,7 +96,7 @@ function ManageLayoutContent() {
             <main
               data-theme-scope="event-preview"
               className={clsx(
-                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2',
+                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
                 themeState.theme !== 'default' && [themeState.config.color, themeState.config.mode],
               )}
             >

@@ -397,10 +397,9 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
         onClick={() => {
           if (readOnly) return;
           if (selectedSpace?._id) {
-            router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
+            router.push(`/upgrade/${selectedSpace.slug || selectedSpace._id}`);
             return;
           }
-          router.push('/upgrade-to-pro');
         }}
         title="Upgrade to Pro"
       >
