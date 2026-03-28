@@ -93,7 +93,7 @@ function UpgradeToProPage({ space, activeSection, subscriptionData }: UpgradeToP
                       }
                       iconRight={item._id === selectedSpaceId && 'icon-done'}
                       onClick={() => {
-                        setSelectedSpaceId(item._id);
+                        router.push(`/upgrade/${item.slug || item._id}`);
                         toggle();
                       }}
                     >
