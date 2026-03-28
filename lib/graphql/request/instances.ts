@@ -43,6 +43,7 @@ export const usernameClient = new GraphqlClient({
 
 export const aiChatClient = new GraphqlClient({
   url: process.env.NEXT_PUBLIC_AI_API_HTTP as string,
+  cache: new InMemoryCache(),
   options: {
     credentials: 'include',
   },

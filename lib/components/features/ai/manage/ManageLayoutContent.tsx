@@ -104,7 +104,7 @@ function ManageLayoutContent() {
             >
               <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
-                <EventGuestSide event={event} />
+                <EventGuestSide event={event} autoSave={false} />
               </div>
             </main>
           ) : null,

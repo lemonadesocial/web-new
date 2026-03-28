@@ -22,7 +22,15 @@ export class InMemoryCache {
       return fieldName;
     }
 
-    const argString = Object.entries(args)
+    // Sort keys to ensure consistent stringification
+    const sortedArgs = Object.keys(args as object)
+      .sort()
+      .reduce((acc, key) => {
+        (acc as any)[key] = (args as any)[key];
+        return acc;
+      }, {});
+
+    const argString = Object.entries(sortedArgs)
       .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
       .join(',');
 
@@ -268,14 +276,17 @@ export class InMemoryCache {
 
     const operationName = operationDef.name?.value;
 
-    // Format variables
+    // Format variables with sorted keys
     const varStrings = [];
     if (variables) {
-      for (const [key, value] of Object.entries(variables)) {
+      const sortedKeys = Object.keys(variables).sort();
+      for (const key of sortedKeys) {
+        const value = variables[key];
         let formattedValue = '';
         if (typeof value === 'object' || Array.isArray(value)) formattedValue = JSON.stringify(value);
         if (typeof value === 'string') formattedValue = `"${value}"`;
-        if (typeof value === 'number' || typeof value === 'boolean') formattedValue = value.toString();
+        if (typeof value === 'number' || typeof value === 'boolean') formattedValue = (value as any).toString();
+        if (value === null) formattedValue = 'null';
 
         varStrings.push(`${key}: ${formattedValue}`);
       }
