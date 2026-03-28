@@ -96,7 +96,7 @@ export function useQuery<T, V extends object>(
     const unsubscribe = client.subscribe({
       ...subscriptionVariables,
       callback: () => {
-        const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables);
+        const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables as any);
         if (res) {
           const resKey = JSON.stringify(res);
           if (resKey === lastUpdateRef.current) return;
@@ -148,14 +148,14 @@ export function useMutation<T, V extends object>(
     setError(error);
     setLoading(false);
     if (error) {
-      merged.onError?.(error);
+      merged.onError?.(error as any);
     } else {
       merged.onComplete?.(client, result as T);
     }
     return { data: result as T, error, loading: false, client };
   };
 
-  return [mutate, { data, error, client, loading }];
+  return [mutate, { data, error, client, loading }, client];
 }
 
 

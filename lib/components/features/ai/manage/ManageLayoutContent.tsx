@@ -106,7 +106,8 @@ function ManageLayoutContent() {
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
                 <EventGuestSide event={event} autoSave={false} />
               </div>
-            </main>
+              </main>
+
           ) : null,
         )
         .otherwise(() => null),

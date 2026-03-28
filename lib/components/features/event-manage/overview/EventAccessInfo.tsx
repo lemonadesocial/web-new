@@ -50,7 +50,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
       const { data } = await updatePhotos({ variables: { id: event._id, new_new_photos: [fileId] } });
 
       if (data?.updateEvent) {
-        updateEvent(data.updateEvent);
+        updateEvent(data.updateEvent as any);
       }
 
       toast.success('Photo updated!');
