@@ -1,5 +1,6 @@
 import React from 'react';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { isEqual } from 'lodash';
 
 import { MutationOptions, QueryOptions } from './type';
 import { GraphqlClient } from './client';
@@ -17,9 +18,17 @@ export function useQuery<T, V extends object>(
   }: QueryOptions<T, V> & { onComplete?: (data: T) => void; onError?: (error: unknown) => void } = {},
   client: GraphqlClient = defaultClient,
 ) {
-  const [data, setData] = React.useState<T | null>(initData);
+  const variablesKey = React.useMemo(() => JSON.stringify(variables), [variables]);
+
+  const [data, setData] = React.useState<T | null>(() => {
+    if (initData) return initData;
+    if (skip) return null;
+    return (client.readQuery(query, variables as any) as T) || null;
+  });
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
+
+  const lastUpdateRef = React.useRef<string>('');
 
   const fetchData = async (fetchDataPolicy = fetchPolicy) => {
     try {
@@ -30,8 +39,17 @@ export function useQuery<T, V extends object>(
         initData,
         fetchPolicy: fetchDataPolicy,
       });
-      setData(queryData);
-      onComplete?.(queryData as T);
+
+      const nextData = queryData as T;
+      const nextDataKey = JSON.stringify(nextData);
+
+      setData((prev) => {
+        if (isEqual(prev, nextData)) return prev;
+        return nextData;
+      });
+
+      lastUpdateRef.current = nextDataKey;
+      onComplete?.(nextData);
     } catch (error) {
       setError(error);
       onError?.(error);
@@ -48,17 +66,21 @@ export function useQuery<T, V extends object>(
         variables: { ...variables, ...params.variables },
         fetchPolicy: 'network-only',
       });
-      const latestData = params.updateQuery?.(data as T, newData);
-      setData(latestData as T);
-      onComplete?.(latestData as T); // Call onComplete with updated data
+      const latestData = params.updateQuery?.(data as T, newData) as T;
+
+      setData((prev) => {
+        if (isEqual(prev, latestData)) return prev;
+        return latestData;
+      });
+
+      lastUpdateRef.current = JSON.stringify(latestData);
+      onComplete?.(latestData);
     } catch (error) {
       setError(error);
     } finally {
       setLoading(false);
     }
   };
-
-  const variablesKey = React.useMemo(() => JSON.stringify(variables), [variables]);
 
   React.useEffect(() => {
     if (!skip) {
@@ -74,9 +96,16 @@ export function useQuery<T, V extends object>(
     const unsubscribe = client.subscribe({
       ...subscriptionVariables,
       callback: () => {
-        const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables);
+        const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables as any);
         if (res) {
-          setData(() => ({ ...res }) as T);
+          const resKey = JSON.stringify(res);
+          if (resKey === lastUpdateRef.current) return;
+
+          setData((prev) => {
+            if (isEqual(prev, res)) return prev;
+            lastUpdateRef.current = resKey;
+            return { ...res } as T;
+          });
         }
       },
     });
@@ -105,23 +134,28 @@ export function useMutation<T, V extends object>(
   const mutate = async (opts: MutationOptions<T, V>) => {
     const merged = { ...options, ...opts };
     setLoading(true);
-    const { data, error } = await client.query({
+    const { data: result, error } = await client.query({
       query,
       variables: merged.variables,
       fetchPolicy: 'network-only',
     });
-    setData(data);
+
+    setData((prev) => {
+      if (isEqual(prev, result)) return prev;
+      return result as T;
+    });
+
     setError(error);
     setLoading(false);
     if (error) {
-      merged.onError?.(error);
+      merged.onError?.(error as any);
     } else {
-      if (!error) {
-        merged.onComplete?.(client, data);
-      }
+      merged.onComplete?.(client, result as T);
     }
-    return { data, error, loading: false, client };
+    return { data: result as T, error, loading: false, client };
   };
 
-  return [mutate, { data, error, client, loading }];
+  return [mutate, { data, error, client, loading }, client];
 }
+
+

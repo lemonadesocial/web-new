@@ -7,7 +7,7 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
   manage: {
     icon: 'icon-settings',
     label: 'Manage',
-    component: AIChat,
+    component: () => <AIChat readOnly />,
   },
   design: {
     icon: 'icon-palette-outline',
@@ -17,7 +17,7 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
   preview: {
     icon: 'icon-eye-line',
     label: 'Preview',
-    component: AIChat,
+    component: () => <AIChat readOnly />,
   },
 };
 

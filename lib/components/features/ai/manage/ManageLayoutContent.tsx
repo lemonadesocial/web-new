@@ -41,7 +41,8 @@ function ManageLayoutContent() {
     variables: { shortid },
     skip: !shouldFetchEvent,
   });
-  const event = (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
+  const event =
+    (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
   useQuery(
@@ -66,6 +67,7 @@ function ManageLayoutContent() {
     if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
       aiChatDispatch({ type: AIChatActionKind.reset });
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
+      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { standId: event.space } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
 
@@ -96,15 +98,16 @@ function ManageLayoutContent() {
             <main
               data-theme-scope="event-preview"
               className={clsx(
-                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2',
+                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
                 themeState.theme !== 'default' && [themeState.config.color, themeState.config.mode],
               )}
             >
               <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
-                <EventGuestSide event={event} />
+                <EventGuestSide event={event} autoSave={false} />
               </div>
-            </main>
+              </main>
+
           ) : null,
         )
         .otherwise(() => null),
