@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.26.3](https://github.com/lemonadesocial/web-new/compare/v10.26.2...v10.26.3) (2026-03-28)
+
+
+### Bug Fixes
+
+* correct path instead of set state ([b5890ac](https://github.com/lemonadesocial/web-new/commit/b5890ac6222487c50ade715bf40ed4ff15cc51c5))
+
 ## [10.26.2](https://github.com/lemonadesocial/web-new/compare/v10.26.1...v10.26.2) (2026-03-27)
 
 
