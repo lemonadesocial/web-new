@@ -67,7 +67,7 @@ export class InMemoryCache {
     return data;
   }
 
-  readQuery<T, V>(query: TypedDocumentNode<T, V>, variables?: Record<string, V>) {
+  readQuery<T, V>(query: TypedDocumentNode<T, V>, variables?: V) {
     try {
       const operationDef = query.definitions.find(
         (def): def is OperationDefinitionNode => def.kind === 'OperationDefinition',
@@ -82,7 +82,7 @@ export class InMemoryCache {
         if (selection.kind !== 'Field') return;
 
         const fieldName = selection.name.value;
-        const args = this.extractArguments(selection, variables);
+        const args = this.extractArguments(selection, variables as any);
         const fieldKey = this.generateFieldCacheKey(fieldName, args);
 
         // Check if field exists in cache
@@ -190,8 +190,8 @@ export class InMemoryCache {
     return { __ref: entityId };
   }
 
-  normalizeAndStore<T, V extends object>(query: TypedDocumentNode<T, V>, variables: Record<string, V>, data: T) {
-    const queryKey = this.createCacheKey<T, V>(query, variables);
+  normalizeAndStore<T, V extends object>(query: TypedDocumentNode<T, V>, variables: V, data: T) {
+    const queryKey = this.createCacheKey<T, V>(query, variables as any);
 
     // Get operation name and extract root fields
     const operationDef = query.definitions.find((def) => def.kind === 'OperationDefinition');
@@ -205,7 +205,7 @@ export class InMemoryCache {
 
       if (fieldName === '__typename') return;
 
-      const args = this.extractArguments(selection, variables);
+      const args = this.extractArguments(selection, variables as any);
       const fieldKey = this.generateFieldCacheKey(fieldName as string, args);
       const resultData = data[fieldName];
 
