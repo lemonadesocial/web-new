@@ -66,17 +66,11 @@ function ManageLayoutContent() {
 
   React.useEffect(() => {
     if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({
-        type: AIChatActionKind.set_data_run,
-        payload: { data: { event_id: event._id, space_id: event.space }, standId: event.space },
-      });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
 
       if (!ready) setReady(true);
     }
-  }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
+  }, [state.layoutType, event, ready, shortid]);
 
   if (!ready) return null;
 
