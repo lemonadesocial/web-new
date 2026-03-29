@@ -203,11 +203,11 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
   const rootClassName =
     variant === 'home'
-      ? 'backdrop-blur! rounded-lg border border-white bg-[rgba(20,19,23,0.64)]'
-      : 'backdrop-blur-none! rounded-lg border-0 bg-(--btn-tertiary)';
+      ? 'backdrop-blur! border border-white bg-[rgba(20,19,23,0.64)]'
+      : 'backdrop-blur-none! border-0 bg-(--btn-tertiary)';
 
   return (
-    <Card.Root className={rootClassName}>
+    <Card.Root className={clsx('rounded-lg overflow-visible!', rootClassName)}>
       <Card.Content className="flex flex-col space-y-2 p-4">
         <div className="relative w-full">
           {isIdle && (
@@ -397,10 +397,9 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
         onClick={() => {
           if (readOnly) return;
           if (selectedSpace?._id) {
-            router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
+            router.push(`/upgrade/${selectedSpace.slug || selectedSpace._id}`);
             return;
           }
-          router.push('/upgrade-to-pro');
         }}
         title="Upgrade to Pro"
       >

@@ -30,7 +30,7 @@ import { useTracker } from '$lib/hooks/useTracker';
 import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
-export function EventGuestSide({ event: initEvent }: { event: Event }) {
+export function EventGuestSide({ event: initEvent, autoSave = true }: { event: Event; autoSave?: boolean }) {
   const { data } = useQuery(GetEventDocument, {
     variables: { id: initEvent._id },
     initData: { getEvent: initEvent } as unknown as GetEventQuery,
@@ -38,10 +38,10 @@ export function EventGuestSide({ event: initEvent }: { event: Event }) {
 
   useTracker(initEvent._id);
 
-  return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} />;
+  return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} autoSave={autoSave} />;
 }
 
-export function EventGuestSideContent({ event }: { event: Event }) {
+export function EventGuestSideContent({ event, autoSave = true }: { event: Event; autoSave?: boolean }) {
   const [state] = useEventTheme();
 
   const me = useMe();
@@ -70,7 +70,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
 
           {isHost && (
             <>
-              <EventThemeBuilder eventId={event._id} />
+              <EventThemeBuilder eventId={event._id} autoSave={autoSave} />
               <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                 <p className="text-accent-500">You have manage access for this event.</p>
                 <Button

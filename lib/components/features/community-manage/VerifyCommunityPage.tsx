@@ -301,7 +301,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           <div className="border-l-2 border-warning-300 pl-3.5">
             <p className="text-sm text-warning-300">
               You can send up to 500 invites or newsletters per week once you verify your calendar. Need more? You can{' '}
-              <Link href={`/upgrade-to-pro?space=${space._id}`} className="text-accent-400 hover:text-accent-300 transition-colors">
+              <Link href={`/upgrade/${space._id}`} className="text-accent-400 hover:text-accent-300 transition-colors">
                 upgrade your plan
               </Link>
               .

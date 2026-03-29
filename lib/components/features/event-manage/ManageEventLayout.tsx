@@ -130,7 +130,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <div className="px-4">
+      <div className="md:px-4">
         <Comp />
       </div>
     </div>
