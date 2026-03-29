@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.26.4](https://github.com/lemonadesocial/web-new/compare/v10.26.3...v10.26.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* chat selected current space - dropdown option ([1be6407](https://github.com/lemonadesocial/web-new/commit/1be6407296c1f6ab26c325ec9de51a92516ed35a))
+* check duplicate query ([3285e12](https://github.com/lemonadesocial/web-new/commit/3285e1204ed59d03380b3a5427bb3397bc2b1e7c))
+* correct type check ([a9a5f54](https://github.com/lemonadesocial/web-new/commit/a9a5f54b51f12a88f53cf27ba61524f1f942ed4a))
+* remove readonly props ([b903018](https://github.com/lemonadesocial/web-new/commit/b9030183dc64d64853cb09cf6dc887e3d2f44711))
+* resolve redundant graphql calls and re-render loops in event management ([7f7ab74](https://github.com/lemonadesocial/web-new/commit/7f7ab748811d6b71d155799993b68ba4b289fc83))
+* update path upgrade ([26e375b](https://github.com/lemonadesocial/web-new/commit/26e375bb2adaf54054a356f366854c4805e25e69))
+
 ## [10.26.3](https://github.com/lemonadesocial/web-new/compare/v10.26.2...v10.26.3) (2026-03-28)
 
 
