@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.26.5](https://github.com/lemonadesocial/web-new/compare/v10.26.4...v10.26.5) (2026-03-29)
+
+
+### Bug Fixes
+
+* check space chat from event ([8788eaa](https://github.com/lemonadesocial/web-new/commit/8788eaa744f5c33a5da7b5d8acf98e35a47b4770))
+
 ## [10.26.4](https://github.com/lemonadesocial/web-new/compare/v10.26.3...v10.26.4) (2026-03-29)
 
 
