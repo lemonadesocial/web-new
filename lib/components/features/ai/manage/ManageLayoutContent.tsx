@@ -20,6 +20,7 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
+import { pad } from 'lodash';
 
 function ManageLayoutContent() {
   const params = useParams();
@@ -65,15 +66,11 @@ function ManageLayoutContent() {
 
   React.useEffect(() => {
     if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { standId: event.space } });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
 
       if (!ready) setReady(true);
     }
-  }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
+  }, [state.layoutType, event, ready, shortid]);
 
   if (!ready) return null;
 
@@ -106,8 +103,7 @@ function ManageLayoutContent() {
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
                 <EventGuestSide event={event} autoSave={false} />
               </div>
-              </main>
-
+            </main>
           ) : null,
         )
         .otherwise(() => null),
