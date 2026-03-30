@@ -1,22 +1,25 @@
 import { formatDistanceToNow } from 'date-fns';
 import { Avatar, Chip, Skeleton } from '$lib/components/core';
-import { Event, EventGuestDetail, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
+import { Event, EventJoinRequestState, type ListEventGuestsQuery } from '$lib/graphql/generated/backend/graphql';
 import { randomUserImage } from '$lib/utils/user';
 import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 import { drawer } from '$lib/components/core';
 
+type GuestTableGuest = ListEventGuestsQuery['listEventGuests']['items'][number];
+
 interface GuestTableProps {
   event: Event;
-  guests: EventGuestDetail[];
+  guests: GuestTableGuest[];
   loading?: boolean;
-  onGuestClick?: (guest: EventGuestDetail) => void;
+  onGuestClick?: (guest: GuestTableGuest) => void;
 }
 
 export function GuestTable({ event, guests, loading = false, onGuestClick }: GuestTableProps) {
-  const handleGuestClick = (guest: EventGuestDetail) => {
+  const handleGuestClick = (guest: GuestTableGuest) => {
     if (onGuestClick) {
       onGuestClick(guest);
     } else {
+      if (!guest.user.email) return;
       drawer.open(GuestDetailsDrawer, { props: { email: guest.user.email, event: event._id } });
     }
   };
@@ -59,7 +62,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
   return (
     <div className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
-        {guests.map((guest: EventGuestDetail, index) => (
+        {guests.map((guest, index) => (
           <div
             key={index}
             className="flex items-center justify-between px-4 py-3 gap-1 hover:bg-card-hover cursor-pointer"
