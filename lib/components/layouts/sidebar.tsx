@@ -40,7 +40,6 @@ const Sidebar = () => {
     const menu = [
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
-      { icon: 'icon-community', path: '/communities', label: 'Community Hubs' },
 
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
