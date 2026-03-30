@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { Button, Menu, MenuItem } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
 import { GetListMySpacesDocument, Space, SubscriptionItem } from '$lib/graphql/generated/backend/graphql';
+import type { FeatureConfig } from '$lib/components/features/upgrade-to-pro/utils';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -20,10 +21,11 @@ import {
 type UpgradeToProPageProps = {
   activeSection: UpgradeToProSectionKey;
   subscriptionData?: SubscriptionItem[];
+  featureConfigs?: FeatureConfig[];
   space: Space;
 };
 
-function UpgradeToProPage({ space, activeSection, subscriptionData }: UpgradeToProPageProps) {
+function UpgradeToProPage({ space, activeSection, subscriptionData, featureConfigs }: UpgradeToProPageProps) {
   const router = useRouter();
   const me = useMe();
 
@@ -150,7 +152,7 @@ function UpgradeToProPage({ space, activeSection, subscriptionData }: UpgradeToP
 
         {space && (
           <div className="w-full flex-1 overflow-auto no-scrollbar p-4 md:p-12">
-            <ActiveSection space={space} subscriptionData={subscriptionData} />
+            <ActiveSection space={space} subscriptionData={subscriptionData} featureConfigs={featureConfigs} />
           </div>
         )}
       </div>

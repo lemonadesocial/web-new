@@ -3,6 +3,7 @@ import UpgradeToProPage from './UpgradeToProPage';
 
 import {
   GetSpaceDocument,
+  ListSubscriptionFeatureConfigsDocument,
   ListSubscriptionItemsDocument,
   Space,
   SubscriptionItem,
@@ -28,14 +29,20 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
   const space = dataGetSpace?.getSpace as Space;
   if (!space) return notFound();
 
-  const { data } = await client.query({ query: ListSubscriptionItemsDocument });
+  const [{ data }, featureResult] = await Promise.all([
+    client.query({ query: ListSubscriptionItemsDocument }),
+    client.query({ query: ListSubscriptionFeatureConfigsDocument }).catch(() => ({ data: null })),
+  ]);
+
   const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
+  const featureConfigs = featureResult?.data?.listSubscriptionFeatureConfigs || [];
 
   return (
     <UpgradeToProPage
       space={space}
       activeSection={DEFAULT_UPGRADE_TO_PRO_SECTION}
       subscriptionData={subscriptionData}
+      featureConfigs={featureConfigs}
     />
   );
 }

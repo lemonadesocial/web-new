@@ -6,6 +6,7 @@ import { getUpgradeToProSectionKey } from '$lib/components/features/upgrade-to-p
 import { getClient } from '$lib/graphql/request';
 import {
   GetSpaceDocument,
+  ListSubscriptionFeatureConfigsDocument,
   ListSubscriptionItemsDocument,
   Space,
   SubscriptionItem,
@@ -33,8 +34,20 @@ export default async function Page({ params }: { params: Promise<{ section: stri
 
   if (!activeSection) return notFound();
 
-  const { data } = await client.query({ query: ListSubscriptionItemsDocument });
-  const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
+  const [{ data }, featureResult] = await Promise.all([
+    client.query({ query: ListSubscriptionItemsDocument }),
+    client.query({ query: ListSubscriptionFeatureConfigsDocument }).catch(() => ({ data: null })),
+  ]);
 
-  return <UpgradeToProPage space={space} activeSection={activeSection} subscriptionData={subscriptionData} />;
+  const subscriptionData = (data?.listSubscriptionItems || []) as SubscriptionItem[];
+  const featureConfigs = featureResult?.data?.listSubscriptionFeatureConfigs || [];
+
+  return (
+    <UpgradeToProPage
+      space={space}
+      activeSection={activeSection}
+      subscriptionData={subscriptionData}
+      featureConfigs={featureConfigs}
+    />
+  );
 }

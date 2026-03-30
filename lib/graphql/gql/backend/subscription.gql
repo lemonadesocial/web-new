@@ -43,6 +43,16 @@ query ListSubscriptionItems {
   }
 }
 
+query ListSubscriptionFeatureConfigs {
+  listSubscriptionFeatureConfigs {
+    feature_code
+    feature_type
+    display_label
+    description
+    tiers
+  }
+}
+
 query PreviewUpdateSpaceSubscription($id: MongoID!, $space: MongoID!, $input: UpdateSubscriptionInput!) {
   previewUpdateSubscription(_id: $id, space: $space, input: $input) {
     price
