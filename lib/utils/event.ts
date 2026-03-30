@@ -49,7 +49,7 @@ export function formatFiatPrice(price: EventTicketPrice) {
 }
 
 export function formatPrice(price: EventTicketPrice, showFree?: boolean) {
-  if (!price.payment_accounts_expanded?.[0]) return showFree ? 'Free' : '';
+  if (!price?.payment_accounts_expanded?.[0]) return showFree ? 'Free' : '';
 
   const isStripe = price.payment_accounts_expanded[0].provider === 'stripe';
 
