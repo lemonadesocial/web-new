@@ -56,7 +56,13 @@ function ManageLayoutContent() {
         }
         if (data?.configs?.items?.length) {
           const config = data.configs.items[0] as AiConfigFieldsFragment;
-          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+          aiChatDispatch({
+            type: AIChatActionKind.set_config,
+            payload: {
+              config: config._id,
+              messages: event ? mockWelcomeEvent(event) : undefined,
+            },
+          });
         }
       },
       skip: !eventId || initializedConfigEventRef.current === eventId,
@@ -65,8 +71,19 @@ function ManageLayoutContent() {
   );
 
   React.useEffect(() => {
-    if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
+    if (state.layoutType === 'event' && event?.shortid === shortid && initializedConfigEventRef.current !== event._id) {
       store.setData(event);
+
+      aiChatDispatch({
+        type: AIChatActionKind.reset,
+        payload: {
+          data: { event_id: event._id, space_id: event.space },
+          standId: event.space,
+          messages: mockWelcomeEvent(event),
+        },
+      });
+
+      initializedConfigEventRef.current = event._id;
 
       if (!ready) setReady(true);
     }
@@ -75,7 +92,7 @@ function ManageLayoutContent() {
   if (!ready) return null;
 
   const mobilePaneContent = match(state.mobilePane)
-    .with('chat', () => <AIChat />)
+    .with('chat', () => <AIChat compact />)
     .with('config', () => <SidebarComp />)
     .otherwise(() => null);
   const isChatPane = state.mobilePane === 'chat';

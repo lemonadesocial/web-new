@@ -11,6 +11,7 @@ import { Config } from '$utils/types';
 
 import { StyleVariables } from './styled';
 import Providers from './providers';
+import { AIChatProvider } from '$lib/components/features/ai/provider';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -34,11 +35,13 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
     <Providers space={space}>
       <TRPCProvider>
         <ModalProvider>
-          <StyleVariables theme={data.theme.styles} />
-          {props.children}
-          {/* <DrawerContainer /> */}
-          <BottomSheetContainer />
-          <ToastContainer />
+          <AIChatProvider>
+            <StyleVariables theme={data.theme.styles} />
+            {props.children}
+            {/* <DrawerContainer /> */}
+            <BottomSheetContainer />
+            <ToastContainer />
+          </AIChatProvider>
         </ModalProvider>
       </TRPCProvider>
     </Providers>

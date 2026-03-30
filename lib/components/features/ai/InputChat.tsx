@@ -35,9 +35,10 @@ type InputChatProps = {
   variant?: 'default' | 'home';
   showTools?: boolean;
   readOnly?: boolean;
+  compact?: boolean;
 };
 
-export function InputChat({ variant = 'default', showTools = true, readOnly }: InputChatProps) {
+export function InputChat({ variant = 'default', showTools = true, readOnly, compact }: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -48,6 +49,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const hasActivity = !!state.messages.length || !!state.thinking;
   const isIdle = input.length === 0 && !hasActivity;
+  const isCompact = isMobile || compact;
 
   React.useEffect(() => {
     if (!isIdle) return;
@@ -200,7 +202,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   const typingText = isIdle ? PLACEHOLDER_PHRASES[phraseIndex].slice(0, charCount) : '';
   const textareaBaseClass =
     'relative min-h-6 w-full resize-none overflow-y-auto bg-transparent text-base leading-6 text-primary font-medium outline-none';
-  const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
+  const textareaClass = isIdle && !isCompact ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
   const rootClassName =
     variant === 'home'
       ? 'backdrop-blur! border border-white bg-[rgba(20,19,23,0.64)]'
@@ -210,7 +212,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
     <Card.Root className={clsx('rounded-lg overflow-visible!', rootClassName)}>
       <Card.Content className="flex flex-col space-y-2 p-4">
         <div className="relative w-full">
-          {isIdle && (
+          {isIdle && !isCompact && (
             <div
               className="pointer-events-none absolute inset-0 overflow-hidden text-base leading-6 text-quaternary"
               aria-hidden
@@ -242,10 +244,10 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
                       variant="tertiary-alt"
                       onClick={() => toggle()}
                       size="sm"
-                      icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
-                      iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                      icon={isCompact || !state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                      iconLeft={!isCompact && state.selectedTool?.label ? 'icon-discover-tune' : undefined}
                     >
-                      {state.selectedTool?.label}
+                      {!isCompact && state.selectedTool?.label}
                     </Button>
                   )}
                 </Menu.Trigger>
@@ -272,6 +274,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
 
           <div className="flex shrink-0 items-center gap-2">
             <SpaceSelector
+              compact={isCompact}
               readOnly={readOnly}
               currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
               onSelectSpace={(space) =>
@@ -299,6 +302,7 @@ type SpaceSelectorProps = {
   currentSpaceId?: string;
   onSelectSpace: (space: Space) => void;
   readOnly?: boolean;
+  compact?: boolean;
 };
 
 function formatCredits(value?: number | null) {
@@ -313,7 +317,7 @@ function getCreditFillPercent(credits?: number | null, highWaterMark?: number | 
   return Math.max(0, Math.min(100, percent));
 }
 
-function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelectorProps) {
+function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: SpaceSelectorProps) {
   const router = useRouter();
   const me = useMe();
 
@@ -368,13 +372,15 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
                 className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
-              <p className="text-sm max-w-33 truncate text-tertiary">{selectedSpace?.title || 'Select community'}</p>
+              <p className={clsx('text-sm max-w-33 truncate text-tertiary', (compact || isMobile) ? 'hidden' : 'hidden md:block')}>
+                {selectedSpace?.title || 'Select community'}
+              </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
             </div>
           )}
         </Menu.Trigger>
         <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
-          {() => (
+          {({toggle}) => (
             <>
               {spaces.map((space) => (
                 <MenuItem
@@ -382,6 +388,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
                   title={space.title}
                   onClick={() => {
                     onSelectSpace(space);
+                    toggle()
                   }}
                 />
               ))}
@@ -426,7 +433,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
             strokeDashoffset={ringOffset}
           />
         </svg>
-        <span>
+        <span className={clsx((compact || isMobile) ? 'hidden' : 'hidden md:inline')}>
           {formatCredits(selectedSpace?.credits)} / {formatCredits(selectedSpace?.credits_high_water_mark)}
         </span>
       </button>

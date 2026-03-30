@@ -132,9 +132,9 @@ function reducers(state: State, action: AIChatAction) {
       const nextConfigId = action.payload?.config;
       const configs = action.payload?.configs || state.configs;
       const nextConfig = configs.find((c) => c._id === nextConfigId);
-      const nextMessages: Message[] = [];
+      let nextMessages: Message[] = action.payload?.messages || [];
 
-      if (nextConfig) {
+      if (nextMessages.length === 0 && state.messages.length === 0 && nextConfig) {
         nextMessages.push({
           message:
             nextConfig.welcomeMessage ||
@@ -148,7 +148,7 @@ function reducers(state: State, action: AIChatAction) {
         ...state,
         configs,
         config: nextConfigId,
-        messages: nextMessages,
+        messages: nextMessages.length > 0 ? nextMessages : state.messages,
       };
     }
 
@@ -157,7 +157,11 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.reset: {
-      return { ...defaultState };
+      return {
+        ...defaultState,
+        ...action.payload,
+        session: uuidV4(),
+      };
     }
 
     default:
