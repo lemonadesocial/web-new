@@ -2,6 +2,9 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { formatUnits } from 'viem';
 
 import {
+  type ConnectionOutput,
+  type ConnectorActionInfo,
+  type ConnectorDefinition,
   type SubscriptionItem,
   type SubscriptionPricing,
   SubscriptionItemType,
@@ -191,6 +194,38 @@ export const CONNECTOR_ICONS: Record<string, string> = {
   'eleven-labs': `${ASSET_PREFIX}/assets/images/connectors/connector-eleven-labs.png`,
   webhook: `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
 };
+
+type ConnectorActionLike = {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+};
+
+export type ConnectorModalAction = ConnectorActionInfo;
+export type ConnectorModalConnection = ConnectionOutput & {
+  connector: ConnectorDefinition;
+};
+
+type ConnectorLike<TAction extends ConnectorActionLike = ConnectorActionLike> = {
+  actions?: Array<TAction | null> | null;
+};
+
+export function getGuestExportAction<TAction extends ConnectorActionLike>(
+  connector?: ConnectorLike<TAction> | null,
+): TAction | null {
+  const actions = connector?.actions ?? [];
+
+  return (
+    actions.find((action) => action?.id === 'export-guests') ??
+    actions.find((action) => {
+      if (!action) return false;
+
+      const haystack = `${action.id} ${action.name ?? ''} ${action.description ?? ''}`.toLowerCase();
+      return haystack.includes('export') && haystack.includes('guest');
+    }) ??
+    null
+  ) as TAction | null;
+}
 
 export function getProcessingMessage(status: string) {
   if (status === 'approving') return 'Please approve token spending in your wallet.';
