@@ -45,7 +45,7 @@ const EventRegistrationContent: React.FC = () => {
   const nonLoggedInStatus = useAtomValue(nonLoggedInStatusAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
-  const paymentAccount = ticketTypes[0].prices[0].payment_accounts_expanded?.[0];
+  const paymentAccount = ticketTypes[0]?.prices[0]?.payment_accounts_expanded?.[0];
 
   const event = useAtomValue(eventDataAtom);
 
@@ -214,6 +214,7 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
     if (ticketTypes?.length === 1 && tokenGatesData?.listEventTokenGates.length === 0) {
       const ticket = ticketTypes[0];
       const price = ticket.prices[0];
+      if (!price) return;
 
       setPurchaseItems([{ id: ticket._id, count: 1 }]);
       setCurrency(price.currency);

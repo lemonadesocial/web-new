@@ -218,7 +218,7 @@ export function TicketSelectItem({
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
-              {ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
+              {ticketType.prices[0]?.payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
                 <Chip variant="success" size="xxs" className="rounded-full">
                   Check In to Earn
                 </Chip>
@@ -311,10 +311,10 @@ export function TicketPrices({ prices, single, groupRegistration, active }: Tick
           active || single ? 'text-accent' : 'text-secondary',
         )}
       >
-        {formatPrice(firstPrice, true)}
+        {firstPrice ? formatPrice(firstPrice, true) : 'Free'}
       </p>
       {groupRegistration && single && <p className="text-sm font-medium text-secondary">per ticket</p>}
-      <PaymentNetworks paymentAccounts={firstPrice.payment_accounts_expanded || []} />
+      <PaymentNetworks paymentAccounts={firstPrice?.payment_accounts_expanded || []} />
     </div>
   );
 }
