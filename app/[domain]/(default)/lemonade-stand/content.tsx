@@ -90,33 +90,35 @@ function DashboardHome() {
   const [activeTab, setActiveTab] = React.useState<DashboardTab>('events');
 
   return (
-    <div className="flex w-full flex-col pb-16 pt-10 md:pb-24 md:pt-12">
-      <div className="px-4 md:px-12">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-title-default text-2xl leading-10 font-semibold text-white">
-            Lemonade Stand
-          </h1>
-          <p className="max-w-2xl font-body-default text-base leading-6 text-white/56">
-            Quickly catch up and manage your events, communities &amp; coins.
-          </p>
+    <div className="flex w-full flex-col pb-16 md:pb-24">
+      <div className="sticky top-0 z-10 bg-page-background/90 backdrop-blur-3xl">
+        <div className="px-4 pt-10 md:px-12 md:pt-12">
+          <div className="flex flex-col gap-1">
+            <h1 className="font-title-default text-2xl leading-10 font-semibold text-white">
+              Lemonade Stand
+            </h1>
+            <p className="max-w-2xl font-body-default text-base leading-6 text-white/56">
+              Quickly catch up and manage your events, communities &amp; coins.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-2 border-b border-white/8 px-4 pt-2 md:px-12">
-        <div className="no-scrollbar flex gap-4 overflow-x-auto pt-1">
-          {DASHBOARD_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => startTransition(() => setActiveTab(tab.key))}
-              className={twMerge(
-                'shrink-0 border-b-2 border-transparent pb-2.5 font-body-default text-base leading-6 font-medium text-white/56 transition hover:text-white',
-                activeTab === tab.key && 'border-white text-white',
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="mt-2 border-b border-white/8 px-4 pt-2 md:px-12">
+          <div className="no-scrollbar flex gap-4 overflow-x-auto pt-1">
+            {DASHBOARD_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => startTransition(() => setActiveTab(tab.key))}
+                className={twMerge(
+                  'shrink-0 border-b-2 border-transparent pb-2.5 font-body-default text-base leading-6 font-medium text-white/56 transition hover:text-white',
+                  activeTab === tab.key && 'border-white text-white',
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
