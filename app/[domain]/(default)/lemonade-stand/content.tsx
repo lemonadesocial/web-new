@@ -68,6 +68,8 @@ const MANAGED_HUB_ROLES = [SpaceRole.Creator, SpaceRole.Admin, SpaceRole.Ambassa
 const SUBSCRIBED_HUB_ROLES = [SpaceRole.Subscriber];
 const MY_HUBS_QUERY_VARIABLES = { with_my_spaces: true, roles: MANAGED_HUB_ROLES };
 const SUBSCRIBED_HUBS_QUERY_VARIABLES = { with_my_spaces: false, roles: SUBSCRIBED_HUB_ROLES };
+const EVENT_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 2xl:grid-cols-3';
+const COMMUNITY_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5';
 
 export function Content() {
   const me = useMe();
@@ -215,13 +217,13 @@ function EventsPanel() {
       />
 
       {loading ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className={EVENT_GRID_CLASSNAME}>
           {Array.from({ length: 4 }).map((_, index) => (
             <EventCardSkeleton key={index} />
           ))}
         </div>
       ) : events.length ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className={EVENT_GRID_CLASSNAME}>
           {events.map((event) => (
             <EventCardItem
               key={event._id}
@@ -291,13 +293,13 @@ function CommunitiesPanel() {
         />
 
         {myHubsLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className={COMMUNITY_GRID_CLASSNAME}>
             {Array.from({ length: 5 }).map((_, index) => (
               <CommunityHubCardSkeleton key={index} view="card" />
             ))}
           </div>
         ) : myHubs.length ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className={COMMUNITY_GRID_CLASSNAME}>
             {myHubs.map((space) => (
               <CommunityHubCard
                 key={space._id}
