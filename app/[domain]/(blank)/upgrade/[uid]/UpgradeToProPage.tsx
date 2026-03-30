@@ -6,12 +6,7 @@ import clsx from 'clsx';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import {
-  GetListMySpacesDocument,
-  GetSpaceDocument,
-  Space,
-  SubscriptionItem,
-} from '$lib/graphql/generated/backend/graphql';
+import { GetListMySpacesDocument, Space, SubscriptionItem } from '$lib/graphql/generated/backend/graphql';
 import type { FeatureConfig } from '$lib/components/features/upgrade-to-pro/utils';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
