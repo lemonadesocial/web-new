@@ -34,9 +34,9 @@ export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean
     console.error('Cannot find currency decimals.');
     return '';
   }
-  if (skipCurrency) return formatUnits(cost, decimals);
+  if (skipCurrency) return formatUnits(BigInt(cost), decimals);
 
-  return `${parseNumericString(formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
+  return `${parseNumericString(formatUnits(BigInt(cost), decimals))} ${currency.toUpperCase()}`;
 }
 
 export function formatFiatPrice(price: EventTicketPrice) {
@@ -192,15 +192,15 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 
   if (!Number.isFinite(decimals)) return 0;
 
-  if (account.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
+  if (account?.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
 
-  return `${formatUnits(cost, decimals)} ${currency}`;
+  return `${formatUnits(BigInt(cost), decimals)} ${currency}`;
 };
 
 export function isAttending(event: Event, userId: string): boolean {
   if (!event?._id) return false;
   return new Set(
-    [...([event?.host] || [])]
+    [event?.host].filter(Boolean)
       .concat(event?.cohosts || [])
       .concat(event?.speaker_users || [])
       .concat(event?.accepted || []),
@@ -225,7 +225,7 @@ export function getEventCohosts(event: Event) {
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
   const { min_value, decimals } = tokenGate;
 
-  if (min_value && decimals) return `> ${parseNumericString(formatUnits(min_value, decimals))}`;
+  if (min_value && decimals) return `> ${parseNumericString(formatUnits(BigInt(min_value), decimals))}`;
 
   return `> 0`;
 }
