@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.28.0](https://github.com/lemonadesocial/web-new/compare/v10.27.0...v10.28.0) (2026-03-30)
+
+
+### Features
+
+* improve lemonade stand grid responsiveness ([49c6caf](https://github.com/lemonadesocial/web-new/commit/49c6caff4c34a550502355ce62bc0d9f9d5ddbcd))
+
+
+### Bug Fixes
+
+* keep lemonade stand header and tabs sticky ([b6948cf](https://github.com/lemonadesocial/web-new/commit/b6948cfce08f0b46fa7581719efc68a93e2a0523))
+* remove communities item from navigation ([ca79f83](https://github.com/lemonadesocial/web-new/commit/ca79f831146cbe9d5d269fcf91231bb8c353527b))
+
 ## [10.27.0](https://github.com/lemonadesocial/web-new/compare/v10.26.5...v10.27.0) (2026-03-29)
 
 
