@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.29.0](https://github.com/lemonadesocial/web-new/compare/v10.28.0...v10.29.0) (2026-03-30)
+
+
+### Features
+
+* add event guest list export modal flow ([0ebde95](https://github.com/lemonadesocial/web-new/commit/0ebde953ce28c4b87dfc8de7df91a56f41f0f754))
+
+
+### Bug Fixes
+
+* crash on Registration tab when ticket type has empty prices ([996dfd5](https://github.com/lemonadesocial/web-new/commit/996dfd537f2f0ade543177ed784ca251475c4ea9))
+* resolve pre-existing type errors in event.ts ([a0015e6](https://github.com/lemonadesocial/web-new/commit/a0015e67ee124d451dcbe06cf3640e877613fe2e))
+
 ## [10.28.0](https://github.com/lemonadesocial/web-new/compare/v10.27.0...v10.28.0) (2026-03-30)
 
 
