@@ -20,6 +20,7 @@ import { useQuery } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
+import { openEventPane } from '../pane';
 
 export function HomeEventsSection() {
   const me = useMe();
@@ -48,13 +49,8 @@ export function HomeEventsSection() {
   };
 
   return (
-    <section
-      className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl"
-    >
-      <header
-        className="flex items-center justify-between w-full"
-        style={{ height: 32, minHeight: 32 }}
-      >
+    <section className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl">
+      <header className="flex items-center justify-between w-full" style={{ height: 32, minHeight: 32 }}>
         <Segment
           items={[
             { label: 'Events', value: 'events' },
@@ -65,10 +61,7 @@ export function HomeEventsSection() {
           size="sm"
           className="rounded-[var(--radius-sm)]"
         />
-        <div
-          className="flex items-center gap-2"
-          style={{ gap: 8 }}
-        >
+        <div className="flex items-center gap-2" style={{ gap: 8 }}>
           {tab === 'events' && (
             <>
               <Link
@@ -137,12 +130,12 @@ export function HomeEventsSection() {
                 key={item._id}
                 item={item}
                 me={me}
-                onClick={() => router.push(`/e/${item.shortid}`)}
+                onClick={() => openEventPane(item._id)}
                 onManage={
                   [item.host, ...(item.cohosts || [])].includes(me?._id)
                     ? (e) => {
                         e.stopPropagation();
-                        router.push(`/e/manage/${item.shortid}`);
+                        openEventPane(item._id);
                       }
                     : undefined
                 }

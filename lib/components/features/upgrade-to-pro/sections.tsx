@@ -97,8 +97,8 @@ export function getUpgradeToProSectionKey(sectionSlug?: string | null): UpgradeT
   return slugToSectionKey[sectionSlug] ?? null;
 }
 
-export function getUpgradeToProSectionHref(sectionKey: UpgradeToProSectionKey) {
+export function getUpgradeToProSectionHref(uid: string, sectionKey: UpgradeToProSectionKey) {
   const section = getUpgradeToProSection(sectionKey);
-  if (section.key === DEFAULT_UPGRADE_TO_PRO_SECTION) return '/upgrade-to-pro';
-  return `/upgrade-to-pro/${section.slug}`;
+  if (section.key === DEFAULT_UPGRADE_TO_PRO_SECTION) return `/upgrade/${uid}`;
+  return `/upgrade/${uid}/${section.slug}`;
 }

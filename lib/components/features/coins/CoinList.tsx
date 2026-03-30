@@ -33,7 +33,6 @@ interface CoinListProps {
 export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
   const [skip, setSkip] = useState(0);
   const chainIds = useListChainIds();
-  
   const { data, loading } = useQuery(
     PoolCreatedDocument,
     {
@@ -43,7 +42,7 @@ export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
             blockTimestamp: Order_By.Desc,
           },
         ],
-        limit: LIMIT,
+        limit: LIMIT + 1,
         offset: skip,
         where: {
           ...filter,
@@ -56,8 +55,10 @@ export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
     coinClient,
   );
 
-  const pools = data?.PoolCreated || [];
-  const total = pools.length >= LIMIT ? (skip + LIMIT) + 1 : pools.length;
+  const allPools = data?.PoolCreated || [];
+  const hasNextPage = allPools.length > LIMIT;
+  const pools = allPools.slice(0, LIMIT);
+  const total = hasNextPage ? skip + LIMIT + 1 : skip + pools.length;
 
   return (
     <CoinListTable
@@ -84,6 +85,7 @@ interface CoinListTableProps {
 
 export function CoinListTable({ pools, loading, hiddenColumns = [], skip = 0, total, onNext, onPrev }: CoinListTableProps) {
   const showColumn = (column: CoinListColumn) => !hiddenColumns.includes(column);
+  const shouldShowPagination = total !== undefined && total > LIMIT && Boolean(onNext) && Boolean(onPrev);
 
   return (
     <div className="flex flex-col gap-4 relative">
@@ -149,7 +151,7 @@ export function CoinListTable({ pools, loading, hiddenColumns = [], skip = 0, to
             ))}
           </CardTable.Root>
         </div>
-        {pools.length > 0 && onNext && onPrev && total !== undefined && (
+        {shouldShowPagination && (
           <CardTable.Pagination 
             limit={LIMIT} 
             skip={skip} 
@@ -269,4 +271,3 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
     </CardTable.Row>
   );
 }
-

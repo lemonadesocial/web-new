@@ -64,7 +64,7 @@ function MessageItem({ message: item }: { message: Message }) {
               src={currentAgent.avatar}
               width={24}
               height={24}
-              className="rounded-full object-cover"
+              className="rounded-full object-cover aspect-square"
               alt={currentAgent.name || 'Agent'}
             />
           ) : (
@@ -83,23 +83,26 @@ function MessageItem({ message: item }: { message: Message }) {
             <CardList title={item.metadata.title} cards={item.metadata.cards} overflow={item.metadata.overflow} />
           )}
 
-          <div className="flex gap-2">
-            {item.metadata?.actions?.map((action, idx) =>
-              match(action.type)
-                .with('button', () => (
-                  <Button
-                    key={idx}
-                    onClick={action.props?.onClick}
-                    variant="tertiary-alt"
-                    size="sm"
-                    iconLeft={action.props.icon}
-                  >
-                    {action.props?.label}
-                  </Button>
-                ))
-                .otherwise(() => <>Action unsupported</>),
-            )}
-          </div>
+          {item.metadata?.actions?.length > 0 && (
+            <div className="flex gap-2">
+              {item.metadata?.actions.map(
+                (action: { type: string; props?: { onClick: () => void; icon: string; label: string } }, idx: number) =>
+                  match(action.type)
+                    .with('button', () => (
+                      <Button
+                        key={idx}
+                        onClick={action.props?.onClick}
+                        variant="tertiary-alt"
+                        size="sm"
+                        iconLeft={action.props?.icon}
+                      >
+                        {action.props?.label}
+                      </Button>
+                    ))
+                    .otherwise(() => <>Action unsupported</>),
+              )}
+            </div>
+          )}
         </div>
       </div>
     ))

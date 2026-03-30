@@ -15,7 +15,7 @@ import { CreateAgentPane } from '$lib/components/features/community-manage/panes
 import { CoinCard } from '$lib/components/features/coin/CoinCard';
 import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
 import { EventCardItem } from '$lib/components/features/EventCardItem';
-import { EventPane } from '$lib/components/features/pane';
+import { openEventPane } from '$lib/components/features/pane';
 import { GetAiDocumentsDocument, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import type { Config, Document as AiDocument } from '$lib/graphql/generated/ai/graphql';
 import {
@@ -227,7 +227,7 @@ function EventsPanel() {
               key={event._id}
               item={event}
               me={me}
-              onClick={() => drawer.open(EventPane, { props: { eventId: event._id } })}
+              onClick={() => openEventPane(event._id)}
               onManage={
                 [event.host, ...(event.cohosts || [])].includes(me?._id)
                   ? (e) => {
@@ -405,7 +405,7 @@ function SubscribedHubRow({ space }: { space: Space }) {
               <button
                 key={event._id}
                 type="button"
-                onClick={() => router.push(`/e/${event.shortid}`)}
+                onClick={() => openEventPane(event._id)}
                 className="flex flex-col items-start gap-1 text-left transition hover:opacity-80"
               >
                 <span className="text-base leading-6 text-white">{event.title}</span>

@@ -6,22 +6,20 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
-import { AnimatePresence, motion } from 'framer-motion';
+import { match } from 'ts-pattern';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
-import { Badge, Button, Menu, MenuItem, Card, Divider, modal, drawer } from '../core';
+import { Button, Menu, MenuItem, Card, modal, drawer } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
-import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
-import { generateUrl } from '$lib/utils/cnd';
+import { GetListMySpacesDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { ProfilePane } from '../features/pane';
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
-import { match } from 'ts-pattern';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -34,6 +32,9 @@ const Sidebar = () => {
 
   const logOut = useLogOut();
   const signIn = useSignIn();
+
+  const { data: dataSpaces } = useQuery(GetListMySpacesDocument, { variables: { limit: 10 }, skip: !me });
+  const mySpaces = (dataSpaces?.listMySpaces?.items || []) as Space[];
 
   const mainMenu = useMemo(() => {
     const menu = [
@@ -171,11 +172,6 @@ const Sidebar = () => {
                 </div>
               ))}
             </div>
-
-            <div className={clsx('flex-1 pb-2 overflow-hidden', toggle === 'mini' && 'hidden')}>
-              <Divider className="h-1 w-full" />
-              {toggle === 'open' && <SectionEvents handleNavigate={(path) => handleNavigate(path)} />}
-            </div>
           </div>
 
           <div className="border-t p-3 pt-4 flex flex-col gap-3">
@@ -212,7 +208,7 @@ const Sidebar = () => {
               )}
               onClick={() => {
                 if (me || account) {
-                  router.push('/upgrade-to-pro');
+                  if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
                 } else {
                   signIn();
                 }
@@ -356,78 +352,6 @@ export function CreatingModal() {
         </div>
       </Card.Content>
     </Card.Root>
-  );
-}
-
-function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => void }) {
-  const me = useMe();
-  const [hasMore, setHasMore] = React.useState(true);
-
-  const { data, fetchMore } = useQuery(GetHostingEventsSidebarLelfDocument, {
-    variables: { limit: 15, user: me?._id, skip: 0 },
-    skip: !me,
-  });
-  const events = data?.getHostingEvents || [];
-
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  const handleScroll = () => {
-    if (!containerRef.current) return;
-
-    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-
-    if (scrollTop + clientHeight >= scrollHeight - 10 && hasMore) {
-      fetchMore({
-        variables: { skip: events.length },
-        updateQuery: (existing, res) => {
-          if (res?.getHostingEvents?.length) {
-            return {
-              __typename: 'Query',
-              getHostingEvents: [...(existing?.getHostingEvents || []), ...res?.getHostingEvents],
-            };
-          }
-          if (res.getHostingEvents.length === 0) setHasMore(false);
-          return existing;
-        },
-      });
-    }
-  };
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="px-3 flex items-center justify-between p-2.5 pb-1.5">
-        <p>Events</p>
-        <i
-          className="icon-arrow-outward text-quaternary hover:text-primary cursor-pointer size-5"
-          onClick={() => handleNavigate('/events')}
-        />
-      </div>
-      <div ref={containerRef} onScroll={handleScroll} className="px-3 flex-1 overflow-auto">
-        {events.map((item) => (
-          <div
-            key={item._id}
-            className="p-2.5 flex cursor-pointer hover:bg-(--btn-tertiary) rounded-sm text-sm"
-            onClick={() => handleNavigate(`/agent/e/manage/${item.shortid}`)}
-          >
-            <div className="flex gap-2.5 flex-1">
-              <div className="size-5 aspect-square rounded-xs bg-tertiary">
-                {item.new_new_photos_expanded?.[0] && (
-                  <img
-                    src={generateUrl(item.new_new_photos_expanded?.[0])}
-                    className="object-contain w-full h-full rounded-xs"
-                  />
-                )}
-              </div>
-              <p className="text-secondary line-clamp-1">{item.title}</p>
-            </div>
-            <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-px">
-              <i aria-hidden="true" className="icon-draft-outline w-3 h-3 aspect-square" />
-              <p>Draft</p>
-            </Badge>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 

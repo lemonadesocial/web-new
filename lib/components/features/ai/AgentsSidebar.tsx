@@ -49,7 +49,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
               src={agent.avatar || randomEventDP(agent._id)}
               width={40}
               height={40}
-              className="rounded-full object-cover shrink-0"
+              className="rounded-full object-cover shrink-0 aspect-square"
               alt={agent.name}
             />
             <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ export function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSele
                 src={agent.userExpanded?.image_avatar || userAvatar(agent.userExpanded)}
                 width={16}
                 height={16}
-                className="rounded-full"
+                className="rounded-full aspect-square"
                 alt={agent.userExpanded?.name || 'User'}
               />
               <p>{agent.userExpanded?.name}</p>

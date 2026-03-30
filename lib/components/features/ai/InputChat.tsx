@@ -38,7 +38,6 @@ type InputChatProps = {
 };
 
 export function InputChat({ variant = 'default', showTools = true, readOnly }: InputChatProps) {
-  const me = useMe();
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -204,15 +203,18 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
   const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
   const rootClassName =
     variant === 'home'
-      ? 'backdrop-blur! rounded-lg border border-white bg-[rgba(20,19,23,0.64)]'
-      : 'backdrop-blur-none! rounded-lg border-0 bg-(--btn-tertiary)';
+      ? 'backdrop-blur! border border-white bg-[rgba(20,19,23,0.64)]'
+      : 'backdrop-blur-none! border-0 bg-(--btn-tertiary)';
 
   return (
-    <Card.Root className={rootClassName}>
+    <Card.Root className={clsx('rounded-lg overflow-visible!', rootClassName)}>
       <Card.Content className="flex flex-col space-y-2 p-4">
         <div className="relative w-full">
           {isIdle && (
-            <div className="pointer-events-none absolute inset-0 overflow-hidden text-base leading-6 text-quaternary" aria-hidden>
+            <div
+              className="pointer-events-none absolute inset-0 overflow-hidden text-base leading-6 text-quaternary"
+              aria-hidden
+            >
               <span className="font-medium">
                 Ask LemonAI to <span>{typingText}</span>
               </span>
@@ -269,18 +271,16 @@ export function InputChat({ variant = 'default', showTools = true, readOnly }: I
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            {me && (
-              <SpaceSelector
-                readOnly={readOnly}
-                currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
-                onSelectSpace={(space) =>
-                  dispatch({
-                    type: AIChatActionKind.set_data_run,
-                    payload: { data: { space_id: space._id } },
-                  })
-                }
-              />
-            )}
+            <SpaceSelector
+              readOnly={readOnly}
+              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
+              onSelectSpace={(space) =>
+                dispatch({
+                  type: AIChatActionKind.set_data_run,
+                  payload: { data: { space_id: space._id } },
+                })
+              }
+            />
             <Button
               icon="icon-arrow-foward-sharp -rotate-90"
               size="sm"
@@ -315,12 +315,25 @@ function getCreditFillPercent(credits?: number | null, highWaterMark?: number | 
 
 function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelectorProps) {
   const router = useRouter();
+  const me = useMe();
+
   const { data } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
     fetchPolicy: 'cache-and-network',
+    skip: !me,
+  });
+
+  const { data: dataSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: currentSpaceId },
+    skip: !readOnly && !currentSpaceId,
   });
 
   const spaces = (data?.listSpaces || []) as Space[];
+
+  if (readOnly && dataSpace?.getSpace) {
+    spaces.push(dataSpace.getSpace as Space);
+  }
+
   const personalSpace = spaces.find((space) => space.personal);
   const selectedSpace = spaces.find((space) => space._id === currentSpaceId) || personalSpace;
   const creditFillPercent = getCreditFillPercent(selectedSpace?.credits, selectedSpace?.credits_high_water_mark);
@@ -333,6 +346,8 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
       onSelectSpace(personalSpace);
     }
   }, [currentSpaceId, personalSpace, onSelectSpace]);
+
+  if (!spaces.length) return null;
 
   return (
     <div className="flex items-center gap-2">
@@ -353,9 +368,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
                 className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
-              <p className="text-sm max-w-33 truncate text-tertiary">
-                {selectedSpace?.title || 'Select community'}
-              </p>
+              <p className="text-sm max-w-33 truncate text-tertiary">{selectedSpace?.title || 'Select community'}</p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
             </div>
           )}
@@ -384,10 +397,9 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly }: SpaceSelecto
         onClick={() => {
           if (readOnly) return;
           if (selectedSpace?._id) {
-            router.push(`/upgrade-to-pro?space=${selectedSpace._id}`);
+            router.push(`/upgrade/${selectedSpace.slug || selectedSpace._id}`);
             return;
           }
-          router.push('/upgrade-to-pro');
         }}
         title="Upgrade to Pro"
       >

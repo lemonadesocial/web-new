@@ -56,7 +56,7 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Plus,
     description: 'More AI, more reach — for organizers who are scaling up.',
     annual: false,
-    featureTitle: 'All features in Free, and:',
+    featureTitle: 'All features in Pro, and:',
     features: [
       '{{credits_per_month}} AI credits per month (with 1.5x top-up bonus)',
       'Premium AI models (Opus)',
@@ -78,7 +78,7 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Pro,
     description: 'For creators and organizers ready to build, sell, and grow.',
     annual: false,
-    featureTitle: 'All features in Pro, and:',
+    featureTitle: 'All features in Free, and:',
     features: [
       '{{credits_per_month}} monthly AI credits',
       'Premium AI models (Opus)',
@@ -211,7 +211,10 @@ function CryptoPlanSavingsBadge({ item }: { item: PlanCard }) {
 
 export function PlanAndCredits({ space, data: subscriptionItems = [], featureConfigs = [] }: { space: Space; data?: SubscriptionItem[]; featureConfigs?: FeatureConfig[] }) {
   const router = useRouter();
-  const mergedPlans = React.useMemo(() => mergePlansWithSubscriptions(pricingPlans, subscriptionItems), [subscriptionItems]);
+  const mergedPlans = React.useMemo(
+    () => mergePlansWithSubscriptions(pricingPlans, subscriptionItems),
+    [subscriptionItems],
+  );
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
   const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>('card');
   const [optimisticSubscriptionTier, setOptimisticSubscriptionTier] = React.useState<SubscriptionItemType | null>(null);
@@ -326,7 +329,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
   const getPlanPaymentMethod = React.useCallback(
     (item: PlanCard): PaymentMethod => {
       const annual = Boolean(item.annual);
-      return paymentMethod === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual) ? 'wallet' : 'card';
+      return paymentMethod === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)
+        ? 'wallet'
+        : 'card';
     },
     [paymentMethod],
   );
@@ -339,7 +344,11 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
         const annual = Boolean(item.annual);
 
         if (!hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
-          toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+          toast.error(
+            annual
+              ? 'Annual crypto pricing is unavailable for this plan.'
+              : 'Monthly crypto pricing is unavailable for this plan.',
+          );
           return;
         }
 
@@ -471,7 +480,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
 
                       <div className="flex flex-col">
                         <div className="flex justify-between items-center flex-1 min-h-8">
-                          {selectedPaymentMethod === 'wallet' && item.pricing && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
+                          {selectedPaymentMethod === 'wallet' &&
+                          item.pricing &&
+                          hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
                             <>
                               <div className="flex gap-2 items-end">
                                 <p className="text-2xl">
@@ -541,8 +552,15 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
                             onSelect={(method) => {
                               const annual = Boolean(item.annual);
 
-                              if (method.value === 'wallet' && !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
-                                toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+                              if (
+                                method.value === 'wallet' &&
+                                !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)
+                              ) {
+                                toast.error(
+                                  annual
+                                    ? 'Annual crypto pricing is unavailable for this plan.'
+                                    : 'Monthly crypto pricing is unavailable for this plan.',
+                                );
                                 return;
                               }
 

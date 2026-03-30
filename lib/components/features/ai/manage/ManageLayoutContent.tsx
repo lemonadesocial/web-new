@@ -20,6 +20,7 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
+import { pad } from 'lodash';
 
 function ManageLayoutContent() {
   const params = useParams();
@@ -41,7 +42,8 @@ function ManageLayoutContent() {
     variables: { shortid },
     skip: !shouldFetchEvent,
   });
-  const event = (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
+  const event =
+    (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
   useQuery(
@@ -64,14 +66,11 @@ function ManageLayoutContent() {
 
   React.useEffect(() => {
     if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
 
       if (!ready) setReady(true);
     }
-  }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
+  }, [state.layoutType, event, ready, shortid]);
 
   if (!ready) return null;
 
@@ -96,13 +95,13 @@ function ManageLayoutContent() {
             <main
               data-theme-scope="event-preview"
               className={clsx(
-                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2',
+                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
                 themeState.theme !== 'default' && [themeState.config.color, themeState.config.mode],
               )}
             >
               <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
-                <EventGuestSide event={event} />
+                <EventGuestSide event={event} autoSave={false} />
               </div>
             </main>
           ) : null,

@@ -50,7 +50,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
       const { data } = await updatePhotos({ variables: { id: event._id, new_new_photos: [fileId] } });
 
       if (data?.updateEvent) {
-        updateEvent(data.updateEvent);
+        updateEvent(data.updateEvent as any);
       }
 
       toast.success('Photo updated!');
@@ -67,7 +67,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
           <div className="absolute scale-50 origin-top-left w-[200%]">
             <EventThemeProvider themeData={event.theme_data}>
               <EventThemeLayout>
-                <EventGuestSideContent event={event} />
+                <EventGuestSideContent event={event} autoSave={false} />
               </EventThemeLayout>
             </EventThemeProvider>
           </div>

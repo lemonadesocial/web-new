@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
@@ -27,16 +27,14 @@ type UpgradeToProPageProps = {
   activeSection: UpgradeToProSectionKey;
   subscriptionData?: SubscriptionItem[];
   featureConfigs?: FeatureConfig[];
+  space: Space;
 };
 
-function UpgradeToProPage({ activeSection, subscriptionData, featureConfigs }: UpgradeToProPageProps) {
-  const search = useSearchParams();
-  const spaceId = search.get('space') ?? '';
-
+function UpgradeToProPage({ space, activeSection, subscriptionData, featureConfigs }: UpgradeToProPageProps) {
   const router = useRouter();
   const me = useMe();
 
-  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string>(spaceId);
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string>(space._id);
   const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
 
   const activeMenuItem = getUpgradeToProSection(activeSection);
@@ -47,12 +45,6 @@ function UpgradeToProPage({ activeSection, subscriptionData, featureConfigs }: U
     skip: !me,
   });
   const spaces = (data?.listMySpaces?.items || []) as Space[];
-
-  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: selectedSpaceId },
-    skip: !selectedSpaceId,
-  });
-  const space = dataGetSpace?.getSpace as Space;
 
   React.useEffect(() => {
     if (spaces.length && !selectedSpaceId) {
@@ -108,7 +100,7 @@ function UpgradeToProPage({ activeSection, subscriptionData, featureConfigs }: U
                       }
                       iconRight={item._id === selectedSpaceId && 'icon-done'}
                       onClick={() => {
-                        setSelectedSpaceId(item._id);
+                        router.push(`/upgrade/${item.slug || item._id}`);
                         toggle();
                       }}
                     >
@@ -136,9 +128,7 @@ function UpgradeToProPage({ activeSection, subscriptionData, featureConfigs }: U
                   )}
                   onClick={() => {
                     setToggleMenuMobile(false);
-                    const params = new URLSearchParams(search.toString());
-                    params.set('space', selectedSpaceId);
-                    router.push(getUpgradeToProSectionHref(item.key) + '?' + params.toString());
+                    router.push(getUpgradeToProSectionHref(space.slug || space._id, item.key));
                   }}
                 >
                   <i className={clsx('w-5 h-5 aspect-square', item.icon)}></i>

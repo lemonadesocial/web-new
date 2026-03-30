@@ -22,7 +22,15 @@ export class InMemoryCache {
       return fieldName;
     }
 
-    const argString = Object.entries(args)
+    // Sort keys to ensure consistent stringification
+    const sortedArgs = Object.keys(args as object)
+      .sort()
+      .reduce((acc, key) => {
+        (acc as any)[key] = (args as any)[key];
+        return acc;
+      }, {});
+
+    const argString = Object.entries(sortedArgs)
       .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
       .join(',');
 
@@ -59,7 +67,7 @@ export class InMemoryCache {
     return data;
   }
 
-  readQuery<T, V>(query: TypedDocumentNode<T, V>, variables?: Record<string, V>) {
+  readQuery<T, V>(query: TypedDocumentNode<T, V>, variables?: V) {
     try {
       const operationDef = query.definitions.find(
         (def): def is OperationDefinitionNode => def.kind === 'OperationDefinition',
@@ -74,7 +82,7 @@ export class InMemoryCache {
         if (selection.kind !== 'Field') return;
 
         const fieldName = selection.name.value;
-        const args = this.extractArguments(selection, variables);
+        const args = this.extractArguments(selection, variables as any);
         const fieldKey = this.generateFieldCacheKey(fieldName, args);
 
         // Check if field exists in cache
@@ -182,8 +190,8 @@ export class InMemoryCache {
     return { __ref: entityId };
   }
 
-  normalizeAndStore<T, V extends object>(query: TypedDocumentNode<T, V>, variables: Record<string, V>, data: T) {
-    const queryKey = this.createCacheKey<T, V>(query, variables);
+  normalizeAndStore<T, V extends object>(query: TypedDocumentNode<T, V>, variables: V, data: T) {
+    const queryKey = this.createCacheKey<T, V>(query, variables as any);
 
     // Get operation name and extract root fields
     const operationDef = query.definitions.find((def) => def.kind === 'OperationDefinition');
@@ -197,7 +205,7 @@ export class InMemoryCache {
 
       if (fieldName === '__typename') return;
 
-      const args = this.extractArguments(selection, variables);
+      const args = this.extractArguments(selection, variables as any);
       const fieldKey = this.generateFieldCacheKey(fieldName as string, args);
       const resultData = data[fieldName];
 
@@ -268,14 +276,17 @@ export class InMemoryCache {
 
     const operationName = operationDef.name?.value;
 
-    // Format variables
+    // Format variables with sorted keys
     const varStrings = [];
     if (variables) {
-      for (const [key, value] of Object.entries(variables)) {
+      const sortedKeys = Object.keys(variables).sort();
+      for (const key of sortedKeys) {
+        const value = variables[key];
         let formattedValue = '';
         if (typeof value === 'object' || Array.isArray(value)) formattedValue = JSON.stringify(value);
         if (typeof value === 'string') formattedValue = `"${value}"`;
-        if (typeof value === 'number' || typeof value === 'boolean') formattedValue = value.toString();
+        if (typeof value === 'number' || typeof value === 'boolean') formattedValue = (value as any).toString();
+        if (value === null) formattedValue = 'null';
 
         varStrings.push(`${key}: ${formattedValue}`);
       }

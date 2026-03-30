@@ -23,6 +23,10 @@ import { EventAccess } from '../event-access';
 import { useMe } from '$lib/hooks/useMe';
 import { Pane } from '$lib/components/core/pane/pane';
 
+export function openEventPane(eventId: string) {
+  drawer.open(EventPane, { props: { eventId }, contentClass: 'bg-background' });
+}
+
 export function EventPane({ eventId }: { eventId: string }) {
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
