@@ -93,7 +93,13 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
       onComplete: (data) => {
         if (data?.configs?.items?.length) {
           const config = data.configs.items[0] as AiConfigFieldsFragment;
-          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+          aiChatDispatch({
+            type: AIChatActionKind.set_config,
+            payload: {
+              config: config._id,
+              messages: mockWelcomeEvent(event),
+            },
+          });
         }
       },
       skip: !event._id,
@@ -127,9 +133,14 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   React.useEffect(() => {
     if (event.shortid === shortid) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id }, standId: event.space } });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
+      aiChatDispatch({
+        type: AIChatActionKind.reset,
+        payload: {
+          data: { event_id: event._id, space_id: event.space },
+          standId: event.space,
+          messages: mockWelcomeEvent(event),
+        },
+      });
 
       if (!isMobile) aiChat.open();
     }
