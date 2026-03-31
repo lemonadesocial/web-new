@@ -1,5 +1,15 @@
 # Changelog
 
+## [10.29.4](https://github.com/lemonadesocial/web-new/compare/v10.29.3...v10.29.4) (2026-03-31)
+
+
+### Bug Fixes
+
+* also check me.oauth2_clients before showing empty state ([4df7ac3](https://github.com/lemonadesocial/web-new/commit/4df7ac393af9c457092b9a6858b5abdd0a4785af))
+* derive canCreateMore from query result instead of stale me data ([09138a0](https://github.com/lemonadesocial/web-new/commit/09138a06f803c72408e34456b4f8ab515e66dce8))
+* hide "No OAuth2 clients" while query is loading ([24faccf](https://github.com/lemonadesocial/web-new/commit/24faccfba74d484080b4c2d1b3c7be73586f1bfd))
+* use clientList length to toggle create button text ([547a9cc](https://github.com/lemonadesocial/web-new/commit/547a9cc9e45fda56802d142e808741270fad3750))
+
 ## [10.29.3](https://github.com/lemonadesocial/web-new/compare/v10.29.2...v10.29.3) (2026-03-31)
 
 
