@@ -181,7 +181,7 @@ export function OAuthClient() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [clientName, setClientName] = useState('');
 
-  const { data: clients, refetch } = useQuery(ListOauth2ClientsDocument);
+  const { data: clients, loading: loadingClients, refetch } = useQuery(ListOauth2ClientsDocument);
 
   const [createOauth2, { loading: creating }] = useMutation(CreateOauth2ClientDocument);
 
@@ -234,7 +234,7 @@ export function OAuthClient() {
         </div>
       ))}
 
-      {!clientList.length && !showCreateForm && (
+      {!loadingClients && !clientList.length && !showCreateForm && (
         <ListItem icon="icon-factory" title="OAuth2 client" subtile="No OAuth2 clients">
           <Button onClick={() => setShowCreateForm(true)} size="sm" variant="secondary">
             Create OAuth2 client
