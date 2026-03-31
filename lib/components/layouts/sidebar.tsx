@@ -69,7 +69,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
+      <div className="md:hidden fixed z-50 top-0 left-0 right-0 p-2.5">
         <button
           className="text-tertiary p-2.5 flex justify-center cursor-pointer"
           onClick={() => setToggle((prev) => (prev !== 'open' ? 'open' : 'mini'))}
