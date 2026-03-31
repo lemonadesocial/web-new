@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.29.1](https://github.com/lemonadesocial/web-new/compare/v10.29.0...v10.29.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* properly type AIChatContext and refine provider initialization ([01489ca](https://github.com/lemonadesocial/web-new/commit/01489ca0faa2429d80f4be85d8fa0ce2f389da53))
+* resolve type check errors in GraphqlClient ([eae2b22](https://github.com/lemonadesocial/web-new/commit/eae2b22a5f17ec61d9eca2177b3da2694d872971))
+
+
+### Performance Improvements
+
+* refactor GraphqlClient to support parallel requests ([554bc70](https://github.com/lemonadesocial/web-new/commit/554bc7079e1ee512f98b0f04fb0ca13a1bf00986))
+
 ## [10.29.0](https://github.com/lemonadesocial/web-new/compare/v10.28.0...v10.29.0) (2026-03-30)
 
 
