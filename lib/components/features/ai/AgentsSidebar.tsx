@@ -35,7 +35,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
               onSelectAgent?.();
             }}
             className={clsx(
-              'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary',
+              'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary backdrop-blur-sm',
               isActive && 'border border-primary hover:bg-(--btn-tertiary)!',
             )}
           >
