@@ -156,7 +156,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="md:hidden absolute top-30 left-0 right-0 z-50 overflow-hidden bg-background/80 backdrop-blur-md border-b"
+                  className="md:hidden absolute top-30 left-0 right-0 z-50 overflow-hidden backdrop-blur-md border-b"
                 >
                   <div className="max-h-[calc(100dvh-120px)] flex flex-col">
                     <div className="flex-1 overflow-y-auto py-4 no-scrollbar">
