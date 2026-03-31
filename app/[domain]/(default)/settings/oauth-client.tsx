@@ -185,7 +185,8 @@ export function OAuthClient() {
 
   const [createOauth2, { loading: creating }] = useMutation(CreateOauth2ClientDocument);
 
-  const canCreateMore = !me?.oauth2_max_clients || me.oauth2_max_clients > (me?.oauth2_clients?.length || 0);
+  const clientList = clients?.listOauth2Clients || [];
+  const canCreateMore = !me?.oauth2_max_clients || me.oauth2_max_clients > clientList.length;
 
   const createOauth2Client = async () => {
     const { data } = await createOauth2({
@@ -220,8 +221,6 @@ export function OAuthClient() {
   };
 
   if (!me) return null;
-
-  const clientList = clients?.listOauth2Clients || [];
 
   return (
     <div>
