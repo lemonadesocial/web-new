@@ -3,7 +3,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAppKitAccount } from '@reown/appkit/react';
 
 import { Button, Card, Menu, MenuItem, Segment, Skeleton, drawer } from '$lib/components/core';
@@ -71,6 +71,10 @@ const SUBSCRIBED_HUBS_QUERY_VARIABLES = { with_my_spaces: false, roles: SUBSCRIB
 const EVENT_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 2xl:grid-cols-3';
 const COMMUNITY_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5';
 
+function getDashboardTab(value: string | null): DashboardTab {
+  return DASHBOARD_TABS.some((tab) => tab.key === value) ? (value as DashboardTab) : 'events';
+}
+
 export function Content() {
   const me = useMe();
 
@@ -86,8 +90,20 @@ export function Content() {
 }
 
 function DashboardHome() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [, startTransition] = React.useTransition();
-  const [activeTab, setActiveTab] = React.useState<DashboardTab>('events');
+  const activeTab = getDashboardTab(searchParams.get('tab'));
+
+  const handleTabChange = (tab: DashboardTab) => {
+    if (tab === activeTab) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+
+    startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
+  };
 
   return (
     <div className="flex w-full flex-col pb-16 md:pb-24">
@@ -109,7 +125,7 @@ function DashboardHome() {
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => startTransition(() => setActiveTab(tab.key))}
+                onClick={() => handleTabChange(tab.key)}
                 className={twMerge(
                   'shrink-0 border-b-2 border-transparent pb-2.5 font-body-default text-base leading-6 font-medium text-white/56 transition hover:text-white',
                   activeTab === tab.key && 'border-white text-white',
@@ -351,7 +367,7 @@ function CommunitiesPanel() {
             title="No subscribed hubs"
             description="Communities you follow will appear here with their upcoming events."
             actionLabel="Explore Communities"
-            onAction={() => router.push('/communities')}
+            onAction={() => router.push('/explore')}
           />
         )}
       </div>
@@ -815,7 +831,7 @@ function EmptyState({
   onAction?: () => void;
 }) {
   return (
-    <div className="flex min-h-60 flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-white/8 bg-white/5 px-6 py-12 text-center">
+    <div className="flex min-h-60 flex-col items-center justify-center gap-4 rounded-md border border-dashed border-white/8 bg-white/5 px-6 py-12 text-center">
       <div className="flex size-14 items-center justify-center rounded-full bg-white/5 text-primary/72">
         <i aria-hidden="true" className={twMerge(icon, 'size-6')} />
       </div>

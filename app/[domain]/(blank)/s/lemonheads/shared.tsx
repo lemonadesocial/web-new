@@ -501,7 +501,7 @@ export function UpcomingEventsCard({ userId }: { userId?: string }) {
   if (!upcomingEvents.length) return null;
 
   return (
-    <CardGroup title="Upcoming Events" onViewAll={() => router.push(`/events`)}>
+    <CardGroup title="Upcoming Events" onViewAll={() => router.push('/lemonade-stand?tab=events')}>
       {upcomingEvents.map((item) => (
         <div key={item._id} className="flex items-center gap-3">
           {!!item?.new_new_photos_expanded?.[0] && (

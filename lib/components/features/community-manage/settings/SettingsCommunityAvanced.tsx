@@ -34,7 +34,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
   const [deleteSpace] = useMutation(DeleteSpaceDocument, {
     onComplete(_client, response) {
       if (response.deleteSpace) {
-        window.location.href = '/communities';
+        window.location.href = '/lemonade-stand?tab=communities';
       }
     },
   });
