@@ -233,7 +233,7 @@ export function OAuthClient() {
         </div>
       ))}
 
-      {!loadingClients && !clientList.length && !showCreateForm && (
+      {!loadingClients && !clientList.length && !me?.oauth2_clients?.length && !showCreateForm && (
         <ListItem icon="icon-factory" title="OAuth2 client" subtile="No OAuth2 clients">
           <Button onClick={() => setShowCreateForm(true)} size="sm" variant="secondary">
             Create OAuth2 client
