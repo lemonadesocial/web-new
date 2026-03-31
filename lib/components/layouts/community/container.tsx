@@ -89,7 +89,17 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
           className="hidden md:flex sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
           title={
             isChat ? (
-              <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() =>
+                  modal.open(AgentInfoModal, {
+                    props: {
+                      agent: currentAgent,
+                      onSelectAgent: () => modal.close(),
+                    },
+                  })
+                }
+              >
                 <Image
                   src={currentAgent?.avatar || randomEventDP(currentAgent?._id)}
                   className="w-8 h-8 rounded-full object-cover"
@@ -156,7 +166,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="md:hidden absolute top-30 left-0 right-0 z-50 overflow-hidden backdrop-blur-md border-b"
+                  className="md:hidden absolute top-30 left-0 right-0 z-50 overflow-hidden bg-background/80 backdrop-blur-md border-b"
                 >
                   <div className="max-h-[calc(100dvh-120px)] flex flex-col">
                     <div className="flex-1 overflow-y-auto py-4 no-scrollbar">
