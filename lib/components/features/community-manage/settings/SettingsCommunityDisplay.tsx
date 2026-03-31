@@ -51,6 +51,17 @@ const validationSchema = z.object({
   slug: z
     .string()
     .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
+  description: z.string().optional(),
+  image_avatar: z.string().optional().nullable(),
+  image_cover: z.string().optional().nullable(),
+  address: z.any().optional(),
+  handle_instagram: z.string().optional(),
+  handle_twitter: z.string().optional(),
+  handle_youtube: z.string().optional(),
+  handle_tiktok: z.string().optional(),
+  handle_linkedin: z.string().optional(),
+  website: z.string().optional(),
+  theme_data: z.any().optional(),
 });
 
 function SettingsCommunityDisplay({ space }: { space: Space }) {
@@ -205,7 +216,14 @@ export function CommunityDetailForm({ space }: { space: Space }) {
     try {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
-      await update({ variables: { id: space._id, input: { ...values, ...siteInfo } } });
+
+      const { image_avatar, image_cover, ...rest } = values;
+      const input: any = { ...rest, ...siteInfo };
+
+      if (image_avatar) input.image_avatar = image_avatar;
+      if (image_cover) input.image_cover = image_cover;
+
+      await update({ variables: { id: space._id, input } });
     } catch (err: unknown) {
       toast.error(getErrorMessage(err));
     } finally {
