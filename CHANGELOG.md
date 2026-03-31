@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.29.2](https://github.com/lemonadesocial/web-new/compare/v10.29.1...v10.29.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* persist community theme and align card text spacing ([ae83ade](https://github.com/lemonadesocial/web-new/commit/ae83adeb197609d7292a81c4f75cefe95b9f2f50))
+* rotate sidebar expand icon ([6f1c050](https://github.com/lemonadesocial/web-new/commit/6f1c050695b6044e7765ad3c4232c61318274f9f))
+* the clipped Appearance popovers in Manage Community settings ([a0aec65](https://github.com/lemonadesocial/web-new/commit/a0aec654752e1766e615639def51eafd6fcf9026))
+
 ## [10.29.1](https://github.com/lemonadesocial/web-new/compare/v10.29.0...v10.29.1) (2026-03-31)
 
 
