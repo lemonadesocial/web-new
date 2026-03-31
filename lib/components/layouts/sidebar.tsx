@@ -112,7 +112,7 @@ const Sidebar = () => {
                     className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
                     onClick={() => setToggle((prev) => (prev === 'mini' ? 'open' : 'mini'))}
                   >
-                    <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
+                    <i aria-hidden="true" className="icon-left-panel-close-outline size-5 rotate-180" />
                   </button>
                 )}
               </div>
