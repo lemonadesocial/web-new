@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
-import { match } from 'ts-pattern';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
@@ -20,6 +19,59 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { ProfilePane } from '../features/pane';
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
+
+type SidebarFooterActionProps = {
+  toggle: 'mini' | 'open';
+  active?: boolean;
+  label: string;
+  subtitle: string;
+  icon: string;
+  iconBadgeClassName: string;
+  onClick: () => void;
+};
+
+function SidebarFooterAction({
+  toggle,
+  active,
+  label,
+  subtitle,
+  icon,
+  iconBadgeClassName,
+  onClick,
+}: SidebarFooterActionProps) {
+  if (toggle === 'mini') {
+    return (
+      <div
+        className={clsx(
+          'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
+          active && 'bg-(--btn-tertiary)',
+        )}
+        onClick={onClick}
+      >
+        <i className={twMerge('size-5 aspect-square', icon)} />
+      </div>
+    );
+  }
+
+  return (
+    <Card.Root className="border-none bg-(--btn-tertiary) hover:bg-(--btn-tertiary)" onClick={onClick}>
+      <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
+        <div>
+          <p className="text-sm">{label}</p>
+          <p className="text-quaternary text-xs">{subtitle}</p>
+        </div>
+        <div
+          className={twMerge(
+            'p-2 rounded-full w-7.5 h-7.5 aspect-square flex items-center justify-center',
+            iconBadgeClassName,
+          )}
+        >
+          <i className={twMerge('w-4 h-4 aspect-square', icon)} />
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
+}
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -60,6 +112,26 @@ const Sidebar = () => {
 
   const isActive = (item: { path: string }) =>
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
+  const isRewardsActive = pathname.includes('/s/manage/') && pathname.includes('/rewards');
+  const isUpgradeActive = pathname.startsWith('/upgrade/');
+
+  const handleUpgradeClick = () => {
+    if (me || account) {
+      if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
+      return;
+    }
+
+    signIn();
+  };
+
+  const handleRewardsClick = () => {
+    if (me || account) {
+      if (mySpaces.length) router.push(`/s/manage/${mySpaces[0].slug || mySpaces[0]._id}/rewards`);
+      return;
+    }
+
+    signIn();
+  };
 
   const handleNavigate = (path: string) => {
     dispatch({ type: AIChatActionKind.reset });
@@ -174,64 +246,25 @@ const Sidebar = () => {
           </div>
 
           <div className="border-t p-3 pt-4 flex flex-col gap-3">
-            <Card.Root
-              className={clsx(
-                'border-none hover:bg-(--btn-tertiary)',
-                toggle ? 'bg-(--btn-tertiary)' : 'bg-transparent',
-              )}
-            >
-              <Card.Content
-                className={clsx('flex justify-between items-center', toggle === 'open' ? 'px-3 py-2 gap-3' : 'p-2.5')}
-              >
-                {match(toggle)
-                  .with('open', () => (
-                    <>
-                      <div>
-                        <p className="text-sm">Rewards</p>
-                        <p className="text-quaternary text-xs">Earn credits for your hubs</p>
-                      </div>
-                      <div className="p-2 bg-warning-600 rounded-full w-7.5 h-7.5 aspect-square flex items-center justify-center">
-                        <i className="icon-gift-line w-4 h-4" />
-                      </div>
-                    </>
-                  ))
-                  .with('mini', () => <i className="icon-gift-line size-5 aspect-square" />)
-                  .otherwise(() => null)}
-              </Card.Content>
-            </Card.Root>
+            <SidebarFooterAction
+              toggle={toggle}
+              active={isRewardsActive}
+              label="Rewards"
+              subtitle="Earn credits for your hubs"
+              icon="icon-gift-line"
+              iconBadgeClassName="bg-warning-600"
+              onClick={handleRewardsClick}
+            />
 
-            <Card.Root
-              className={clsx(
-                'border-none hover:bg-(--btn-tertiary)',
-                toggle ? 'bg-(--btn-tertiary)' : 'bg-transparent',
-              )}
-              onClick={() => {
-                if (me || account) {
-                  if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
-                } else {
-                  signIn();
-                }
-              }}
-            >
-              <Card.Content
-                className={clsx('flex justify-between items-center', toggle === 'open' ? 'px-3 py-2 gap-3' : 'p-2.5')}
-              >
-                {match(toggle)
-                  .with('open', () => (
-                    <>
-                      <div>
-                        <p className="text-sm">Upgrade to Pro</p>
-                        <p className="text-quaternary text-xs">Unlock more benefits</p>
-                      </div>
-                      <div className="p-2 bg-alert-500 rounded-full w-7.5 h-7.5 aspect-square flex items-center justify-center">
-                        <i className="icon-flash w-4 h-4 aspect-square" />
-                      </div>
-                    </>
-                  ))
-                  .with('mini', () => <i className="icon-flash size-5 aspect-square" />)
-                  .otherwise(() => null)}
-              </Card.Content>
-            </Card.Root>
+            <SidebarFooterAction
+              toggle={toggle}
+              active={isUpgradeActive}
+              label="Upgrade to Pro"
+              subtitle="Unlock more benefits"
+              icon="icon-flash"
+              iconBadgeClassName="bg-alert-500"
+              onClick={handleUpgradeClick}
+            />
 
             {me || account ? (
               <Menu.Root strategy="absolute" placement="top-start">
