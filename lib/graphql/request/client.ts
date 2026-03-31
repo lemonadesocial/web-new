@@ -61,14 +61,14 @@ export class GraphqlClient {
 
   async query<T, V extends object>({
     query,
-    variables = {},
+    variables = {} as V,
     fetchPolicy = 'cache-first',
     headers,
     initData,
   }: {
     query: TypedDocumentNode<T, V>;
     headers?: HeadersInit;
-    variables?: object;
+    variables?: V;
     fetchPolicy?: FetchPolicy;
     initData?: T;
   }): Promise<{ data: T | null; error: unknown }> {
@@ -276,14 +276,14 @@ export class GraphqlClient {
 
   subscribe<T, V extends object>({
     query,
-    variables = {},
+    variables = {} as V,
     callback,
   }: {
     query: TypedDocumentNode<T, V>;
-    variables?: object;
+    variables?: V;
     callback: () => void;
   }) {
-    const queryKey = this.cache?.createCacheKey(query, variables);
+    const queryKey = this.cache?.createCacheKey(query, variables as Record<string, unknown>);
     if (queryKey) this.cache?.subscribe(queryKey, callback);
   }
 
@@ -293,7 +293,7 @@ export class GraphqlClient {
 
   private getHeaders(headers?: HeadersInit): HeadersInit {
     const store = getDefaultStore();
-    const session = store.get(sessionAtom);
+    const session = store.get(sessionAtom) as any;
     const defaultHeaders: HeadersInit = {};
 
     if (session?.token) {
