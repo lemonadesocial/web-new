@@ -1,6 +1,7 @@
 mutation CreateOauth2Client($input: Oauth2ClientInput!) {
   createOauth2Client(input: $input) {
     client_id
+    client_name
     client_secret
     audience
   }
@@ -9,12 +10,18 @@ mutation CreateOauth2Client($input: Oauth2ClientInput!) {
 mutation UpdateOauth2Client($input: Oauth2ClientInput!, $updateOauth2ClientId: String!) {
   updateOauth2Client(input: $input, id: $updateOauth2ClientId) {
     client_id
+    client_name
   }
+}
+
+mutation DeleteOauth2Client($deleteOauth2ClientId: String!) {
+  deleteOauth2Client(id: $deleteOauth2ClientId)
 }
 
 query ListOauth2Clients($ids: [String!]) {
   listOauth2Clients(ids: $ids) {
     client_id
+    client_name
     redirect_uris
   }
 }
