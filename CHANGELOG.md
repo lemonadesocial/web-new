@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.29.3](https://github.com/lemonadesocial/web-new/compare/v10.29.2...v10.29.3) (2026-03-31)
+
+
+### Bug Fixes
+
+* sidebar footer actions to match nav states ([2a7c3a4](https://github.com/lemonadesocial/web-new/commit/2a7c3a4cbc471297a87a0da950e4348794dda1c1))
+
 ## [10.29.2](https://github.com/lemonadesocial/web-new/compare/v10.29.1...v10.29.2) (2026-03-31)
 
 
