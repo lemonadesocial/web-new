@@ -32,7 +32,7 @@ type Props = {
 
 const menu = [
   { text: 'Home', path: '/', icon: 'icon-home' },
-  { text: 'Events', path: '/events', icon: 'icon-ticket' },
+  { text: 'Events', path: '/lemonade-stand', icon: 'icon-ticket' },
   { text: 'Explore', path: '/explore', icon: 'icon-explore' },
 ];
 
