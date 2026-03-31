@@ -16,7 +16,7 @@ import Sidebar from './sidebar';
 import { Footer } from './footer';
 import { useAIChat, AIChatActionKind } from '../../features/ai/provider';
 import { randomEventDP } from '$lib/utils/user';
-import { Button, Card, Menu, modal } from '$lib/components/core';
+import { Button, Card, modal } from '$lib/components/core';
 import { AgentInfoModal, AgentList } from '$lib/components/features/ai/AgentsSidebar';
 
 function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
@@ -83,7 +83,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
       <ThemeGenerator data={state} />
       <Sidebar space={space} />
 
-      <div className="flex-1 flex flex-col overflow-hidden relative">
+      <div className={clsx('flex-1 flex flex-col overflow-hidden relative', isChat && 'bg-overlay-primary')}>
         <Header
           hideLogo
           className="hidden md:flex sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
