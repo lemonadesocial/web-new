@@ -219,92 +219,95 @@ function CommunityThemeBuilderPane({
       <Sheet
         ref={sheetRef}
         avoidKeyboard
+        detent="content"
         isOpen={show ?? false}
         onClose={handleCloseSheet}
-        snapPoints={[0, 0.324, 1]}
-        initialSnap={1}
       >
         <Sheet.Backdrop onTap={handleCloseSheet} />
 
-        <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+        <Sheet.Container
+          className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl"
+          style={{ minHeight: 'min(300px, calc(100dvh - env(safe-area-inset-top, 0px) - 0.75rem))' }}
+        >
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-5">
               <div className="bg-primary/8 rounded-xs w-12 h-1 cursor-row-resize"></div>
             </div>
           </Sheet.Header>
-          <Sheet.Content disableDrag>
-            <CommunityThemeContentBuilder>
-              <div className="flex justify-between">
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    iconLeft="icon-tune"
-                    variant="tertiary-alt"
-                    onClick={() => {
-                      onOpenAdvanced?.();
-                    }}
-                  >
-                    Advanced Options
-                  </Button>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    icon="icon-recent"
-                    variant="tertiary-alt"
-                    onClick={async () => {
-                      if (spaceId) {
-                        await updateCommunity({
-                          variables: { id: spaceId, input: { theme_data: null } },
-                          onComplete: (client) => {
-                            client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: null } });
-                            dispatch({ type: ThemeBuilderActionKind.reset, payload: defaultTheme });
-                          },
-                        });
-                      }
-                    }}
-                  />
-                  <Button
-                    size="sm"
-                    icon="icon-shuffle"
-                    variant="tertiary-alt"
-                    disabled={themeName !== 'minimal'}
-                    onClick={async () => {
-                      const [fontTitle, fontTitleVariable] = getRandomFont('title');
-                      const [fontBody, fontBodyVariable] = getRandomFont('body');
-                      const payload = {
-                        font_title: fontTitle,
-                        font_body: fontBody,
-                        variables: { font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
-                      };
-                      dispatch({ type: ThemeBuilderActionKind.select_font, payload });
-                      dispatch({
-                        type: ThemeBuilderActionKind.select_template,
-                        payload: { theme: 'minimal', config: { color: getRandomColor() } },
-                      });
-                    }}
-                  />
-                  <Button
-                    size="sm"
-                    loading={loading}
-                    onClick={async () => {
-                      if (spaceId) {
-                        await updateCommunity({
-                          variables: { id: spaceId, input: { theme_data: state } },
-                          onComplete: (client) => {
-                            client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
-                          },
-                        });
-                      }
-                    }}
-                  >
-                    Apply
-                  </Button>
-                </div>
-              </div>
-            </CommunityThemeContentBuilder>
+          <Sheet.Content disableDrag scrollClassName="pb-4">
+            <CommunityThemeContentBuilder />
           </Sheet.Content>
+          <div className="border-t border-divider px-4 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  iconLeft="icon-tune"
+                  variant="tertiary-alt"
+                  onClick={() => {
+                    onOpenAdvanced?.();
+                  }}
+                >
+                  Advanced Options
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  icon="icon-recent"
+                  variant="tertiary-alt"
+                  onClick={async () => {
+                    if (spaceId) {
+                      await updateCommunity({
+                        variables: { id: spaceId, input: { theme_data: null } },
+                        onComplete: (client) => {
+                          client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: null } });
+                          dispatch({ type: ThemeBuilderActionKind.reset, payload: defaultTheme });
+                        },
+                      });
+                    }
+                  }}
+                />
+                <Button
+                  size="sm"
+                  icon="icon-shuffle"
+                  variant="tertiary-alt"
+                  disabled={themeName !== 'minimal'}
+                  onClick={async () => {
+                    const [fontTitle, fontTitleVariable] = getRandomFont('title');
+                    const [fontBody, fontBodyVariable] = getRandomFont('body');
+                    const payload = {
+                      font_title: fontTitle,
+                      font_body: fontBody,
+                      variables: { font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
+                    };
+                    dispatch({ type: ThemeBuilderActionKind.select_font, payload });
+                    dispatch({
+                      type: ThemeBuilderActionKind.select_template,
+                      payload: { theme: 'minimal', config: { color: getRandomColor() } },
+                    });
+                  }}
+                />
+                <Button
+                  size="sm"
+                  loading={loading}
+                  onClick={async () => {
+                    if (spaceId) {
+                      await updateCommunity({
+                        variables: { id: spaceId, input: { theme_data: state } },
+                        onComplete: (client) => {
+                          client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
+                        },
+                      });
+                    }
+                  }}
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
+          </div>
         </Sheet.Container>
       </Sheet>
     );

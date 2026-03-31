@@ -22,6 +22,11 @@ import { useQuery } from '$lib/graphql/request';
 import { FloatingPortal } from '@floating-ui/react';
 import { generateUrl } from '$lib/utils/cnd';
 
+const THEME_MENU_PROPS = {
+  placement: 'top' as const,
+  strategy: 'fixed' as const,
+  withFlip: true,
+};
 
 export function ThemeTemplate({ className }: { className?: string }) {
   const [state, dispatch] = useTheme();
@@ -60,7 +65,7 @@ export function PopoverColor({ disabled }: { disabled?: boolean }) {
   const [state, dispatch] = useTheme();
 
   return (
-    <Menu.Root placement="top" disabled={disabled} strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root {...THEME_MENU_PROPS} disabled={disabled} className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
@@ -131,7 +136,7 @@ export function PopoverEffect() {
   const [state, dispatch] = useTheme();
 
   return (
-    <Menu.Root className="flex-1 min-w-full md:min-w-auto" strategy="fixed" placement="top">
+    <Menu.Root {...THEME_MENU_PROPS} className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           {!state.config?.effect?.name ? (
@@ -196,7 +201,7 @@ export function PopoverFont({
   onClick: (font: string) => void;
 }) {
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root {...THEME_MENU_PROPS} className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[selected] }} className="font-semibold">
@@ -246,7 +251,7 @@ function PopoverShaderColor() {
   const [state, dispatch] = useTheme();
 
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root {...THEME_MENU_PROPS} className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className={twMerge('size-6 rounded-full', `item-color-${state.config.name}`)} />
@@ -288,7 +293,7 @@ function PopoverPattern() {
   const [state, dispatch] = useTheme();
 
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root {...THEME_MENU_PROPS} className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className="w-6 h-6 rounded-full">
@@ -366,7 +371,7 @@ function PopoverImage() {
   }, [images.length, state.config.image?._id]);
 
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1">
+    <Menu.Root {...THEME_MENU_PROPS} className="flex-1">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <img src={state.config?.image?.url} className="size-6 aspect-square rounded" />
@@ -377,36 +382,38 @@ function PopoverImage() {
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content className="grid grid-cols-4 gap-3">
-        {images.map((item) => (
-          <div
-            key={item._id}
-            className={clsx('flex flex-col items-center gap-1 cursor-pointer')}
-            onClick={() => {
-              dispatch({
-                type: ThemeBuilderActionKind.select_image,
-                payload: {
-                  config: {
-                    mode: item.category.includes('dark') ? 'dark' : 'light',
-                    image: {
-                      _id: item._id,
-                      url: generateUrl(item, {
-                        resize: { fit: 'cover', height: 1080, width: 1920 },
-                      }),
-                      name: item.name,
+      <FloatingPortal>
+        <Menu.Content className="grid grid-cols-4 gap-3">
+          {images.map((item) => (
+            <div
+              key={item._id}
+              className={clsx('flex flex-col items-center gap-1 cursor-pointer')}
+              onClick={() => {
+                dispatch({
+                  type: ThemeBuilderActionKind.select_image,
+                  payload: {
+                    config: {
+                      mode: item.category.includes('dark') ? 'dark' : 'light',
+                      image: {
+                        _id: item._id,
+                        url: generateUrl(item, {
+                          resize: { fit: 'cover', height: 1080, width: 1920 },
+                        }),
+                        name: item.name,
+                      },
                     },
                   },
-                },
-              });
-            }}
-          >
-            <div className={clsx('rounded-sm outline-offset-2', item._id === state.config?.image?._id && 'outline-2')}>
-              <img src={item.url} className="aspect-[4/3] h-12 rounded-sm self-stretch" loading="lazy" />
+                });
+              }}
+            >
+              <div className={clsx('rounded-sm outline-offset-2', item._id === state.config?.image?._id && 'outline-2')}>
+                <img src={item.url} className="aspect-[4/3] h-12 rounded-sm self-stretch" loading="lazy" />
+              </div>
+              <p className="text-xs font-normal text-tertiary">{item.name}</p>
             </div>
-            <p className="text-xs font-normal text-tertiary">{item.name}</p>
-          </div>
-        ))}
-      </Menu.Content>
+          ))}
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }
@@ -418,44 +425,45 @@ export function PopoverDisplay() {
 
   return (
     <Menu.Root
-    className="flex-1 min-w-full md:min-w-auto"
-    placement="top"
-    strategy="fixed"
-    disabled={presets[themeName]?.ui?.disabled?.mode}
-  >
-    <Menu.Trigger>
-      <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-        <i
-          className={clsx(
-            'size-6 rounded-full',
-            modes.find((item) => item.mode === mode)?.icon,
-            modes.find((item) => item.mode === mode)?.active,
-          )}
-        />
-        <span className="text-left flex-1">Display</span>
-        <p className="flex items-center gap-1">
-          <span className="capitalize">{state.config?.mode}</span>
-          <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
-        </p>
-      </div>
-    </Menu.Trigger>
-    <FloatingPortal>
-      <Menu.Content className="w-75">
-        {modes.map((item) => (
-          <MenuItem
-            key={item.mode}
-            iconLeft={item.icon}
-            title={item.label}
-            onClick={() => {
-              dispatch({
-                type: ThemeBuilderActionKind.select_color,
-                payload: { config: { mode: item.mode as any } },
-              });
-            }}
+      {...THEME_MENU_PROPS}
+      className="flex-1 min-w-full md:min-w-auto"
+      disabled={Boolean(
+        state.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.mode,
+      )}
+    >
+      <Menu.Trigger>
+        <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+          <i
+            className={clsx(
+              'size-6 rounded-full',
+              modes.find((item) => item.mode === mode)?.icon,
+              modes.find((item) => item.mode === mode)?.active,
+            )}
           />
-        ))}
-      </Menu.Content>
-    </FloatingPortal>
-  </Menu.Root>
+          <span className="text-left flex-1">Display</span>
+          <p className="flex items-center gap-1">
+            <span className="capitalize">{state.config?.mode}</span>
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
+          </p>
+        </div>
+      </Menu.Trigger>
+      <FloatingPortal>
+        <Menu.Content className="w-75">
+          {modes.map((item) => (
+            <MenuItem
+              key={item.mode}
+              iconLeft={item.icon}
+              title={item.label}
+              onClick={() => {
+                dispatch({
+                  type: ThemeBuilderActionKind.select_color,
+                  payload: { config: { mode: item.mode as any } },
+                });
+              }}
+            />
+          ))}
+        </Menu.Content>
+      </FloatingPortal>
+    </Menu.Root>
   );
 }
