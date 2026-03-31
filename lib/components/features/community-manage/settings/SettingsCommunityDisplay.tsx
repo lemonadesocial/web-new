@@ -403,7 +403,7 @@ export function CommunityDetailForm({ space }: { space: Space }) {
             </Card.Root>
           </div>
 
-          <Card.Root>
+          <Card.Root className="overflow-visible">
             <Card.Content className="space-y-4">
               <p className="text-lg">Appearance</p>
               <CommunityThemeContentBuilder className="p-0 [&>*:first-child]:justify-start" />

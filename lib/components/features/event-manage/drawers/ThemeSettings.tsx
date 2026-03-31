@@ -12,7 +12,11 @@ export function ThemeSettings() {
     <div className="space-y-4">
       <ThemeTemplate className="justify-start" />
       <div className="grid grid-cols-2 gap-2">
-        <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
+        <PopoverColor
+          disabled={Boolean(
+            state.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.color,
+          )}
+        />
         <PopoverStyle />
         <PopoverEffect />
         <PopoverFont
