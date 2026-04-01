@@ -153,9 +153,13 @@ function EventsPanel() {
   const router = useRouter();
   const [period, setPeriod] = React.useState<EventPeriod>('upcoming');
   const [filterBy, setFilterBy] = React.useState(EventFilterItem.AllEvents);
+  const [searchValue, setSearchValue] = React.useState('');
+  const deferredSearchValue = React.useDeferredValue(searchValue);
+  const normalizedSearch = deferredSearchValue.trim().toLocaleLowerCase();
 
   const host = filterBy === EventFilterItem.Hosting ? true : filterBy === EventFilterItem.Attending ? false : undefined;
   const unpublished = filterBy === EventFilterItem.Drafts ? true : undefined;
+  const isSearching = Boolean(searchValue.trim());
 
   const variables = React.useMemo(
     () => ({
@@ -179,6 +183,13 @@ function EventsPanel() {
   });
 
   const events = ((period === 'upcoming' ? upcomingData?.events : pastData?.events) as Event[]) || [];
+  const filteredEvents = React.useMemo(
+    () =>
+      normalizedSearch
+        ? events.filter((event) => event.title.toLocaleLowerCase().includes(normalizedSearch))
+        : events,
+    [events, normalizedSearch],
+  );
   const loading = period === 'upcoming' ? upcomingLoading : pastLoading;
 
   return (
@@ -187,49 +198,48 @@ function EventsPanel() {
         title="My Events"
         titleClassName="font-body-default text-xl font-medium leading-none text-white"
         controls={
-          <div className="flex gap-2 items-center justify-between w-full md:w-fit">
-            <div className="flex gap-2 items-center">
-              <Segment
-                size="sm"
-                selected={period}
-                onSelect={({ value }) => setPeriod(value as EventPeriod)}
-                items={EVENT_PERIOD_ITEMS}
-              />
-            </div>
+          <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+            <SectionSearchField value={searchValue} onChange={setSearchValue} label="Search my events" />
 
-            <div className="flex gap-2">
-              <Menu.Root className="w-33">
-                <Menu.Trigger>
-                  <div className="btn btn-tertiary rounded-sm">
-                    <MenuItem iconRight="icon-chevrons-up-down">
-                      <div className="flex items-center gap-1.5 flex-1">
-                        <i className={twMerge(EVENT_FILTER_OPTIONS[filterBy].icon, 'text-tertiary size-4')} />
-                        <p className="font-medium text-sm font-default-body text-secondary flex-1">
-                          {EVENT_FILTER_OPTIONS[filterBy].label}
-                        </p>
-                      </div>
-                    </MenuItem>
-                  </div>
-                </Menu.Trigger>
+            <Segment
+              size="sm"
+              selected={period}
+              onSelect={({ value }) => setPeriod(value as EventPeriod)}
+              items={EVENT_PERIOD_ITEMS}
+            />
 
-                <Menu.Content className="p-1">
-                  {({ toggle }) =>
-                    Object.entries(EVENT_FILTER_OPTIONS).map(([key, value]) => (
-                      <MenuItem
-                        key={key}
-                        title={value.label}
-                        iconLeft={value.icon}
-                        onClick={() => {
-                          setFilterBy(Number(key) as EventFilterItem);
-                          toggle();
-                        }}
-                      />
-                    ))
-                  }
-                </Menu.Content>
-              </Menu.Root>
-              <Button icon="icon-plus" size="sm" variant="tertiary" onClick={() => router.push('/create/event')} />
-            </div>
+            <Menu.Root className="w-33">
+              <Menu.Trigger>
+                <div className="btn btn-tertiary rounded-sm">
+                  <MenuItem iconRight="icon-chevrons-up-down">
+                    <div className="flex flex-1 items-center gap-1.5">
+                      <i className={twMerge(EVENT_FILTER_OPTIONS[filterBy].icon, 'size-4 text-tertiary')} />
+                      <p className="font-default-body flex-1 text-sm font-medium text-secondary">
+                        {EVENT_FILTER_OPTIONS[filterBy].label}
+                      </p>
+                    </div>
+                  </MenuItem>
+                </div>
+              </Menu.Trigger>
+
+              <Menu.Content className="p-1">
+                {({ toggle }) =>
+                  Object.entries(EVENT_FILTER_OPTIONS).map(([key, value]) => (
+                    <MenuItem
+                      key={key}
+                      title={value.label}
+                      iconLeft={value.icon}
+                      onClick={() => {
+                        setFilterBy(Number(key) as EventFilterItem);
+                        toggle();
+                      }}
+                    />
+                  ))
+                }
+              </Menu.Content>
+            </Menu.Root>
+
+            <Button icon="icon-plus" size="sm" variant="tertiary" onClick={() => router.push('/create/event')} />
           </div>
         }
       />
@@ -240,9 +250,9 @@ function EventsPanel() {
             <EventCardSkeleton key={index} />
           ))}
         </div>
-      ) : events.length ? (
+      ) : filteredEvents.length ? (
         <div className={EVENT_GRID_CLASSNAME}>
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCardItem
               key={event._id}
               item={event}
@@ -262,10 +272,14 @@ function EventsPanel() {
       ) : (
         <EmptyState
           icon="icon-confirmation-number"
-          title={period === 'upcoming' ? 'No events on deck' : 'No past events yet'}
-          description="Your event queue will show up here as soon as you start hosting or attending."
-          actionLabel={period === 'upcoming' ? 'Create Event' : undefined}
-          onAction={period === 'upcoming' ? () => router.push('/create/event') : undefined}
+          title={isSearching ? 'No events match your search' : period === 'upcoming' ? 'No events on deck' : 'No past events yet'}
+          description={
+            isSearching
+              ? 'Try a different event name or adjust your event filter.'
+              : 'Your event queue will show up here as soon as you start hosting or attending.'
+          }
+          actionLabel={!isSearching && period === 'upcoming' ? 'Create Event' : undefined}
+          onAction={!isSearching && period === 'upcoming' ? () => router.push('/create/event') : undefined}
         />
       )}
     </section>
@@ -275,6 +289,10 @@ function EventsPanel() {
 function CommunitiesPanel() {
   const me = useMe();
   const router = useRouter();
+  const [searchValue, setSearchValue] = React.useState('');
+  const deferredSearchValue = React.useDeferredValue(searchValue);
+  const normalizedSearch = deferredSearchValue.trim().toLocaleLowerCase();
+  const isSearching = Boolean(searchValue.trim());
   const { data: myHubsData, loading: myHubsLoading } = useQuery(GetSpacesDocument, {
     variables: MY_HUBS_QUERY_VARIABLES,
     fetchPolicy: 'cache-and-network',
@@ -295,6 +313,20 @@ function CommunitiesPanel() {
     () => ((subscribedData?.listSpaces as Space[]) || []).slice(),
     [subscribedData?.listSpaces],
   );
+  const filteredMyHubs = React.useMemo(
+    () =>
+      normalizedSearch
+        ? myHubs.filter((space) => space.title.toLocaleLowerCase().includes(normalizedSearch))
+        : myHubs,
+    [myHubs, normalizedSearch],
+  );
+  const filteredSubscribedHubs = React.useMemo(
+    () =>
+      normalizedSearch
+        ? subscribedHubs.filter((space) => space.title.toLocaleLowerCase().includes(normalizedSearch))
+        : subscribedHubs,
+    [normalizedSearch, subscribedHubs],
+  );
 
   return (
     <section className="flex flex-col gap-12">
@@ -303,7 +335,8 @@ function CommunitiesPanel() {
           title="My Hubs"
           titleClassName="font-body-default text-xl font-medium leading-none text-white"
           controls={
-            <div className="flex gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+              <SectionSearchField value={searchValue} onChange={setSearchValue} label="Search my hubs and subscribed hubs" />
               <Button size="sm" variant="tertiary" icon="icon-explore" onClick={() => router.push('/explore')} />
               <Button size="sm" variant="tertiary" icon="icon-plus" onClick={() => router.push('/create/community')} />
             </div>
@@ -316,9 +349,9 @@ function CommunitiesPanel() {
               <CommunityHubCardSkeleton key={index} view="card" />
             ))}
           </div>
-        ) : myHubs.length ? (
+        ) : filteredMyHubs.length ? (
           <div className={COMMUNITY_GRID_CLASSNAME}>
-            {myHubs.map((space) => (
+            {filteredMyHubs.map((space) => (
               <CommunityHubCard
                 key={space._id}
                 title={space.title}
@@ -335,10 +368,14 @@ function CommunitiesPanel() {
         ) : (
           <EmptyState
             icon="icon-community"
-            title="No hubs yet"
-            description="Create your first hub to start organizing your community presence."
-            actionLabel="Create Community"
-            onAction={() => router.push('/create/community')}
+            title={isSearching ? 'No hubs match your search' : 'No hubs yet'}
+            description={
+              isSearching
+                ? 'Try a different hub name to find one of your communities.'
+                : 'Create your first hub to start organizing your community presence.'
+            }
+            actionLabel={!isSearching ? 'Create Community' : undefined}
+            onAction={!isSearching ? () => router.push('/create/community') : undefined}
           />
         )}
       </div>
@@ -355,23 +392,52 @@ function CommunitiesPanel() {
               <SubscribedHubRowSkeleton key={index} />
             ))}
           </div>
-        ) : subscribedHubs.length ? (
+        ) : filteredSubscribedHubs.length ? (
           <div className="flex flex-col gap-4">
-            {subscribedHubs.map((space) => (
+            {filteredSubscribedHubs.map((space) => (
               <SubscribedHubRow key={space._id} space={space} />
             ))}
           </div>
         ) : (
           <EmptyState
             icon="icon-community"
-            title="No subscribed hubs"
-            description="Communities you follow will appear here with their upcoming events."
-            actionLabel="Explore Communities"
-            onAction={() => router.push('/explore')}
+            title={isSearching ? 'No subscribed hubs match your search' : 'No subscribed hubs'}
+            description={
+              isSearching
+                ? 'Try a different hub name to search across the communities you follow.'
+                : 'Communities you follow will appear here with their upcoming events.'
+            }
+            actionLabel={!isSearching ? 'Explore Communities' : undefined}
+            onAction={!isSearching ? () => router.push('/explore') : undefined}
           />
         )}
       </div>
     </section>
+  );
+}
+
+function SectionSearchField({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+}) {
+  return (
+    <label className="flex h-8 w-full items-center gap-1.5 rounded-sm border border-primary/8 bg-background/64 px-2.5 transition-colors hover:border-quaternary focus-within:border-primary md:w-54">
+      <i aria-hidden="true" className="icon-search size-4 shrink-0 text-quaternary" />
+      <input
+        type="search"
+        value={value}
+        aria-label={label}
+        autoComplete="off"
+        placeholder="Search"
+        onChange={(e) => onChange(e.target.value)}
+        className="min-w-0 flex-1 bg-transparent text-sm font-medium text-primary placeholder:text-quaternary outline-none"
+      />
+    </label>
   );
 }
 
