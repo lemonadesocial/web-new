@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.29.5](https://github.com/lemonadesocial/web-new/compare/v10.29.4...v10.29.5) (2026-04-01)
+
+
+### Bug Fixes
+
+* allow drawer backdrop dismissal by default ([c5aa2d1](https://github.com/lemonadesocial/web-new/commit/c5aa2d1693ff40ffb3119243b301dc678e9357aa))
+* hide add location button when address exists ([f359e1d](https://github.com/lemonadesocial/web-new/commit/f359e1d286a8e078c84cbd7d2f69de7cbf8c3296))
+* **ui:** add backdrop-blur to agent list items ([f2ee4eb](https://github.com/lemonadesocial/web-new/commit/f2ee4eb4748ad47119839368290e534d992ae75a))
+* **ui:** add data-theme-scope to community container ([f89dbe7](https://github.com/lemonadesocial/web-new/commit/f89dbe784e9182eafe6c8878ae031bb21ade1da8))
+* **ui:** remove background from mobile sidebar container ([b3f1ba4](https://github.com/lemonadesocial/web-new/commit/b3f1ba47a17f1a117a4611af06c48e8ec5c6c74e))
+
 ## [10.29.4](https://github.com/lemonadesocial/web-new/compare/v10.29.3...v10.29.4) (2026-03-31)
 
 
