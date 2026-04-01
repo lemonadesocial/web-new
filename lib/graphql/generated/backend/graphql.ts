@@ -4713,6 +4713,7 @@ export type Mutation = {
   purchaseSubscription: CheckoutResult;
   readNotifications: Scalars['Boolean']['output'];
   redeemTickets: RedeemTicketsResponse;
+  registerXMTPAddress: Scalars['Boolean']['output'];
   releaseConfigLock: Scalars['Boolean']['output'];
   removeSubSpaces: Scalars['Boolean']['output'];
   removeUserFcmToken: Scalars['Boolean']['output'];
@@ -6433,6 +6434,11 @@ export type MutationRedeemTicketsArgs = {
 };
 
 
+export type MutationRegisterXmtpAddressArgs = {
+  address: Scalars['String']['input'];
+};
+
+
 export type MutationReleaseConfigLockArgs = {
   config_id: Scalars['MongoID']['input'];
 };
@@ -8019,8 +8025,10 @@ export type Query = {
   getUserIcebreakerQuestions: Array<UserIcebreakerQuestion>;
   getUserPaymentVerification: UserPaymentVerificationInfo;
   getUserWalletRequest: UserWalletRequest;
+  getUserXMTPAddress?: Maybe<UserXmtpAddressResponse>;
   getUsers: Array<User>;
   getUsersSpotlight: Array<User>;
+  getUsersXMTPAddresses: Array<UserXmtpAddressWithInfo>;
   getVaultSalt: Scalars['String']['output'];
   isUsernameAvailable: UsernameAvailability;
   joinChannel: Scalars['Boolean']['output'];
@@ -9423,6 +9431,11 @@ export type QueryGetUserWalletRequestArgs = {
 };
 
 
+export type QueryGetUserXmtpAddressArgs = {
+  userId: Scalars['String']['input'];
+};
+
+
 export type QueryGetUsersArgs = {
   _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   limit?: Scalars['Int']['input'];
@@ -9430,6 +9443,11 @@ export type QueryGetUsersArgs = {
   skip?: Scalars['Int']['input'];
   tag_recommended?: InputMaybe<Scalars['Boolean']['input']>;
   wallets?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryGetUsersXmtpAddressesArgs = {
+  userIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -13277,6 +13295,19 @@ export type UserWithEmailEvents_ExpandedArgs = {
 export type UserWithEmailNew_Photos_ExpandedArgs = {
   limit?: Scalars['Int']['input'];
   skip?: Scalars['Int']['input'];
+};
+
+export type UserXmtpAddressResponse = {
+  __typename?: 'UserXmtpAddressResponse';
+  xmtpAddress: Scalars['String']['output'];
+};
+
+export type UserXmtpAddressWithInfo = {
+  __typename?: 'UserXmtpAddressWithInfo';
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  userId: Scalars['String']['output'];
+  xmtpAddress: Scalars['String']['output'];
 };
 
 export type UsernameAvailability = {

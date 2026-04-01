@@ -70,6 +70,10 @@ mutation CreateAIConfig($input: ConfigInput!) {
   }
 }
 
+mutation DeleteAIConfig($id: ObjectId!) {
+  deleteConfig(_id: $id)
+}
+
 mutation CreateDocument($input: DocumentInput!) {
   createDocument(input: $input) {
     _id
