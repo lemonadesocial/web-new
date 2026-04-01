@@ -444,7 +444,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
 export function mockWelcomeEvent(event: Event): Message[] {
   const actions = [];
   const opts = { dismissible: false, fixed: isMobile, showBackdrop: false, props: { event } };
-  if (!event.location) {
+  if (!event.address) {
     actions.push({
       type: 'button',
       props: {
