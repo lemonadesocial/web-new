@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { AIChat } from '$lib/components/features/ai/AIChat';
-import { useAIChat } from '$lib/components/features/ai/provider';
+import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { NonLoginContent } from './NonLoginContent';
 import { HomeEventsSection } from './HomeEventsSection';
@@ -13,13 +13,17 @@ import { HomeEventsSection } from './HomeEventsSection';
 export function Home() {
   const me = useMe();
   const signIn = useSignIn();
-  const [aiState] = useAIChat();
+  const [aiState, aiDispatch] = useAIChat();
   const loggedIn = !!me;
   const chatExpanded = loggedIn && (aiState.messages.length || aiState.thinking);
   const rootClassName = clsx(
     'min-h-full w-full bg-overlay-primary flex flex-col items-center',
     !chatExpanded && 'pb-10 relative overflow-x-clip',
   );
+
+  React.useEffect(() => {
+    aiDispatch({ type: AIChatActionKind.reset });
+  }, []);
 
   return (
     <div className={rootClassName}>

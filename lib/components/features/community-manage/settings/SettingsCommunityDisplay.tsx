@@ -51,6 +51,17 @@ const validationSchema = z.object({
   slug: z
     .string()
     .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
+  description: z.string().optional(),
+  image_avatar: z.string().optional().nullable(),
+  image_cover: z.string().optional().nullable(),
+  address: z.any().optional(),
+  handle_instagram: z.string().optional(),
+  handle_twitter: z.string().optional(),
+  handle_youtube: z.string().optional(),
+  handle_tiktok: z.string().optional(),
+  handle_linkedin: z.string().optional(),
+  website: z.string().optional(),
+  theme_data: z.any().optional(),
 });
 
 function SettingsCommunityDisplay({ space }: { space: Space }) {
@@ -105,7 +116,52 @@ export function CommunityDetailForm({ space }: { space: Space }) {
     resolver: zodResolver(validationSchema),
   });
 
-  const [update] = useMutation(UpdateSpaceDocument);
+  const [update] = useMutation(UpdateSpaceDocument, {
+    onComplete: (client, incomming) => {
+      if (incomming?.updateSpace) {
+        const data = incomming.updateSpace as Space;
+
+        /** map form fields bc backend is not return some field based on roles  */
+        client.writeFragment({
+          id: `Space:${space._id}`,
+          data: {
+            ...space,
+            title: data.title,
+            description: data.description,
+            slug: data.slug,
+            image_avatar: data.image_avatar,
+            image_cover: data.image_cover,
+            address: data.address,
+            handle_instagram: data.handle_instagram,
+            handle_twitter: data.handle_twitter,
+            handle_youtube: data.handle_youtube,
+            handle_tiktok: data.handle_tiktok,
+            handle_linkedin: data.handle_linkedin,
+            website: data.website,
+            theme_data: data.theme_data || defaultTheme,
+          },
+        });
+
+        const { __typename: _, ...dataAddress } = data.address || {};
+        reset({
+          title: data.title,
+          description: data.description || '',
+          slug: data.slug || '',
+          image_avatar: data.image_avatar,
+          image_cover: data.image_cover,
+          address: dataAddress || undefined,
+          handle_instagram: data.handle_instagram || '',
+          handle_twitter: data.handle_twitter || '',
+          handle_youtube: data.handle_youtube || '',
+          handle_tiktok: data.handle_tiktok || '',
+          handle_linkedin: data.handle_linkedin || '',
+          website: data.website || '',
+          theme_data: data.theme_data || defaultTheme,
+        });
+        toast.success('Update succeess.');
+      }
+    },
+  });
 
   React.useEffect(() => {
     if (!mounted) setMounted(true);
@@ -160,57 +216,14 @@ export function CommunityDetailForm({ space }: { space: Space }) {
     try {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
-      const themeData = (state as ThemeValues) || values.theme_data || defaultTheme;
-      const input = { ...values, ...siteInfo, theme_data: themeData };
 
-      await update({
-        variables: { id: space._id, input },
-        onComplete: (client, incoming) => {
-          if (!incoming?.updateSpace) return;
+      const { image_avatar, image_cover, ...rest } = values;
+      const input: any = { ...rest, ...siteInfo };
 
-          const data = incoming.updateSpace as Space;
-          const persistedThemeData = data.theme_data || themeData;
+      if (image_avatar) input.image_avatar = image_avatar;
+      if (image_cover) input.image_cover = image_cover;
 
-          /** map form fields bc backend is not return some field based on roles  */
-          client.writeFragment({
-            id: `Space:${space._id}`,
-            data: {
-              ...space,
-              title: data.title,
-              description: data.description,
-              slug: data.slug,
-              image_avatar: data.image_avatar,
-              image_cover: data.image_cover,
-              address: data.address,
-              handle_instagram: data.handle_instagram,
-              handle_twitter: data.handle_twitter,
-              handle_youtube: data.handle_youtube,
-              handle_tiktok: data.handle_tiktok,
-              handle_linkedin: data.handle_linkedin,
-              website: data.website,
-              theme_data: persistedThemeData,
-            },
-          });
-
-          const { __typename: _, ...dataAddress } = data.address || {};
-          reset({
-            title: data.title,
-            description: data.description || '',
-            slug: data.slug || '',
-            image_avatar: data.image_avatar,
-            image_cover: data.image_cover,
-            address: dataAddress || undefined,
-            handle_instagram: data.handle_instagram || '',
-            handle_twitter: data.handle_twitter || '',
-            handle_youtube: data.handle_youtube || '',
-            handle_tiktok: data.handle_tiktok || '',
-            handle_linkedin: data.handle_linkedin || '',
-            website: data.website || '',
-            theme_data: persistedThemeData,
-          });
-          toast.success('Update succeess.');
-        },
-      });
+      await update({ variables: { id: space._id, input } });
     } catch (err: unknown) {
       toast.error(getErrorMessage(err));
     } finally {
