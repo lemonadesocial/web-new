@@ -87,6 +87,23 @@ mutation CreateDocument($input: DocumentInput!) {
   }
 }
 
+mutation UpdateDocument($id: ObjectId!, $input: DocumentInput!) {
+  updateDocument(_id: $id, input: $input) {
+    _id
+    createdAt
+    isPublic
+    metadata
+    text
+    title
+    updatedAt
+    user
+  }
+}
+
+mutation DeleteDocument($id: ObjectId!) {
+  deleteDocument(_id: $id)
+}
+
 query ListDocuments($skip: Int, $limit: Int) {
   listDocuments(skip: $skip, limit: $limit) {
     items {

@@ -9,7 +9,7 @@ import { useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AgentDashboardCard, AgentDashboardCardSkeleton } from '$lib/components/features/ai/manage/AgentDashboardCard';
 import { KnowledgeBaseListRow, KnowledgeBaseListRowSkeleton } from '$lib/components/features/ai/manage/KnowledgeBaseListRow';
-import { getAiConfigFilter, getConfigAvatarSrc, type AiManageScope } from '$lib/components/features/ai/manage/shared';
+import { getAiConfigFilter, getConfigAvatarSrc, getConfigDocumentIds, type AiManageScope } from '$lib/components/features/ai/manage/shared';
 import { CreateAgentPane } from './panes/CreateAgentPane';
 import { AddExistingAgentPane } from './panes/AddExistingAgentPane';
 import { AddKnowledgeBasePane } from './panes/AddKnowledgeBasePane';
@@ -105,9 +105,24 @@ export function CommunityAgents({ space }: Props) {
       props: {
         scope,
         onCreated: handleRefetch,
+        onDeleted: handleRefetch,
       },
     });
   }, [handleRefetch, scope]);
+
+  const openEditKnowledgeBase = React.useCallback((document: Pick<Document, '_id' | 'title' | 'text'>) => {
+    const attachedConfigs = configs.filter((config) => getConfigDocumentIds(config).includes(document._id));
+
+    drawer.open(AddKnowledgeBasePane, {
+      props: {
+        scope,
+        document,
+        selectedConfigs: attachedConfigs,
+        onCreated: handleRefetch,
+        onDeleted: handleRefetch,
+      },
+    });
+  }, [configs, handleRefetch, scope]);
 
   const openEdit = React.useCallback((configId: string) => {
     const config = configsById.get(configId);
@@ -284,12 +299,14 @@ export function CommunityAgents({ space }: Props) {
             ) : (
               knowledgeBases.map((doc) => {
                 return (
-                  <KnowledgeBaseListRow
-                    key={doc._id}
-                    agents={knowledgeBaseAgentsById.get(doc._id)}
-                    text={doc.text}
-                    title={doc.title}
-                  />
+                  <button key={doc._id} type="button" className="w-full text-left" onClick={() => openEditKnowledgeBase(doc)}>
+                    <KnowledgeBaseListRow
+                      agents={knowledgeBaseAgentsById.get(doc._id)}
+                      text={doc.text}
+                      title={doc.title}
+                      trailingIcon="icon-chevron-right"
+                    />
+                  </button>
                 );
               })
             )}
