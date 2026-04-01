@@ -42,7 +42,9 @@ export function Content() {
   const { handleConnect } = useLinkFarcaster();
   const openClaimUsername = useClaimUsername();
 
-  const { userData } = useFarcasterUserData(me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null);
+  const { userData } = useFarcasterUserData(
+    me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null,
+  );
   const [deleteUser] = useMutation(DeleteUserDocument);
 
   const handleDeletePost = async () => {
@@ -70,17 +72,14 @@ export function Content() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11 max-w-133">
+    <div className="flex flex-col gap-8 p-4 mt-16 pb-24 md:my-11 max-w-133">
       <PageTitle title="Settings" subtitle="Choose how you are displayed as a host or guest." />
 
       <Card.Content className="bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">
         <div className="px-4.5 py-4 flex flex-col gap-4">
           <div className="flex justify-between items-start">
             <div className="size-15">
-              <Avatar
-                className="w-full h-full"
-                src={userAvatar(me)}
-              />
+              <Avatar className="w-full h-full" src={userAvatar(me)} />
             </div>
             <Button
               variant="tertiary-alt"
@@ -94,12 +93,7 @@ export function Content() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <div>
-                <h3
-                  className={clsx(
-                    'text-xl font-semibold',
-                    me?.name ? 'text-primary' : 'text-tertiary',
-                  )}
-                >
+                <h3 className={clsx('text-xl font-semibold', me?.name ? 'text-primary' : 'text-tertiary')}>
                   {me?.name || 'No Name Added'}
                 </h3>
                 <p className="text-tertiary">{username ? `@${username}` : 'No Username Picked'}</p>
@@ -183,11 +177,7 @@ export function Content() {
             subtile={username || 'No Username Picked'}
           >
             {!username && (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={openClaimUsername}
-              >
+              <Button variant="secondary" size="sm" onClick={openClaimUsername}>
                 Claim Username
               </Button>
             )}
@@ -216,27 +206,22 @@ export function Content() {
         </div>
       </Card.Content>
 
-      {!!me?.oauth2_allow_creation && (
-        <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
-          <OAuthClient />
-        </div>
-      )}
+      {/* {!!me?.oauth2_allow_creation && ( */}
+      <OAuthClient />
+      {/* )} */}
 
-      <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
-      <div
-          className="flex gap-4 items-center cursor-pointer py-3 px-4"
-          onClick={() => logOut(true)}
-        >
-          <i className="icon-exit size-5 text-tertiary" />
-          <p>Sign Out</p>
-        </div>
-        <hr className="border-t ml-8" />
-        <div
-          className="flex gap-4 items-center cursor-pointer py-3 px-4"
-          onClick={handleDeleteAccountClick}
-        >
-          <i className="icon-delete size-5 text-error" />
-          <p className="text-error">Delete Account</p>
+      <div className="flex flex-col gap-4">
+        <h2 className="text-2xl font-semibold text-primary">Account</h2>
+        <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border overflow-hidden">
+          <div className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition" onClick={() => logOut(true)}>
+            <i className="icon-exit size-5 text-tertiary" />
+            <p>Sign Out</p>
+          </div>
+          <hr className="border-t ml-12 border-(--color-divider)" />
+          <div className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition" onClick={handleDeleteAccountClick}>
+            <i className="icon-delete size-5 text-error" />
+            <p className="text-error">Delete Account</p>
+          </div>
         </div>
       </div>
     </div>

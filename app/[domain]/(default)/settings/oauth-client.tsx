@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import _ from 'lodash';
-import { Button, Input, modal, toast } from '$lib/components/core';
+import { Button, Card, Input, modal, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
@@ -20,9 +20,11 @@ const generateKey = () => `url-${++keyCounter}`;
 function OAuthClientCard({
   client,
   onRefetch,
+  isLast,
 }: {
   client: { client_id: string; client_name: string; redirect_uris?: string[] | null };
   onRefetch: () => void;
+  isLast?: boolean;
 }) {
   const [edit, setEdit] = useState(false);
   const [editUrls, setEditUrls] = useState<{ key: string; url: string }[]>([]);
@@ -57,32 +59,28 @@ function OAuthClientCard({
   };
 
   return (
-    <div>
+    <>
       <ListItem
-        icon="icon-factory"
+        icon="icon-api"
         title="OAuth2 client"
         subtile={client.client_name ? `${client.client_name} — ${client.client_id}` : client.client_id}
       >
-        <Button
-          onClick={handleDelete}
-          size="sm"
-          variant="danger"
-          icon="icon-delete"
-        />
+        <Button onClick={handleDelete} size="sm" variant="danger" icon="icon-delete" />
       </ListItem>
-      <ListItem icon="icon-repost" title="Redirect URLs" subtile="" flexColumn>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <ListItem icon="icon-repost" title="Redirect URLs" subtile="" flexColumn divide={!isLast}>
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-col gap-1.5">
             {!edit && !renderUrls.length ? (
-              <div>No redirect URL</div>
+              <div className="text-tertiary text-sm">No redirect URL</div>
             ) : (
               renderUrls.map(({ key, url }, index) => (
                 <div key={key}>
                   {edit ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    <div className="flex items-center gap-1.5">
                       <Input
                         readOnly={updating}
                         value={url}
+                        className="flex-1"
                         onChange={(e) =>
                           setEditUrls((urls) => [
                             ...urls.slice(0, index),
@@ -101,14 +99,19 @@ function OAuthClientCard({
                       />
                     </div>
                   ) : (
-                    <div>{url}</div>
+                    <div className="text-primary text-sm break-all">{url}</div>
                   )}
                 </div>
               ))
             )}
             {edit && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 5 }}>
-                <Input placeholder="Add new URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value)} />
+              <div className="flex items-center gap-1.5">
+                <Input
+                  placeholder="Add new URL"
+                  value={newUrl}
+                  className="flex-1"
+                  onChange={(e) => setNewUrl(e.target.value)}
+                />
                 <Button
                   disabled={updating || !newUrl.trim()}
                   onClick={() => {
@@ -121,7 +124,7 @@ function OAuthClientCard({
               </div>
             )}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <div className="flex items-center gap-2">
             {edit ? (
               <>
                 <Button
@@ -172,7 +175,7 @@ function OAuthClientCard({
           </div>
         </div>
       </ListItem>
-    </div>
+    </>
   );
 }
 
@@ -223,54 +226,62 @@ export function OAuthClient() {
   if (!me) return null;
 
   return (
-    <div>
-      {clientList.map((client, index) => (
-        <div
-          key={client.client_id}
-          className={index < clientList.length - 1 ? 'border-b border-(--color-divider)' : ''}
-        >
-          <OAuthClientCard client={client} onRefetch={refetch} />
-        </div>
-      ))}
+    <div className="flex flex-col gap-5">
+      <p className="text-xl font-semibold text-primary">OAuth2 Clients</p>
 
-      {!loadingClients && !clientList.length && !me?.oauth2_clients?.length && !showCreateForm && (
-        <ListItem icon="icon-factory" title="OAuth2 client" subtile="No OAuth2 clients">
-          <Button onClick={() => setShowCreateForm(true)} size="sm" variant="secondary">
-            Create OAuth2 client
-          </Button>
-        </ListItem>
-      )}
+      <Card.Root>
+        <Card.Content className="py-3">
+          {clientList.map((client, index) => (
+            <OAuthClientCard
+              key={client.client_id}
+              client={client}
+              onRefetch={refetch}
+              isLast={index === clientList.length - 1}
+            />
+          ))}
 
-      {showCreateForm && (
-        <div className="p-4 flex flex-col gap-3">
-          <p className="text-sm text-tertiary">Create new OAuth2 client</p>
-          <Input
-            placeholder="Client name (optional)"
-            value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
-          />
-          <div className="flex gap-2">
-            <Button
-              onClick={() => {
-                setShowCreateForm(false);
-                setClientName('');
-              }}
-              size="sm"
-              variant="tertiary"
-            >
-              Cancel
-            </Button>
-            <Button loading={creating} onClick={createOauth2Client} size="sm" variant="primary">
-              Create
-            </Button>
-          </div>
-        </div>
-      )}
+          {!loadingClients && !clientList.length && !showCreateForm && (
+            <div className="flex items-center gap-4 text-tertiary">
+              <i className="icon-manage-accounts-outline size-5 aspect-square" />
+              <div className="space-y-1">
+                <p>No OAuth2 Clients</p>
+                <p className="text-sm">Allow third-party apps to authenticate users via Lemonade.</p>
+              </div>
+            </div>
+          )}
 
-      {!!clientList.length && canCreateMore && !showCreateForm && (
-        <div className="p-4">
-          <Button onClick={() => setShowCreateForm(true)} size="sm" variant="secondary">
-            Create another client
+          {showCreateForm && (
+            <div className="p-4 flex flex-col gap-3">
+              <p className="text-sm text-tertiary">Create new OAuth2 client</p>
+              <Input
+                placeholder="Client name (optional)"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    setClientName('');
+                  }}
+                  size="sm"
+                  variant="tertiary"
+                >
+                  Cancel
+                </Button>
+                <Button loading={creating} onClick={createOauth2Client} size="sm" variant="primary">
+                  Create
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card.Content>
+      </Card.Root>
+
+      {!showCreateForm && canCreateMore && (
+        <div>
+          <Button onClick={() => setShowCreateForm(true)} variant="secondary" iconLeft="icon-plus">
+            New Client
           </Button>
         </div>
       )}
