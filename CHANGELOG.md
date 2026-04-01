@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.30.0](https://github.com/lemonadesocial/web-new/compare/v10.29.5...v10.30.0) (2026-04-01)
+
+
+### Features
+
+* add delete action to edit agent footer ([fc48af3](https://github.com/lemonadesocial/web-new/commit/fc48af3779a4924b36817f341ad781b2f8caab82))
+
 ## [10.29.5](https://github.com/lemonadesocial/web-new/compare/v10.29.4...v10.29.5) (2026-04-01)
 
 
