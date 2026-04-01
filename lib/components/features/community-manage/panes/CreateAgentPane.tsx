@@ -13,7 +13,7 @@ import {
   SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
-import { CreateAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { CreateAiConfigDocument, DeleteAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { WelcomeMessagePane } from './WelcomeMessagePane';
 import { BackstoryPane } from './BackstoryPane';
 import { AddKnowledgeBasePane } from './AddKnowledgeBasePane';
@@ -28,6 +28,7 @@ import { uploadFiles } from '$lib/utils/file';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import type { Config, Document } from '$lib/graphql/generated/ai/graphql';
 import type { SpaceFragment } from '$lib/graphql/generated/backend/graphql';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 interface Props {
   scope: AiManageScope;
@@ -117,7 +118,7 @@ export function CreateAgentPane({ scope, config, onCreated }: Props) {
     return allSpaces.filter((item) => activeSpaceIds.has(item._id));
   }, [config?.spaces, mySpacesData?.listSpaces, shouldLoadActiveSpaces]);
 
-  const { register, watch, setValue, handleSubmit, formState: { errors } } = useForm<AgentFormData>({
+  const { register, watch, setValue, handleSubmit, formState: { errors, isDirty } } = useForm<AgentFormData>({
     defaultValues: {
       name: config?.name || '',
       jobTitle: config?.job || '',
@@ -183,7 +184,18 @@ export function CreateAgentPane({ scope, config, onCreated }: Props) {
     },
   }, aiChatClient);
 
-  const loading = creating || updating;
+  const [deleteAgent, { loading: deleting }] = useMutation(DeleteAiConfigDocument, {
+    onComplete: () => {
+      toast.success('Agent deleted successfully');
+      onCreated?.();
+      drawer.close();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to delete agent');
+    },
+  }, aiChatClient);
+
+  const loading = creating || updating || deleting;
 
   const isPublic = watch('isPublic');
   const welcomeMessage = watch('welcomeMessage');
@@ -193,6 +205,7 @@ export function CreateAgentPane({ scope, config, onCreated }: Props) {
   const activeIn = watch('activeIn') || [];
   const spotlightEvents = watch('spotlightEvents') || [];
   const documents = watch('documents') || [];
+  const canSaveChanges = !loading && (!isEditMode || isDirty || !!avatar);
   const appendDocument = React.useCallback((document: Pick<Document, '_id' | 'title' | 'text'>) => {
     const nextDocuments: AgentFormData['documents'] = [
       ...documents,
@@ -253,6 +266,28 @@ export function CreateAgentPane({ scope, config, onCreated }: Props) {
       toast.error(error instanceof Error ? error.message : `Failed to ${isEditMode ? 'update' : 'create'} agent`);
     }
   };
+
+  const handleDelete = React.useCallback(() => {
+    if (!config?._id) {
+      return;
+    }
+
+    modal.open(ConfirmModal, {
+      props: {
+        icon: 'icon-delete',
+        title: 'Delete Agent',
+        subtitle: 'This will permanently delete this agent and remove it from your community.',
+        buttonText: 'Delete',
+        onConfirm: async () => {
+          await deleteAgent({
+            variables: {
+              id: config._id,
+            },
+          });
+        },
+      },
+    });
+  }, [config?._id, deleteAgent]);
 
   return (
     <Pane.Root>
@@ -627,12 +662,37 @@ export function CreateAgentPane({ scope, config, onCreated }: Props) {
         </div>
       </Pane.Content>
 
-      <Pane.Footer>
-        <div className="p-4 border-t">
-          <Button variant="secondary" onClick={handleSubmit(onSubmit)} loading={loading}>
-            {isEditMode ? 'Update Agent' : 'Create Agent'}
-          </Button>
-        </div>
+      <Pane.Footer
+        className={isEditMode ? 'border-t border-card-border bg-overlay-secondary/80 backdrop-blur-xl' : undefined}
+      >
+        {isEditMode ? (
+          <div className="flex gap-3 px-4 py-3">
+            <Button
+              variant="danger"
+              outlined
+              className="h-10 flex-1 justify-center rounded-sm"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="secondary"
+              className="h-10 flex-1 justify-center rounded-sm"
+              onClick={handleSubmit(onSubmit)}
+              loading={loading}
+              disabled={!canSaveChanges}
+            >
+              Save Changes
+            </Button>
+          </div>
+        ) : (
+          <div className="p-4 border-t">
+            <Button variant="secondary" onClick={handleSubmit(onSubmit)} loading={loading}>
+              Create Agent
+            </Button>
+          </div>
+        )}
       </Pane.Footer>
     </Pane.Root>
   );
@@ -681,7 +741,7 @@ function CommunitySelector({
     <Menu.Root isOpen={isOpen} onOpenChange={setIsOpen} placement="bottom-start">
       <Menu.Trigger className="w-full">
         <div
-          className="relative h-10 w-full rounded-sm border border-primary/8 bg-background/64 p-1 transition-colors hover:border-primary focus-within:border-primary"
+          className="relative h-11 w-full rounded-sm border border-primary/8 bg-background/64 p-1 transition-colors hover:border-primary focus-within:border-primary"
         >
           <button
             type="button"
@@ -697,7 +757,7 @@ function CommunitySelector({
               selectedSpaces.map((space) => (
                 <div
                   key={space._id}
-                  className="pointer-events-none flex items-center gap-1.5 rounded-xs bg-card px-2.5 py-1.5"
+                  className="pointer-events-none flex items-center gap-1.5 rounded-xs bg-card px-2.5 py-1"
                 >
                   <img
                     src={communityAvatar(space)}
