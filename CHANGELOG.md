@@ -1,5 +1,31 @@
 # Changelog
 
+## [10.29.4](https://github.com/lemonadesocial/web-new/compare/v10.29.3...v10.29.4) (2026-03-31)
+
+
+### Bug Fixes
+
+* also check me.oauth2_clients before showing empty state ([4df7ac3](https://github.com/lemonadesocial/web-new/commit/4df7ac393af9c457092b9a6858b5abdd0a4785af))
+* derive canCreateMore from query result instead of stale me data ([09138a0](https://github.com/lemonadesocial/web-new/commit/09138a06f803c72408e34456b4f8ab515e66dce8))
+* hide "No OAuth2 clients" while query is loading ([24faccf](https://github.com/lemonadesocial/web-new/commit/24faccfba74d484080b4c2d1b3c7be73586f1bfd))
+* use clientList length to toggle create button text ([547a9cc](https://github.com/lemonadesocial/web-new/commit/547a9cc9e45fda56802d142e808741270fad3750))
+
+## [10.29.3](https://github.com/lemonadesocial/web-new/compare/v10.29.2...v10.29.3) (2026-03-31)
+
+
+### Bug Fixes
+
+* sidebar footer actions to match nav states ([2a7c3a4](https://github.com/lemonadesocial/web-new/commit/2a7c3a4cbc471297a87a0da950e4348794dda1c1))
+
+## [10.29.2](https://github.com/lemonadesocial/web-new/compare/v10.29.1...v10.29.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* persist community theme and align card text spacing ([ae83ade](https://github.com/lemonadesocial/web-new/commit/ae83adeb197609d7292a81c4f75cefe95b9f2f50))
+* rotate sidebar expand icon ([6f1c050](https://github.com/lemonadesocial/web-new/commit/6f1c050695b6044e7765ad3c4232c61318274f9f))
+* the clipped Appearance popovers in Manage Community settings ([a0aec65](https://github.com/lemonadesocial/web-new/commit/a0aec654752e1766e615639def51eafd6fcf9026))
+
 ## [10.29.1](https://github.com/lemonadesocial/web-new/compare/v10.29.0...v10.29.1) (2026-03-31)
 
 

@@ -65,7 +65,7 @@ export function HomeEventsSection() {
           {tab === 'events' && (
             <>
               <Link
-                href="/events"
+                href="/lemonade-stand?tab=events"
                 className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-medium text-tertiary bg-primary/8 hover:text-primary hover:bg-primary/12 transition"
               >
                 View All
@@ -84,7 +84,7 @@ export function HomeEventsSection() {
           {tab === 'communities' && (
             <>
               <Link
-                href="/communities"
+                href="/lemonade-stand?tab=communities"
                 className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-medium text-tertiary bg-primary/8 hover:text-primary hover:bg-primary/12 transition"
               >
                 View All
