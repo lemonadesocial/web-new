@@ -5,7 +5,6 @@ import { Button, Card, Input, modal, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
-  CreateOauth2ClientDocument,
   DeleteOauth2ClientDocument,
   ListOauth2ClientsDocument,
   UpdateOauth2ClientDocument,
@@ -13,6 +12,7 @@ import {
 import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 import { ListItem } from './list-item';
+import { CreateOauth2ClientModal } from '$lib/components/features/modals/CreateOauth2ClientModal';
 
 let keyCounter = 0;
 const generateKey = () => `url-${++keyCounter}`;
@@ -181,47 +181,11 @@ function OAuthClientCard({
 
 export function OAuthClient() {
   const me = useMe();
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [clientName, setClientName] = useState('');
 
   const { data: clients, loading: loadingClients, refetch } = useQuery(ListOauth2ClientsDocument);
 
-  const [createOauth2, { loading: creating }] = useMutation(CreateOauth2ClientDocument);
-
   const clientList = clients?.listOauth2Clients || [];
   const canCreateMore = !me?.oauth2_max_clients || me.oauth2_max_clients > clientList.length;
-
-  const createOauth2Client = async () => {
-    const { data } = await createOauth2({
-      variables: {
-        input: {
-          client_name: clientName.trim() || undefined,
-        },
-      },
-    });
-
-    if (data?.createOauth2Client) {
-      const text = [
-        `Client ID: ${data.createOauth2Client.client_id}`,
-        `Client Secret: ${data.createOauth2Client.client_secret}`,
-        ...(data.createOauth2Client.audience[0] ? [`Audience: ${data.createOauth2Client.audience[0]}`] : []),
-      ].join('\n');
-
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `oauth2-client-${data.createOauth2Client.client_id}.txt`;
-      a.click();
-
-      setClientName('');
-      setShowCreateForm(false);
-      toast.success('OAuth2 client created.');
-      refetch();
-    } else {
-      toast.error('Failed to create OAuth2 client.');
-    }
-  };
 
   if (!me) return null;
 
@@ -240,7 +204,7 @@ export function OAuthClient() {
             />
           ))}
 
-          {!loadingClients && !clientList.length && !showCreateForm && (
+          {!loadingClients && !clientList.length && (
             <div className="flex items-center gap-4 text-tertiary">
               <i className="icon-manage-accounts-outline size-5 aspect-square" />
               <div className="space-y-1">
@@ -249,38 +213,17 @@ export function OAuthClient() {
               </div>
             </div>
           )}
-
-          {showCreateForm && (
-            <div className="p-4 flex flex-col gap-3">
-              <p className="text-sm text-tertiary">Create new OAuth2 client</p>
-              <Input
-                placeholder="Client name (optional)"
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-              />
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setClientName('');
-                  }}
-                  size="sm"
-                  variant="tertiary"
-                >
-                  Cancel
-                </Button>
-                <Button loading={creating} onClick={createOauth2Client} size="sm" variant="primary">
-                  Create
-                </Button>
-              </div>
-            </div>
-          )}
         </Card.Content>
       </Card.Root>
 
-      {!showCreateForm && canCreateMore && (
+      {canCreateMore && (
         <div>
-          <Button onClick={() => setShowCreateForm(true)} variant="secondary" iconLeft="icon-plus">
+          <Button
+            onClick={() => modal.open(CreateOauth2ClientModal, { props: { onRefetch: refetch } })}
+            variant="secondary"
+            iconLeft="icon-plus"
+            className="bg-white text-black hover:bg-white/90 border-none px-4 py-2.5 h-auto rounded-xl font-semibold"
+          >
             New Client
           </Button>
         </div>
