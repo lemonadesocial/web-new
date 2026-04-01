@@ -222,7 +222,6 @@ export function OAuthClient() {
             onClick={() => modal.open(CreateOauth2ClientModal, { props: { onRefetch: refetch } })}
             variant="secondary"
             iconLeft="icon-plus"
-            className="bg-white text-black hover:bg-white/90 border-none px-4 py-2.5 h-auto rounded-xl font-semibold"
           >
             New Client
           </Button>

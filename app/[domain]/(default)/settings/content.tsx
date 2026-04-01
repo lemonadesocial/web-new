@@ -206,19 +206,23 @@ export function Content() {
         </div>
       </Card.Content>
 
-      {/* {!!me?.oauth2_allow_creation && ( */}
-      <OAuthClient />
-      {/* )} */}
+      {!!me?.oauth2_allow_creation && <OAuthClient />}
 
       <div className="flex flex-col gap-4">
         <h2 className="text-2xl font-semibold text-primary">Account</h2>
         <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border overflow-hidden">
-          <div className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition" onClick={() => logOut(true)}>
+          <div
+            className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition"
+            onClick={() => logOut(true)}
+          >
             <i className="icon-exit size-5 text-tertiary" />
             <p>Sign Out</p>
           </div>
           <hr className="border-t ml-12 border-(--color-divider)" />
-          <div className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition" onClick={handleDeleteAccountClick}>
+          <div
+            className="flex gap-4 items-center cursor-pointer py-3 px-4 hover:bg-white/5 transition"
+            onClick={handleDeleteAccountClick}
+          >
             <i className="icon-delete size-5 text-error" />
             <p className="text-error">Delete Account</p>
           </div>
