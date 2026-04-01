@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Button, Input, InputField, modal, ModalContent, toast } from '$lib/components/core';
+import { Button, InputField, modal, ModalContent, toast } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
 import { CreateOauth2ClientDocument } from '$lib/graphql/generated/backend/graphql';
 
@@ -56,14 +56,10 @@ export function CreateOauth2ClientModal({ onRefetch }: { onRefetch: () => void }
 
   if (createdData) {
     return (
-      <ModalContent className="p-8 space-y-6 w-112 max-w-full">
-        <div className="flex flex-col gap-6">
-          <div className="size-14 flex justify-center items-center rounded-full bg-success/10">
-            <i aria-hidden="true" className="icon-check text-success size-8" />
-          </div>
-
+      <ModalContent icon="icon-done" className="w-full max-w-sm md:max-w-md">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-semibold text-primary">OAuth2 Client Created</h2>
+            <p className="text-2xl font-semibold text-primary">OAuth2 Client Created</p>
             <p className="text-sm text-tertiary leading-relaxed font-medium">
               Your OAuth2 client is ready to use. Copy or download your credentials below before moving on. Your client
               secret will only be shown once and cannot be recovered.
@@ -72,23 +68,21 @@ export function CreateOauth2ClientModal({ onRefetch }: { onRefetch: () => void }
 
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <Input
+              <InputField
                 readOnly
                 value={createdData.client_secret}
-                className="w-full h-12 bg-transparent border-white/20 rounded-xl font-mono text-sm"
               />
             </div>
             <Button
               icon="icon-download"
-              variant="secondary"
-              className="h-12 w-12 flex-shrink-0 bg-white/10 border-none rounded-xl hover:bg-white/20"
+              variant="tertiary-alt"
               onClick={handleDownload}
             />
           </div>
 
           <Button
             onClick={() => modal.close()}
-            className="w-full bg-white/20 text-primary hover:bg-white/30 border-none h-13 rounded-xl font-bold text-lg"
+            variant='secondary'
           >
             I've Saved My Secret
           </Button>
