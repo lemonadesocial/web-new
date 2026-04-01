@@ -206,9 +206,9 @@ export function Content() {
         </div>
       </Card.Content>
 
-      {/* {!!me?.oauth2_allow_creation && ( */}
-      <OAuthClient />
-      {/* )} */}
+      {!!me?.oauth2_allow_creation && (
+        <OAuthClient />
+      )}
 
       <div className="flex flex-col gap-4">
         <h2 className="text-2xl font-semibold text-primary">Account</h2>
