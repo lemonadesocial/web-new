@@ -74,6 +74,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
   return (
     <main
       id={space._id}
+      data-theme-scope
       className={clsx(
         'relative flex h-dvh w-full z-100 overflow-hidden',
         state.theme !== 'default' && [state.config.color, state.config.mode],
