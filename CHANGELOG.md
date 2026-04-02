@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.32.0](https://github.com/lemonadesocial/web-new/compare/v10.31.0...v10.32.0) (2026-04-02)
+
+
+### Features
+
+* add submission state menu to community submissions ([dafa62c](https://github.com/lemonadesocial/web-new/commit/dafa62c3188704c5f7d808d898953442d3d28fb2))
+
+
+### Bug Fixes
+
+* show coming soon toast for disabled rewards in sidebar ([fa4c496](https://github.com/lemonadesocial/web-new/commit/fa4c496ef9f9cbad207c373c395c8ba9ff7ee496))
+
 ## [10.31.0](https://github.com/lemonadesocial/web-new/compare/v10.30.0...v10.31.0) (2026-04-02)
 
 
