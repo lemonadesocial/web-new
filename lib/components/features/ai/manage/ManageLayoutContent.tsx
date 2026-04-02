@@ -20,7 +20,6 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
-import { pad } from 'lodash';
 
 function ManageLayoutContent() {
   const params = useParams();
@@ -113,8 +112,12 @@ function ManageLayoutContent() {
               data-theme-scope="event-preview"
               className={clsx(
                 'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
-                themeState.theme !== 'default' && [themeState.config.color, themeState.config.mode],
+                themeState.theme,
+                themeState.config.name,
+                themeState.config.color,
+                themeState.config.mode,
               )}
+              style={themeState.variables.font as React.CSSProperties}
             >
               <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
               <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">

@@ -60,6 +60,6 @@ function BuilderTabs() {
       </ul>
 
       <div className="px-4!">{Comp && <Comp />}</div>
-    </div>
+    </div >
   );
 }

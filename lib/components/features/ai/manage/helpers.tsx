@@ -9,7 +9,7 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
     label: 'Manage',
     component: () => (
       <div className="px-4 h-full">
-        <AIChat />
+        <AIChat compact />
       </div>
     ),
   },
@@ -27,7 +27,7 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
     label: 'Preview',
     component: () => (
       <div className="px-4 h-full">
-        <AIChat />
+        <AIChat compact />
       </div>
     ),
   },
