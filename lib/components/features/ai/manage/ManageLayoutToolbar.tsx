@@ -196,9 +196,6 @@ function ManageLayoutToolbar() {
                   size="sm"
                   onClick={() => {
                     store.setActiveTab(key as ActiveTabType);
-                    if (!['design', 'preview'].includes(key)) {
-                      store.setPreviewMode('desktop');
-                    }
                   }}
                   className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
                 >
@@ -209,20 +206,18 @@ function ManageLayoutToolbar() {
           </div>
 
           <div className="flex-1 flex items-center justify-center gap-2">
-            {['design', 'preview'].includes(state.activeTab) && (
-              <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-                {Object.entries(devices).map(([key, item]) => (
-                  <Button
-                    key={key}
-                    icon={item.icon}
-                    variant="tertiary"
-                    size="sm"
-                    onClick={() => store.setPreviewMode(key as any)}
-                    className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                  ></Button>
-                ))}
-              </div>
-            )}
+            <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+              {Object.entries(devices).map(([key, item]) => (
+                <Button
+                  key={key}
+                  icon={item.icon}
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => store.setPreviewMode(key as any)}
+                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                ></Button>
+              ))}
+            </div>
 
             <Button variant="tertiary-alt" icon="icon-arrow-outward" size="sm" onClick={handleOpenPublicPage} />
           </div>

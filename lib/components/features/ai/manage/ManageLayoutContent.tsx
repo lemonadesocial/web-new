@@ -33,7 +33,6 @@ function ManageLayoutContent() {
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
-  const isDesignOrPreview = state.activeTab === 'design' || state.activeTab === 'preview';
   const cachedEvent = state.data as Event | undefined;
   const shouldFetchEvent = state.layoutType === 'event' && !!shortid && cachedEvent?.shortid !== shortid;
 
@@ -142,8 +141,8 @@ function ManageLayoutContent() {
               className="overflow-hidden shrink-0 hidden md:block"
             >
               <div
-                data-mode={isDesignOrPreview ? state.device : undefined}
-                className={clsx('w-110 h-full', isDesignOrPreview && 'pt-3')}
+                data-mode={state.device}
+                className={clsx('w-110 h-full pt-3')}
               >
                 <SidebarComp />
               </div>
@@ -157,7 +156,7 @@ function ManageLayoutContent() {
           )}
         >
           <div
-            data-mode={isDesignOrPreview ? state.device : undefined}
+            data-mode={state.device}
             className={clsx(
               'w-full bg-background h-full rounded-none md:rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
               state.device === 'mobile' && 'md:w-sm',

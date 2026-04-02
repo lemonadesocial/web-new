@@ -8,6 +8,13 @@ export const EventThemeContext = React.createContext(null);
 
 export function EventThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
+
+  React.useEffect(() => {
+    if (themeData) {
+      dispatch({ type: ThemeBuilderActionKind.reset, payload: themeData });
+    }
+  }, [themeData]);
+
   const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <EventThemeContext.Provider value={value}>{children}</EventThemeContext.Provider>;
