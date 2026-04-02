@@ -78,7 +78,7 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
 
           {isHost && (
             <>
-              <EventThemeBuilder eventId={event._id} autoSave={autoSave} />
+              <EventThemeBuilder eventId={event._id} autoSave={false} />
               <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                 <p className="text-accent-500">You have manage access for this event.</p>
                 <Button
@@ -135,7 +135,7 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
             <>
               <Spacer className="h-4" />
               <div className="flex flex-col gap-4">
-                <EventThemeBuilder eventId={event._id} />
+                <EventThemeBuilder eventId={event._id} autoSave={false} />
                 <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                   <p className="text-accent-500">You have manage access for this event.</p>
                   <Button
