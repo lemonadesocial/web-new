@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.31.0](https://github.com/lemonadesocial/web-new/compare/v10.30.0...v10.31.0) (2026-04-02)
+
+
+### Features
+
+* add search filters for events and community hubs ([8858e83](https://github.com/lemonadesocial/web-new/commit/8858e834524ac7a96fa4ab04b73a18bb87ab3f3c))
+* edit knowledge base ([0902611](https://github.com/lemonadesocial/web-new/commit/0902611092735e5f15347deee990ef6ca701fd58))
+
 ## [10.30.0](https://github.com/lemonadesocial/web-new/compare/v10.29.5...v10.30.0) (2026-04-01)
 
 
