@@ -1,7 +1,8 @@
 'use client';
 
+import { FloatingPortal } from '@floating-ui/react';
 import React from 'react';
-import { Avatar, Button, Skeleton, toast } from '$lib/components/core';
+import { Avatar, Button, Menu, MenuItem, Skeleton, toast } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import {
   DecideSpaceEventRequestsDocument,
@@ -20,6 +21,11 @@ import { Segment } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 
 const LIMIT = 15;
+const SUBMISSION_STATE_OPTIONS = [
+  { value: SpaceEventRequestState.Pending, label: 'Mark as Pending', icon: 'icon-clock' },
+  { value: SpaceEventRequestState.Approved, label: 'Mark as Approved', icon: 'icon-done' },
+  { value: SpaceEventRequestState.Declined, label: 'Mark as Declined', icon: 'icon-x' },
+] as const;
 
 interface Props {
   space: Space;
@@ -77,11 +83,11 @@ export function CommunitySubmissions({ space }: Props) {
 
     const actionLabel =
       decision === SpaceEventRequestState.Approved
-        ? 'added'
+        ? 'approved'
         : decision === SpaceEventRequestState.Declined
-          ? 'removed'
-          : 'updated';
-    toast.success(`'${event.event_expanded?.title}' has been ${actionLabel}`);
+          ? 'declined'
+          : 'moved back to pending';
+    toast.success(`'${event.event_expanded?.title}' has been ${actionLabel}.`);
   };
 
   return (
@@ -174,33 +180,38 @@ function SubmissionRow({
   const event = item.event_expanded as Event & { shortid?: string } | undefined;
   const photo = event?.new_new_photos_expanded?.[0];
   const eventUrl = event?.shortid ? `/e/${event.shortid}` : undefined;
+  const isSubmitting = decideState?.id === item._id && decideState?.submitting;
+  const content = (
+    <>
+      <img
+        src={
+          photo
+            ? generateUrl(photo, { resize: { width: 40, height: 40, fit: 'cover' } })
+            : randomEventDP(event?._id)
+        }
+        alt=""
+        className="size-5 rounded-sm border object-cover shrink-0"
+      />
+      <p className="truncate">{event?.title}</p>
+    </>
+  );
 
   return (
     <CardTable.Row>
       <div className="flex gap-4 items-center px-4 py-3 min-w-0">
-        <div
-          className="flex gap-3 items-center flex-1 min-w-0 cursor-pointer hover:opacity-80"
-          onClick={() => eventUrl && window.open(eventUrl, '_blank')}
-          onKeyDown={(e) => {
-            if ((e.key === 'Enter' || e.key === ' ') && eventUrl) {
-              e.preventDefault();
-              window.open(eventUrl, '_blank');
-            }
-          }}
-          role={eventUrl ? 'button' : undefined}
-          tabIndex={eventUrl ? 0 : undefined}
-        >
-          <img
-            src={
-              photo
-                ? generateUrl(photo, { resize: { width: 40, height: 40, fit: 'cover' } })
-                : randomEventDP(event?._id)
-            }
-            alt=""
-            className="size-5 rounded-sm border object-cover shrink-0"
-          />
-          <p className="truncate">{event?.title}</p>
-        </div>
+        {eventUrl ? (
+          <button
+            type="button"
+            className="flex gap-3 items-center flex-1 min-w-0 cursor-pointer hover:opacity-80 text-left"
+            onClick={() => window.open(eventUrl, '_blank')}
+          >
+            {content}
+          </button>
+        ) : (
+          <div className="flex gap-3 items-center flex-1 min-w-0">
+            {content}
+          </div>
+        )}
 
         <div className="hidden lg:block w-[18%] min-w-0 shrink-0">
           <p className="text-tertiary">
@@ -227,14 +238,14 @@ function SubmissionRow({
           </p>
         </div>
 
-        <div className="flex gap-1 w-[13%] min-w-18 shrink-0 justify-end" onClick={(e) => e.stopPropagation()}>
+        <div className="flex gap-1 w-[13%] min-w-18 shrink-0 justify-end">
           {item.state === SpaceEventRequestState.Pending && (
             <>
               <Button
                 variant="danger"
                 size="xs"
                 className="!p-1.5 !min-w-0"
-                disabled={decideState?.id === item._id && decideState?.submitting}
+                disabled={isSubmitting}
                 loading={
                   decideState?.id === item._id &&
                   decideState?.action === SpaceEventRequestState.Declined &&
@@ -251,7 +262,7 @@ function SubmissionRow({
                 variant="success"
                 size="xs"
                 className="!p-1.5 !min-w-0"
-                disabled={decideState?.id === item._id && decideState?.submitting}
+                disabled={isSubmitting}
                 loading={
                   decideState?.id === item._id &&
                   decideState?.action === SpaceEventRequestState.Approved &&
@@ -266,8 +277,61 @@ function SubmissionRow({
               </Button>
             </>
           )}
+
+          {item.state !== SpaceEventRequestState.Pending && (
+            <SubmissionStateMenu
+              item={item}
+              decideState={decideState}
+              onDecide={onDecide}
+            />
+          )}
         </div>
       </div>
     </CardTable.Row>
+  );
+}
+
+function SubmissionStateMenu({
+  item,
+  decideState,
+  onDecide,
+}: {
+  item: SpaceEventRequest;
+  decideState?: { id: string; action: SpaceEventRequestState; submitting: boolean };
+  onDecide: (item: SpaceEventRequest, decision: SpaceEventRequestState) => void;
+}) {
+  const options = SUBMISSION_STATE_OPTIONS.filter((option) => option.value !== item.state);
+  const isSubmitting = decideState?.id === item._id && decideState?.submitting;
+
+  if (!options.length) return null;
+
+  return (
+    <Menu.Root disabled={isSubmitting} placement="bottom-end" withFlip>
+      <Menu.Trigger className="flex size-5 items-center justify-center text-quaternary transition hover:text-primary">
+        <i aria-hidden="true" className="icon-more-horiz size-5" />
+      </Menu.Trigger>
+
+      <FloatingPortal>
+        <Menu.Content className="!w-fit min-w-0 flex flex-col items-start p-1">
+          {({ toggle }) => (
+            <>
+              {options.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  title={option.label}
+                  iconLeft={option.icon}
+                  className="!min-w-0 !w-auto !max-w-none whitespace-nowrap"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDecide(item, option.value);
+                    toggle();
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </Menu.Content>
+      </FloatingPortal>
+    </Menu.Root>
   );
 }
