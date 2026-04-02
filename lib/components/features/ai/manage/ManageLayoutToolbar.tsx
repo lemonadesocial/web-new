@@ -255,7 +255,14 @@ function ManageLayoutToolbar() {
                     <PreviewLinkPopup />
                   </Menu.Content>
                 </Menu.Root>
-                <Button size="sm" variant="tertiary-alt" onClick={() => store.setActiveTab('manage')}>
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  onClick={() => {
+                    handleResetTheme();
+                    store.setActiveTab('manage');
+                  }}
+                >
                   Close
                 </Button>
               </>
