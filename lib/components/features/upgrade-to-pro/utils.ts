@@ -2,6 +2,9 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { formatUnits } from 'viem';
 
 import {
+  type ConnectionOutput,
+  type ConnectorActionInfo,
+  type ConnectorDefinition,
   type SubscriptionItem,
   type SubscriptionPricing,
   SubscriptionItemType,
@@ -9,6 +12,146 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { formatNumber } from '$lib/utils/number';
 import type { TokenMeta } from '$lib/utils/crypto';
+
+// ── Feature config types (matches backend SubscriptionFeatureConfig) ──
+
+export type FeatureConfigTier = {
+  enabled: boolean;
+  limit?: number;
+  values?: string[];
+};
+
+export type FeatureConfig = {
+  feature_code: string;
+  feature_type: 'boolean' | 'numeric_limit' | 'enum_set';
+  display_label?: string | null;
+  description: string;
+  tiers: Record<string, FeatureConfigTier>;
+};
+
+export type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
+type CompareValue = string | boolean;
+
+type CompareRow = {
+  label: string;
+  values: Record<ComparePlan, CompareValue>;
+};
+
+export type CompareSection = {
+  id: string;
+  title: string;
+  icon: string;
+  rows: CompareRow[];
+};
+
+type CompareSectionDef = {
+  id: string;
+  title: string;
+  icon: string;
+  features: string[];
+};
+
+export const COMPARE_SECTION_DEFS: CompareSectionDef[] = [
+  {
+    id: 'ai_agents',
+    title: 'AI & Agents',
+    icon: 'icon-robot',
+    features: ['ai_credits_per_month', 'topup_multiplier', 'advanced_ai_models', 'premium_ai_models', 'custom_agents', 'ai_tool_access', 'ai_page_generation'],
+  },
+  {
+    id: 'domain_branding',
+    title: 'Domain & Branding',
+    icon: 'icon-globe',
+    features: ['custom_event_slug', 'custom_domain', 'remove_branding'],
+  },
+  {
+    id: 'design_page_builder',
+    title: 'Design & Page Builder',
+    icon: 'icon-palette-outline',
+    features: ['premium_themes', 'page_builder', 'custom_code_access'],
+  },
+  {
+    id: 'newsletter_email',
+    title: 'Newsletter & Email',
+    icon: 'icon-email',
+    features: ['newsletter_access', 'newsletter_sends_per_month', 'newsletter_recipients_per_send'],
+  },
+  {
+    id: 'integrations',
+    title: 'Integrations',
+    icon: 'icon-connector-line',
+    features: ['available_connectors', 'api_access', 'marketplace_seller', 'referral_stablecoin_rewards', 'config_versions'],
+  },
+  {
+    id: 'api_access',
+    title: 'API access',
+    icon: 'icon-api',
+    features: ['api_keys_limit', 'api_rate_limit', 'api_burst_limit', 'max_page_size', 'api_monthly_quota', 'api_overage_rate', 'api_hard_cap', 'api_scopes'],
+  },
+];
+
+const COMPARE_PLANS: ComparePlan[] = ['pro', 'plus', 'max', 'enterprise'];
+
+function formatTierValue(config: FeatureConfig, tier: ComparePlan): CompareValue {
+  const tierConfig = config.tiers[tier];
+
+  if (!tierConfig?.enabled) {
+    return false;
+  }
+
+  if (config.feature_type === 'boolean') {
+    return true;
+  }
+
+  if (config.feature_type === 'numeric_limit') {
+    const limit = tierConfig.limit ?? 0;
+
+    if (limit === 0) {
+      return tier === 'enterprise' ? 'Custom' : 'Unlimited';
+    }
+
+    return limit.toLocaleString('en-US');
+  }
+
+  if (config.feature_type === 'enum_set') {
+    const values = tierConfig.values ?? [];
+
+    if (values.includes('*')) return 'All';
+    if (values.length === 0) return false;
+
+    return values.map((v) => v.replace(/_/g, ' ')).join(', ');
+  }
+
+  return false;
+}
+
+export function buildCompareSections(featureConfigs: FeatureConfig[]): CompareSection[] {
+  const configByCode = new Map(featureConfigs.map((c) => [c.feature_code, c]));
+
+  return COMPARE_SECTION_DEFS.map((def) => ({
+    id: def.id,
+    title: def.title,
+    icon: def.icon,
+    rows: def.features
+      .map((code) => {
+        const config = configByCode.get(code);
+
+        if (!config) return null;
+
+        const values = {} as Record<ComparePlan, CompareValue>;
+
+        for (const plan of COMPARE_PLANS) {
+          values[plan] = formatTierValue(config, plan);
+        }
+
+        return {
+          label: config.display_label || config.description,
+          values,
+        };
+      })
+      .filter((row): row is CompareRow => row !== null),
+  }));
+}
 
 const CONNECTOR_AUTH_FAILED_MESSAGE = 'Authentication failed — please try again';
 const DEFAULT_CONNECTOR_ERROR_MESSAGE = 'Unable to connect. Please try again.';
@@ -51,6 +194,38 @@ export const CONNECTOR_ICONS: Record<string, string> = {
   'eleven-labs': `${ASSET_PREFIX}/assets/images/connectors/connector-eleven-labs.png`,
   webhook: `${ASSET_PREFIX}/assets/images/connectors/webhook.svg`,
 };
+
+type ConnectorActionLike = {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+};
+
+export type ConnectorModalAction = ConnectorActionInfo;
+export type ConnectorModalConnection = ConnectionOutput & {
+  connector: ConnectorDefinition;
+};
+
+type ConnectorLike<TAction extends ConnectorActionLike = ConnectorActionLike> = {
+  actions?: Array<TAction | null> | null;
+};
+
+export function getGuestExportAction<TAction extends ConnectorActionLike>(
+  connector?: ConnectorLike<TAction> | null,
+): TAction | null {
+  const actions = connector?.actions ?? [];
+
+  return (
+    actions.find((action) => action?.id === 'export-guests') ??
+    actions.find((action) => {
+      if (!action) return false;
+
+      const haystack = `${action.id} ${action.name ?? ''} ${action.description ?? ''}`.toLowerCase();
+      return haystack.includes('export') && haystack.includes('guest');
+    }) ??
+    null
+  ) as TAction | null;
+}
 
 export function getProcessingMessage(status: string) {
   if (status === 'approving') return 'Please approve token spending in your wallet.';

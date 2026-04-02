@@ -13,9 +13,16 @@ type AIChatProps = {
   showTools?: boolean;
   readOnly?: boolean;
   allowGuest?: boolean;
+  compact?: boolean;
 };
 
-export function AIChat({ variant = 'default', showTools = true, readOnly, allowGuest = false }: AIChatProps) {
+export function AIChat({
+  variant = 'default',
+  showTools = true,
+  readOnly,
+  allowGuest = false,
+  compact,
+}: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
   const hasActivity = !!state.messages.length || !!state.thinking;
@@ -58,7 +65,7 @@ export function AIChat({ variant = 'default', showTools = true, readOnly, allowG
                 }}
               >
                 <div className="relative z-10 mx-auto w-full max-w-4xl">
-                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} />
+                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} compact={compact} />
                 </div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -89,7 +96,7 @@ export function AIChat({ variant = 'default', showTools = true, readOnly, allowG
                 <WelcomeChat />
 
                 <div className="space-y-4">
-                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} />
+                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} compact={compact} />
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

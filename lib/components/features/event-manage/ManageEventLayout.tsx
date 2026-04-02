@@ -86,7 +86,13 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
       onComplete: (data) => {
         if (data?.configs?.items?.length) {
           const config = data.configs.items[0] as AiConfigFieldsFragment;
-          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+          aiChatDispatch({
+            type: AIChatActionKind.set_config,
+            payload: {
+              config: config._id,
+              messages: mockWelcomeEvent(event),
+            },
+          });
         }
       },
       skip: !event._id,
@@ -96,21 +102,13 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   const [selectedTab, setSelectedTab] = React.useState('overview');
 
-  React.useEffect(() => {
-    if (event.shortid === shortid) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
-    }
-  }, []);
-
   const Comp = tabs[selectedTab].component;
 
   return (
     <div className="relative h-full overflow-auto">
       <div className="sticky top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-2 font-default">
-          <div className="page mx-auto px-4 md:px-0">
+          <div className="w-full max-w-[69.5rem] mx-auto px-4">
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
               {Object.entries(tabs).map(([key, item]) => {
                 return (
@@ -130,7 +128,9 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <Comp />
+      <div className="md:px-4">
+        <Comp />
+      </div>
     </div>
   );
 }

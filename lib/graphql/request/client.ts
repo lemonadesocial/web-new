@@ -44,7 +44,6 @@ export class GraphqlClient {
   private client: GraphQLClient;
   private cache?: InMemoryCache;
   private queue: QueryRequest<any, any>[] = [];
-  private processing: boolean = false;
   customHeader: Record<string, string> = {};
 
   constructor({ url, cache, options = {} }: { url: string; cache?: InMemoryCache; options?: RequestConfig }) {
@@ -62,14 +61,14 @@ export class GraphqlClient {
 
   async query<T, V extends object>({
     query,
-    variables = {},
+    variables = {} as V,
     fetchPolicy = 'cache-first',
     headers,
     initData,
   }: {
     query: TypedDocumentNode<T, V>;
     headers?: HeadersInit;
-    variables?: object;
+    variables?: V;
     fetchPolicy?: FetchPolicy;
     initData?: T;
   }): Promise<{ data: T | null; error: unknown }> {
@@ -110,23 +109,18 @@ export class GraphqlClient {
     });
   }
 
-  private async processQueue() {
-    if (this.processing || this.queue.length === 0) return;
+  private processQueue() {
+    while (this.queue.length > 0) {
+      const request = this.queue.shift()!;
+      this.executeRequestWrapper(request);
+    }
+  }
 
-    this.processing = true;
-    const request = this.queue.shift()!;
-
+  private async executeRequestWrapper(request: QueryRequest<any, any>) {
     try {
-      if (request.headers) {
-        this.client.setHeaders(request.headers);
-      }
-
       await this.executeRequest(request);
     } catch (error) {
       this.handleRequestError(request, error);
-    } finally {
-      this.processing = false;
-      this.processQueue();
     }
   }
 
@@ -136,7 +130,7 @@ export class GraphqlClient {
       return;
     }
 
-    const { fetchPolicy, initData } = request;
+    const { fetchPolicy, initData, headers } = request;
 
     if (fetchPolicy === 'network-only') {
       await this.executeNetworkRequest(request);
@@ -157,15 +151,15 @@ export class GraphqlClient {
 
     let result = initData;
     if (!result) {
-      result = await this.client.request(request.query, request.variables);
+      result = await this.client.request(request.query, request.variables, headers as HeadersInit);
     }
     this.cache?.normalizeAndStore(request.query, request.variables, result);
     request.resolve({ data: result, error: null });
   }
 
   private async executeNetworkRequest(request: QueryRequest<any, any>) {
-    const { query, variables } = request;
-    const result = await this.client.request(query, variables);
+    const { query, variables, headers } = request;
+    const result = await this.client.request(query, variables, headers as HeadersInit);
 
     this.cache?.normalizeAndStore(query, variables, result);
     request.resolve({ data: result, error: null });
@@ -282,14 +276,14 @@ export class GraphqlClient {
 
   subscribe<T, V extends object>({
     query,
-    variables = {},
+    variables = {} as V,
     callback,
   }: {
     query: TypedDocumentNode<T, V>;
-    variables?: object;
+    variables?: V;
     callback: () => void;
   }) {
-    const queryKey = this.cache?.createCacheKey(query, variables);
+    const queryKey = this.cache?.createCacheKey(query, variables as Record<string, unknown>);
     if (queryKey) this.cache?.subscribe(queryKey, callback);
   }
 
@@ -299,7 +293,7 @@ export class GraphqlClient {
 
   private getHeaders(headers?: HeadersInit): HeadersInit {
     const store = getDefaultStore();
-    const session = store.get(sessionAtom);
+    const session = store.get(sessionAtom) as any;
     const defaultHeaders: HeadersInit = {};
 
     if (session?.token) {

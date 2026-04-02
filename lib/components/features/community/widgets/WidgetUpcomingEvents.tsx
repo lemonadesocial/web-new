@@ -20,6 +20,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
+import { openEventPane } from '../../pane';
 
 interface Props {
   space: Space;
@@ -65,7 +66,7 @@ export function WidgetUpcomingEvents({ space }: Props) {
             key={item._id}
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/e/${item.shortid}`);
+              openEventPane(item._id);
             }}
           >
             <Card.Content>

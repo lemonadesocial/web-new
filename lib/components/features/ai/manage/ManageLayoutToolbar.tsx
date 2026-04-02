@@ -234,7 +234,7 @@ function ManageLayoutToolbar() {
                 outlined
                 iconLeft="icon-arrow-shape-up-stack-outline"
                 onClick={() => {
-                  router.push('/upgrade-to-pro');
+                  router.push(`/upgrade/${event?.space}`);
                 }}
               >
                 Upgrade
@@ -353,7 +353,7 @@ function ManageLayoutToolbar() {
               icon="icon-arrow-shape-up-stack-outline"
               className="rounded-full aspect-square"
               onClick={() => {
-                router.push('/upgrade-to-pro');
+                router.push(`/upgrade/${event?.space}`);
               }}
             >
               Upgrade

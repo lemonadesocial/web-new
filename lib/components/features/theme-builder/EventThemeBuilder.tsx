@@ -20,6 +20,10 @@ import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
 import { FloatingPortal } from '@floating-ui/react';
 
+function getThemePreset(themeName: ReturnType<typeof getThemeName>) {
+  return themeName in presets ? presets[themeName as keyof typeof presets] : undefined;
+}
+
 export function EventThemeBuilder({
   eventId,
   autoSave = true,
@@ -34,6 +38,7 @@ export function EventThemeBuilder({
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
   const themeName = getThemeName(data);
+  const activePreset = getThemePreset(themeName);
   const mounted = React.useRef(false);
 
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
@@ -81,11 +86,11 @@ export function EventThemeBuilder({
           className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left backdrop-blur-sm"
           onClick={() => setToggle(true)}
         >
-          <img src={presets[themeName]?.image} className="w-12.75 h-9.5 rounded-xs" />
+          {activePreset?.image ? <img src={activePreset.image} className="w-12.75 h-9.5 rounded-xs" /> : null}
           <div className="flex justify-between items-center flex-1">
             <div>
               <p className="text-xs">Theme</p>
-              <p className="text-primary">{presets[themeName]?.name}</p>
+              {activePreset?.name ? <p className="text-primary">{activePreset.name}</p> : null}
             </div>
             <i aria-hidden="true" className="icon-chevrons-up-down size-5" />
           </div>
@@ -111,9 +116,15 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
   const menuPlacement = menuInPortal ? 'right-start' : 'bottom-start';
   const menuWithFlip = !menuInPortal;
   const mode = data.config.mode || 'auto';
-  const styleDisabled = !!presets[themeName]?.ui?.disabled?.style;
-  const effectDisabled = !!presets[themeName]?.ui?.disabled?.effect;
-  const displayDisabled = !!presets[themeName]?.ui?.disabled?.mode;
+  const styleDisabled = Boolean(
+    data.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.style,
+  );
+  const effectDisabled = Boolean(
+    data.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.effect,
+  );
+  const displayDisabled = Boolean(
+    data.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.mode,
+  );
 
   const { data: dataGetSystemFiles } = useQuery(GetSystemFilesDocument, {
     variables: {
@@ -136,7 +147,6 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
       )}
       style={
         {
-          // @ts-expect-error accept variables
           '--font-title': 'var(--font-class-display)',
           '--font-body': 'var(--font-general-sans)',
         } as React.CSSProperties
@@ -584,6 +594,7 @@ function EventBuilderPaneOptions() {
   >('template');
   const [data] = useEventTheme();
   const themeName = getThemeName(data);
+  const activePreset = getThemePreset(themeName);
 
   const Comp = MAPPINGS[state];
 
@@ -600,13 +611,13 @@ function EventBuilderPaneOptions() {
               setState('template');
             }}
           >
-            <img src={presets[themeName]?.image} className="h-8 w-10.75 rounded-xs" />
+            {activePreset?.image ? <img src={activePreset.image} className="h-8 w-10.75 rounded-xs" /> : null}
             <p className="text-xs">Template</p>
           </ActionButton>
 
           <ActionButton
             active={state === 'colors'}
-            disabled={data.theme && presets[themeName]?.ui?.disabled?.color}
+            disabled={Boolean(data.theme && activePreset?.ui?.disabled?.color)}
             onClick={() => setState('colors')}
           >
             <div
@@ -620,7 +631,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'style'}
-            disabled={presets[themeName]?.ui?.disabled?.style}
+            disabled={Boolean(activePreset?.ui?.disabled?.style)}
             onClick={() => setState('style')}
           >
             <div
@@ -650,7 +661,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'effect'}
-            disabled={presets[themeName]?.ui?.disabled?.effect}
+            disabled={Boolean(activePreset?.ui?.disabled?.effect)}
             onClick={() => setState('effect')}
           >
             {!data.config.effect?.name ? (
@@ -681,7 +692,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'mode'}
-            disabled={data.theme && presets[themeName]?.ui?.disabled?.mode}
+            disabled={Boolean(data.theme && activePreset?.ui?.disabled?.mode)}
             onClick={() => setState('mode')}
           >
             <div className="size-8">
@@ -723,9 +734,10 @@ function ThemeTemplate() {
                 e.stopPropagation();
                 const config: any = {};
                 const themeName = getThemeName(data);
+                const activePreset = getThemePreset(themeName);
 
                 if (!data.config.color) config.color = getRandomColor();
-                if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
+                if (activePreset?.ui?.disabled?.mode) config.mode = 'auto';
 
                 dispatch({
                   type: ThemeBuilderActionKind.select_template,

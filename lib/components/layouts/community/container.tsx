@@ -16,7 +16,7 @@ import Sidebar from './sidebar';
 import { Footer } from './footer';
 import { useAIChat, AIChatActionKind } from '../../features/ai/provider';
 import { randomEventDP } from '$lib/utils/user';
-import { Button, Card, Menu, modal } from '$lib/components/core';
+import { Button, Card, modal } from '$lib/components/core';
 import { AgentInfoModal, AgentList } from '$lib/components/features/ai/AgentsSidebar';
 
 function FaviconUpdater({ faviconUrl }: { faviconUrl?: string | null }) {
@@ -74,6 +74,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
   return (
     <main
       id={space._id}
+      data-theme-scope
       className={clsx(
         'relative flex h-dvh w-full z-100 overflow-hidden',
         state.theme !== 'default' && [state.config.color, state.config.mode],
@@ -83,13 +84,23 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
       <ThemeGenerator data={state} />
       <Sidebar space={space} />
 
-      <div className="flex-1 flex flex-col overflow-hidden relative">
+      <div className={clsx('flex-1 flex flex-col overflow-hidden relative', isChat && 'bg-overlay-primary')}>
         <Header
           hideLogo
-          className="hidden md:block sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
+          className="hidden md:flex sticky top-0 left-0 w-full h-16 z-9 border-b backdrop-blur-md"
           title={
             isChat ? (
-              <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() =>
+                  modal.open(AgentInfoModal, {
+                    props: {
+                      agent: currentAgent,
+                      onSelectAgent: () => modal.close(),
+                    },
+                  })
+                }
+              >
                 <Image
                   src={currentAgent?.avatar || randomEventDP(currentAgent?._id)}
                   className="w-8 h-8 rounded-full object-cover"

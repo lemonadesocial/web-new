@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Button, Textarea, Card, drawer, Divider } from '$lib/components/core';
+import { Button, Textarea, drawer, Divider } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { Space, Event } from '$lib/graphql/generated/backend/graphql';
 import { SpotlightEventsPane } from './SpotlightEventsPane';
@@ -9,13 +9,14 @@ import { SpotlightEventCard } from './SpotlightEventCard';
 interface Props {
   initialValue?: string;
   initialSpotlightEvents?: Event[];
-  space: Space;
+  space?: Space;
   onSave: (value: string, spotlightEvents: Event[]) => void;
 }
 
 export function WelcomeMessagePane({ initialValue = '', initialSpotlightEvents = [], space, onSave }: Props) {
   const [message, setMessage] = React.useState(initialValue);
   const [spotlightEvents, setSpotlightEvents] = React.useState<Event[]>(initialSpotlightEvents);
+  const canManageSpotlightEvents = !!space;
 
   const handleSave = () => {
     onSave(message, spotlightEvents);
@@ -53,37 +54,41 @@ export function WelcomeMessagePane({ initialValue = '', initialSpotlightEvents =
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <p className="text-lg">Spotlight Events</p>
-            <Button
-              variant="tertiary-alt"
-              size="sm"
-              iconLeft="icon-plus"
-              onClick={() => {
-                drawer.open(SpotlightEventsPane, {
-                  props: {
-                    space,
-                    selectedEvents: spotlightEvents,
-                    onSave: (events: Event[]) => {
-                      setSpotlightEvents(events);
+            {space ? (
+              <Button
+                variant="tertiary-alt"
+                size="sm"
+                iconLeft="icon-plus"
+                onClick={() => {
+                  drawer.open(SpotlightEventsPane, {
+                    props: {
+                      space,
+                      selectedEvents: spotlightEvents,
+                      onSave: (events: Event[]) => {
+                        setSpotlightEvents(events);
+                      },
                     },
-                  },
-                });
-              }}
-            >
-              Add
-            </Button>
+                  });
+                }}
+              >
+                Add
+              </Button>
+            ) : null}
           </div>
           {spotlightEvents.length === 0 ? (
             <div className="flex bg-card border border-card-border gap-3 items-center px-4 py-3 rounded-md">
               <i aria-hidden="true" className="icon-ticket size-8 text-tertiary" />
               <div className="flex flex-col gap-0.5 flex-1">
-                <p className="text-tertiary">No spotlight events yet</p>
+                <p className="text-tertiary">{canManageSpotlightEvents ? 'No spotlight events yet' : 'No active community selected'}</p>
                 <p className="text-sm text-tertiary">
-                  Choose events to highlight when the chat opens.
+                  {canManageSpotlightEvents
+                    ? 'Choose events to highlight when the chat opens.'
+                    : 'Select a community in Active In before you add spotlight events.'}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-2 bg-card rounded-md border border-card-border divide-y divide-(--color-divider)">
+            <div className="flex flex-col gap-2 rounded-md border border-card-border bg-card divide-y divide-card-border">
               {spotlightEvents.map((event) => (
                 <SpotlightEventCard
                   key={event._id}

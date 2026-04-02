@@ -8,6 +8,7 @@ import { CustomDomain } from './CustomDomain';
 import { Payouts } from './Payouts';
 import { PlanAndCredits } from './PlanAndCredits';
 import Team from './Team';
+import type { FeatureConfig } from './utils';
 
 export const DEFAULT_UPGRADE_TO_PRO_SECTION = 'plans' as const;
 
@@ -19,7 +20,7 @@ export type UpgradeToProSection = {
   aliases?: string[];
   label: string;
   icon: string;
-  render: (props: { space: Space; subscriptionData?: SubscriptionItem[] }) => ReactNode;
+  render: (props: { space: Space; subscriptionData?: SubscriptionItem[]; featureConfigs?: FeatureConfig[] }) => ReactNode;
 };
 
 export const UPGRADE_TO_PRO_SECTIONS: UpgradeToProSection[] = [
@@ -44,7 +45,7 @@ export const UPGRADE_TO_PRO_SECTIONS: UpgradeToProSection[] = [
     slug: 'plans',
     label: 'Plans & Credits',
     icon: 'icon-credit-card',
-    render: ({ space, subscriptionData = [] }) => <PlanAndCredits space={space} data={subscriptionData} />,
+    render: ({ space, subscriptionData = [], featureConfigs = [] }) => <PlanAndCredits space={space} data={subscriptionData} featureConfigs={featureConfigs} />,
   },
   {
     key: 'payouts',
@@ -96,8 +97,8 @@ export function getUpgradeToProSectionKey(sectionSlug?: string | null): UpgradeT
   return slugToSectionKey[sectionSlug] ?? null;
 }
 
-export function getUpgradeToProSectionHref(sectionKey: UpgradeToProSectionKey) {
+export function getUpgradeToProSectionHref(uid: string, sectionKey: UpgradeToProSectionKey) {
   const section = getUpgradeToProSection(sectionKey);
-  if (section.key === DEFAULT_UPGRADE_TO_PRO_SECTION) return '/upgrade-to-pro';
-  return `/upgrade-to-pro/${section.slug}`;
+  if (section.key === DEFAULT_UPGRADE_TO_PRO_SECTION) return `/upgrade/${uid}`;
+  return `/upgrade/${uid}/${section.slug}`;
 }

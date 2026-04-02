@@ -113,8 +113,8 @@ jobs:
 
       - name: Deploy
         run: |
-          kubectl set image --namespace $NAMESPACE deployment/web-new web-new-app=$REPOSITORY_URI:$GITHUB_SHA-app web-new-nginx=$REPOSITORY_URI:$GITHUB_SHA-nginx
+          kubectl set image --namespace $NAMESPACE deployment/web web-app=$REPOSITORY_URI:$GITHUB_SHA-app web-nginx=$REPOSITORY_URI:$GITHUB_SHA-nginx
 
       - name: Verify
         run: |
-          kubectl rollout status --namespace $NAMESPACE deployment/web-new
+          kubectl rollout status --namespace $NAMESPACE deployment/web

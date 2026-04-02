@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { formatEther, parseUnits, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
-import { useSendCalls } from 'wagmi';
-import { waitForCallsStatus } from '@wagmi/core';
+import { sendCalls, waitForCallsStatus } from '@wagmi/core';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
@@ -27,44 +26,24 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
   const [slippage, setSlippage] = useState(5);
 
-  const { sendCalls, error, data, reset } = useSendCalls();
-  const [resolver, setResolver] = useState<(id?: string, err?: unknown) => void>();
-
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance, balance } = useTokenBalance(chain, address);
 
   const send7702Calls = async (calls: { to: `0x${string}`; value: bigint; data: `0x${string}` }[]) => {
-    const promise = new Promise<string>((resolve, reject) => {
-      setResolver(() => (id?: string, err?: unknown) => {
-        if (err) {
-          reject(err);
-        } else if (id) {
-          waitForCallsStatus(config, { id })
-            .then((status) => {
-              const txHash = status.receipts?.[0]?.transactionHash;
-              if (status.status === 'success' && txHash) {
-                resolve(txHash);
-              } else {
-                reject(status);
-              }
-            })
-            .finally(() => {
-              reset();
-            });
-        }
-      });
-
-      sendCalls({ calls, chainId: Number(chain.chain_id) });
+    const wagmiCoreConfig = config as Parameters<typeof sendCalls>[0];
+    const { id } = await sendCalls(wagmiCoreConfig, {
+      calls,
+      chainId: Number(chain.chain_id),
     });
+    const status = await waitForCallsStatus(wagmiCoreConfig, { id });
+    const txHash = status.receipts?.[0]?.transactionHash;
 
-    return promise;
-  };
-
-  useEffect(() => {
-    if (resolver && (data?.id || error)) {
-      resolver(data?.id, error);
+    if (status.status === 'success' && txHash) {
+      return txHash;
     }
-  }, [resolver, data, error]);
+
+    throw status;
+  };
 
   useEffect(() => {
     const fetchPrice = async () => {

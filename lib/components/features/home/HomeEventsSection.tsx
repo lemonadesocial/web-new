@@ -6,7 +6,8 @@ import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Segment } from '$lib/components/core';
-import { EventCardItem } from '$lib/components/features/EventList';
+import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
+import { EventCardItem } from '$lib/components/features/EventCardItem';
 import {
   Event,
   GetSpacesDocument,
@@ -19,8 +20,7 @@ import { useQuery } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-
-import { PageCardItem, PageCardItemSkeleton } from '../../../../app/[domain]/(default)/shared';
+import { openEventPane } from '../pane';
 
 export function HomeEventsSection() {
   const me = useMe();
@@ -49,13 +49,8 @@ export function HomeEventsSection() {
   };
 
   return (
-    <section
-      className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl"
-    >
-      <header
-        className="flex items-center justify-between w-full"
-        style={{ height: 32, minHeight: 32 }}
-      >
+    <section className="w-full p-4 md:p-6 xl:p-7 bg-background rounded-xl">
+      <header className="flex items-center justify-between w-full" style={{ height: 32, minHeight: 32 }}>
         <Segment
           items={[
             { label: 'Events', value: 'events' },
@@ -66,14 +61,11 @@ export function HomeEventsSection() {
           size="sm"
           className="rounded-[var(--radius-sm)]"
         />
-        <div
-          className="flex items-center gap-2"
-          style={{ gap: 8 }}
-        >
+        <div className="flex items-center gap-2" style={{ gap: 8 }}>
           {tab === 'events' && (
             <>
               <Link
-                href="/events"
+                href="/lemonade-stand?tab=events"
                 className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-medium text-tertiary bg-primary/8 hover:text-primary hover:bg-primary/12 transition"
               >
                 View All
@@ -92,7 +84,7 @@ export function HomeEventsSection() {
           {tab === 'communities' && (
             <>
               <Link
-                href="/communities"
+                href="/lemonade-stand?tab=communities"
                 className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-medium text-tertiary bg-primary/8 hover:text-primary hover:bg-primary/12 transition"
               >
                 View All
@@ -121,7 +113,7 @@ export function HomeEventsSection() {
         >
           {eventsLoading &&
             Array.from({ length: 3 }).map((_, i) => (
-              <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+              <CommunityHubCardSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
             ))}
           {!eventsLoading && events.length === 0 && (
             <div
@@ -138,12 +130,12 @@ export function HomeEventsSection() {
                 key={item._id}
                 item={item}
                 me={me}
-                onClick={() => router.push(`/e/${item.shortid}`)}
+                onClick={() => openEventPane(item._id)}
                 onManage={
                   [item.host, ...(item.cohosts || [])].includes(me?._id)
                     ? (e) => {
                         e.stopPropagation();
-                        router.push(`/e/manage/${item.shortid}`);
+                        openEventPane(item._id);
                       }
                     : undefined
                 }
@@ -162,7 +154,7 @@ export function HomeEventsSection() {
         >
           {spacesLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+              <CommunityHubCardSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
             ))}
           {!spacesLoading && spaces.length === 0 && (
             <div
@@ -177,7 +169,7 @@ export function HomeEventsSection() {
             spaces
               .sort((a, _) => (a.personal ? -1 : 1))
               .map((item) => (
-                <PageCardItem
+                <CommunityHubCard
                   key={item._id}
                   title={item.title}
                   subtitle={`${item.followers_count || 0} Subscribers`}

@@ -34,7 +34,7 @@ export function EventMore() {
   const [deleteEvent] = useMutation(CancelEventDocument, {
     onComplete: () => {
       toast.success(`${event?.title} was cancelled successfully`);
-      router.push('/events');
+      router.push('/lemonade-stand?tab=events');
     },
   });
 

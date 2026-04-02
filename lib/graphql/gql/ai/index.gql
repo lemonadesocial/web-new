@@ -70,6 +70,10 @@ mutation CreateAIConfig($input: ConfigInput!) {
   }
 }
 
+mutation DeleteAIConfig($id: ObjectId!) {
+  deleteConfig(_id: $id)
+}
+
 mutation CreateDocument($input: DocumentInput!) {
   createDocument(input: $input) {
     _id
@@ -81,6 +85,23 @@ mutation CreateDocument($input: DocumentInput!) {
     updatedAt
     user
   }
+}
+
+mutation UpdateDocument($id: ObjectId!, $input: DocumentInput!) {
+  updateDocument(_id: $id, input: $input) {
+    _id
+    createdAt
+    isPublic
+    metadata
+    text
+    title
+    updatedAt
+    user
+  }
+}
+
+mutation DeleteDocument($id: ObjectId!) {
+  deleteDocument(_id: $id)
 }
 
 query ListDocuments($skip: Int, $limit: Int) {
@@ -96,5 +117,30 @@ query ListDocuments($skip: Int, $limit: Int) {
       user
     }
     total
+  }
+}
+
+query GetAiDocuments($filter: DocumentFilter, $limit: Int, $startAfter: String, $endBefore: String) {
+  documents(filter: $filter, limit: $limit, startAfter: $startAfter, endBefore: $endBefore) {
+    items {
+      _id
+      createdAt
+      updatedAt
+      metadata
+      title
+      text
+      isPublic
+      user
+      userExpanded {
+        _id
+        name
+        image_avatar
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+    }
   }
 }

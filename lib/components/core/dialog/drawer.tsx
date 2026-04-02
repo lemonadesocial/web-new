@@ -147,8 +147,6 @@ export function DrawerContainer() {
             layout={!drawer.options.fixed}
             className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')}
             style={{ zIndex: 10000 + index }}
-            role="dialog"
-            aria-modal="true"
           >
             <div className="h-full w-full p-2">
               {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
@@ -171,6 +169,8 @@ export function DrawerContainer() {
                     'bg-overlay-primary backdrop-blur-md rounded-sm flex-1 w-full max-w-sm md:max-w-132 z-10',
                     drawer.options.contentClass,
                   )}
+                  role="dialog"
+                  aria-modal="true"
                   style={{
                     // @ts-expect-error accept variables
                     '--font-title': 'var(--font-class-display)',

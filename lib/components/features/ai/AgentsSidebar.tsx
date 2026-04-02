@@ -13,14 +13,8 @@ export function AgentsSidebar() {
   if (state.configs.length <= 1) return null;
 
   return (
-    <div className="hidden md:flex w-80 border-r h-full flex-col bg-background">
-      <div className="p-6">
-        <h2 className="text-xl font-semibold">Agents</h2>
-        <p className="text-sm text-tertiary mt-1">
-          Chat with AI assistants to explore and get help across the community.
-        </p>
-      </div>
-
+    <div className="hidden md:flex w-80 border-r h-full flex-col px-6 gap-5 pt-6">
+      <h2 className="text-xl font-semibold">Agents</h2>
       <AgentList />
     </div>
   );
@@ -30,7 +24,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
   const [state, dispatch] = useAIChat();
 
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col gap-2 px-3">
+    <div className="flex-1 overflow-y-auto flex flex-col gap-2">
       {state.configs.map((agent) => {
         const isActive = state.config === agent._id;
         return (
@@ -41,7 +35,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
               onSelectAgent?.();
             }}
             className={clsx(
-              'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary',
+              'flex items-center gap-3 p-3 rounded-sm cursor-pointer transition-colors bg-(--btn-tertiary) hover:bg-quaternary backdrop-blur-sm',
               isActive && 'border border-primary hover:bg-(--btn-tertiary)!',
             )}
           >
@@ -49,7 +43,7 @@ export function AgentList({ onSelectAgent }: { onSelectAgent?: () => void }) {
               src={agent.avatar || randomEventDP(agent._id)}
               width={40}
               height={40}
-              className="rounded-full object-cover shrink-0"
+              className="rounded-full object-cover shrink-0 aspect-square"
               alt={agent.name}
             />
             <div className="flex-1 min-w-0">
@@ -115,7 +109,7 @@ export function AgentInfoModal({ agent, onSelectAgent }: { agent: Config; onSele
                 src={agent.userExpanded?.image_avatar || userAvatar(agent.userExpanded)}
                 width={16}
                 height={16}
-                className="rounded-full"
+                className="rounded-full aspect-square"
                 alt={agent.userExpanded?.name || 'User'}
               />
               <p>{agent.userExpanded?.name}</p>

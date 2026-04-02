@@ -22,7 +22,11 @@ import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
 import { formatNumber } from '$lib/utils/number';
 import { openCryptoSubscriptionModal } from './CryptoSubscriptionFlow';
 import {
+  buildCompareSections,
   buildWalletPlanOptions,
+  type ComparePlan,
+  type CompareSection,
+  type FeatureConfig,
   getDisplayedMonthlyCryptoAmount,
   getCryptoSavingsAmount,
   getFirstCryptoPriceForPeriod,
@@ -38,35 +42,21 @@ type PlanCard = {
   price?: number | null;
   annual: boolean | null;
   featureTitle: string;
-  method?: 'card' | 'wallet';
   features: string[];
   pricing?: SubscriptionItem['pricing'];
   credits_per_month?: number | null;
   crypto_prices?: SubscriptionItem['crypto_prices'];
 };
 
-type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
+type PaymentMethod = 'card' | 'wallet';
 type CompareValue = string | boolean;
-
-type CompareRow = {
-  label: string;
-  values: Record<ComparePlan, CompareValue>;
-};
-
-type CompareSection = {
-  id: string;
-  title: string;
-  icon: string;
-  rows: CompareRow[];
-};
 
 const pricingPlans: PlanCard[] = [
   {
     type: SubscriptionItemType.Plus,
     description: 'More AI, more reach — for organizers who are scaling up.',
     annual: false,
-    featureTitle: 'All features in Free, and:',
-    method: 'card',
+    featureTitle: 'All features in Pro, and:',
     features: [
       '{{credits_per_month}} AI credits per month (with 1.5x top-up bonus)',
       'Premium AI models (Opus)',
@@ -88,8 +78,7 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Pro,
     description: 'For creators and organizers ready to build, sell, and grow.',
     annual: false,
-    method: 'card',
-    featureTitle: 'All features in Pro, and:',
+    featureTitle: 'All features in Free, and:',
     features: [
       '{{credits_per_month}} monthly AI credits',
       'Premium AI models (Opus)',
@@ -113,7 +102,6 @@ const pricingPlans: PlanCard[] = [
     type: SubscriptionItemType.Max,
     description: 'High-volume tools for serious event businesses. No compromises.',
     annual: false,
-    method: 'card',
     featureTitle: 'All features in Plus, and:',
     features: [
       '{{credits_per_month}} AI credits per month (with 2x top-up bonus)',
@@ -221,10 +209,14 @@ function CryptoPlanSavingsBadge({ item }: { item: PlanCard }) {
   );
 }
 
-export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
+export function PlanAndCredits({ space, data: subscriptionItems = [], featureConfigs = [] }: { space: Space; data?: SubscriptionItem[]; featureConfigs?: FeatureConfig[] }) {
   const router = useRouter();
-  const mergedPlans = React.useMemo(() => mergePlansWithSubscriptions(pricingPlans, subscriptionItems), [subscriptionItems]);
+  const mergedPlans = React.useMemo(
+    () => mergePlansWithSubscriptions(pricingPlans, subscriptionItems),
+    [subscriptionItems],
+  );
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>('card');
   const [optimisticSubscriptionTier, setOptimisticSubscriptionTier] = React.useState<SubscriptionItemType | null>(null);
   const [optimisticSubscriptionAnnual, setOptimisticSubscriptionAnnual] = React.useState<boolean | null>(null);
   const activeSubscriptionTier = optimisticSubscriptionTier ?? (space.subscription_tier || SubscriptionItemType.Free);
@@ -256,158 +248,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     },
   });
 
-  const compareSections = React.useMemo<CompareSection[]>(() => {
-    const planByType = new Map(mergedPlans.map((item) => [item.type, item]));
-    const getCredits = (type: PlanCard['type']) =>
-      planByType.get(type)?.credits_per_month?.toLocaleString('en-US') ?? 'Custom';
-
-    return [
-      {
-        id: 'ai_agents',
-        title: 'AI & Agents',
-        icon: 'icon-robot',
-        rows: [
-          {
-            label: 'AI credits / month',
-            values: {
-              pro: getCredits(SubscriptionItemType.Pro),
-              plus: getCredits(SubscriptionItemType.Plus),
-              max: getCredits(SubscriptionItemType.Max),
-              enterprise: getCredits('enterprise'),
-            },
-          },
-          {
-            label: 'Top-up multiplier bonus',
-            values: {
-              pro: '1x (no bonus)',
-              plus: '1.5x',
-              max: '2x',
-              enterprise: 'Custom',
-            },
-          },
-          {
-            label: 'Advanced AI models (Sonnet, GPT-4o, Gemini Pro)',
-            values: { pro: 'Unlimited', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'Premium AI models (Opus)',
-            values: { pro: false, plus: true, max: true, enterprise: true },
-          },
-          {
-            label: 'Custom AI agents',
-            values: { pro: '1', plus: '3', max: '10', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'AI tool categories',
-            values: {
-              pro: 'Basic, Standard',
-              plus: 'Basic, Standard, Advanced',
-              max: 'Basic, Standard, Advanced',
-              enterprise: 'All',
-            },
-          },
-          {
-            label: 'AI page generations / month',
-            values: { pro: '20', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'domain_branding',
-        title: 'Domain & Branding',
-        icon: 'icon-globe',
-        rows: [
-          { label: 'Custom event slug', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Custom domain', values: { pro: false, plus: true, max: true, enterprise: true } },
-          { label: 'Remove Lemonade branding', values: { pro: true, plus: true, max: true, enterprise: true } },
-        ],
-      },
-      {
-        id: 'design_page_builder',
-        title: 'Design & Page Builder',
-        icon: 'icon-palette-outline',
-        rows: [
-          {
-            label: 'Premium themes',
-            values: { pro: '10', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-          {
-            label: 'Page builder sections',
-            values: {
-              pro: 'All sections',
-              plus: 'All sections + Containers',
-              max: 'All sections + Containers',
-              enterprise: 'Full access',
-            },
-          },
-          {
-            label: 'Custom code injection',
-            values: { pro: 'CSS', plus: 'CSS', max: 'CSS, HTML', enterprise: 'CSS, HTML, JS' },
-          },
-        ],
-      },
-      {
-        id: 'newsletter_email',
-        title: 'Newsletter & Email',
-        icon: 'icon-email',
-        rows: [
-          { label: 'Newsletter access', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Sends / month', values: { pro: '4', plus: '12', max: '30', enterprise: 'Unlimited' } },
-          {
-            label: 'Recipients / send',
-            values: { pro: '1,000', plus: '5,000', max: '25,000', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'integrations',
-        title: 'Integrations',
-        icon: 'icon-connector-line',
-        rows: [
-          {
-            label: 'Connectors',
-            values: { pro: 'Google Sheets, Airtable', plus: 'All', max: 'All', enterprise: 'All' },
-          },
-          { label: 'API access', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Marketplace seller', values: { pro: true, plus: true, max: true, enterprise: true } },
-          { label: 'Referral stablecoin rewards', values: { pro: true, plus: true, max: true, enterprise: true } },
-          {
-            label: 'Config version history',
-            values: { pro: '20', plus: '50', max: 'Unlimited', enterprise: 'Unlimited' },
-          },
-        ],
-      },
-      {
-        id: 'api_access',
-        title: 'API access',
-        icon: 'icon-api',
-        rows: [
-          { label: 'Max API keys', values: { pro: '3', plus: '10', max: '25', enterprise: '999' } },
-          { label: 'Rate limit / min', values: { pro: '60', plus: '120', max: '300', enterprise: '1,000' } },
-          { label: 'Burst / sec', values: { pro: '3', plus: '5', max: '15', enterprise: '50' } },
-          { label: 'Max page size', values: { pro: '50', plus: '100', max: '100', enterprise: '250' } },
-          {
-            label: 'Monthly quota',
-            values: { pro: '10,000', plus: '50,000', max: '200,000', enterprise: '1,000,000' },
-          },
-          {
-            label: 'Overage enabled',
-            values: { pro: false, plus: '($2.00 / 1k)', max: '($1.50 / 1k)', enterprise: '($1.00 / 1k)' },
-          },
-          { label: 'Hard cap', values: { pro: '10,500', plus: '100,000', max: '500,000', enterprise: 'Unlimited' } },
-          {
-            label: 'Scopes',
-            values: {
-              pro: 'events: read',
-              plus: 'events: read, write subscribers: read, write',
-              max: 'events: read, write subscribers: read, write',
-              enterprise: 'events: read, write subscribers: read, write',
-            },
-          },
-        ],
-      },
-    ];
-  }, [mergedPlans]);
+  const compareSections = React.useMemo<CompareSection[]>(
+    () => buildCompareSections(featureConfigs),
+    [featureConfigs],
+  );
 
   const previewSection = compareSections[0];
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
@@ -482,13 +326,29 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       0,
     );
 
+  const getPlanPaymentMethod = React.useCallback(
+    (item: PlanCard): PaymentMethod => {
+      const annual = Boolean(item.annual);
+      return paymentMethod === 'wallet' && hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)
+        ? 'wallet'
+        : 'card';
+    },
+    [paymentMethod],
+  );
+
   const handlePlanCheckout = React.useCallback(
     (item: PlanCard, tier: SubscriptionTierEnum) => {
-      if (item.method === 'wallet') {
+      const selectedPaymentMethod = getPlanPaymentMethod(item);
+
+      if (selectedPaymentMethod === 'wallet') {
         const annual = Boolean(item.annual);
 
         if (!hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
-          toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+          toast.error(
+            annual
+              ? 'Annual crypto pricing is unavailable for this plan.'
+              : 'Monthly crypto pricing is unavailable for this plan.',
+          );
           return;
         }
 
@@ -515,7 +375,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
       handleUpgrade(tier, Boolean(item.annual));
     },
-    [data, handleUpgrade, router, space, subscriptionItems],
+    [data, getPlanPaymentMethod, handleUpgrade, router, space, subscriptionItems],
   );
 
   return (
@@ -607,6 +467,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           {[...data]
             .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
             .map((item) => {
+              const selectedPaymentMethod = getPlanPaymentMethod(item);
+
               return (
                 <Card.Root key={item.type}>
                   <Card.Content className="p-0">
@@ -618,7 +480,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
                       <div className="flex flex-col">
                         <div className="flex justify-between items-center flex-1 min-h-8">
-                          {item.method === 'wallet' && item.pricing && hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
+                          {selectedPaymentMethod === 'wallet' &&
+                          item.pricing &&
+                          hasCryptoPriceForPeriod(item.crypto_prices ?? [], Boolean(item.annual)) ? (
                             <>
                               <div className="flex gap-2 items-end">
                                 <p className="text-2xl">
@@ -639,7 +503,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                   <p className="text-tertiary">per month</p>
                                 </div>
                               )}
-                              {item.annual && item.pricing?.annual_price && item.method !== 'wallet' && (
+                              {item.annual && item.pricing?.annual_price && selectedPaymentMethod !== 'wallet' && (
                                 <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
                                   Save {calculateFiatAnnualSavings(item.pricing)}
                                 </Badge>
@@ -667,13 +531,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                 setData((prev) =>
                                   prev.map((i) => {
                                     if (i.type === activeSubscriptionTier) return i;
-                                    const nextItem = { ...i, annual: value };
-
-                                    if (nextItem.method === 'wallet' && !hasCryptoPriceForPeriod(nextItem.crypto_prices ?? [], value)) {
-                                      return { ...nextItem, method: 'card' };
-                                    }
-
-                                    return nextItem;
+                                    return { ...i, annual: value };
                                   }),
                                 );
                               }}
@@ -694,19 +552,21 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             onSelect={(method) => {
                               const annual = Boolean(item.annual);
 
-                              if (method.value === 'wallet' && !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)) {
-                                toast.error(annual ? 'Annual crypto pricing is unavailable for this plan.' : 'Monthly crypto pricing is unavailable for this plan.');
+                              if (
+                                method.value === 'wallet' &&
+                                !hasCryptoPriceForPeriod(item.crypto_prices ?? [], annual)
+                              ) {
+                                toast.error(
+                                  annual
+                                    ? 'Annual crypto pricing is unavailable for this plan.'
+                                    : 'Monthly crypto pricing is unavailable for this plan.',
+                                );
                                 return;
                               }
 
-                              setData((prev) =>
-                                prev.map((i) => {
-                                  if (i.type !== item.type) return i;
-                                  return { ...i, method: method.value as 'card' | 'wallet' };
-                                }),
-                              );
+                              setPaymentMethod(method.value as PaymentMethod);
                             }}
-                            selected={item.method}
+                            selected={selectedPaymentMethod}
                             size="sm"
                           />
                         </div>

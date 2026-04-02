@@ -617,7 +617,8 @@ main {
 }
 
 p,
-span {
+span,
+button {
   font-weight: var(--font-weight-medium);
 }
 

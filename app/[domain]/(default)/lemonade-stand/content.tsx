@@ -1,350 +1,999 @@
 'use client';
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
-import { useAtomValue } from 'jotai';
 
-import { Accordion, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
-import { useMe } from '$lib/hooks/useMe';
-import { useSignIn } from '$lib/hooks/useSignIn';
-import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
-import { useRouter } from 'next/navigation';
-import clsx from 'clsx';
-import { EventCardItem } from '$lib/components/features/EventList';
-import { useQuery } from '$lib/graphql/request';
+import React from 'react';
+import { format } from 'date-fns';
+import { twMerge } from 'tailwind-merge';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useAppKitAccount } from '@reown/appkit/react';
+
+import { Button, Card, Menu, MenuItem, Segment, Skeleton, drawer } from '$lib/components/core';
+import { AgentDashboardCard, AgentDashboardCardSkeleton } from '$lib/components/features/ai/manage/AgentDashboardCard';
+import { KnowledgeBaseListRow, KnowledgeBaseListRowSkeleton } from '$lib/components/features/ai/manage/KnowledgeBaseListRow';
+import { getAiDocumentFilter, getConfigAvatarSrc, getConfigDocumentIds, type AiManageScope } from '$lib/components/features/ai/manage/shared';
+import { AddKnowledgeBasePane } from '$lib/components/features/community-manage/panes/AddKnowledgeBasePane';
+import { CreateAgentPane } from '$lib/components/features/community-manage/panes/CreateAgentPane';
+import { CoinCard } from '$lib/components/features/coin/CoinCard';
+import { CommunityHubCard, CommunityHubCardSkeleton } from '$lib/components/features/community/CommunityHubCard';
+import { EventCardItem } from '$lib/components/features/EventCardItem';
+import { openEventPane } from '$lib/components/features/pane';
+import { GetAiDocumentsDocument, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import type { Config, Document as AiDocument } from '$lib/graphql/generated/ai/graphql';
 import {
   Event,
-  GetSelfVerificationStatusDocument,
+  GetPastEventsDocument,
+  GetSpaceEventsDocument,
   GetSpacesDocument,
   GetUpcomingEventsDocument,
   Space,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
+import { Order_By, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
+import { useQuery } from '$lib/graphql/request';
+import { aiChatClient, coinClient } from '$lib/graphql/request/instances';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
 import { generateUrl } from '$lib/utils/cnd';
-import { EventPane, ProfilePane } from '$lib/components/features/pane';
-import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
-import { useAppKitAccount } from '@reown/appkit/react';
-import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
-import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { Order_By, PoolCreated, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
-import { coinClient } from '$lib/graphql/request/instances';
-import { useTokenData } from '$lib/hooks/useCoin';
-import { formatWallet } from '$lib/utils/crypto';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { userAvatar } from '$lib/utils/user';
 
-import { calculateMarketCapData } from '$lib/utils/coin';
-import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
-import { chainsMapAtom } from '$lib/jotai';
+type DashboardTab = 'events' | 'communities' | 'coins' | 'agents';
+type EventPeriod = 'upcoming' | 'past';
+
+enum EventFilterItem {
+  AllEvents,
+  Drafts,
+  Hosting,
+  Attending,
+}
+
+const DASHBOARD_TABS: Array<{ key: DashboardTab; label: string }> = [
+  { key: 'events', label: 'Events' },
+  { key: 'communities', label: 'Communities' },
+  { key: 'coins', label: 'Coins' },
+  { key: 'agents', label: 'Agents' },
+];
+
+const EVENT_FILTER_OPTIONS = {
+  [EventFilterItem.AllEvents]: { label: 'All Events', icon: 'icon-house-party' },
+  [EventFilterItem.Drafts]: { label: 'Drafts', icon: 'icon-document' },
+  [EventFilterItem.Hosting]: { label: 'Hosting', icon: 'icon-crown' },
+  [EventFilterItem.Attending]: { label: 'Attending', icon: 'icon-guests' },
+};
+const EVENT_PERIOD_ITEMS = [
+  { label: 'Upcoming', value: 'upcoming' },
+  { label: 'Past', value: 'past' },
+] as const;
+const MANAGED_HUB_ROLES = [SpaceRole.Creator, SpaceRole.Admin, SpaceRole.Ambassador];
+const SUBSCRIBED_HUB_ROLES = [SpaceRole.Subscriber];
+const MY_HUBS_QUERY_VARIABLES = { with_my_spaces: true, roles: MANAGED_HUB_ROLES };
+const SUBSCRIBED_HUBS_QUERY_VARIABLES = { with_my_spaces: false, roles: SUBSCRIBED_HUB_ROLES };
+const EVENT_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 2xl:grid-cols-3';
+const COMMUNITY_GRID_CLASSNAME = 'grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5';
+
+function getDashboardTab(value: string | null): DashboardTab {
+  return DASHBOARD_TABS.some((tab) => tab.key === value) ? (value as DashboardTab) : 'events';
+}
 
 export function Content() {
   const me = useMe();
 
-  const { data: selfVerificationStatus } = useQuery(GetSelfVerificationStatusDocument, {
-    variables: {
-      config: SELF_VERIFICATION_CONFIG,
-    },
-    skip: !me,
-  });
-
   if (!me) {
     return (
-      <div className="w-full h-full max-sm:px-4 max-sm:pt-16 flex items-center justify-between max-w-300">
+      <div className="flex h-full w-full items-center px-4 pt-12 md:px-12 md:pt-16">
         <NonLoginContent />
       </div>
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6 max-sm:px-4 pt-16 md:pt-8">
-      <h1 className="text-2xl font-semibold">Lemonade Stand</h1>
+  return <DashboardHome />;
+}
 
-      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">
-        <div className="flex-1 flex flex-col gap-4 mb-20">
-          <UpcomingEventSection />
-          <Divider />
-          <CommunitySection />
-          <Divider />
-          <AllCoins />
+function DashboardHome() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [, startTransition] = React.useTransition();
+  const activeTab = getDashboardTab(searchParams.get('tab'));
+
+  const handleTabChange = (tab: DashboardTab) => {
+    if (tab === activeTab) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+
+    startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
+  };
+
+  return (
+    <div className="flex w-full flex-col pb-16 md:pb-24">
+      <div className="sticky top-0 z-10 bg-page-background/90 backdrop-blur-3xl">
+        <div className="px-4 pt-10 md:px-12 md:pt-12">
+          <div className="flex flex-col gap-1">
+            <h1 className="font-title-default text-2xl leading-10 font-semibold text-white">
+              Lemonade Stand
+            </h1>
+            <p className="max-w-2xl font-body-default text-base leading-6 text-white/56">
+              Quickly catch up and manage your events, communities &amp; coins.
+            </p>
+          </div>
         </div>
 
-        <div>
-          <div className="flex md:flex-col gap-4 min-w-66 sticky top-12 overflow-x-auto no-scrollbar">
-            {selfVerificationStatus?.getSelfVerificationStatus?.disclosures?.some((item) => !item.verified) && (
-              <CardItem
-                onClick={() => modal.open(GetVerifiedModal)}
-                className="bg-transparent [&_.title]:text-sm"
-                image={
-                  <div className="bg-accent-400/16 size-9.5 flex items-center justify-center rounded-sm">
-                    <i className="icon-verified-outline text-accent-400" />
-                  </div>
-                }
-                title="Get Verified"
-                subtitle={
-                  <div className="flex gap-1 items-center text-tertiary">
-                    <p className="title text-lg">Powered by</p>
-                    <i className="icon-self size-3.5" />
-                    <p className="title text-lg">Self</p>
-                  </div>
-                }
-                rightContent={<i className="icon-chevron-right text-tertiary" />}
-              />
-            )}
-
-            <CompleteYourProfile />
-
-            <LemonHeadsZone />
-
-            {/* <CardItem */}
-            {/*   onClick={() => comingSoon()} */}
-            {/*   className="bg-transparent [&_.title]:text-sm" */}
-            {/*   image={ */}
-            {/*     <div className="bg-alert-400/16 size-9.5 flex items-center justify-center rounded-sm"> */}
-            {/*       <i className="icon-user-group-outline text-alert-400" /> */}
-            {/*     </div> */}
-            {/*   } */}
-            {/*   title="Team" */}
-            {/*   subtitle="Add people you collab with." */}
-            {/*   rightContent={<i className="icon-chevron-right text-tertiary" />} */}
-            {/* /> */}
-
-            {/* <CardItem */}
-            {/*   onClick={() => comingSoon()} */}
-            {/*   className="bg-transparent [&_.title]:text-sm" */}
-            {/*   image={ */}
-            {/*     <div className="bg-success-400/16 size-9.5 flex items-center justify-center rounded-sm"> */}
-            {/*       <i className="icon-government text-success-400" /> */}
-            {/*     </div> */}
-            {/*   } */}
-            {/*   title="Vaults" */}
-            {/*   subtitle="Collect payments easily." */}
-            {/*   rightContent={<i className="icon-chevron-right text-tertiary" />} */}
-            {/* /> */}
+        <div className="mt-2 border-b border-white/8 px-4 pt-2 md:px-12">
+          <div className="no-scrollbar flex gap-4 overflow-x-auto pt-1">
+            {DASHBOARD_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => handleTabChange(tab.key)}
+                className={twMerge(
+                  'shrink-0 border-b-2 border-transparent pb-2.5 font-body-default text-base leading-6 font-medium text-white/56 transition hover:text-white',
+                  activeTab === tab.key && 'border-white text-white',
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
+        </div>
+      </div>
+
+      <div className="px-4 pt-7 md:px-12">
+        {activeTab === 'events' && <EventsPanel />}
+        {activeTab === 'communities' && <CommunitiesPanel />}
+        {activeTab === 'coins' && <CoinsPanel />}
+        {activeTab === 'agents' && <AgentsPanel />}
+      </div>
+    </div>
+  );
+}
+
+function EventsPanel() {
+  const me = useMe();
+  const router = useRouter();
+  const [period, setPeriod] = React.useState<EventPeriod>('upcoming');
+  const [filterBy, setFilterBy] = React.useState(EventFilterItem.AllEvents);
+  const [searchValue, setSearchValue] = React.useState('');
+  const deferredSearchValue = React.useDeferredValue(searchValue);
+  const normalizedSearch = deferredSearchValue.trim().toLocaleLowerCase();
+
+  const host = filterBy === EventFilterItem.Hosting ? true : filterBy === EventFilterItem.Attending ? false : undefined;
+  const unpublished = filterBy === EventFilterItem.Drafts ? true : undefined;
+  const isSearching = Boolean(searchValue.trim());
+
+  const variables = React.useMemo(
+    () => ({
+      user: me?._id || '',
+      host,
+      unpublished,
+    }),
+    [host, me?._id, unpublished],
+  );
+  const upcomingQueryVariables = React.useMemo(() => ({ ...variables, sort: { start: 1 } }), [variables]);
+  const pastQueryVariables = React.useMemo(() => ({ ...variables, sort: { start: -1 } }), [variables]);
+
+  const { data: upcomingData, loading: upcomingLoading } = useQuery(GetUpcomingEventsDocument, {
+    variables: upcomingQueryVariables,
+    skip: !me?._id || period !== 'upcoming',
+  });
+
+  const { data: pastData, loading: pastLoading } = useQuery(GetPastEventsDocument, {
+    variables: pastQueryVariables,
+    skip: !me?._id || period !== 'past',
+  });
+
+  const events = ((period === 'upcoming' ? upcomingData?.events : pastData?.events) as Event[]) || [];
+  const filteredEvents = React.useMemo(
+    () =>
+      normalizedSearch
+        ? events.filter((event) => event.title.toLocaleLowerCase().includes(normalizedSearch))
+        : events,
+    [events, normalizedSearch],
+  );
+  const loading = period === 'upcoming' ? upcomingLoading : pastLoading;
+
+  return (
+    <section className="flex flex-col gap-5">
+      <SectionHeader
+        title="My Events"
+        titleClassName="font-body-default text-xl font-medium leading-none text-white"
+        controls={
+          <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+            <SectionSearchField value={searchValue} onChange={setSearchValue} label="Search my events" />
+
+            <Segment
+              size="sm"
+              selected={period}
+              onSelect={({ value }) => setPeriod(value as EventPeriod)}
+              items={EVENT_PERIOD_ITEMS}
+            />
+
+            <Menu.Root className="w-33">
+              <Menu.Trigger>
+                <div className="btn btn-tertiary rounded-sm">
+                  <MenuItem iconRight="icon-chevrons-up-down">
+                    <div className="flex flex-1 items-center gap-1.5">
+                      <i className={twMerge(EVENT_FILTER_OPTIONS[filterBy].icon, 'size-4 text-tertiary')} />
+                      <p className="font-default-body flex-1 text-sm font-medium text-secondary">
+                        {EVENT_FILTER_OPTIONS[filterBy].label}
+                      </p>
+                    </div>
+                  </MenuItem>
+                </div>
+              </Menu.Trigger>
+
+              <Menu.Content className="p-1">
+                {({ toggle }) =>
+                  Object.entries(EVENT_FILTER_OPTIONS).map(([key, value]) => (
+                    <MenuItem
+                      key={key}
+                      title={value.label}
+                      iconLeft={value.icon}
+                      onClick={() => {
+                        setFilterBy(Number(key) as EventFilterItem);
+                        toggle();
+                      }}
+                    />
+                  ))
+                }
+              </Menu.Content>
+            </Menu.Root>
+
+            <Button icon="icon-plus" size="sm" variant="tertiary" onClick={() => router.push('/create/event')} />
+          </div>
+        }
+      />
+
+      {loading ? (
+        <div className={EVENT_GRID_CLASSNAME}>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : filteredEvents.length ? (
+        <div className={EVENT_GRID_CLASSNAME}>
+          {filteredEvents.map((event) => (
+            <EventCardItem
+              key={event._id}
+              item={event}
+              me={me}
+              onClick={() => openEventPane(event._id)}
+              onManage={
+                [event.host, ...(event.cohosts || [])].includes(me?._id)
+                  ? (e) => {
+                      e.stopPropagation();
+                      router.push(`/e/manage/${event.shortid}`);
+                    }
+                  : undefined
+              }
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="icon-confirmation-number"
+          title={isSearching ? 'No events match your search' : period === 'upcoming' ? 'No events on deck' : 'No past events yet'}
+          description={
+            isSearching
+              ? 'Try a different event name or adjust your event filter.'
+              : 'Your event queue will show up here as soon as you start hosting or attending.'
+          }
+          actionLabel={!isSearching && period === 'upcoming' ? 'Create Event' : undefined}
+          onAction={!isSearching && period === 'upcoming' ? () => router.push('/create/event') : undefined}
+        />
+      )}
+    </section>
+  );
+}
+
+function CommunitiesPanel() {
+  const me = useMe();
+  const router = useRouter();
+  const [searchValue, setSearchValue] = React.useState('');
+  const deferredSearchValue = React.useDeferredValue(searchValue);
+  const normalizedSearch = deferredSearchValue.trim().toLocaleLowerCase();
+  const isSearching = Boolean(searchValue.trim());
+  const { data: myHubsData, loading: myHubsLoading } = useQuery(GetSpacesDocument, {
+    variables: MY_HUBS_QUERY_VARIABLES,
+    fetchPolicy: 'cache-and-network',
+  });
+  const { data: subscribedData, loading: subscribedLoading } = useQuery(GetSpacesDocument, {
+    variables: SUBSCRIBED_HUBS_QUERY_VARIABLES,
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const myHubs = React.useMemo(
+    () =>
+      (((myHubsData?.listSpaces as Space[]) || []).slice()).sort(
+        (a, b) => Number(!!b.personal) - Number(!!a.personal),
+      ),
+    [myHubsData?.listSpaces],
+  );
+  const subscribedHubs = React.useMemo(
+    () => ((subscribedData?.listSpaces as Space[]) || []).slice(),
+    [subscribedData?.listSpaces],
+  );
+  const filteredMyHubs = React.useMemo(
+    () =>
+      normalizedSearch
+        ? myHubs.filter((space) => space.title.toLocaleLowerCase().includes(normalizedSearch))
+        : myHubs,
+    [myHubs, normalizedSearch],
+  );
+  const filteredSubscribedHubs = React.useMemo(
+    () =>
+      normalizedSearch
+        ? subscribedHubs.filter((space) => space.title.toLocaleLowerCase().includes(normalizedSearch))
+        : subscribedHubs,
+    [normalizedSearch, subscribedHubs],
+  );
+
+  return (
+    <section className="flex flex-col gap-12">
+      <div className="flex flex-col gap-5">
+        <SectionHeader
+          title="My Hubs"
+          titleClassName="font-body-default text-xl font-medium leading-none text-white"
+          controls={
+            <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+              <SectionSearchField value={searchValue} onChange={setSearchValue} label="Search my hubs and subscribed hubs" />
+              <Button size="sm" variant="tertiary" icon="icon-explore" onClick={() => router.push('/explore')} />
+              <Button size="sm" variant="tertiary" icon="icon-plus" onClick={() => router.push('/create/community')} />
+            </div>
+          }
+        />
+
+        {myHubsLoading ? (
+          <div className={COMMUNITY_GRID_CLASSNAME}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <CommunityHubCardSkeleton key={index} view="card" />
+            ))}
+          </div>
+        ) : filteredMyHubs.length ? (
+          <div className={COMMUNITY_GRID_CLASSNAME}>
+            {filteredMyHubs.map((space) => (
+              <CommunityHubCard
+                key={space._id}
+                title={space.title}
+                subtitle={`${(space.followers_count || 0).toLocaleString()} Followers`}
+                view="card"
+                onClick={() => router.push(`/s/manage/${space.slug || space._id}`)}
+                image={{
+                  src: getCommunityCardImageSrc(space, me),
+                  class: twMerge('rounded-sm', space.personal && 'rounded-full'),
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon="icon-community"
+            title={isSearching ? 'No hubs match your search' : 'No hubs yet'}
+            description={
+              isSearching
+                ? 'Try a different hub name to find one of your communities.'
+                : 'Create your first hub to start organizing your community presence.'
+            }
+            actionLabel={!isSearching ? 'Create Community' : undefined}
+            onAction={!isSearching ? () => router.push('/create/community') : undefined}
+          />
+        )}
+      </div>
+
+      <div className="flex flex-col gap-5">
+        <SectionHeader
+          title="Subscribed Hubs"
+          titleClassName="font-body-default text-xl font-medium leading-none text-white"
+        />
+
+        {subscribedLoading ? (
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SubscribedHubRowSkeleton key={index} />
+            ))}
+          </div>
+        ) : filteredSubscribedHubs.length ? (
+          <div className="flex flex-col gap-4">
+            {filteredSubscribedHubs.map((space) => (
+              <SubscribedHubRow key={space._id} space={space} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon="icon-community"
+            title={isSearching ? 'No subscribed hubs match your search' : 'No subscribed hubs'}
+            description={
+              isSearching
+                ? 'Try a different hub name to search across the communities you follow.'
+                : 'Communities you follow will appear here with their upcoming events.'
+            }
+            actionLabel={!isSearching ? 'Explore Communities' : undefined}
+            onAction={!isSearching ? () => router.push('/explore') : undefined}
+          />
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SectionSearchField({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+}) {
+  return (
+    <label className="flex h-8 w-full items-center gap-1.5 rounded-sm border border-primary/8 bg-background/64 px-2.5 transition-colors hover:border-quaternary focus-within:border-primary md:w-54">
+      <i aria-hidden="true" className="icon-search size-4 shrink-0 text-quaternary" />
+      <input
+        type="search"
+        value={value}
+        aria-label={label}
+        autoComplete="off"
+        placeholder="Search"
+        onChange={(e) => onChange(e.target.value)}
+        className="min-w-0 flex-1 bg-transparent text-sm font-medium text-primary placeholder:text-quaternary outline-none"
+      />
+    </label>
+  );
+}
+
+function SubscribedHubRow({ space }: { space: Space }) {
+  const router = useRouter();
+  const endFrom = React.useMemo(() => new Date().toISOString(), []);
+  const queryVariables = React.useMemo(
+    () => ({
+      space: space._id,
+      limit: 3,
+      endFrom,
+      spaceTags: [],
+    }),
+    [endFrom, space._id],
+  );
+  const { data, loading } = useQuery(GetSpaceEventsDocument, {
+    variables: queryVariables,
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const events = (data?.getEvents || []) as Event[];
+  const imageSrc = getCommunityCardImageSrc(space);
+
+  return (
+    <div className="grid overflow-hidden rounded-xl border border-card-border bg-card md:grid-cols-3">
+      <div className="flex flex-col gap-6 p-4 md:col-span-1">
+        <div className="flex size-12 items-center justify-center overflow-hidden rounded-lg">
+          <img src={imageSrc} alt={space.title} className="size-full rounded-lg object-cover" />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <p className="font-title-default text-2xl leading-8 text-white line-clamp-2">{space.title}</p>
+          <Button size="sm" variant="tertiary" className="w-fit" onClick={() => router.push(`/s/${space.slug || space._id}`)}>
+            View Hub
+          </Button>
+        </div>
+      </div>
+
+      <div className="border-t border-card-border p-4 md:col-span-2 md:border-l md:border-t-0">
+        <p className="text-sm leading-5 text-tertiary">Upcoming Events</p>
+
+        <div className="mt-4 flex flex-col gap-3">
+          {loading ? (
+            <>
+              <Skeleton className="h-6 w-40 rounded-md" animate />
+              <Skeleton className="h-5 w-28 rounded-md" animate />
+              <Skeleton className="h-6 w-32 rounded-md" animate />
+            </>
+          ) : events.length ? (
+            events.map((event) => (
+              <button
+                key={event._id}
+                type="button"
+                onClick={() => openEventPane(event._id)}
+                className="flex flex-col items-start gap-1 text-left transition hover:opacity-80"
+              >
+                <span className="text-base leading-6 text-white">{event.title}</span>
+                <span className="text-sm leading-5 text-tertiary">
+                  {format(convertFromUtcToTimezone(event.start, event.timezone), "EEE, MMM d, h:mm a")}
+                </span>
+              </button>
+            ))
+          ) : (
+            <p className="text-sm leading-5 text-tertiary">No upcoming events</p>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function UpcomingEventSection() {
+function SubscribedHubRowSkeleton() {
+  return (
+    <div className="grid overflow-hidden rounded-xl border border-card-border bg-card md:grid-cols-3">
+      <div className="flex flex-col gap-6 p-4 md:col-span-1">
+        <Skeleton className="size-12 rounded-lg" animate />
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-3/4 rounded-lg" animate />
+          <Skeleton className="h-8 w-24 rounded-lg" animate />
+        </div>
+      </div>
+      <div className="border-t border-card-border p-4 md:col-span-2 md:border-l md:border-t-0">
+        <Skeleton className="h-5 w-28 rounded-md" animate />
+        <div className="mt-4 space-y-3">
+          <Skeleton className="h-6 w-32 rounded-md" animate />
+          <Skeleton className="h-5 w-24 rounded-md" animate />
+          <Skeleton className="h-6 w-40 rounded-md" animate />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function getCommunityCardImageSrc(space: Space, me?: ReturnType<typeof useMe>) {
+  if (space.personal) return userAvatar(me);
+  if (space.image_avatar) return generateUrl(space.image_avatar_expanded);
+  if (space.image_cover) return generateUrl(space.image_cover_expanded);
+  return `${ASSET_PREFIX}/assets/images/default-dp.png`;
+}
+
+function CoinsPanel() {
   const router = useRouter();
   const me = useMe();
-  const { data } = useQuery(GetUpcomingEventsDocument, {
-    variables: { user: me!._id, skip: 0, limit: 3 },
-    skip: !me?._id,
-  });
+  const { address } = useAppKitAccount();
 
-  return (
-    <Accordion.Root className="border-none" open>
-      <Accordion.Header chevron={false} className="px-0!">
-        {({ toggle, isOpen }) => {
-          return (
-            <div className="flex items-center justify-between text-primary w-full">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="tertiary"
-                  className="rounded-full"
-                  size="xs"
-                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
-                  onClick={() => toggle()}
-                />
-                <h3 className="text-xl font-semibold">Upcoming Events</h3>
-              </div>
-              <div className="hidden md:flex gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/event');
-                  }}
-                >
-                  New Event
-                </Button>
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconRight="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/events');
-                  }}
-                >
-                  All Events
-                </Button>
-              </div>
+  const userWallets = React.useMemo(() => {
+    const wallets: string[] = [];
 
-              <div className="flex md:hidden gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/event');
-                  }}
-                />
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/events');
-                  }}
-                />
-              </div>
-            </div>
-          );
-        }}
-      </Accordion.Header>
-      <Accordion.Content className="pt-1! px-0! flex flex-col gap-3">
-        {data?.events?.map((item) => (
-          <EventCardItem
-            item={item as Event}
-            key={item._id}
-            onClick={() => drawer.open(EventPane, { props: { eventId: item._id } })}
-            me={me}
-            onManage={
-              [item.host, ...(item.cohosts || [])].includes(me?._id)
-                ? (e) => {
-                    e.stopPropagation();
-                    router.push(`/e/manage/${item.shortid}`);
-                  }
-                : undefined
+    if (address) {
+      wallets.push(address.toLowerCase());
+    }
+
+    if (me?.wallets_new?.ethereum) {
+      me.wallets_new.ethereum.forEach((wallet: string) => {
+        if (wallet) {
+          wallets.push(wallet.toLowerCase());
+        }
+      });
+    }
+
+    if (me?.kratos_wallet_address) {
+      wallets.push(me.kratos_wallet_address.toLowerCase());
+    }
+
+    return [...new Set(wallets)];
+  }, [address, me?.kratos_wallet_address, me?.wallets_new?.ethereum]);
+
+  const poolQueryVariables = React.useMemo(
+    () => ({
+      orderBy: [
+        {
+          blockTimestamp: Order_By.Desc,
+        },
+      ],
+      offset: 0,
+      where:
+        userWallets.length > 0
+          ? {
+              paramsCreator: {
+                _in: userWallets,
+              },
             }
-          />
-        ))}
-
-        <div className="hidden only:block text-center text-gray-500 py-10">
-          <EmptyCard
-            icon="icon-confirmation-number"
-            title="No Upcoming Events"
-            subtitle="When you create or join events, they’ll show up here."
-          />
-        </div>
-      </Accordion.Content>
-    </Accordion.Root>
+          : undefined,
+    }),
+    [userWallets],
   );
-}
+  const { data, loading } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: poolQueryVariables,
+      fetchPolicy: 'network-only',
+      skip: userWallets.length === 0,
+    },
+    coinClient,
+  );
 
-function CommunitySection() {
-  const router = useRouter();
-
-  const { data } = useQuery(GetSpacesDocument, {
-    variables: { roles: [SpaceRole.Admin, SpaceRole.Creator, SpaceRole.Ambassador] },
-  });
-
-  const getImageSrc = (item: Space) => {
-    let src = `${ASSET_PREFIX}/assets/images/default-dp.png`;
-    if (item.image_avatar) src = generateUrl(item.image_avatar_expanded);
-    return src;
-  };
+  const pools = React.useMemo(() => (data?.PoolCreated || []).slice(0, 8), [data?.PoolCreated]);
 
   return (
-    <Accordion.Root className="border-none" open>
-      <Accordion.Header chevron={false} className="px-0!">
-        {({ toggle, isOpen }) => {
-          return (
-            <div className="flex items-center justify-between text-primary w-full">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="tertiary"
-                  className="rounded-full"
-                  size="xs"
-                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
-                  onClick={() => toggle()}
-                />
-                <h3 className="text-xl font-semibold">Communities</h3>
-              </div>
-              <div className="hidden md:flex gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/community');
-                  }}
-                >
-                  New Community
-                </Button>
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconRight="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/communities');
-                  }}
-                >
-                  All Communities
-                </Button>
-              </div>
+    <section className="flex flex-col gap-5">
+      <SectionHeader
+        title="My Coins"
+        titleClassName="font-body-default text-xl font-medium leading-none text-white"
+        controls={<Button size="sm" variant="tertiary" icon="icon-plus" onClick={() => router.push('/create/coin')} />}
+      />
 
-              <div className="flex md:hidden gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/community');
-                  }}
-                />
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/communities');
-                  }}
-                />
-              </div>
-            </div>
-          );
-        }}
-      </Accordion.Header>
-      <Accordion.Content
-        className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!data?.listSpaces.length && 'grid-cols-2')}
-      >
-        {(data?.listSpaces as Space[])
-          ?.slice(0, 6)
-          .map((item) => (
-            <CardItem
-              key={item._id}
-              title={item.title}
-              subtitle={`${item.followers_count || 0} Subscribers`}
-              image={getImageSrc(item)}
-              onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
-            />
+      {loading ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <SimpleCardSkeleton key={index} />
           ))}
-        <div className="hidden only:block text-center text-gray-500 py-10">
-          <EmptyCard
-            icon="icon-confirmation-number"
-            title="No Communities Yet"
-            subtitle="Communities you create and manage will appear here."
-          />
         </div>
-      </Accordion.Content>
-    </Accordion.Root>
+      ) : pools.length ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {pools.map((pool) => (
+            <CoinCard key={pool.id} pool={pool} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="icon-confirmation-number"
+          title="No coins yet"
+          description="Coins tied to your connected wallets will appear here once they go live."
+          actionLabel="Create Coin"
+          onAction={() => router.push('/create/coin')}
+        />
+      )}
+    </section>
   );
 }
 
-function EmptyCard({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
+function AgentsPanel() {
+  const me = useMe();
+  const userId = me?._id;
+  const scope = React.useMemo<AiManageScope | null>(
+    () => (userId ? { type: 'user', userId } : null),
+    [userId],
+  );
+  const configQueryVariables = React.useMemo(
+    () => (userId ? { filter: { user_eq: userId } } : undefined),
+    [userId],
+  );
+  const documentQueryVariables = React.useMemo(
+    () => (scope ? { filter: getAiDocumentFilter(scope) } : undefined),
+    [scope],
+  );
+
+  const { data: configsData, loading: configsLoading, refetch: refetchConfigs } = useQuery(
+    GetListAiConfigDocument,
+    {
+      variables: configQueryVariables,
+      fetchPolicy: 'cache-and-network',
+      skip: !scope,
+    },
+    aiChatClient,
+  );
+  const { data: documentsData, loading: documentsLoading, refetch: refetchDocuments } = useQuery(
+    GetAiDocumentsDocument,
+    {
+      variables: documentQueryVariables,
+      fetchPolicy: 'cache-and-network',
+      skip: !scope,
+    },
+    aiChatClient,
+  );
+
+  const configs = (configsData?.configs?.items ?? []) as Config[];
+  const documents = (documentsData?.documents?.items ?? []) as AiDocument[];
+  const configsById = React.useMemo(
+    () => new Map(configs.map((config) => [config._id, config])),
+    [configs],
+  );
+
+  const { configDocumentCounts, documentAgentsById } = React.useMemo(() => {
+    const nextConfigDocumentCounts = new Map<string, number>();
+    const nextDocumentAgentsById = new Map<
+      string,
+      Array<{ _id: string; avatar: string; name: string }>
+    >();
+
+    configs.forEach((config) => {
+      const documentIds = getConfigDocumentIds(config);
+      nextConfigDocumentCounts.set(config._id, documentIds.length);
+
+      const agent = {
+        _id: config._id,
+        avatar: getConfigAvatarSrc(config),
+        name: config.name,
+      };
+
+      documentIds.forEach((documentId) => {
+        const existing = nextDocumentAgentsById.get(documentId);
+
+        if (!existing) {
+          nextDocumentAgentsById.set(documentId, [agent]);
+          return;
+        }
+
+        if (!existing.some((item) => item._id === config._id)) {
+          existing.push(agent);
+        }
+      });
+    });
+
+    return {
+      configDocumentCounts: nextConfigDocumentCounts,
+      documentAgentsById: nextDocumentAgentsById,
+    };
+  }, [configs]);
+
+  const handleRefresh = React.useCallback(() => {
+    void refetchConfigs();
+    void refetchDocuments();
+  }, [refetchConfigs, refetchDocuments]);
+
+  const openCreateAgent = React.useCallback(() => {
+    if (!scope) {
+      return;
+    }
+
+    drawer.open(CreateAgentPane, {
+      props: {
+        scope,
+        onCreated: handleRefresh,
+      },
+    });
+  }, [handleRefresh, scope]);
+
+  const openEditAgent = React.useCallback(
+    (configId: string) => {
+      if (!scope) {
+        return;
+      }
+
+      const config = configsById.get(configId);
+
+      if (!config) {
+        return;
+      }
+
+      drawer.open(CreateAgentPane, {
+        props: {
+          config,
+          scope,
+          onCreated: handleRefresh,
+        },
+      });
+    },
+    [configsById, handleRefresh, scope],
+  );
+
+  const openCreateKnowledgeBase = React.useCallback(() => {
+    if (!scope) {
+      return;
+    }
+
+    drawer.open(AddKnowledgeBasePane, {
+      props: {
+        scope,
+        onCreated: handleRefresh,
+      },
+    });
+  }, [handleRefresh, scope]);
+
+  if (!scope) {
+    return null;
+  }
+
+  return (
+    <section className="flex flex-col gap-12">
+      <div className="flex flex-col gap-5">
+        <SectionHeader
+          title="Agents"
+          description="Create AI assistants to help explore, answer questions, and guide actions across Lemonade."
+          titleClassName="font-body-default text-xl font-medium leading-none text-white"
+          controls={
+            <Button aria-label="Create agent" size="sm" variant="tertiary" icon="icon-plus" onClick={openCreateAgent} />
+          }
+        />
+
+        {configsLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <AgentDashboardCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : configs.length ? (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {configs.map((config) => (
+              <AgentDashboardCard
+                key={config._id}
+                id={config._id}
+                avatarSrc={getConfigAvatarSrc(config)}
+                count={configDocumentCounts.get(config._id) ?? 0}
+                description={config.description}
+                isPrivate={!config.isPublic}
+                job={config.job}
+                name={config.name}
+                onClick={openEditAgent}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon="icon-robot"
+            title="No agents yet"
+            description="Your AI assistants will appear here as soon as you create one."
+            actionLabel="Create Agent"
+            onAction={openCreateAgent}
+          />
+        )}
+      </div>
+
+      <div className="flex flex-col gap-5">
+        <SectionHeader
+          title="Knowledge Bases"
+          description="Add information that agents can use to give accurate and helpful responses."
+          titleClassName="font-body-default text-xl font-medium leading-none text-white"
+          controls={
+            <Button
+              aria-label="Create knowledge base"
+              size="sm"
+              variant="tertiary"
+              icon="icon-plus"
+              onClick={openCreateKnowledgeBase}
+            />
+          }
+        />
+
+        {documentsLoading ? (
+          <Card.Root className="divide-y divide-card-border">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <KnowledgeBaseListRowSkeleton key={index} />
+            ))}
+          </Card.Root>
+        ) : documents.length ? (
+          <Card.Root className="divide-y divide-card-border">
+            {documents.map((document) => {
+              return (
+                <KnowledgeBaseListRow
+                  key={document._id}
+                  agents={documentAgentsById.get(document._id)}
+                  text={document.text}
+                  title={document.title}
+                  trailingIcon="icon-more-horiz"
+                />
+              );
+            })}
+          </Card.Root>
+        ) : (
+          <EmptyState
+            icon="icon-book"
+            title="No knowledge bases yet"
+            description="Knowledge bases you create for your agents will show up here once they’re ready."
+            actionLabel="Add Knowledge Base"
+            onAction={openCreateKnowledgeBase}
+          />
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SectionHeader({
+  title,
+  description,
+  controls,
+  titleClassName,
+}: {
+  title: string;
+  description?: string;
+  controls?: React.ReactNode;
+  titleClassName?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-1">
+        <h2 className={twMerge('font-body-default text-2xl leading-8 text-primary', titleClassName)}>{title}</h2>
+        {description ? <p className="max-w-2xl text-sm leading-5 text-tertiary">{description}</p> : null}
+      </div>
+      {controls ? <div className="flex flex-wrap items-center gap-2">{controls}</div> : null}
+    </div>
+  );
+}
+
+function EmptyState({
+  icon,
+  title,
+  description,
+  actionLabel,
+  onAction,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  actionLabel?: string;
+  onAction?: () => void;
+}) {
+  return (
+    <div className="flex min-h-60 flex-col items-center justify-center gap-4 rounded-md border border-dashed border-white/8 bg-white/5 px-6 py-12 text-center">
+      <div className="flex size-14 items-center justify-center rounded-full bg-white/5 text-primary/72">
+        <i aria-hidden="true" className={twMerge(icon, 'size-6')} />
+      </div>
+      <div className="space-y-1">
+        <p className="text-lg leading-6 text-primary">{title}</p>
+        <p className="max-w-md text-sm leading-5 text-tertiary">{description}</p>
+      </div>
+      {actionLabel && onAction ? (
+        <Button size="sm" variant="secondary" onClick={onAction}>
+          {actionLabel}
+        </Button>
+      ) : null}
+    </div>
+  );
+}
+
+function EventCardSkeleton() {
   return (
     <Card.Root>
-      <Card.Content className="flex gap-3 text-tertiary items-center">
-        <i className={twMerge('size-9 aspect-square', icon)} />
-        <div className="space-y-0.5">
-          <p>{title}</p>
-          <p className="text-sm">{subtitle}</p>
+      <Card.Content className="flex gap-6">
+        <div className="flex flex-1 flex-col gap-3">
+          <Skeleton className="h-5 w-28 rounded-md" animate />
+          <Skeleton className="h-7 w-3/4 rounded-lg" animate />
+          <Skeleton className="h-5 w-1/2 rounded-md" animate />
+          <Skeleton className="h-5 w-1/3 rounded-md" animate />
         </div>
+        <Skeleton className="size-22 rounded-lg md:size-30" animate />
       </Card.Content>
     </Card.Root>
+  );
+}
+
+function SimpleCardSkeleton() {
+  return (
+    <div className="flex min-h-46 flex-col justify-between rounded-xl border border-card-border bg-card p-4 backdrop-blur-lg">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-12 rounded-lg" animate />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-28 rounded-lg" animate />
+            <Skeleton className="h-4 w-20 rounded-full" animate />
+          </div>
+        </div>
+        <Skeleton className="size-5 rounded-full" animate />
+      </div>
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-6 w-24 rounded-full" animate />
+        <Skeleton className="h-4 w-14 rounded-full" animate />
+      </div>
+    </div>
+  );
+}
+
+function NonLoginContent() {
+  const signIn = useSignIn();
+
+  return (
+    <div className="flex w-full flex-col gap-2 pb-10">
+      <div className="overflow-hidden rounded-md outline-2 outline-card-border">
+        <div
+          className="flex aspect-video max-h-137 w-full flex-col justify-between p-5 md:p-16"
+          style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
+        >
+          <div className="flex flex-col gap-2 md:gap-4">
+            <h3 className="text-xl font-semibold md:text-6xl md:leading-18">Create your Lemonade Stand</h3>
+            <p className="max-w-128 text-sm text-secondary md:text-xl md:leading-9">
+              Your space for events, communities, and everything in between.
+            </p>
+          </div>
+
+          <div className="flex items-end justify-between">
+            <Button size="lg" onClick={() => signIn()}>
+              Get Started
+            </Button>
+            <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} alt="" className="size-12 md:size-24" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 py-2 md:grid-cols-2 xl:grid-cols-4">
+        {cards.map((item, index) => (
+          <Card.Root key={index}>
+            <Card.Content className="flex flex-row gap-4 p-5 md:flex-col">
+              <div className={twMerge('flex size-14 items-center justify-center rounded-sm', item.color)}>
+                <i className={twMerge('size-8', item.icon)} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                {item.title()}
+                <p className="text-sm text-tertiary">{item.subtitle}</p>
+              </div>
+            </Card.Content>
+          </Card.Root>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -390,431 +1039,3 @@ const cards = [
     subtitle: 'Give your community a live social layer that keeps them connected.',
   },
 ];
-
-function NonLoginContent() {
-  const signIn = useSignIn();
-
-  return (
-    <div className="flex flex-col gap-2 mb-20">
-      <div className="rounded-md outline-2 outline-card-border overflow-hidden">
-        <div
-          className="w-full aspect-video max-h-137 p-5 md:p-16 flex flex-col justify-between"
-          style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
-        >
-          <div className="flex flex-col gap-2 md:gap-4">
-            <h3 className="text-xl md:text-[60px] font-semibold md:leading-[72px] max-w-2/3">
-              Create your Lemonade Stand
-            </h3>
-            <p className="text-sm md:text-[24px] md:leading-9 text-secondary max-w-5/6 md:max-w-1/2">
-              Your space for events, communities, and everything in between.
-            </p>
-          </div>
-
-          <div className="hidden md:flex justify-between items-end">
-            <Button size="lg" onClick={() => signIn()}>
-              Get Started
-            </Button>
-            <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-24 aspect-square" />
-          </div>
-
-          <div className="flex md:hidden justify-between items-end">
-            <Button size="sm" onClick={() => signIn()}>
-              Get Started
-            </Button>
-            <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-12 aspect-square" />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4 py-2">
-        {cards.map((item, idx) => (
-          <Card.Root key={idx}>
-            <Card.Content className="p-5 flex flex-row md:flex-col gap-4">
-              <div className={twMerge('size-14 aspect-square flex items-center justify-center rounded-sm', item.color)}>
-                <i className={twMerge('size-8', item.icon)} />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                {item.title()}
-                <p className="text-sm text-tertiary">{item.subtitle}</p>
-              </div>
-            </Card.Content>
-          </Card.Root>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CardItem({
-  image,
-  title,
-  subtitle,
-  onClick,
-  rightContent,
-  className,
-}: {
-  image?: string | React.ReactElement;
-  title: string;
-  subtitle: string | React.ReactElement;
-  rightContent?: React.ReactElement;
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  className?: string;
-}) {
-  return (
-    <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
-      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-9.5 rounded-sm aspect-square" /> : image}
-        <div className="space-y-0.5 flex-1">
-          <p className="title text-lg">{title}</p>
-          {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
-        </div>
-        <div className="hidden md:block">{rightContent}</div>
-      </Card.Content>
-    </Card.Root>
-  );
-}
-
-function CompleteYourProfile() {
-  const me = useMe();
-  const { username } = useLemonadeUsername();
-  const openClaimUsername = useClaimUsername();
-
-  const { isConnected } = useAppKitAccount();
-
-  const openEditProfilePane = () => drawer.open(ProfilePane);
-
-  const { handleConnect } = useLinkFarcaster();
-
-  const [tasks, setTasks] = React.useState([
-    {
-      key: 'verify_email',
-      label: 'Verify Email',
-      completed: !!me?.email_verified,
-      show: true,
-      onClick: () => modal.open(VerifyEmailModal),
-    },
-    {
-      key: 'add_photo',
-      label: 'Add Profile Photo',
-      completed: !!me?.new_photos_expanded?.length,
-      show: true,
-      onClick: openEditProfilePane,
-    },
-    {
-      key: 'add_display_name',
-      label: 'Add display name',
-      completed: !!me?.name || !!me?.display_name,
-      onClick: openEditProfilePane,
-    },
-    { key: 'add_bio', label: 'Add bio', completed: !!me?.description, onClick: openEditProfilePane },
-    {
-      key: 'claim_username',
-      label: 'Claim Username',
-      completed: !!username,
-      show: true,
-      onClick: openClaimUsername,
-    },
-    // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
-    {
-      key: 'connect_wallet',
-      label: 'Connect wallet',
-      completed: isConnected,
-      onClick: () =>
-        modal.open(ConnectWallet, {
-          props: {
-            onConnect() {
-              setTasks((prev) =>
-                prev.map((item) => (item.key === 'connect_wallet' ? { ...item, completed: true } : item)),
-              );
-            },
-          },
-        }),
-    },
-    {
-      key: 'connect_farcaster',
-      label: 'Connect Farcaster',
-      completed: !!me?.kratos_farcaster_fid,
-      show: true,
-      onClick: () => handleConnect(),
-    },
-    // { label: 'Connect Stripe', completed: false },
-    // { label: 'Connect Eventbrite', completed: false },
-  ]);
-
-  React.useEffect(() => {
-    if (username) {
-      setTasks((prev) => prev.map((item) => (item.key === 'claim_username' ? { ...item, completed: true } : item)));
-    }
-  }, [username]);
-
-  return (
-    <>
-      <Card.Root className="bg-transparent hidden md:block">
-        <Card.Content className="flex px-4 py-3 flex-col gap-3">
-          <div className="flex justify-between items-center">
-            <p>Complete Your Profile</p>
-            <i
-              className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary"
-              onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            {tasks
-              .filter((item) => item.show)
-              .map((item, idx) => {
-                return (
-                  <div
-                    key={idx}
-                    className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer"
-                    onClick={!item.completed ? item.onClick : undefined}
-                  >
-                    <i
-                      className={clsx(
-                        'size-4',
-                        item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
-                      )}
-                    />
-                    <p className="text-sm text-primary">{item.label}</p>
-                  </div>
-                );
-              })}
-          </div>
-
-          <div className="flex gap-0.5">
-            {Array.from({ length: 4 }).map((_, idx) => (
-              <div
-                key={idx}
-                className={clsx(
-                  'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
-                  idx < tasks.filter((item) => item.show && item.completed).length ? 'bg-accent-400' : 'bg-quaternary',
-                )}
-              />
-            ))}
-          </div>
-        </Card.Content>
-      </Card.Root>
-
-      <CardItem
-        onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
-        className="block md:hidden bg-transparent [&_.title]:text-sm"
-        image={
-          <div className="bg-primary/8 size-9.5 flex items-center justify-center rounded-sm">
-            <i className="icon-account text-primary/56" />
-          </div>
-        }
-        title="Complete Your Profile"
-        subtitle={<p className="text-xs text-warning-400">{tasks.filter((item) => !item.completed).length} pending</p>}
-        rightContent={<i className="icon-chevron-right text-tertiary" />}
-      />
-    </>
-  );
-}
-
-function LemonHeadsZone() {
-  const router = useRouter();
-  const { data, loading } = useLemonhead();
-
-  const onClick = () => router.push('/lemonheads');
-
-  //NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
-  if (loading) return null;
-
-  if (data && data.tokenId > 0) {
-    return (
-      <CardItem
-        className="bg-transparent [&_.title]:text-sm"
-        image={
-          <div className="size-9.5 aspect-square flex items-center justify-center rounded-sm">
-            <img src={data.image} className="w-full h-full rounded-sm" />
-          </div>
-        }
-        title="LemonHeads Zone"
-        subtitle={`LemonHead #${data.tokenId}`}
-        rightContent={<i className="icon-chevron-right text-tertiary" />}
-        onClick={onClick}
-      />
-    );
-  }
-
-  return (
-    <CardItem
-      className="bg-transparent [&_.title]:text-sm"
-      image={
-        <div className="bg-[#A3E635]/16 size-9.5 flex items-center justify-center rounded-sm">
-          <i className="icon-lemonade-logo text-[#A3E635]" />
-        </div>
-      }
-      title="LemonHeads Zone"
-      subtitle="Claim your LemonHead"
-      rightContent={<i className="icon-chevron-right text-tertiary" />}
-      onClick={onClick}
-    />
-  );
-}
-
-function AllCoins() {
-  const router = useRouter();
-  const me = useMe();
-  const { address } = useAppKitAccount();
-
-  const handleCreateCoin = () => {
-    router.push('/create/coin');
-  };
-
-  const userWallets = React.useMemo(() => {
-    const wallets: string[] = [];
-
-    if (address) {
-      wallets.push(address.toLowerCase());
-    }
-
-    if (me?.wallets_new?.ethereum) {
-      me.wallets_new.ethereum.forEach((wallet: string) => {
-        if (wallet) {
-          wallets.push(wallet.toLowerCase());
-        }
-      });
-    }
-
-    if (me?.kratos_wallet_address) {
-      wallets.push(me.kratos_wallet_address.toLowerCase());
-    }
-
-    return [...new Set(wallets)];
-  }, [address, me?.wallets_new?.ethereum, me?.kratos_wallet_address]);
-
-  const { data, loading } = useQuery(
-    PoolCreatedDocument,
-    {
-      variables: {
-        orderBy: [
-          {
-            blockTimestamp: Order_By.Desc,
-          },
-        ],
-        offset: 0,
-        where:
-          userWallets.length > 0
-            ? {
-                paramsCreator: {
-                  _in: userWallets,
-                },
-              }
-            : undefined,
-      },
-      fetchPolicy: 'network-only',
-      skip: userWallets.length === 0,
-    },
-    coinClient,
-  );
-
-  const pools = data?.PoolCreated || [];
-
-  return (
-    <Accordion.Root className="border-none" open>
-      <Accordion.Header chevron={false} className="px-0!">
-        {({ toggle, isOpen }) => {
-          return (
-            <div className="flex items-center justify-between text-primary w-full">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="tertiary"
-                  className="rounded-full"
-                  size="xs"
-                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
-                  onClick={() => toggle()}
-                />
-                <h3 className="text-xl font-semibold">Coins</h3>
-              </div>
-              <div className="hidden md:flex gap-2">
-                <Button size="sm" variant="tertiary-alt" iconLeft="icon-plus" onClick={handleCreateCoin}>
-                  New Coin
-                </Button>
-              </div>
-
-              <div className="flex md:hidden gap-2">
-                <Button size="sm" variant="tertiary-alt" icon="icon-plus" onClick={handleCreateCoin} />
-              </div>
-            </div>
-          );
-        }}
-      </Accordion.Header>
-      <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
-        {loading ? (
-          <Card.Root className="min-w-fit">
-            <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-              <Skeleton className="size-9.5 rounded-sm" animate />
-              <Skeleton className="h-9 w-24 rounded-md" animate />
-            </Card.Content>
-          </Card.Root>
-        ) : (
-          <>
-            {pools.map((pool) => (
-              <CoinItem key={pool.id} pool={pool} />
-            ))}
-            <div className="hidden only:block text-center text-gray-500">
-              <EmptyCard
-                icon="icon-confirmation-number"
-                title="No Coins Yet"
-                subtitle="Coins you create and manage will appear here."
-              />
-            </div>
-          </>
-        )}
-      </Accordion.Content>
-    </Accordion.Root>
-  );
-}
-
-function CoinItem({ pool }: { pool: PoolCreated }) {
-  const router = useRouter();
-  const chainsMap = useAtomValue(chainsMapAtom);
-
-  const chain = chainsMap[pool.chainId.toString()];
-  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
-
-  const { formattedAmount, percentageChange } = calculateMarketCapData(
-    pool.latestMarketCapETH,
-    pool.previousMarketCapETH,
-  );
-
-  if (isLoadingTokenData)
-    return (
-      <Card.Root className="min-w-fit">
-        <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-          <Skeleton className="size-9.5 rounded-sm" animate />
-          <div className="space-y-0.5 flex-1">
-            <Skeleton className="h-5 w-24 rounded-md" animate />
-            <Skeleton className="h-4 w-32 rounded-md" animate />
-          </div>
-        </Card.Content>
-      </Card.Root>
-    );
-
-  if (!tokenData) return null;
-
-  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin);
-
-  return (
-    <CardItem
-      key={pool.id}
-      title={displaySymbol}
-      subtitle={formatWallet(pool.memecoin)}
-      image={tokenData.metadata?.imageUrl || undefined}
-      onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
-      rightContent={
-        <div className="flex flex-col items-end">
-          <p className="text-primary">{formattedAmount}</p>
-          {percentageChange !== null && (
-            <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
-              {percentageChange > 0 && '+'}
-              {percentageChange.toFixed(2)}%
-            </p>
-          )}
-        </div>
-      }
-    />
-  );
-}

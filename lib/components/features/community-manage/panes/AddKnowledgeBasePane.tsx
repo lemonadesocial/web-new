@@ -1,28 +1,75 @@
 'use client';
 import React from 'react';
-import { Button, Textarea, Input, drawer, toast, Menu, MenuItem, Avatar, Skeleton } from '$lib/components/core';
+import { Button, Textarea, Input, drawer, modal, toast, Menu, MenuItem, Avatar, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { CreateDocumentDocument, GetListAiConfigDocument, UpdateAiConfigDocument, type Config, type Document, type CreateDocumentMutation } from '$lib/graphql/generated/ai/graphql';
-import { Space } from '$lib/graphql/generated/backend/graphql';
+import {
+  CreateDocumentDocument,
+  DeleteDocumentDocument,
+  GetListAiConfigDocument,
+  UpdateAiConfigDocument,
+  UpdateDocumentDocument,
+  type Config,
+  type Document,
+  type CreateDocumentMutation,
+} from '$lib/graphql/generated/ai/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { randomEventDP } from '$lib/utils/user';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { getAiConfigFilter, getConfigAvatarSrc, type AiManageScope } from '$lib/components/features/ai/manage/shared';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 interface Props {
-  space: Space;
+  scope: AiManageScope;
   onCreated: (document: Document) => void;
+  onDeleted?: () => void;
   skipAvailableTo?: boolean;
+  document?: Pick<Document, '_id' | 'title' | 'text'>;
+  selectedConfigs?: Config[];
 }
 
-export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false }: Props) {
-  const [title, setTitle] = React.useState('');
-  const [content, setContent] = React.useState('');
-  const [selectedConfigs, setSelectedConfigs] = React.useState<Config[]>([]);
+export function AddKnowledgeBasePane({
+  scope,
+  onCreated,
+  onDeleted,
+  skipAvailableTo = false,
+  document,
+  selectedConfigs: initialSelectedConfigs = [],
+}: Props) {
+  const isEditMode = !!document;
+  const [title, setTitle] = React.useState(document?.title || '');
+  const [content, setContent] = React.useState(document?.text || '');
+  const [selectedConfigs, setSelectedConfigs] = React.useState<Config[]>(initialSelectedConfigs);
+  const titleInputId = React.useId();
+  const availableToLabelId = React.useId();
+  const contentInputId = React.useId();
+  const initialTitle = document?.title || '';
+  const initialContent = document?.text || '';
+  const initialSelectedConfigIds = React.useMemo(
+    () => initialSelectedConfigs.map((config) => config._id).sort(),
+    [initialSelectedConfigs],
+  );
+  const selectedConfigIds = React.useMemo(() => selectedConfigs.map((config) => config._id).sort(), [selectedConfigs]);
+  const hasSelectionChanged =
+    selectedConfigIds.length !== initialSelectedConfigIds.length ||
+    selectedConfigIds.some((id, idx) => id !== initialSelectedConfigIds[idx]);
+  const canSaveChanges =
+    !!content.trim() &&
+    (title !== initialTitle || content !== initialContent || hasSelectionChanged);
 
   const [createDocument, { loading: creating }] = useMutation(CreateDocumentDocument, {
     onError: (error) => {
       toast.error(error.message || 'Failed to create knowledge base');
+    },
+  }, aiChatClient);
+
+  const [updateDocument, { loading: updating }] = useMutation(UpdateDocumentDocument, {
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update knowledge base');
+    },
+  }, aiChatClient);
+
+  const [deleteDocument, { loading: deleting }] = useMutation(DeleteDocumentDocument, {
+    onError: (error) => {
+      toast.error(error.message || 'Failed to delete knowledge base');
     },
   }, aiChatClient);
 
@@ -32,9 +79,106 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
     },
   }, aiChatClient);
 
+  const loading = creating || updating || deleting;
+
+  const syncConfigAssignments = React.useCallback(async (documentId: string) => {
+    if (skipAvailableTo) {
+      return;
+    }
+
+    if (!isEditMode) {
+      if (selectedConfigs.length === 0) {
+        return;
+      }
+
+      await Promise.all(
+        selectedConfigs.map((config) => {
+          const currentDocuments = config.documents || [];
+          const updatedDocuments = [...currentDocuments, documentId];
+
+          return updateConfig({
+            variables: {
+              input: {
+                name: config.name,
+                job: config.job,
+                description: config.description,
+                documents: updatedDocuments,
+              },
+              id: config._id,
+            },
+          });
+        }),
+      );
+      return;
+    }
+
+    const initialById = new Map(initialSelectedConfigs.map((config) => [config._id, config]));
+    const selectedById = new Map(selectedConfigs.map((config) => [config._id, config]));
+
+    const configsToAdd = selectedConfigs.filter((config) => !initialById.has(config._id));
+    const configsToRemove = initialSelectedConfigs.filter((config) => !selectedById.has(config._id));
+
+    await Promise.all([
+      ...configsToAdd.map((config) => {
+        const currentDocuments = config.documents || [];
+        const updatedDocuments = currentDocuments.includes(documentId) ? currentDocuments : [...currentDocuments, documentId];
+
+        return updateConfig({
+          variables: {
+            input: {
+              name: config.name,
+              job: config.job,
+              description: config.description,
+              documents: updatedDocuments,
+            },
+            id: config._id,
+          },
+        });
+      }),
+      ...configsToRemove.map((config) => {
+        const currentDocuments = config.documents || [];
+        const updatedDocuments = currentDocuments.filter((id) => id !== documentId);
+
+        return updateConfig({
+          variables: {
+            input: {
+              name: config.name,
+              job: config.job,
+              description: config.description,
+              documents: updatedDocuments,
+            },
+            id: config._id,
+          },
+        });
+      }),
+    ]);
+  }, [initialSelectedConfigs, isEditMode, selectedConfigs, skipAvailableTo, updateConfig]);
+
   const handleSubmit = async () => {
     if (!content.trim()) {
       toast.error('Content is required');
+      return;
+    }
+
+    if (isEditMode && document?._id) {
+      await updateDocument({
+        variables: {
+          id: document._id,
+          input: {
+            title: title.trim() || undefined,
+            text: content.trim(),
+          },
+        },
+        onComplete: async (_client, response) => {
+          const data = response?.updateDocument;
+          if (data?._id) {
+            await syncConfigAssignments(data._id);
+            onCreated(data as Document);
+            drawer.close();
+            toast.success('Knowledge base updated');
+          }
+        },
+      });
       return;
     }
 
@@ -49,27 +193,7 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
         const data = response as CreateDocumentMutation;
         if (data?.createDocument) {
           const documentId = data.createDocument._id;
-
-          if (selectedConfigs.length > 0) {
-            await Promise.all(
-              selectedConfigs.map((config) => {
-                const currentDocuments = config.documents || [];
-                const updatedDocuments = [...currentDocuments, documentId];
-
-                return updateConfig({
-                  variables: {
-                    input: {
-                      name: config.name,
-                      job: config.job,
-                      description: config.description,
-                      documents: updatedDocuments,
-                    },
-                    id: config._id,
-                  },
-                });
-              })
-            );
-          }
+          await syncConfigAssignments(documentId);
 
           onCreated(data.createDocument);
           drawer.close();
@@ -79,6 +203,52 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
     });
   };
 
+  const handleDelete = React.useCallback(() => {
+    if (!document?._id) {
+      return;
+    }
+
+    modal.open(ConfirmModal, {
+      props: {
+        icon: 'icon-delete',
+        title: 'Delete Knowledge Base',
+        subtitle: 'Are you sure you want to delete this knowledge base? Agents that use it will no longer have access to this information.',
+        buttonText: 'Delete',
+        onConfirm: async () => {
+          await Promise.all(
+            initialSelectedConfigs.map((config) => {
+              const currentDocuments = config.documents || [];
+              const updatedDocuments = currentDocuments.filter((id) => id !== document._id);
+
+              return updateConfig({
+                variables: {
+                  input: {
+                    name: config.name,
+                    job: config.job,
+                    description: config.description,
+                    documents: updatedDocuments,
+                  },
+                  id: config._id,
+                },
+              });
+            }),
+          );
+
+          await deleteDocument({
+            variables: {
+              id: document._id,
+            },
+            onComplete: () => {
+              onDeleted?.();
+              drawer.close();
+              toast.success('Knowledge base deleted');
+            },
+          });
+        },
+      },
+    });
+  }, [deleteDocument, document?._id, initialSelectedConfigs, onDeleted, updateConfig]);
+
   return (
     <Pane.Root>
       <Pane.Header.Root>
@@ -87,15 +257,18 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
 
       <Pane.Content className="p-4 flex flex-col gap-6 overflow-auto">
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">Add Knowledge Base</h2>
+          <h2 className="text-xl font-semibold">{isEditMode ? 'Edit Knowledge Base' : 'Add Knowledge Base'}</h2>
           <p className="text-secondary">
             Add written information that your agents can use to answer questions accurately.
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-secondary">Title</label>
+          <label htmlFor={titleInputId} className="text-sm font-medium text-secondary">
+            Title
+          </label>
           <Input
+            id={titleInputId}
             variant="outlined"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -106,9 +279,12 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
 
         {!skipAvailableTo && (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-secondary">Available To</label>
+            <p id={availableToLabelId} className="text-sm font-medium text-secondary">
+              Available To
+            </p>
             <ConfigSelector
-              space={space}
+              labelledById={availableToLabelId}
+              scope={scope}
               selectedConfigs={selectedConfigs}
               onConfigsChange={setSelectedConfigs}
             />
@@ -116,8 +292,11 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-secondary">Content</label>
+          <label htmlFor={contentInputId} className="text-sm font-medium text-secondary">
+            Content
+          </label>
           <Textarea
+            id={contentInputId}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={5}
@@ -128,32 +307,66 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
         </div>
       </Pane.Content>
 
-      <Pane.Footer>
-        <div className="p-4 border-t">
-          <Button
-            variant="secondary"
-            onClick={handleSubmit}
-            loading={creating}
-            disabled={!content.trim()}
-          >
-            Add Knowledge Base
-          </Button>
-        </div>
+      <Pane.Footer
+        className={isEditMode ? 'border-t border-card-border bg-overlay-secondary/80 backdrop-blur-xl' : undefined}
+      >
+        {isEditMode ? (
+          <div className="flex gap-3 px-4 py-3">
+            <Button
+              variant="danger"
+              outlined
+              className="h-10 flex-1 justify-center rounded-sm"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="secondary"
+              className="h-10 flex-1 justify-center rounded-sm"
+              onClick={handleSubmit}
+              loading={loading}
+              disabled={!canSaveChanges}
+            >
+              Save Changes
+            </Button>
+          </div>
+        ) : (
+          <div className="p-4 border-t">
+            <Button
+              variant="secondary"
+              onClick={handleSubmit}
+              loading={loading}
+              disabled={!content.trim()}
+            >
+              Add Knowledge Base
+            </Button>
+          </div>
+        )}
       </Pane.Footer>
     </Pane.Root>
   );
 }
 
-function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Space; selectedConfigs: Config[]; onConfigsChange: (configs: Config[]) => void }) {
+function ConfigSelector({
+  labelledById,
+  scope,
+  selectedConfigs,
+  onConfigsChange,
+}: {
+  labelledById: string;
+  scope: AiManageScope;
+  selectedConfigs: Config[];
+  onConfigsChange: (configs: Config[]) => void;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const configQueryVariables = React.useMemo(() => ({ filter: getAiConfigFilter(scope) }), [scope]);
 
   const { data: configsData, loading } = useQuery(
     GetListAiConfigDocument,
     {
-      variables: {
-        filter: { spaces_in: [space._id] },
-      },
-      skip: !isOpen || !space?._id,
+      variables: configQueryVariables,
+      skip: !isOpen,
       fetchPolicy: 'network-only',
     },
     aiChatClient,
@@ -178,38 +391,51 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
     <Menu.Root isOpen={isOpen} onOpenChange={setIsOpen} placement="bottom-start">
       <Menu.Trigger className="w-full">
         <div
-          className="h-10 w-full rounded-sm bg-background/64 border border-primary/8 hover:border-primary focus-within:border-primary p-1 flex items-center gap-2 cursor-pointer transition-colors"
-          onClick={() => setIsOpen(true)}
+          className="relative h-11 w-full rounded-sm border border-primary/8 bg-background/64 p-1 transition-colors hover:border-primary focus-within:border-primary"
         >
-          <div className="flex-1 flex flex-wrap gap-0.5 items-center">
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-haspopup="menu"
+            aria-labelledby={labelledById}
+            className="absolute inset-0 rounded-sm"
+            onClick={() => setIsOpen(true)}
+          />
+          <div className="relative z-10 flex h-full items-center gap-2">
+            <div className="flex-1 flex flex-wrap gap-0.5 items-center min-w-0">
             {selectedConfigs.length > 0 ? (
               selectedConfigs.map((config) => {
-                const avatarSrc = config.avatar || randomEventDP(config._id);
+                const avatarSrc = getConfigAvatarSrc(config);
                 return (
                   <div
                     key={config._id}
-                    className="flex items-center gap-1.5 bg-card rounded-xs px-2.5 py-1.5"
+                    className="pointer-events-none flex items-center gap-1.5 rounded-xs bg-card px-2.5 py-1"
                   >
                     <Avatar
                       src={avatarSrc}
                       className="size-4 rounded-xs object-cover"
                     />
                     <span className="text-sm">{config.name}</span>
-                    <i
-                      className="icon-x size-4 text-tertiary cursor-pointer hover:text-secondary transition-colors"
+                    <button
+                      type="button"
+                      aria-label={`Remove ${config.name || 'agent'}`}
+                      className="pointer-events-auto text-tertiary transition-colors hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemoveConfig(config._id);
                       }}
-                    />
+                    >
+                      <i aria-hidden="true" className="icon-x size-4" />
+                    </button>
                   </div>
                 );
               })
             ) : (
-              <span className="text-tertiary font-medium ml-2">Select agents</span>
+              <span className="ml-2 pointer-events-none font-medium text-tertiary">Select agents</span>
             )}
+            </div>
+            <i aria-hidden="true" className="icon-chevron-down pointer-events-none size-5 shrink-0 text-tertiary" />
           </div>
-          <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary shrink-0" />
         </div>
       </Menu.Trigger>
 
@@ -232,7 +458,7 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
           </div>
         ) : (
           availableConfigs.map((config) => {
-            const avatarSrc = config.avatar || randomEventDP(config._id) || `${ASSET_PREFIX}/assets/images/agent.png`;
+            const avatarSrc = getConfigAvatarSrc(config);
             return (
               <MenuItem
                 key={config._id}

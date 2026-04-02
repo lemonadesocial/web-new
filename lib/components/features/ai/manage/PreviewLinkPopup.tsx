@@ -83,7 +83,7 @@ export function PreviewLinkPopup() {
           {state.layoutType === PreviewLinkType.Event && event && (
             <EventThemeProvider themeData={event.theme_data}>
               <EventThemeLayout>
-                <EventGuestSideContent event={event} />
+                <EventGuestSideContent event={event} autoSave={false} />
               </EventThemeLayout>
             </EventThemeProvider>
           )}

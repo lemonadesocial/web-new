@@ -3,18 +3,22 @@ import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { snakeCase } from 'lodash';
 
-import { Button, Input, Menu, MenuItem } from '$lib/components/core';
+import { Button, Input, Menu, MenuItem, modal } from '$lib/components/core';
 import { downloadCSVFile } from '$lib/utils/file';
 import { useQuery } from '$lib/graphql/request';
 import {
+  ConnectionOutput,
   Event,
   ListEventGuestsDocument,
   ListEventGuestsSortBy,
   SortOrder,
+  SpaceConnectionsDocument,
 } from '$lib/graphql/generated/backend/graphql';
+import { getGuestExportAction, type ConnectorModalConnection } from '$lib/components/features/upgrade-to-pro/utils';
 
 import { GuestTable } from './common/GuestTable';
 import { SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
+import { ExportGuestListModal, type GuestExportConnection } from './modals/ExportGuestListModal';
 
 type SortOption = {
   key: string;
@@ -77,6 +81,31 @@ export function GuestList({ event }: { event: Event }) {
   const guests = data?.listEventGuests.items || [];
   const totalCount = data?.listEventGuests.total || 0;
   const totalPages = Math.ceil(totalCount / pageSize);
+  const spaceId = event.space || event.space_expanded?._id;
+
+  const { data: connectionsData } = useQuery(SpaceConnectionsDocument, {
+    variables: {
+      spaceId,
+    },
+    skip: !spaceId,
+  });
+
+  const exportConnections = ((connectionsData?.spaceConnections ?? []) as ConnectionOutput[])
+    .filter(
+      (connection): connection is ConnectorModalConnection =>
+        connection.enabled && connection.status === 'active' && Boolean(connection.connector),
+    )
+    .map((connection) => {
+      const action = getGuestExportAction(connection.connector);
+
+      if (!action) return null;
+
+      return {
+        action,
+        connection,
+      };
+    })
+    .filter((connection): connection is GuestExportConnection => connection !== null);
 
   const exportGuestsCSV = () => {
     downloadCSVFile(
@@ -110,6 +139,17 @@ export function GuestList({ event }: { event: Event }) {
     setCurrentPage(1);
   };
 
+  const handleOpenExportModal = () => {
+    if (!exportConnections.length) return;
+
+    modal.open(ExportGuestListModal, {
+      props: {
+        connections: exportConnections,
+        event,
+      },
+    });
+  };
+
   React.useEffect(() => {
     window.addEventListener('refetch_guest_list', refetch);
 
@@ -130,7 +170,28 @@ export function GuestList({ event }: { event: Event }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Guest List</h1>
-        <Button data-testid="guest-list-export" icon="icon-download" variant="tertiary" size="sm" onClick={exportGuestsCSV} aria-label="Export guest list" />
+        <div className="flex items-center gap-2">
+          {!!exportConnections.length && (
+            <Button
+              data-testid="guest-list-export-action"
+              variant="tertiary"
+              size="sm"
+              iconLeft="icon-upload-sharp"
+              onClick={handleOpenExportModal}
+              aria-label="Export guest list"
+            >
+              Export
+            </Button>
+          )}
+          <Button
+            data-testid="guest-list-export"
+            icon="icon-download"
+            variant="tertiary"
+            size="sm"
+            onClick={exportGuestsCSV}
+            aria-label="Download guest list"
+          />
+        </div>
       </div>
 
       <Input
@@ -166,7 +227,7 @@ export function GuestList({ event }: { event: Event }) {
             </Button>
           </Menu.Trigger>
           <Menu.Content className="w-48 p-1">
-            {({ toggle }) => (
+            {() => (
               <>
                 <MenuItem
                   title="Going"

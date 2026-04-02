@@ -142,6 +142,11 @@ type ConnectorCardProps = {
 function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceConnections }: ConnectorCardProps) {
   const router = useRouter();
   const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
+  const handleViewActions = React.useCallback(() => {
+    if (!connectionId) return;
+
+    router.push(`/s/manage/${space.slug || space._id}/settings/connectors/${connectionId}`);
+  }, [connectionId, router, space._id, space.slug]);
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
     onError: (error) => {
@@ -202,7 +207,7 @@ function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceCon
   };
 
   return (
-    <Card.Root onClick={isConnected ? undefined : handleConnect}>
+    <Card.Root onClick={isConnected ? handleViewActions : handleConnect}>
       <Card.Content className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div className="size-12 flex items-center justify-center rounded-sm bg-overlay-primary overflow-hidden">
@@ -235,7 +240,7 @@ function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceCon
                         <MenuItem
                           onClick={() => {
                             toggle();
-                            router.push(`/s/manage/${space.slug || space._id}/settings/connectors/${connectionId}`);
+                            handleViewActions();
                           }}
                         >
                           <div className="flex items-center gap-2.5">
