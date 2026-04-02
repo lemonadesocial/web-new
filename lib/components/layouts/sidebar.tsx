@@ -9,8 +9,9 @@ import { twMerge } from 'tailwind-merge';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
+import { isAtlasEnabled } from '$lib/services/atlas-client';
 import { userAvatar } from '$lib/utils/user';
-import { Button, Menu, MenuItem, Card, modal, drawer } from '../core';
+import { Button, Menu, MenuItem, Card, modal, drawer, toast } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
 import { GetListMySpacesDocument, Space } from '$lib/graphql/generated/backend/graphql';
@@ -126,6 +127,11 @@ const Sidebar = () => {
 
   const handleRewardsClick = () => {
     if (me || account) {
+      if (!isAtlasEnabled()) {
+        toast.success('Coming soon');
+        return;
+      }
+
       if (mySpaces.length) router.push(`/s/manage/${mySpaces[0].slug || mySpaces[0]._id}/rewards`);
       return;
     }
