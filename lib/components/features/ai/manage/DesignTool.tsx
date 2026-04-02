@@ -4,6 +4,7 @@ import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventT
 import clsx from 'clsx';
 import React from 'react';
 import { TemplateTool } from './TemplateTool';
+import { SectionTool } from './SectionTool';
 
 const segments: SegmentItem<string>[] = [
   { label: 'Builder', value: 'builder', iconLeft: 'icon-cards-outline' },
@@ -31,8 +32,16 @@ export function DesignTool() {
 
 const tabs = [
   { key: 'template', label: 'Templates', component: () => <TemplateTool /> },
-  { key: 'sections', label: 'Sections', component: () => null },
-  { key: 'theme', label: 'Theme', component: () => <EventThemeBuilder autoSave={false} inline /> },
+  { key: 'sections', label: 'Sections', component: () => <SectionTool /> },
+  {
+    key: 'theme',
+    label: 'Theme',
+    component: () => (
+      <div className="p-5">
+        <EventThemeBuilder autoSave={false} inline />
+      </div>
+    ),
+  },
 ];
 function BuilderTabs() {
   const [selectedTab, setSelectedTab] = React.useState<'template' | 'sections' | 'theme'>('template');
