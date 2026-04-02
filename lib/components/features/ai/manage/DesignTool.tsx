@@ -3,10 +3,11 @@ import { Segment, SegmentItem } from '$lib/components/core';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 import clsx from 'clsx';
 import React from 'react';
+import { TemplateTool } from './TemplateTool';
 
 const segments: SegmentItem<string>[] = [
-  { label: 'builder', value: 'builder', iconLeft: 'icon-cards-outline' },
-  { label: 'ai', value: 'ai', iconLeft: 'icon-sparkles' },
+  { label: 'Builder', value: 'builder', iconLeft: 'icon-cards-outline' },
+  { label: 'AI Designer', value: 'ai', iconLeft: 'icon-sparkles' },
 ];
 
 export function DesignTool() {
@@ -29,7 +30,7 @@ export function DesignTool() {
 }
 
 const tabs = [
-  { key: 'template', label: 'Template', component: () => null },
+  { key: 'template', label: 'Templates', component: () => <TemplateTool /> },
   { key: 'sections', label: 'Sections', component: () => null },
   { key: 'theme', label: 'Theme', component: () => <EventThemeBuilder autoSave={false} inline /> },
 ];
@@ -59,7 +60,7 @@ function BuilderTabs() {
         ))}
       </ul>
 
-      <div className="px-4!">{Comp && <Comp />}</div>
-    </div >
+      <div>{Comp && <Comp />}</div>
+    </div>
   );
 }
