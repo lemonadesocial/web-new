@@ -15,7 +15,7 @@ export const config = {
      * - favicon.ico
      * And exclude file extensions
      */
-    '/((?!api/|proxy_static/|_next/|_static/|_vercel|assets|favicon\\.ico|[\\w-]+\\.\\w+).*)',
+    '/((?!api/|_next/|_static/|_vercel|assets|favicon\\.ico|[\\w-]+\\.\\w+).*)',
   ],
 };
 
