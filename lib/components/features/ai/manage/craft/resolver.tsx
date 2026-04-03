@@ -20,7 +20,7 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   return (
     <div
       ref={(ref: any) => ref && connect(drag(ref))}
-      className="relative group/section w-full"
+      className="relative group/section w-full p-3"
     >
       {/* Selection/Hover Indicator Overlay */}
       {(selected || hovered) && (
