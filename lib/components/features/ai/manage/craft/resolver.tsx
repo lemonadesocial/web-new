@@ -11,21 +11,29 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   const {
     connectors: { connect, drag },
     selected,
+    hovered,
   } = useNode((state) => ({
     selected: state.events.selected,
+    hovered: state.events.hovered,
   }));
 
   return (
     <div
       ref={(ref: any) => ref && connect(drag(ref))}
-      className={`relative min-h-10 w-full ${selected ? 'outline-2 outline-primary outline-offset-2' : ''}`}
+      className="relative group/section w-full"
     >
-      {children}
-      {!children && (
-        <div className="p-8 bg-tertiary/5 border-2 border-dashed border-tertiary/20 rounded-md text-center text-tertiary text-sm">
-          {name || 'Section'} (No Content)
-        </div>
+      {/* Selection/Hover Indicator Overlay */}
+      {(selected || hovered) && (
+        <div 
+          className={`absolute inset-0 z-50 pointer-events-none border-2 rounded-lg transition-colors ${
+            selected ? 'border-primary' : 'border-primary/20'
+          }`}
+        />
       )}
+      
+      <div className="w-full">
+        {children}
+      </div>
     </div>
   );
 };
@@ -36,13 +44,14 @@ export const Container = ({ children, ...props }: any) => {
     <div 
       {...props} 
       ref={(ref: any) => connect(ref)} 
-      className={`flex flex-col gap-6 w-full min-h-[500px] pb-20 ${props.className || ''}`}
+      className={`flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 ${props.className || ''}`}
       style={{ ...props.style }}
     >
       {children}
     </div>
   );
 };
+
 Container.craft = {
   isCanvas: true,
   rules: {
