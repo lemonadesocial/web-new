@@ -17,6 +17,7 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@craftjs/core": "^0.2.12",
     "@date-fns/tz": "^1.2.0",
     "@dicebear/core": "^9.2.2",
     "@dicebear/glass": "^9.2.2",

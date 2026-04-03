@@ -533,6 +533,27 @@
     viem "^2.27.2"
     zustand "5.0.3"
 
+"@craftjs/core@^0.2.12":
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/@craftjs/core/-/core-0.2.12.tgz#b411af3a8c39ba5033e39159911375d9e3299250"
+  integrity sha512-M9WZ6SuvGw6Ue2iXouPiqLzzsxOynn1HVugzlm8q98ulMdhn0BDI3XZdD3ErUdUe4kk4y2Ak9E0dtzVjC51JLw==
+  dependencies:
+    "@craftjs/utils" "^0.2.5"
+    debounce "^1.2.0"
+    lodash "^4.17.21"
+    tiny-invariant "^1.0.6"
+
+"@craftjs/utils@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@craftjs/utils/-/utils-0.2.5.tgz#2778264bb854b51ab34f3194028269d81b59f642"
+  integrity sha512-ANzAkGmQBe6fi7F2x6dhiN2hN9yBDfW+mQ2XJv8bJMIx+0h5Kbv04U4WXaFfMhjcC7DzfPnGkdg7/9gFkd5qVA==
+  dependencies:
+    immer "^9.0.6"
+    lodash "^4.17.21"
+    nanoid "^3.1.23"
+    shallowequal "^1.1.0"
+    tiny-invariant "^1.0.6"
+
 "@csstools/color-helpers@^5.0.2":
   version "5.0.2"
   resolved "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.0.2.tgz"
@@ -10547,6 +10568,11 @@ immer@^11.0.0:
   resolved "https://registry.yarnpkg.com/immer/-/immer-11.0.1.tgz#2191adadc17afc94553bfb7a4c0ca95e55ec2489"
   integrity sha512-naDCyggtcBWANtIrjQEajhhBEuL9b0Zg4zmlWK2CzS6xCWSE39/vvf4LqnMjUAWHBhot4m9MHCM/Z+mfWhUkiA==
 
+immer@^9.0.6:
+  version "9.0.21"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.21.tgz#1e025ea31a40f24fb064f1fef23e931496330176"
+  integrity sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==
+
 immutable@~3.7.6:
   version "3.7.6"
   resolved "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
@@ -12536,15 +12562,15 @@ nanoassert@^2.0.0:
   resolved "https://registry.yarnpkg.com/nanoassert/-/nanoassert-2.0.0.tgz#a05f86de6c7a51618038a620f88878ed1e490c09"
   integrity sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA==
 
+nanoid@^3.1.23, nanoid@^3.3.7:
+  version "3.3.11"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
+  integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==
+
 nanoid@^3.3.6, nanoid@^3.3.8:
   version "3.3.8"
   resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.8.tgz"
   integrity sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==
-
-nanoid@^3.3.7:
-  version "3.3.11"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
-  integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==
 
 napi-build-utils@^2.0.0:
   version "2.0.0"
@@ -15408,7 +15434,7 @@ timeout-signal@^2.0.0:
   resolved "https://registry.npmjs.org/timeout-signal/-/timeout-signal-2.0.0.tgz"
   integrity sha512-YBGpG4bWsHoPvofT6y/5iqulfXIiIErl5B0LdtHT1mGXDFTAhhRrbUpTvBgYbovr+3cKblya2WAOcpoy90XguA==
 
-tiny-invariant@^1.3.3:
+tiny-invariant@^1.0.6, tiny-invariant@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.3.3.tgz#46680b7a873a0d5d10005995eb90a70d74d60127"
   integrity sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==

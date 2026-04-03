@@ -10,6 +10,9 @@ import { EventThemeProvider } from '$lib/components/features/theme-builder/provi
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
+import { Editor } from '@craftjs/core';
+import { resolver } from './craft/resolver';
+
 function ManageLayout() {
   const { isAuthenticated, me } = useRequireLemonadeAccount();
   const state = useStoreManageLayout();
@@ -24,16 +27,16 @@ function ManageLayout() {
   if (!isAuthenticated || !me) return null;
 
   return (
-    <>
-      <Header showUI={false} />
-      <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={event?.theme_data}>
-        <div className="h-dvh flex flex-col bg-overlay-primary">
+    <div className="h-dvh flex flex-col bg-overlay-primary">
+      <Editor resolver={resolver}>
+        <Header showUI={false} />
+        <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={event?.theme_data}>
           <ManageLayoutToolbar />
           <ManageLayoutContent />
-        </div>
-      </EventThemeProvider>
-      <DrawerContainer />
-    </>
+        </EventThemeProvider>
+        <DrawerContainer />
+      </Editor>
+    </div>
   );
 }
 

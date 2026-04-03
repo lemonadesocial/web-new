@@ -21,11 +21,27 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+}
+
 function ManageLayoutContent() {
   const params = useParams();
   const shortid = params?.shortid as string;
 
   const [ready, setReady] = React.useState(false);
+  const isMobile = useIsMobile();
 
   const state = useStoreManageLayout();
   const [themeState] = useEventTheme();
@@ -97,36 +113,28 @@ function ManageLayoutContent() {
   const isConfigPane = state.mobilePane === 'config';
   const needsMobileBottomInset = state.activeTab === 'manage';
 
-  const mainContent = match(state.activeTab)
-    .with('manage', () =>
-      match(state.layoutType)
-        .with('event', () => <ManageEventLayout shortid={shortid} />)
-        .otherwise(() => null),
+  const previewContent = match(state.layoutType)
+    .with('event', () =>
+      event ? (
+        <main
+          data-theme-scope="event-preview"
+          className={clsx(
+            'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
+            themeState.theme,
+            themeState.config.name,
+            themeState.config.color,
+            themeState.config.mode,
+          )}
+          style={themeState.variables.font as React.CSSProperties}
+        >
+          <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
+          <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
+            <EventGuestSide event={event} autoSave={false} isEditable={true} />
+          </div>
+        </main>
+      ) : null,
     )
-    .otherwise(() =>
-      match(state.layoutType)
-        .with('event', () =>
-          event ? (
-            <main
-              data-theme-scope="event-preview"
-              className={clsx(
-                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
-                themeState.theme,
-                themeState.config.name,
-                themeState.config.color,
-                themeState.config.mode,
-              )}
-              style={themeState.variables.font as React.CSSProperties}
-            >
-              <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
-              <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
-                <EventGuestSide event={event} autoSave={false} />
-              </div>
-            </main>
-          ) : null,
-        )
-        .otherwise(() => null),
-    );
+    .otherwise(() => null);
 
   return (
     <>
@@ -140,10 +148,7 @@ function ManageLayoutContent() {
               transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
               className="overflow-hidden shrink-0 hidden md:block"
             >
-              <div
-                data-mode={state.device}
-                className={clsx('w-110 h-full pt-3')}
-              >
+              <div data-mode={state.device} className={clsx('w-110 h-full pt-3')}>
                 <SidebarComp />
               </div>
             </motion.div>
@@ -162,7 +167,13 @@ function ManageLayoutContent() {
               state.device === 'mobile' && 'md:w-sm',
             )}
           >
-            {mainContent}
+            {state.activeTab === 'manage' ? (
+              match(state.layoutType)
+                .with('event', () => <ManageEventLayout shortid={shortid} />)
+                .otherwise(() => null)
+            ) : (
+              !isMobile && previewContent
+            )}
           </div>
         </div>
       </div>
@@ -175,7 +186,13 @@ function ManageLayoutContent() {
             state.mobilePane !== 'main' && 'pointer-events-none',
           )}
         >
-          {mainContent}
+          {state.activeTab === 'manage' ? (
+            match(state.layoutType)
+              .with('event', () => <ManageEventLayout shortid={shortid} />)
+              .otherwise(() => null)
+          ) : (
+            isMobile && previewContent
+          )}
         </div>
 
         <AnimatePresence initial={false}>

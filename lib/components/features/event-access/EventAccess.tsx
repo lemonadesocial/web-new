@@ -103,3 +103,4 @@ export function EventAccess({ event }: { event: Event }) {
 
   return <EventRegistration event={event} />;
 }
+

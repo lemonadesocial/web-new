@@ -30,7 +30,17 @@ import { useTracker } from '$lib/hooks/useTracker';
 import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
-export function EventGuestSide({ event: initEvent, autoSave = true }: { event: Event; autoSave?: boolean }) {
+import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
+
+export function EventGuestSide({
+  event: initEvent,
+  autoSave = true,
+  isEditable = false,
+}: {
+  event: Event;
+  autoSave?: boolean;
+  isEditable?: boolean;
+}) {
   const { data } = useQuery(GetEventDocument, {
     variables: { id: initEvent._id },
     initData: { getEvent: initEvent } as unknown as GetEventQuery,
@@ -38,11 +48,26 @@ export function EventGuestSide({ event: initEvent, autoSave = true }: { event: E
 
   useTracker(initEvent._id);
 
-  return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} autoSave={autoSave} />;
+  return (
+    <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} autoSave={autoSave} isEditable={isEditable} />
+  );
 }
 
-export function EventGuestSideContent({ event, autoSave = true }: { event: Event; autoSave?: boolean }) {
+export function EventGuestSideContent({
+  event,
+  autoSave = true,
+  isEditable = false,
+}: {
+  event: Event;
+  autoSave?: boolean;
+  isEditable?: boolean;
+}) {
   const [state] = useEventTheme();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const me = useMe();
 
@@ -53,16 +78,30 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
 
   const router = useRouter();
 
+  const renderSections = () => {
+    if (isEditable && isClient) {
+      return <CraftableEventSections event={event} attending={attending} />;
+    }
+
+    return (event.layout_sections || DEFAULT_LAYOUT_SECTIONS).map((item) => {
+      switch (item.id) {
+        case 'registration':
+          return event ? <EventAccess key={item.id} event={event} /> : null;
+        case 'about':
+          return <AboutSection key={item.id} event={event} />;
+        case 'collectibles':
+          return attending ? <EventCollectibles key={item.id} event={event} /> : null;
+        case 'location':
+          return <LocationSection key={item.id} event={event} />;
+
+        default:
+          return null;
+      }
+    });
+  };
+
   return (
-    <div
-      className={clsx(
-        'flex gap-18',
-        state.theme,
-        state.config.name,
-        state.config.color,
-        state.config.mode,
-      )}
-    >
+    <div className={clsx('flex gap-18', state.theme, state.config.name, state.config.color, state.config.mode)}>
       <div className="hidden md:flex w-74 flex-col gap-6">
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] ? (
@@ -94,22 +133,20 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
             </>
           )}
 
-          {
-            isUserPromoter && (
-              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-                <p className="text-accent-500">You have check in access for this event.</p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  iconRight="icon-arrow-outward"
-                  className="rounded-full"
-                  onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
-                >
-                  Check In
-                </Button>
-              </div>
-            )
-          }
+          {isUserPromoter && (
+            <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+              <p className="text-accent-500">You have check in access for this event.</p>
+              <Button
+                variant="primary"
+                size="sm"
+                iconRight="icon-arrow-outward"
+                className="rounded-full"
+                onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
+              >
+                Check In
+              </Button>
+            </div>
+          )}
         </div>
 
         <PendingCohostRequest event={event} />
@@ -152,29 +189,30 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
             </>
           )}
 
-{
-            isUserPromoter && (
-              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-                <p className="text-accent-500">You have check in access for this event.</p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  iconRight="icon-arrow-outward"
-                  className="rounded-full"
-                  onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
-                >
-                  Check In
-                </Button>
-              </div>
-            )
-          }
+          {isUserPromoter && (
+            <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+              <p className="text-accent-500">You have check in access for this event.</p>
+              <Button
+                variant="primary"
+                size="sm"
+                iconRight="icon-arrow-outward"
+                className="rounded-full"
+                onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
+              >
+                Check In
+              </Button>
+            </div>
+          )}
 
           {event.private && (
             <>
               <Spacer className="h-6" />
               <Badge className="bg-gradient-to-r from-accent-500/16 to-warning-500/16">
                 <div className="bg-gradient-to-r from-accent-500 to-warning-500 bg-clip-text flex items-center gap-1">
-                  <i aria-hidden="true" className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 " />
+                  <i
+                    aria-hidden="true"
+                    className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 "
+                  />
                   <span className="text-transparent bg-clip-text">Private Event</span>
                 </div>
               </Badge>
@@ -200,21 +238,8 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        {(event.layout_sections || DEFAULT_LAYOUT_SECTIONS)?.map((item) => {
-          switch (item.id) {
-            case 'registration':
-              return event ? <EventAccess key={item.id} event={event} /> : null;
-            case 'about':
-              return <AboutSection key={item.id} event={event} />;
-            case 'collectibles':
-              return attending ? <EventCollectibles key={item.id} event={event} /> : null;
-            case 'location':
-              return <LocationSection key={item.id} event={event} />;
 
-            default:
-              break;
-          }
-        })}
+        {renderSections()}
 
         <SubEventSection event={event} />
         <GallerySection event={event} />

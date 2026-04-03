@@ -13,6 +13,7 @@ import {
   Event,
   GetUpcomingEventsDocument,
   PublishEventDocument,
+  UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
@@ -29,6 +30,7 @@ import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
+import { useEditor } from '@craftjs/core';
 
 const devices = {
   desktop: {
@@ -44,6 +46,11 @@ function ManageLayoutToolbar() {
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
+
+  const { actions, query, canUndo, canRedo } = useEditor((state, query) => ({
+    canUndo: query.history.canUndo(),
+    canRedo: query.history.canRedo(),
+  }));
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -71,6 +78,19 @@ function ManageLayoutToolbar() {
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to save theme');
+    },
+  });
+
+  const [updateEventSettings, { loading: savingLayout }] = useMutation(UpdateEventSettingsDocument, {
+    onComplete: (_, data) => {
+      if (data?.updateEvent?._id) {
+        toast.success('Layout saved successfully!');
+        store.setData({ ...state.data, ...data.updateEvent } as Event);
+        updateEvent(data.updateEvent);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save layout');
     },
   });
 
@@ -104,6 +124,29 @@ function ManageLayoutToolbar() {
         input: { theme_data: themeState },
       },
     });
+  };
+
+  const handleSaveLayout = () => {
+    if (!event?._id) return;
+
+    try {
+      const nodes = query.node('ROOT').get().data.nodes;
+      const layoutSections = nodes.map((id) => ({
+        id,
+        hidden: false,
+      }));
+
+      updateEventSettings({
+        variables: {
+          id: event._id,
+          input: {
+            layout_sections: layoutSections,
+          },
+        },
+      });
+    } catch (e) {
+      toast.error('Failed to parse layout structure');
+    }
   };
 
   const handleResetTheme = () => {
@@ -279,6 +322,33 @@ function ManageLayoutToolbar() {
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
             )}
+
+            {['design', 'preview'].includes(state.activeTab) && (
+              <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-arrow-back-sharp"
+                  disabled={!canUndo}
+                  onClick={() => actions.history.undo()}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-arrow-back-sharp rotate-180"
+                  disabled={!canRedo}
+                  onClick={() => actions.history.redo()}
+                />
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  loading={savingLayout}
+                  onClick={handleSaveLayout}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -360,6 +430,35 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
+            {['preview', 'design'].includes(state.activeTab) && (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  className="rounded-full aspect-square"
+                  icon="icon-arrow-back-sharp"
+                  disabled={!canUndo}
+                  onClick={() => actions.history.undo()}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  className="rounded-full aspect-square"
+                  icon="icon-arrow-back-sharp rotate-180"
+                  disabled={!canRedo}
+                  onClick={() => actions.history.redo()}
+                />
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="rounded-full px-4"
+                  loading={savingLayout}
+                  onClick={handleSaveLayout}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            )}
             {['preview', 'design'].includes(state.activeTab) && (
               <Button
                 size="sm"
