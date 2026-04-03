@@ -3,13 +3,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { debounce, kebabCase } from 'lodash';
 import React from 'react';
 import { Controller, useForm, UseFormReturn } from 'react-hook-form';
-import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
 import { getErrorMessage } from '$lib/utils/error';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
-import { Address, CheckSpaceSlugDocument, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { CheckSpaceSlugDocument, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useClient, useMutation } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { uploadFiles } from '$lib/utils/file';
@@ -18,22 +17,7 @@ import clsx from 'clsx';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useSession } from '$lib/hooks/useSession';
-
-const validationSchema = z.object({
-  title: z.string().min(1, { message: 'Title is required.' }),
-  slug: z
-    .string()
-    .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
-});
-
-type FormValues = {
-  title: string;
-  description?: string;
-  slug: string;
-  image_avatar?: string;
-  image_cover?: string;
-  address?: Address;
-};
+import { communityValidationSchema, type CommunityFormValues } from './communityFormSchema';
 
 export function CommunityForm() {
   const router = useRouter();
@@ -45,7 +29,7 @@ export function CommunityForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [create] = useMutation(CreateSpaceDocument);
 
-  const form = useForm<FormValues>({
+  const form = useForm<CommunityFormValues>({
     defaultValues: {
       title: '',
       description: undefined,
@@ -54,7 +38,7 @@ export function CommunityForm() {
       image_cover: undefined,
       address: undefined,
     },
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(communityValidationSchema),
   });
 
   const {
@@ -70,7 +54,7 @@ export function CommunityForm() {
     if (!me && !session && mounted) signIn(false);
   }, [me, session, mounted]);
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: CommunityFormValues) => {
     try {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
@@ -108,7 +92,7 @@ export function CommunityFormContent({
   form,
   mobile,
 }: {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<CommunityFormValues>;
   /** @description force mobile view such as right pane */
   mobile?: boolean;
 }) {
