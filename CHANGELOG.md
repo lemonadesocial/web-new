@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.32.1](https://github.com/lemonadesocial/web-new/compare/v10.32.0...v10.32.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* preserve community form fields in Zod validation ([6d95580](https://github.com/lemonadesocial/web-new/commit/6d95580815ad0933e2ae0b7eb91d5dbdd987ca11))
+
 ## [10.32.0](https://github.com/lemonadesocial/web-new/compare/v10.31.0...v10.32.0) (2026-04-02)
 
 
