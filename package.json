@@ -87,7 +87,7 @@
     "marked": "^16.3.0",
     "mongodb": "^6.15.0",
     "motion": "^12.34.3",
-    "next": "15.4.10",
+    "next": "15.5.14",
     "oidc-client-ts": "^3.2.0",
     "open-graph-scraper": "^6.10.0",
     "pinata": "^2.5.1",
