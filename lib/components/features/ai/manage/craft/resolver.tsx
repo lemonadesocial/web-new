@@ -1,27 +1,101 @@
 import React from 'react';
-import { useNode } from '@craftjs/core';
+import { useNode, useEditor } from '@craftjs/core';
 import { AboutSection } from '$lib/components/features/event/AboutSection';
 import { LocationSection } from '$lib/components/features/event/LocationSection';
 import { EventAccess } from '$lib/components/features/event-access/EventAccess';
 import { EventCollectibles } from '$lib/components/features/event-collectibles/EventCollectibles';
 import { SubEventSection } from '$lib/components/features/event/SubEventSection';
 import { GallerySection } from '$lib/components/features/event/GallerySection';
+import { Button } from '$lib/components/core';
 
 export const CraftSection = ({ children, name }: { children: React.ReactNode; name?: string }) => {
   const {
+    id,
     connectors: { connect, drag },
     selected,
     hovered,
-  } = useNode((state) => ({
-    selected: state.events.selected,
-    hovered: state.events.hovered,
+  } = useNode((node) => ({
+    selected: node.events.selected,
+    hovered: node.events.hovered,
   }));
+
+  const { actions, query } = useEditor();
+
+  // Fetch real-time data from query to avoid stale closures
+  const getPosition = () => {
+    const node = query.node(id).get();
+    const parentId = node.data.parent;
+    if (!parentId) return { parentId: null, index: -1, total: 0 };
+    
+    const siblings = query.node(parentId).get().data.nodes;
+    return {
+      parentId,
+      index: siblings.indexOf(id),
+      total: siblings.length
+    };
+  };
+
+  const { index, total, parentId } = getPosition();
+  const isFirst = index === 0;
+  const isLast = index === total - 1;
+
+  const moveUp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!parentId || isFirst) return;
+    actions.move(id, parentId, index - 1);
+  };
+
+  const moveDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!parentId || isLast) return;
+    // In Craft.js, to move a node "down" (forward in the array) within the same parent, 
+    // we move it to index + 2 because the node is removed from the array before 
+    // being re-inserted, and we want it to land after the next sibling.
+    actions.move(id, parentId, index + 2);
+  };
+
+  const remove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    actions.delete(id);
+  };
 
   return (
     <div
       ref={(ref: any) => ref && connect(drag(ref))}
       className="relative group/section w-full p-3"
     >
+      {/* Action Buttons Toolbar */}
+      {selected && (
+        <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+          <Button
+            size="xs"
+            variant="tertiary-alt"
+            icon="icon-arrow-back-sharp rotate-90"
+            disabled={isFirst}
+            onClick={moveUp}
+            className="h-7 w-7 p-0"
+          />
+          <Button
+            size="xs"
+            variant="tertiary-alt"
+            icon="icon-arrow-back-sharp -rotate-90"
+            disabled={isLast}
+            onClick={moveDown}
+            className="h-7 w-7 p-0"
+          />
+          <Button
+            size="xs"
+            variant="tertiary-alt"
+            icon="icon-delete"
+            onClick={remove}
+            className="h-7 w-7 p-0 hover:text-error!"
+          />
+        </div>
+      )}
+
       {/* Selection/Hover Indicator Overlay */}
       {(selected || hovered) && (
         <div 
@@ -51,7 +125,6 @@ export const Container = ({ children, ...props }: any) => {
     </div>
   );
 };
-
 Container.craft = {
   isCanvas: true,
   rules: {
