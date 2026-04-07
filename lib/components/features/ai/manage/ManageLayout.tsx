@@ -28,7 +28,17 @@ function ManageLayout() {
 
   return (
     <div className="h-dvh flex flex-col bg-overlay-primary">
-      <Editor resolver={resolver}>
+      <Editor 
+        resolver={resolver} 
+        enabled={true}
+        indicator={{
+          success: 'var(--color-accent-400)',
+          error: 'var(--color-danger-400)',
+          transition: '0.2s',
+          thickness: 3,
+          className: 'z-200'
+        }}
+      >
         <Header showUI={false} />
         <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={event?.theme_data}>
           <ManageLayoutToolbar />

@@ -47,9 +47,10 @@ function ManageLayoutToolbar() {
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
 
-  const { actions, query, canUndo, canRedo } = useEditor((state, query) => ({
+  const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
+    isSelected: state.events.selected.size > 0,
   }));
 
   // NOTE: its bc using different store
@@ -191,7 +192,7 @@ function ManageLayoutToolbar() {
       <div className="hidden md:flex h-14 items-center px-4 gap-4">
         <motion.div
           initial={false}
-          animate={{ width: state.showSidebarLeft ? 432 : 'auto' }}
+          animate={{ width: state.showSidebarLeft ? 420 : 'auto' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="flex items-center gap-3 overflow-hidden"
         >

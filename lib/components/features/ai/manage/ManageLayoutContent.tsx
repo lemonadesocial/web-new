@@ -20,6 +20,8 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
+import { useEditor } from '@craftjs/core';
+import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -47,6 +49,10 @@ function ManageLayoutContent() {
   const [themeState] = useEventTheme();
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
+
+  const { isSelected, actions } = useEditor((state) => ({
+    isSelected: state.events.selected.size > 0,
+  }));
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
   const cachedEvent = state.data as Event | undefined;
@@ -119,16 +125,24 @@ function ManageLayoutContent() {
         <main
           data-theme-scope="event-preview"
           className={clsx(
-            'relative isolate overflow-hidden flex flex-col w-full h-full pt-2 md:px-4',
+            'relative isolate flex flex-col w-full h-full',
             themeState.theme,
             themeState.config.name,
             themeState.config.color,
             themeState.config.mode,
           )}
           style={themeState.variables.font as React.CSSProperties}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) actions.selectNode(null);
+          }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
-          <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
+          <div
+            className="page relative z-10 mx-auto px-4 xl:px-0 pt-10 pb-20"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) actions.selectNode(null);
+            }}
+          >
             <EventGuestSide event={event} autoSave={false} isEditable={true} />
           </div>
         </main>
@@ -138,17 +152,31 @@ function ManageLayoutContent() {
 
   return (
     <>
-      <div className="hidden md:flex px-0 md:p-1 flex-1 overflow-hidden pb-10">
+      <AnimatePresence>
+        {isSelected && (
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed inset-y-0 left-0 min-w-110 w-full z-[100] bg-overlay-primary shadow-2xl hidden md:block"
+          >
+            <SettingsPanel />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="hidden md:flex px-0 flex-1 overflow-hidden pb-10">
         <AnimatePresence initial={false}>
           {state.showSidebarLeft && (
             <motion.div
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 440, opacity: 1 }}
-              exit={{ width: 0, opacity: 0, marginRight: 0 }}
+              animate={{ width: 448, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-              className="overflow-hidden shrink-0 hidden md:block"
+              className="overflow-hidden shrink-0 hidden md:block h-full"
             >
-              <div data-mode={state.device} className={clsx('w-110 h-full pt-3')}>
+              <div data-mode={state.device} className={clsx('min-w-110 w-full h-full relative isolate pt-3')}>
                 <SidebarComp />
               </div>
             </motion.div>
@@ -167,13 +195,11 @@ function ManageLayoutContent() {
               state.device === 'mobile' && 'md:w-sm',
             )}
           >
-            {state.activeTab === 'manage' ? (
-              match(state.layoutType)
-                .with('event', () => <ManageEventLayout shortid={shortid} />)
-                .otherwise(() => null)
-            ) : (
-              !isMobile && previewContent
-            )}
+            {state.activeTab === 'manage'
+              ? match(state.layoutType)
+                  .with('event', () => <ManageEventLayout shortid={shortid} />)
+                  .otherwise(() => null)
+              : !isMobile && previewContent}
           </div>
         </div>
       </div>
@@ -186,13 +212,11 @@ function ManageLayoutContent() {
             state.mobilePane !== 'main' && 'pointer-events-none',
           )}
         >
-          {state.activeTab === 'manage' ? (
-            match(state.layoutType)
-              .with('event', () => <ManageEventLayout shortid={shortid} />)
-              .otherwise(() => null)
-          ) : (
-            isMobile && previewContent
-          )}
+          {state.activeTab === 'manage'
+            ? match(state.layoutType)
+                .with('event', () => <ManageEventLayout shortid={shortid} />)
+                .otherwise(() => null)
+            : isMobile && previewContent}
         </div>
 
         <AnimatePresence initial={false}>
