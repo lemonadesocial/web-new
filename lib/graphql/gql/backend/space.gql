@@ -452,6 +452,144 @@ query GetSpaceSendingQuota($space: MongoID!) {
   }
 }
 
+query GetSpaceStatistics($space: MongoID!) {
+  getSpaceStatistics(space: $space) {
+    admins
+    ambassadors
+    avg_event_rating
+    created_events
+    event_attendees
+    submitted_events
+    subscribers
+  }
+}
+
+query GetSpaceEventSummary($space: MongoID!) {
+  getSpaceEventSummary(space: $space) {
+    all_events
+    irl_events
+    live_events
+    past_events
+    upcoming_events
+    virtual_events
+  }
+}
+
+query GetSpaceEventsInsight(
+  $space: MongoID!
+  $skip: Int!
+  $limit: Int!
+  $search: String
+  $sort: SortInput
+  $eventTense: EventTense
+  $irlEvent: Boolean
+  $virtualEvent: Boolean
+) {
+  getSpaceEventsInsight(
+    space: $space
+    skip: $skip
+    limit: $limit
+    search: $search
+    sort: $sort
+    event_tense: $eventTense
+    irl_event: $irlEvent
+    virtual_event: $virtualEvent
+  ) {
+    total
+    items {
+      _id
+      shortid
+      title
+      cover
+      start
+      timezone
+      virtual
+      tickets_count
+      checkins
+      reviews
+      rating
+      address {
+        title
+        city
+        region
+        country
+      }
+    }
+  }
+}
+
+query GetSpaceMemberAmountByDate($space: MongoID!, $role: SpaceRole!, $start: DateTimeISO!, $end: DateTimeISO!) {
+  getSpaceMemberAmountByDate(space: $space, role: $role, start: $start, end: $end) {
+    _id
+    total
+  }
+}
+
+query GetTopSpaceHosts($space: MongoID!, $limit: Float!) {
+  getTopSpaceHosts(space: $space, limit: $limit) {
+    hosted_event_count
+    space_member {
+      role
+    }
+    user_expanded {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+      new_photos_expanded(limit: 1) {
+        _id
+        bucket
+        key
+        type
+        url
+      }
+    }
+  }
+}
+
+query GetTopSpaceEventAttendees($space: MongoID!, $limit: Float!) {
+  getTopSpaceEventAttendees(space: $space, limit: $limit) {
+    attended_event_count
+    user_expanded {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+      new_photos_expanded(limit: 1) {
+        _id
+        bucket
+        key
+        type
+        url
+      }
+    }
+    non_login_user {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+      new_photos_expanded(limit: 1) {
+        _id
+        bucket
+        key
+        type
+        url
+      }
+    }
+  }
+}
+
+query GetSpaceEventLocationsLeaderboard($space: MongoID!, $limit: Float!, $city: Boolean) {
+  getSpaceEventLocationsLeaderboard(space: $space, limit: $limit, city: $city) {
+    city
+    country
+    total
+  }
+}
+
 query ListSpaceNewsletters($space: MongoID!, $draft: Boolean, $sent: Boolean, $scheduled: Boolean) {
   listSpaceNewsletters(space: $space, draft: $draft, sent: $sent, scheduled: $scheduled) {
     _id
