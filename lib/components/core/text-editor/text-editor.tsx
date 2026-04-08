@@ -19,7 +19,7 @@ import { ImageResize } from './resize-image';
 
 interface TextEditorToolbar {
   bubble?: Record<string, boolean | number[]>;
-  float?: Record<string, { enable?: boolean; label?: string; level?: number[]; }>;
+  float?: Record<string, { enable?: boolean; label?: string; level?: number[] }>;
 }
 
 type TextEditorProps = {
@@ -76,110 +76,111 @@ const defaulToolBar = {
   },
 };
 
-const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
-  content = '',
-  placeholder = 'Write something …',
-  containerClass = '',
-  onChange,
-  toolbar = defaulToolBar,
-  directory = 'event',
-  readOnly = false,
-  onFocus,
-  onBlur,
-  onSelectionChange,
-  label,
-}, ref) => {
-  const editor = useEditor({
-    immediatelyRender: false,
-    extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder, showOnlyWhenEditable: false }),
-      Underline,
-      Strike,
-      CodeBlock,
-      Link.configure({ autolink: true }),
-      ImageResize.configure({ inline: true, allowBase64: true }),
-    ],
-    content: DOMPurify.sanitize(content),
-    editorProps: {
-      attributes: {
-        class: twMerge(
-          'tiptap border hover:border-quaternary focus:border-primary px-3 py-2.5 min-h-27.5 rounded-sm outline-none',
-          containerClass,
-        ),
+const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(
+  (
+    {
+      content = '',
+      placeholder = 'Write something …',
+      containerClass = '',
+      onChange,
+      toolbar = defaulToolBar,
+      directory = 'event',
+      readOnly = false,
+      onFocus,
+      onBlur,
+      onSelectionChange,
+      label,
+    },
+    ref,
+  ) => {
+    const editor = useEditor({
+      immediatelyRender: false,
+      extensions: [
+        StarterKit,
+        Placeholder.configure({ placeholder, showOnlyWhenEditable: false }),
+        Underline,
+        Strike,
+        CodeBlock,
+        Link.configure({ autolink: true }),
+        ImageResize.configure({ inline: true, allowBase64: true }),
+      ],
+      content: DOMPurify.sanitize(content),
+      editorProps: {
+        attributes: {
+          class: twMerge(
+            'tiptap border hover:border-quaternary focus:border-primary px-3 py-2.5 min-h-27.5 rounded-sm outline-none',
+            containerClass,
+          ),
+        },
+        transformPastedHTML(html) {
+          return DOMPurify.sanitize(html, {
+            ADD_ATTR: ['target'], // keep target="_blank" for links
+          });
+        },
       },
-      transformPastedHTML(html) {
-        return DOMPurify.sanitize(html, {
-          ADD_ATTR: ['target'], // keep target="_blank" for links
-        });
+      onUpdate({ editor }) {
+        // Only send content if it's not empty
+        if (editor.isEmpty) {
+          onChange?.('');
+        } else {
+          onChange?.(DOMPurify.sanitize(editor.getHTML(), { ADD_ATTR: ['target'] }));
+        }
       },
-    },
-    onUpdate({ editor }) {
-      // Only send content if it's not empty
-      if (editor.isEmpty) {
-        onChange?.('');
-      } else {
-        onChange?.(DOMPurify.sanitize(editor.getHTML(), { ADD_ATTR: ['target'] }));
+      onSelectionUpdate() {
+        onSelectionChange?.();
+      },
+    });
+
+    React.useEffect(() => {
+      if (!editor) {
+        return undefined;
       }
-    },
-    onSelectionUpdate() {
-      onSelectionChange?.();
-    },
-  });
 
-  React.useEffect(() => {
-    if (!editor) {
-      return undefined;
-    }
+      editor.setEditable(!readOnly);
+    }, [editor, readOnly]);
 
-    editor.setEditable(!readOnly);
-  }, [editor, readOnly]);
+    React.useEffect(() => {
+      if (!editor) return;
 
-  React.useEffect(() => {
-    if (!editor) return;
+      const nextContent = content ? DOMPurify.sanitize(content) : '';
+      const currentContent = editor.isEmpty ? '' : editor.getHTML();
 
-    const nextContent = content ? DOMPurify.sanitize(content) : '';
-    const currentContent = editor.isEmpty ? '' : editor.getHTML();
+      if (currentContent === nextContent) return;
 
-    if (currentContent === nextContent) return;
+      editor.commands.setContent(nextContent, false);
+    }, [content, editor]);
 
-    editor.commands.setContent(nextContent, false);
-  }, [content, editor]);
+    useImperativeHandle(
+      ref,
+      () => ({
+        commands: {
+          clearContent: () => editor?.commands.clearContent(),
+          insertContent: (content: string) => editor?.commands.insertContent(content),
+          toggleBold: () => editor?.chain().focus().toggleBold().run(),
+          toggleItalic: () => editor?.chain().focus().toggleItalic().run(),
+        },
+        isActive: {
+          bold: () => editor?.isActive('bold') ?? false,
+          italic: () => editor?.isActive('italic') ?? false,
+        },
+      }),
+      [editor],
+    );
 
-  useImperativeHandle(ref, () => ({
-    commands: {
-      clearContent: () => editor?.commands.clearContent(),
-      insertContent: (content: string) => editor?.commands.insertContent(content),
-      toggleBold: () => editor?.chain().focus().toggleBold().run(),
-      toggleItalic: () => editor?.chain().focus().toggleItalic().run(),
-    },
-    isActive: {
-      bold: () => editor?.isActive('bold') ?? false,
-      italic: () => editor?.isActive('italic') ?? false,
-    },
-  }), [editor]);
+    if (!editor) return null;
 
-  if (!editor) return null;
-
-  return (
-    <>
-      {
-        toolbar.bubble && (
-          <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
-        )
-      }
-      {
-        toolbar.float && (
-          <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
-        )
-      }
-      <div className="flex flex-col gap-1.5">
-        {label && <label className="text-secondary text-sm font-medium">{label}</label>}
-        <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
-      </div>
-    </>
-  );
-});
+    return (
+      <>
+        {toolbar.bubble && <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />}
+        {toolbar.float && <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />}
+        <div className="flex flex-col gap-1.5">
+          {label && <label className="text-secondary text-sm font-medium">{label}</label>}
+          <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
+        </div>
+      </>
+    );
+  },
+);
 
 TextEditor.displayName = 'TextEditor';
 
