@@ -20,7 +20,7 @@ export function SettingsPanel() {
   if (!selected) return null;
 
   return (
-    <div className="flex flex-col h-full bg-overlay-primary overflow-hidden">
+    <div className="flex flex-col h-full w-full max-w-[448px] bg-overlay-primary overflow-hidden border-r border-card-border">
       <div className="flex items-center justify-between px-4 h-12 border-b border-card-border shrink-0">
         <h2 className="text-lg font-semibold truncate flex-1">{selected.name}</h2>
         <Button 

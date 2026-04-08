@@ -159,7 +159,7 @@ function ManageLayoutContent() {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-y-0 left-0 min-w-110 w-full z-[100] bg-overlay-primary shadow-2xl hidden md:block"
+            className="fixed inset-y-0 left-0 w-[448px] z-[100] bg-overlay-primary shadow-2xl hidden md:block"
           >
             <SettingsPanel />
           </motion.div>
