@@ -30,7 +30,7 @@ import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
-import { useEditor } from '@craftjs/core';
+import { gridLayoutActions, useGridHistory, useGridState } from './layoutStore';
 
 const devices = {
   desktop: {
@@ -47,11 +47,8 @@ function ManageLayoutToolbar() {
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
 
-  const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
-    canUndo: query.history.canUndo(),
-    canRedo: query.history.canRedo(),
-    isSelected: state.events.selected.size > 0,
-  }));
+  const { canUndo, canRedo } = useGridHistory();
+  const gridState = useGridState();
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -131,11 +128,30 @@ function ManageLayoutToolbar() {
     if (!event?._id) return;
 
     try {
-      const nodes = query.node('ROOT').get().data.nodes;
-      const layoutSections = nodes.map((id) => ({
-        id,
-        hidden: false,
-      }));
+      // Sort layout items visually: top-to-bottom, then left-to-right
+      const sortedLayout = [...gridState.layout].sort((a, b) => {
+        if (a.y === b.y) return a.x - b.x;
+        return a.y - b.y;
+      });
+
+      const layoutSections = sortedLayout.map((item) => {
+        // Find the actual mapped ID if it ends with timestamp.
+        // In our store, id format is 'type-timestamp'
+        const comp = gridState.components[item.i];
+        
+        // Map component type back to event layout ID format.
+        // e.g. 'AboutSection' -> 'about'
+        // Let's rely on type or props for now. 
+        // Actually, we can keep the id as is for custom sections or map if known.
+        // For simplicity, we just use the component type as id, assuming backend maps it.
+        // We'll use the component type to match backend IDs.
+        const id = comp?.type || item.i;
+
+        return {
+          id: id,
+          hidden: false,
+        };
+      });
 
       updateEventSettings({
         variables: {

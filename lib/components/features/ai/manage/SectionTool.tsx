@@ -2,10 +2,9 @@
 import React from 'react';
 import clsx from 'clsx';
 import { Card } from '$lib/components/core';
-import { useEditor, Element } from '@craftjs/core';
 import { useStoreManageLayout } from './store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
-import { resolver } from './craft/resolver';
+import { gridLayoutActions } from './layoutStore';
 
 const eventSections = [
   { id: 'Hero', name: 'Event Hero', component: 'EventHero' },
@@ -58,24 +57,18 @@ export function SectionTool() {
   );
 }
 
-function SectionCard({ name, componentName }: { name: string; componentName: keyof typeof resolver }) {
-  const { connectors } = useEditor();
+function SectionCard({ name, componentName }: { name: string; componentName: string }) {
   const state = useStoreManageLayout();
   const event = state.data as Event | undefined;
-  const component = resolver[componentName];
 
   return (
     <div
-      ref={(ref) => {
-        if (ref) {
-          // React 19 fix: Passing the component reference directly instead of a string
-          // to avoid casing warnings and ensure correct resolution.
-          connectors.create(ref, <Element is={component} event={event} />);
-        }
+      onClick={() => {
+        gridLayoutActions.addSection(componentName, { event });
       }}
       className="flex flex-col gap-2 cursor-pointer group"
     >
-      <Card.Root className="aspect-square p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all group-hover:bg-card-hover" />
+      <Card.Root className="aspect-square p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all group-hover:bg-card-hover border-dashed hover:border-primary/50 text-tertiary" />
       <p className="text-[10px] text-center truncate text-tertiary">{name}</p>
     </div>
   );

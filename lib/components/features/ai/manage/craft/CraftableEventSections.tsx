@@ -1,151 +1,98 @@
 'use client';
 import React from 'react';
-import { Frame, Element } from '@craftjs/core';
+import GridLayout from 'react-grid-layout';
+import clsx from 'clsx';
 import { Event } from '$lib/graphql/generated/backend/graphql';
-import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
-import { Container, Grid, Col } from './resolver';
+import { useContainerWidth } from 'react-grid-layout';
+import { gridLayoutActions, useGridState, useGridSelectedId } from '../layoutStore';
+import { resolver } from './resolver';
+
+// Import V2 Styles
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
 export function CraftableEventSections({ event, attending }: { event: Event; attending: boolean }) {
-  // Map sections to their craft.js identifiers in the resolver
-  const sectionMap: Record<string, string> = {
-    registration: 'EventAccess',
-    about: 'AboutSection',
-    collectibles: 'EventCollectibles',
-    location: 'LocationSection',
+  const state = useGridState();
+  const selectedId = useGridSelectedId();
+  const { width, containerRef, mounted } = useContainerWidth();
+
+  const handleLayoutChange = (currentLayout: any) => {
+    gridLayoutActions.updateLayout(currentLayout);
   };
 
-  // Construct initial state JSON for Craft.js
-  const sections = (event.layout_sections || DEFAULT_LAYOUT_SECTIONS).reduce((acc: any, item: any) => {
-    const componentName = sectionMap[item.id];
-    if (!componentName) return acc;
-    if (item.id === 'collectibles' && !attending) return acc;
+  return (
+    <div ref={containerRef} className="w-full min-h-dvh">
+      {mounted && (
+        <GridLayout
+          className="layout"
+          layout={state.layout}
+          cols={12}
+          rowHeight={30}
+          width={width || 1200}
+          onLayoutChange={handleLayoutChange}
+          draggableHandle=".drag-handle"
+          margin={[16, 16]}
+          compactType="vertical"
+        >
+          {state.layout.map((item) => {
+            const compData = state.components[item.i];
+            if (!compData) return null;
 
-    acc[item.id] = {
-      type: { resolvedName: componentName },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'main-col',
-      displayName: componentName,
-      custom: {},
-    };
-    return acc;
-  }, {});
+            const Component = (resolver as any)[compData.type];
+            if (!Component) return null;
 
-  const json = {
-    ROOT: {
-      type: { resolvedName: 'Container' },
-      isCanvas: true,
-      props: { className: 'w-full' },
-      nodes: ['main-grid'],
-      linkedNodes: {},
-      parent: null,
-      displayName: 'Container',
-      custom: {},
-    },
-    'main-grid': {
-      type: { resolvedName: 'Grid' },
-      isCanvas: true,
-      props: { gap: '18' },
-      nodes: ['sidebar-col', 'main-col'],
-      linkedNodes: {},
-      parent: 'ROOT',
-      displayName: 'Grid',
-      custom: {},
-    },
-    'sidebar-col': {
-      type: { resolvedName: 'Col' },
-      isCanvas: true,
-      props: { width: '74' },
-      nodes: ['sidebar-image', 'community-section', 'hosted-by-section', 'attendees-section'],
-      linkedNodes: {},
-      parent: 'main-grid',
-      displayName: 'Sidebar Column',
-      custom: {},
-    },
-    'sidebar-image': {
-      type: { resolvedName: 'EventSidebarImage' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'sidebar-col',
-      displayName: 'Event Image',
-      custom: {},
-    },
-    'community-section': {
-      type: { resolvedName: 'CommunitySection' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'sidebar-col',
-      displayName: 'Community',
-      custom: {},
-    },
-    'hosted-by-section': {
-      type: { resolvedName: 'HostedBySection' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'sidebar-col',
-      displayName: 'Hosted By',
-      custom: {},
-    },
-    'attendees-section': {
-      type: { resolvedName: 'AttendeesSection' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'sidebar-col',
-      displayName: 'Attendees',
-      custom: {},
-    },
-    'main-col': {
-      type: { resolvedName: 'Col' },
-      isCanvas: true,
-      props: { width: '' },
-      nodes: ['event-hero', 'datetime-block', 'location-block', ...Object.keys(sections)],
-      linkedNodes: {},
-      parent: 'main-grid',
-      displayName: 'Main Column',
-      custom: {},
-    },
-    'event-hero': {
-      type: { resolvedName: 'EventHero' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'main-col',
-      displayName: 'Event Hero',
-      custom: {},
-    },
-    'datetime-block': {
-      type: { resolvedName: 'EventDateTimeBlock' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'main-col',
-      displayName: 'Date & Time',
-      custom: {},
-    },
-    'location-block': {
-      type: { resolvedName: 'EventLocationBlock' },
-      isCanvas: false,
-      props: { event },
-      nodes: [],
-      linkedNodes: {},
-      parent: 'main-col',
-      displayName: 'Location Info',
-      custom: {},
-    },
-    ...sections,
-  };
+            const isSelected = selectedId === item.i;
 
-  return <Frame data={JSON.stringify(json)} />;
+            return (
+              <div key={item.i}>
+                <div
+                  className={clsx(
+                    'h-full bg-background border border-card-border shadow-sm rounded-lg overflow-hidden group/item relative transition-all',
+                    isSelected && 'border-primary shadow-lg',
+                    !isSelected && 'hover:border-primary/50'
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    gridLayoutActions.selectNode(item.i);
+                  }}
+                >
+                  {/* Drag Handle */}
+                  <div className="drag-handle absolute top-2 right-2 z-50 cursor-move opacity-0 group-hover/item:opacity-100 transition-opacity p-1.5 bg-overlay-primary border border-card-border rounded-md shadow-lg hover:bg-accent-400/10">
+                    <i className="icon-grid size-4 text-primary" />
+                  </div>
+
+                  {/* Resize Indicator */}
+                  <div className="absolute bottom-0 right-0 z-50 pointer-events-none opacity-0 group-hover/item:opacity-40 p-1">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-tertiary">
+                      <path d="M11 1L1 11M11 5L5 11M11 9L9 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+
+                  <div className="h-full overflow-auto no-scrollbar pointer-events-none group-hover/item:pointer-events-auto relative">
+                    {/* Delete button (only show on hover/select) */}
+                    <div className="absolute top-2 left-2 z-50 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          gridLayoutActions.removeSection(item.i);
+                        }}
+                        className="p-1.5 bg-danger-500/10 text-danger-500 rounded-md hover:bg-danger-500 hover:text-white transition-colors"
+                      >
+                        <i className="icon-delete size-4" />
+                      </button>
+                    </div>
+                    
+                    <div className="p-4 h-full pointer-events-none">
+                       {/* Render the actual resolved component */}
+                       <Component {...compData.props} event={event} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </GridLayout>
+      )}
+    </div>
+  );
 }
