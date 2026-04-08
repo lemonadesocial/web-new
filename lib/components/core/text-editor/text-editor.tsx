@@ -9,6 +9,7 @@ import Underline from '@tiptap/extension-underline';
 import CodeBlock from '@tiptap/extension-code-block';
 import Strike from '@tiptap/extension-strike';
 import Link from '@tiptap/extension-link';
+import DOMPurify from 'dompurify';
 
 import { FileDirectory } from '$lib/utils/file';
 
@@ -99,7 +100,7 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
       Link.configure({ autolink: true }),
       ImageResize.configure({ inline: true, allowBase64: true }),
     ],
-    content,
+    content: DOMPurify.sanitize(content),
     editorProps: {
       attributes: {
         class: twMerge(
@@ -107,13 +108,18 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
           containerClass,
         ),
       },
+      transformPastedHTML(html) {
+        return DOMPurify.sanitize(html, {
+          ADD_ATTR: ['target'], // keep target="_blank" for links
+        });
+      },
     },
     onUpdate({ editor }) {
       // Only send content if it's not empty
       if (editor.isEmpty) {
         onChange?.('');
       } else {
-        onChange?.(editor.getHTML());
+        onChange?.(DOMPurify.sanitize(editor.getHTML(), { ADD_ATTR: ['target'] }));
       }
     },
     onSelectionUpdate() {
@@ -132,7 +138,7 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
   React.useEffect(() => {
     if (!editor) return;
 
-    const nextContent = content || '';
+    const nextContent = content ? DOMPurify.sanitize(content) : '';
     const currentContent = editor.isEmpty ? '' : editor.getHTML();
 
     if (currentContent === nextContent) return;
