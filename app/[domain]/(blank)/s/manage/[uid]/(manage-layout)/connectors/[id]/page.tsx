@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+
 import { useCommunityManageSpace } from '$lib/components/features/community-manage/CommunityManageSpaceContext';
 import { ConnectorDetail } from '$lib/components/features/upgrade-to-pro/ConnectorDetail';
 
@@ -15,7 +16,7 @@ export function Page() {
       <ConnectorDetail
         spaceId={ctx.space._id}
         connectionId={params.id}
-        basePath={`/s/manage/${params.uid}/settings/connectors`}
+        basePath={`/s/manage/${params.uid}/connectors`}
       />
     </div>
   );
