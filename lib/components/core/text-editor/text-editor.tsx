@@ -9,6 +9,7 @@ import Underline from '@tiptap/extension-underline';
 import CodeBlock from '@tiptap/extension-code-block';
 import Strike from '@tiptap/extension-strike';
 import Link from '@tiptap/extension-link';
+import { Level } from '@tiptap/extension-heading';
 import DOMPurify from 'dompurify';
 
 import { FileDirectory } from '$lib/utils/file';
@@ -18,8 +19,31 @@ import TextEditorFloatingMenu from './floating-menu';
 import { ImageResize } from './resize-image';
 
 interface TextEditorToolbar {
-  bubble?: Record<string, boolean | number[]>;
-  float?: Record<string, { enable?: boolean; label?: string; level?: number[] }>;
+  bubble?: {
+    heading?: Level[];
+    bold?: boolean;
+    italic?: boolean;
+    underline?: boolean;
+    strike?: boolean;
+    code_block?: boolean;
+    quote?: boolean;
+    bullet_list?: boolean;
+    ordered_list?: boolean;
+    link?: boolean;
+    blockquote?: boolean;
+  };
+  float?: {
+    heading?: {
+      level: Level[];
+      label: string[];
+    };
+    image?: { enable: boolean; label: string };
+    divider?: { enable: boolean; label: string };
+    blockquote?: { enable: boolean; label: string };
+    bullet_list?: { enable: boolean; label: string };
+    ordered_list?: { enable: boolean; label: string };
+    quote?: { enable: boolean; label: string };
+  };
 }
 
 type TextEditorProps = {
@@ -50,7 +74,7 @@ export interface TextEditorRef {
   };
 }
 
-const defaulToolBar = {
+const defaulToolBar: TextEditorToolbar = {
   bubble: {
     heading: [1, 2],
     bold: true,
@@ -75,6 +99,7 @@ const defaulToolBar = {
     ordered_list: { enable: true, label: 'Numbered List' },
   },
 };
+
 
 const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(
   (
