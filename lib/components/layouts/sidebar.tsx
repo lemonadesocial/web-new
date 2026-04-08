@@ -9,9 +9,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
-import { isAtlasEnabled } from '$lib/services/atlas-client';
 import { userAvatar } from '$lib/utils/user';
-import { Button, Menu, MenuItem, Card, modal, drawer, toast } from '../core';
+import { Button, Menu, MenuItem, Card, modal, drawer } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
 import { GetListMySpacesDocument, Space } from '$lib/graphql/generated/backend/graphql';
@@ -113,7 +112,7 @@ const Sidebar = () => {
 
   const isActive = (item: { path: string }) =>
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
-  const isRewardsActive = pathname.includes('/s/manage/') && pathname.includes('/rewards');
+  const isConnectorsActive = pathname.includes('/s/manage/') && pathname.includes('/connectors');
   const isUpgradeActive = pathname.startsWith('/upgrade/');
 
   const handleUpgradeClick = () => {
@@ -125,14 +124,9 @@ const Sidebar = () => {
     signIn();
   };
 
-  const handleRewardsClick = () => {
+  const handleConnectorsClick = () => {
     if (me || account) {
-      if (!isAtlasEnabled()) {
-        toast.success('Coming soon');
-        return;
-      }
-
-      if (mySpaces.length) router.push(`/s/manage/${mySpaces[0].slug || mySpaces[0]._id}/rewards`);
+      if (mySpaces.length) router.push(`/s/manage/${mySpaces[0].slug || mySpaces[0]._id}/connectors`);
       return;
     }
 
@@ -254,12 +248,12 @@ const Sidebar = () => {
           <div className="border-t p-3 pt-4 flex flex-col gap-3">
             <SidebarFooterAction
               toggle={toggle}
-              active={isRewardsActive}
-              label="Rewards"
-              subtitle="Earn credits for your hubs"
-              icon="icon-gift-line"
-              iconBadgeClassName="bg-warning-600"
-              onClick={handleRewardsClick}
+              active={isConnectorsActive}
+              label="Connectors"
+              subtitle="Manage community integrations"
+              icon="icon-connector-line"
+              iconBadgeClassName="bg-primary"
+              onClick={handleConnectorsClick}
             />
 
             <SidebarFooterAction

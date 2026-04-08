@@ -22,9 +22,10 @@ import { CONNECTOR_ICONS, getConnectorErrorMessage } from './utils';
 
 type ConnectorsProps = {
   space: Space;
+  basePath?: string;
 };
 
-export function Connectors({ space }: ConnectorsProps) {
+export function Connectors({ space, basePath }: ConnectorsProps) {
   const searchParams = useSearchParams();
   const handledQueryRef = React.useRef<string | null>(null);
 
@@ -120,6 +121,7 @@ export function Connectors({ space }: ConnectorsProps) {
                 isConnected={isConnected}
                 connectionId={connection?.id}
                 space={space}
+                basePath={basePath}
                 refetchSpaceConnections={refetchSpaceConnections}
               />
             );
@@ -136,17 +138,19 @@ type ConnectorCardProps = {
   isConnected: boolean;
   connectionId?: string;
   space: Space;
+  basePath?: string;
   refetchSpaceConnections: () => Promise<unknown>;
 };
 
-function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceConnections }: ConnectorCardProps) {
+function ConnectorCard({ item, isConnected, connectionId, space, basePath, refetchSpaceConnections }: ConnectorCardProps) {
   const router = useRouter();
   const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
+  const connectorBasePath = basePath ?? `/s/manage/${space.slug || space._id}/settings/connectors`;
   const handleViewActions = React.useCallback(() => {
     if (!connectionId) return;
 
-    router.push(`/s/manage/${space.slug || space._id}/settings/connectors/${connectionId}`);
-  }, [connectionId, router, space._id, space.slug]);
+    router.push(`${connectorBasePath}/${connectionId}`);
+  }, [connectionId, connectorBasePath, router]);
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
     onError: (error) => {

@@ -21,7 +21,7 @@ const menu = [
   { name: 'Agents', page: 'agents' },
   { name: 'Newsletters', page: 'newsletters' },
   { name: 'Payments', page: 'payments' },
-  { name: 'Rewards', page: 'rewards' },
+  { name: 'Connectors', page: 'connectors' },
   { name: 'Launchpad', page: 'launchpad' },
   { name: 'Insights', page: 'insights' },
   { name: 'Settings', page: 'settings' },

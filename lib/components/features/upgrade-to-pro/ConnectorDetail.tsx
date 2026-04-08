@@ -47,12 +47,13 @@ function TriggerTag({ type }: { type: string }) {
 type ConnectorDetailProps = {
   spaceId: string;
   connectionId: string;
+  basePath?: string;
 };
 
-export function ConnectorDetail({ spaceId, connectionId }: ConnectorDetailProps) {
+export function ConnectorDetail({ spaceId, connectionId, basePath }: ConnectorDetailProps) {
   const params = useParams<{ domain?: string; uid: string; id: string }>();
   const domain = params.domain ? `/${params.domain}` : '';
-  const connectorsHref = `${domain}/s/manage/${params.uid}/settings/connectors`;
+  const connectorsHref = basePath ?? `${domain}/s/manage/${params.uid}/settings/connectors`;
 
   const [logOffset, setLogOffset] = useState(0);
   const LOG_PAGE_SIZE = 10;
