@@ -20,15 +20,15 @@ export function SettingsPanel() {
   if (!selected) return null;
 
   return (
-    <div className="flex flex-col h-full w-full max-w-[448px] bg-overlay-primary overflow-hidden border-r border-card-border">
-      <div className="flex items-center justify-between px-4 h-12 border-b border-card-border shrink-0">
-        <h2 className="text-lg font-semibold truncate flex-1">{selected.name}</h2>
-        <Button 
-          variant="tertiary-alt" 
-          size="sm" 
-          icon="icon-arrow-back-sharp" 
-          onClick={() => actions.selectNode(null)} 
-          className="shrink-0 aspect-square rounded-sm p-0 flex items-center justify-center bg-(--btn-tertiary)!"
+    <div className="flex flex-col h-full w-full max-w-[448px] bg-overlay-primary overflow-hidden border border-card-border rounded-sm">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-card-border shrink-0 gap-3">
+        <p className="truncate flex-1">{selected.name}</p>
+        <Button
+          variant="tertiary-alt"
+          size="sm"
+          icon="icon-keyboard-double-arrow-left"
+          onClick={() => actions.selectNode(null)}
+          className="aspect-square"
         />
       </div>
 
@@ -43,16 +43,13 @@ export function SettingsPanel() {
       </div>
 
       <div className="p-4 border-t border-card-border bg-overlay-primary shrink-0">
-        <div className="flex gap-2">
-           <div className="flex items-center gap-2 px-3 py-1 bg-error/16 text-error rounded-full text-xs font-bold shrink-0">
-              <span className="size-4 bg-error text-white rounded-full flex items-center justify-center text-[10px]">N</span>
-              2 Issues
-              <i className="icon-close size-3" />
-           </div>
-           <Button variant="secondary" className="flex-1 rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11" onClick={() => window.dispatchEvent(new CustomEvent('craft-save'))}>
-             Save Changes
-           </Button>
-        </div>
+        <Button
+          variant="secondary"
+          className="flex-1 rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11"
+          onClick={() => window.dispatchEvent(new CustomEvent('craft-save'))}
+        >
+          Save Changes
+        </Button>
       </div>
     </div>
   );

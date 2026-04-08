@@ -23,11 +23,6 @@ const eventSections = [
   { id: 'SidebarImage', name: 'Event Image', component: 'EventSidebarImage' },
 ];
 
-const layoutSections = [
-  { id: 'grid', name: 'Grid', component: 'Grid' },
-  { id: 'col', name: 'Column', component: 'Col' },
-];
-
 const universalSections = [
   { id: 'u1', name: 'Rich Text', component: 'AboutSection' },
   { id: 'u2', name: 'Image Banner', component: 'AboutSection' },
@@ -38,17 +33,6 @@ const universalSections = [
 export function SectionTool() {
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
-      <section className="p-5">
-        <div className="mb-4">
-          <p className="text-lg">Layout</p>
-        </div>
-        <div className="grid grid-cols-4 gap-3">
-          {layoutSections.map((item) => (
-            <SectionCard key={item.id} name={item.name} componentName={item.component as any} />
-          ))}
-        </div>
-      </section>
-
       <section className="p-5">
         <div className="mb-4">
           <p className="text-lg">Event Sections</p>
