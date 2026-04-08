@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.33.0](https://github.com/lemonadesocial/web-new/compare/v10.32.1...v10.33.0) (2026-04-08)
+
+
+### Features
+
+* implement community insights events page UI ([82336e8](https://github.com/lemonadesocial/web-new/commit/82336e8f94f9763168e5a2c1cbb1836a2ffd6d4a))
+
+
+### Bug Fixes
+
+* resolve pre-existing type errors in TextEditor toolbar ([4629aed](https://github.com/lemonadesocial/web-new/commit/4629aed36b2107404f35a8edb5d0bed2327db137))
+* sanitize TextEditor content using DOMPurify to strip unwanted inline styles ([b508f36](https://github.com/lemonadesocial/web-new/commit/b508f3653842c5cc63587c127f864fda79e32f8e))
+
 ## [10.32.1](https://github.com/lemonadesocial/web-new/compare/v10.32.0...v10.32.1) (2026-04-03)
 
 
