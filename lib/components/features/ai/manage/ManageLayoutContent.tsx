@@ -20,7 +20,7 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
-import { gridLayoutActions, useGridSelectedId } from './layoutStore';
+import { useEditor } from '@craftjs/core';
 import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
@@ -50,8 +50,9 @@ function ManageLayoutContent() {
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
-  const selectedNodeId = useGridSelectedId();
-  const isSelected = !!selectedNodeId;
+  const { isSelected, actions } = useEditor((state) => ({
+    isSelected: state.events.selected.size > 0,
+  }));
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
   const cachedEvent = state.data as Event | undefined;
@@ -104,46 +105,6 @@ function ManageLayoutContent() {
 
       initializedConfigEventRef.current = event._id;
 
-      // Map layout_sections to layoutStore initial state
-      const sectionMap: Record<string, string> = {
-        registration: 'EventAccess',
-        about: 'AboutSection',
-        collectibles: 'EventCollectibles',
-        location: 'LocationSection',
-      };
-      
-      const initialLayout: any[] = [];
-      const initialComponents: Record<string, any> = {};
-      
-      const sourceSections = event.layout_sections || [
-        { id: 'registration' },
-        { id: 'about' },
-        { id: 'location' }
-      ];
-
-      sourceSections.forEach((item, index) => {
-        // Fallback mapping for older custom ids
-        let componentType = sectionMap[item.id] || item.id;
-        
-        // Let's create a deterministic ID for existing sections
-        const compId = `${componentType}-${index}`;
-        
-        initialLayout.push({
-          i: compId,
-          x: 0,
-          y: index * 6,
-          w: 12,
-          h: 6
-        });
-        
-        initialComponents[compId] = {
-          type: componentType,
-          props: { event }
-        };
-      });
-
-      gridLayoutActions.initState({ layout: initialLayout, components: initialComponents });
-
       if (!ready) setReady(true);
     }
   }, [state.layoutType, event, ready, shortid]);
@@ -172,14 +133,14 @@ function ManageLayoutContent() {
           )}
           style={themeState.variables.font as React.CSSProperties}
           onClick={(e) => {
-            if (e.target === e.currentTarget) gridLayoutActions.selectNode(null);
+            if (e.target === e.currentTarget) actions.selectNode(null);
           }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
           <div
             className="page relative z-10 mx-auto px-4 xl:px-0 pt-10 pb-20"
             onClick={(e) => {
-              if (e.target === e.currentTarget) gridLayoutActions.selectNode(null);
+              if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
             <EventGuestSide event={event} autoSave={false} isEditable={true} />

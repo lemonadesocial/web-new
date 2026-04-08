@@ -1,36 +1,40 @@
 'use client';
 import React from 'react';
+import { useEditor } from '@craftjs/core';
 import { Button } from '$lib/components/core';
-import { useGridSelectedId, useGridState, gridLayoutActions } from './layoutStore';
-import { resolver } from './craft/resolver';
 
 export function SettingsPanel() {
-  const selectedId = useGridSelectedId();
-  const state = useGridState();
-  const selected = selectedId ? state.components[selectedId] : null;
+  const { selected, actions } = useEditor((state) => {
+    const selectedNodeId = state.events.selected.size > 0 ? Array.from(state.events.selected)[0] : null;
+    return {
+      selected: selectedNodeId
+        ? {
+            id: selectedNodeId,
+            name: state.nodes[selectedNodeId].data.displayName,
+            settings: state.nodes[selectedNodeId].related && state.nodes[selectedNodeId].related.settings,
+          }
+        : null,
+    };
+  });
 
-  if (!selectedId || !selected) return null;
-
-  // Find the component's craft settings via the resolver
-  const ComponentClass = (resolver as any)[selected.type];
-  const SettingsComponent = ComponentClass?.craft?.related?.settings;
+  if (!selected) return null;
 
   return (
     <div className="flex flex-col h-full w-full max-w-[448px] bg-overlay-primary overflow-hidden border border-card-border rounded-sm">
       <div className="flex items-center justify-between px-4 py-2 border-b border-card-border shrink-0 gap-3">
-        <p className="truncate flex-1">{ComponentClass?.craft?.displayName || selected.type}</p>
+        <p className="truncate flex-1">{selected.name}</p>
         <Button
           variant="tertiary-alt"
           size="sm"
           icon="icon-keyboard-double-arrow-left"
-          onClick={() => gridLayoutActions.selectNode(null)}
+          onClick={() => actions.selectNode(null)}
           className="aspect-square"
         />
       </div>
 
       <div className="flex-1 overflow-auto p-5 custom-scrollbar">
-        {SettingsComponent ? (
-          React.createElement(SettingsComponent)
+        {selected.settings ? (
+          React.createElement(selected.settings)
         ) : (
           <div className="text-center py-10 text-tertiary">
             <p className="text-sm">No settings available for this component.</p>
@@ -51,21 +55,12 @@ export function SettingsPanel() {
   );
 }
 
-// Helper hook for settings components to match the Craft.js API
+// Helper hook for settings components
+import { useNode } from '@craftjs/core';
 export const useSettings = () => {
-  const selectedId = useGridSelectedId();
-  const state = useGridState();
-  const props = selectedId ? state.components[selectedId]?.props : {};
+  const { id, actions, props } = useNode((node) => ({
+    props: node.data.props,
+  }));
 
-  const actions = {
-    setProp: (updater: (props: any) => void) => {
-      if (!selectedId) return;
-      // We pass a copy of the props to the updater to emulate Immer/Craft behavior
-      const newProps = { ...props };
-      updater(newProps);
-      gridLayoutActions.updateProps(selectedId, newProps);
-    }
-  };
-
-  return { id: selectedId, actions, props };
+  return { id, actions, props };
 };
