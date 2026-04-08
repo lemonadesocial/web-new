@@ -23,6 +23,7 @@ const menu = [
   { name: 'Payments', page: 'payments' },
   { name: 'Rewards', page: 'rewards' },
   { name: 'Launchpad', page: 'launchpad' },
+  { name: 'Insights', page: 'insights' },
   { name: 'Settings', page: 'settings' },
 ];
 

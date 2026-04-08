@@ -2,16 +2,16 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { kebabCase } from 'lodash';
 
 import { useMutation } from '$lib/graphql/request';
-import { Address, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { Button, toast } from '$lib/components/core';
 import { getErrorMessage } from '$lib/utils/error';
 import { Pane } from '$lib/components/core/pane/pane';
 import { CommunityFormContent } from '../../community/CommunityForm';
 import { ThemeProvider } from '../../theme-builder/provider';
+import { communityValidationSchema, type CommunityFormValues } from '../../community/communityFormSchema';
 
 interface Props {
   title: string;
@@ -26,27 +26,11 @@ export function CreateCommunityPane(props: Props) {
   );
 }
 
-type FormValues = {
-  title: string;
-  description?: string;
-  slug: string;
-  image_avatar?: string;
-  image_cover?: string;
-  address?: Address;
-};
-
-const validationSchema = z.object({
-  title: z.string().min(1, { message: 'Title is required.' }),
-  slug: z
-    .string()
-    .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
-});
-
 function FormContent({ data, title }: Props) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [create] = useMutation(CreateSpaceDocument);
 
-  const form = useForm<FormValues>({
+  const form = useForm<CommunityFormValues>({
     defaultValues: {
       title: data?.title || '',
       description: data?.description || undefined,
@@ -55,7 +39,7 @@ function FormContent({ data, title }: Props) {
       image_cover: undefined,
       address: undefined,
     },
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(communityValidationSchema),
   });
 
   const {
@@ -63,7 +47,7 @@ function FormContent({ data, title }: Props) {
     formState: { isValid },
   } = form;
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: CommunityFormValues) => {
     try {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
