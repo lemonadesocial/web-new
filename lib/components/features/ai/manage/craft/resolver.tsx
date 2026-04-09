@@ -12,7 +12,7 @@ import { EventLocationBlock } from '$lib/components/features/event/EventLocation
 import { CommunitySection } from '$lib/components/features/event/CommunitySection';
 import { HostedBySection } from '$lib/components/features/event/HostedBySection';
 import { AttendeesSection } from '$lib/components/features/event/AttendeesSection';
-import { Button, Input, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete } from '$lib/components/core';
+import { Button, Input, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete, FileInput } from '$lib/components/core';
 import { getEventCohosts } from '$lib/utils/event';
 import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
@@ -20,10 +20,69 @@ import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { useStoreManageLayout } from '../store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
+import { uploadFiles } from '$lib/utils/file';
+import { toast } from '$lib/components/core/toast';
 
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
   return (layoutState.data as Event) || props.event;
+};
+
+const SidebarImageSettings = () => {
+  const { actions, props } = useSettings();
+  const [uploading, setUploading] = React.useState(false);
+
+  const handleUpload = async (files: File[]) => {
+    if (!files.length) return;
+    try {
+      setUploading(true);
+      const res = await uploadFiles([files[0]], 'event');
+      if (res.length > 0) {
+        const newImageId = res[0]._id;
+        actions.setProp((props: any) => {
+          if (!props.event) props.event = {};
+          if (!props.event.new_new_photos_expanded) props.event.new_new_photos_expanded = [];
+          props.event.new_new_photos_expanded = [newImageId, ...props.event.new_new_photos_expanded.slice(1)];
+          
+          if (!props.event.new_new_photos) props.event.new_new_photos = [];
+          props.event.new_new_photos = [newImageId, ...props.event.new_new_photos.slice(1)];
+        });
+        toast.success('Image uploaded successfully!');
+      }
+    } catch (e) {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Event Image</p>
+        <FileInput onChange={handleUpload} multiple={false}>
+          {(open) => (
+            <div 
+              onClick={open}
+              className="aspect-square w-full border-2 border-dashed border-card-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-card-hover transition-colors relative overflow-hidden"
+            >
+              {props.event?.new_new_photos_expanded?.[0] ? (
+                <img 
+                  src={generateUrl(props.event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)} 
+                  className="absolute inset-0 w-full h-full object-cover opacity-40"
+                />
+              ) : null}
+              
+              <div className="z-10 flex flex-col items-center gap-2">
+                <i className={clsx(uploading ? "icon-loader animate-spin" : "icon-upload-sharp", "size-8 text-tertiary")} />
+                <p className="text-xs text-tertiary">{uploading ? 'Uploading...' : 'Click to upload'}</p>
+              </div>
+            </div>
+          )}
+        </FileInput>
+      </div>
+    </div>
+  );
 };
 
 const HeroSettings = () => {
@@ -306,8 +365,8 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
       onClick={() => actions.selectNode(id)}
       className="relative group/section w-full p-3 cursor-pointer"
     >
-      {/* Interaction Blocker - Prevents clicks on links/buttons inside sections */}
-      {!selected && <div className="absolute inset-0 z-40" />}
+      {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
+      <div className="absolute inset-0 z-40" />
 
       {selected && (
         <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
@@ -661,12 +720,13 @@ CraftEventHero.craft = {
 };
 
 export const CraftEventSidebarImage = (props: any) => {
+  const event = useEvent(props);
   return (
     <CraftSection name="Event Image">
-       {props.event?.new_new_photos_expanded?.[0] ? (
+       {event?.new_new_photos_expanded?.[0] ? (
             <img
-              src={generateUrl(props.event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
-              alt={props.event.title}
+              src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
+              alt={event.title}
               loading="lazy"
               className="aspect-square object-contain border rounded-md"
             />
@@ -676,7 +736,13 @@ export const CraftEventSidebarImage = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventSidebarImage.craft = { displayName: 'EventSidebarImage', rules: { canDrag: () => true } };
+CraftEventSidebarImage.craft = { 
+  displayName: 'Event Image', 
+  rules: { canDrag: () => true },
+  related: {
+    settings: SidebarImageSettings
+  }
+};
 
 export const resolver = {
   Container,

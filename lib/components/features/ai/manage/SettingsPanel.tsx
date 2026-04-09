@@ -52,10 +52,10 @@ export function SettingsPanel() {
         )}
       </div>
 
-      <div className="p-4 border-t border-card-border bg-overlay-primary shrink-0">
+      <div className="p-4 border-t border-card-border bg-overlay-primary shrink-0 flex justify-center">
         <Button
           variant="secondary"
-          className="flex-1 rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11 w-full"
+          className="rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11 px-10"
           onClick={() => window.dispatchEvent(new CustomEvent('craft-save'))}
         >
           Save Changes

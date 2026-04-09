@@ -153,7 +153,7 @@ function ManageLayoutContent() {
   return (
     <>
       <AnimatePresence>
-        {isSelected && (
+        {isSelected && state.activeTab !== 'manage' && (
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
