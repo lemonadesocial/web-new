@@ -25,7 +25,7 @@ const defaultStore: IStore = {
   mobilePane: 'main',
 };
 
-const storeAtom = atom(defaultStore);
+export const storeAtom = atom(defaultStore);
 export const useStoreManageLayout = () => useAtomValue(storeAtom, { store: aiManageLayoutStore });
 
 export const storeManageLayout = {

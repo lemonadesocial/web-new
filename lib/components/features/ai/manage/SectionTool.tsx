@@ -13,12 +13,12 @@ const layoutSections = [
 ];
 
 const eventSections = [
-  { id: 'Hero', name: 'Event Hero', component: 'EventHero' },
-  { id: 'Registration', name: 'Registration', component: 'EventAccess' },
+  { id: 'Hero', name: 'Event Title', component: 'EventHero' },
+  { id: 'Registration', name: 'CTA Block', component: 'EventAccess' },
   { id: 'About', name: 'About', component: 'AboutSection' },
   { id: 'DateTime', name: 'Date & Time', component: 'EventDateTimeBlock' },
-  { id: 'LocationBlock', name: 'Location (Info)', component: 'EventLocationBlock' },
-  { id: 'Location', name: 'Location (Map)', component: 'LocationSection' },
+  { id: 'LocationBlock', name: 'Location', component: 'EventLocationBlock' },
+  { id: 'Location', name: 'Map', component: 'LocationSection' },
   { id: 'Schedule', name: 'Schedule', component: 'SubEventSection' },
   { id: 'Gallery', name: 'Gallery', component: 'GallerySection' },
   { id: 'Collectibles', name: 'Collectibles', component: 'EventCollectibles' },

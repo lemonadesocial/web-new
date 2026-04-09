@@ -12,12 +12,19 @@ import { EventLocationBlock } from '$lib/components/features/event/EventLocation
 import { CommunitySection } from '$lib/components/features/event/CommunitySection';
 import { HostedBySection } from '$lib/components/features/event/HostedBySection';
 import { AttendeesSection } from '$lib/components/features/event/AttendeesSection';
-import { Button, Input, Toggle, Divider, Segment, Card } from '$lib/components/core';
+import { Button, Input, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete } from '$lib/components/core';
 import { getEventCohosts } from '$lib/utils/event';
 import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
 import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
+import { useStoreManageLayout } from '../store';
+import { Event } from '$lib/graphql/generated/backend/graphql';
+
+const useEvent = (props: any) => {
+  const layoutState = useStoreManageLayout();
+  return (layoutState.data as Event) || props.event;
+};
 
 const HeroSettings = () => {
   const { actions, props } = useSettings();
@@ -59,19 +66,14 @@ const AboutSettings = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Heading</p>
-        <Input 
-          value={props.event?.title || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.event.title = e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Description</p>
-        <Input 
-          textarea
-          value={props.event?.description || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.event.description = e.target.value)}
-          rows={5}
+        <TextEditor 
+          content={props.event?.description || ''} 
+          onChange={(value) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.description = value;
+          })}
+          placeholder="Who should come? What's the event about?"
         />
       </div>
     </div>
@@ -186,74 +188,56 @@ const DateTimeSettings = () => {
   );
 };
 
+const MapSettings = () => {
+  const { actions, props } = useSettings();
+  
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Event Location</p>
+        <PlaceAutoComplete
+          value={props.event?.address?.title || ''}
+          placeholder="What's the address?"
+          onSelect={(addressData) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.address = addressData;
+            props.event.latitude = addressData?.latitude;
+            props.event.longitude = addressData?.longitude;
+          })}
+        />
+      </div>
+    </div>
+  );
+};
+
 const LocationSettings = () => {
   const { actions, props } = useSettings();
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Heading</p>
-        <Input 
-          value={props.event?.location_heading || 'Location'} 
-          onChange={(e) => actions.setProp((props: any) => props.event.location_heading = e.target.value)}
+        <p className="text-sm font-medium">Event Location</p>
+        <PlaceAutoComplete
+          value={props.event?.address?.title || ''}
+          placeholder="What's the address?"
+          onSelect={(addressData) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.address = addressData;
+            props.event.latitude = addressData?.latitude;
+            props.event.longitude = addressData?.longitude;
+          })}
         />
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Description</p>
+        <p className="text-sm font-medium">Join URL</p>
         <Input 
-          textarea
-          value={props.event?.location_description || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.event.location_description = e.target.value)}
-          rows={3}
+          value={props.event?.virtual_url || ''} 
+          onChange={(e) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.virtual_url = e.target.value;
+          })}
+          placeholder="https://example.com/join"
         />
-      </div>
-      
-      <Divider />
-      
-      <div className="flex flex-col gap-4">
-        <p className="font-medium text-sm">Location</p>
-        <div className="flex flex-col gap-2">
-          <p className="text-xs text-tertiary">Event Location</p>
-          <Input 
-            value={props.event?.address?.title || ''} 
-            iconLeft="icon-location-outline"
-            readOnly
-            size="sm"
-            placeholder="Search for a location..."
-          />
-        </div>
-        <Button variant="tertiary" size="sm" iconLeft="icon-add" className="justify-start h-9 text-xs">
-          Add Additional Directions
-        </Button>
-        <div className="flex items-start gap-3 p-3 border border-card-border rounded-md bg-accent-400/5">
-          <Toggle checked={!!props.event?.private} onChange={() => {}} className="mt-0.5" />
-          <div className="flex flex-col gap-0.5">
-            <p className="text-sm font-medium">Restrict Location to Guests</p>
-            <p className="text-xs text-tertiary leading-relaxed">Only approved and invited guests can see the precise location of this event.</p>
-          </div>
-        </div>
-      </div>
-
-      <Divider />
-
-      <div className="flex flex-col gap-4">
-        <p className="font-medium text-sm">Graphic</p>
-        <Segment
-          items={[{ label: 'Map', value: 'map' }, { label: 'Image', value: 'image' }]}
-          selected={props.event?.location_graphic_type || 'map'}
-          onSelect={(item) => actions.setProp((props: any) => props.event.location_graphic_type = item.value)}
-          size="sm"
-          className="w-full"
-        />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">Google Maps Embed URL</p>
-          <Input 
-            value={props.event?.location_map_embed_url || ''} 
-            onChange={(e) => actions.setProp((props: any) => props.event.location_map_embed_url = e.target.value)}
-            placeholder='<iframe src="https://www.google.com/maps/embed...'
-            size="sm"
-          />
-        </div>
       </div>
     </div>
   );
@@ -266,7 +250,7 @@ const Placeholder = ({ name, description }: { name: string; description?: string
   </div>
 );
 
-export const CraftSection = ({ children, name, id: forcedId }: { children: React.ReactNode; name?: string; id?: string }) => {
+export const CraftSection = ({ children, name }: { children: React.ReactNode; name?: string }) => {
   const {
     id,
     connectors: { connect, drag },
@@ -322,6 +306,9 @@ export const CraftSection = ({ children, name, id: forcedId }: { children: React
       onClick={() => actions.selectNode(id)}
       className="relative group/section w-full p-3 cursor-pointer"
     >
+      {/* Interaction Blocker - Prevents clicks on links/buttons inside sections */}
+      {!selected && <div className="absolute inset-0 z-40" />}
+
       {selected && (
         <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
           <Button
@@ -490,11 +477,12 @@ Col.craft = {
 
 // Wrapped Versions
 export const CraftAboutSection = (props: any) => {
-  const hasContent = props.event?.description;
+  const event = useEvent(props);
+  const hasContent = event?.description;
   return (
     <CraftSection name="About">
       {hasContent ? (
-        <AboutSection {...props} />
+        <AboutSection {...props} event={event} />
       ) : (
         <Placeholder name="About" description="No description provided for this event." />
       )}
@@ -510,36 +498,34 @@ CraftAboutSection.craft = {
 };
 
 export const CraftLocationSection = (props: any) => {
-  const hasContent = props.event?.address;
+  const event = useEvent(props);
+  const hasContent = event?.address;
   return (
-    <CraftSection name="Location">
+    <CraftSection name="Map">
       {hasContent ? (
-        <LocationSection {...props} />
+        <LocationSection {...props} event={event} />
       ) : (
-        <Placeholder name="Location (Map)" description="No address provided for this event." />
+        <Placeholder name="Map" description="No address provided for this event." />
       )}
     </CraftSection>
   );
 };
 CraftLocationSection.craft = { 
-  displayName: 'LocationSection', 
+  displayName: 'Map', 
   rules: { canDrag: () => true },
   related: {
-    settings: LocationSettings
+    settings: MapSettings
   }
 };
 
 export const CraftEventAccess = (props: any) => (
-  <CraftSection name="Registration">
+  <CraftSection name="CTA Block">
     <EventAccess {...props} />
   </CraftSection>
 );
 CraftEventAccess.craft = { 
-  displayName: 'EventAccess', 
+  displayName: 'CTA Block', 
   rules: { canDrag: () => true },
-  related: {
-    settings: RegistrationSettings
-  }
 };
 
 export const CraftEventCollectibles = (props: any) => {
@@ -579,11 +565,14 @@ export const CraftGallerySection = (props: any) => {
 };
 CraftGallerySection.craft = { displayName: 'GallerySection', rules: { canDrag: () => true } };
 
-export const CraftEventDateTimeBlock = (props: any) => (
-  <CraftSection name="Date Time">
-    <EventDateTimeBlock {...props} />
-  </CraftSection>
-);
+export const CraftEventDateTimeBlock = (props: any) => {
+  const event = useEvent(props);
+  return (
+    <CraftSection name="Date Time">
+      <EventDateTimeBlock {...props} event={event} />
+    </CraftSection>
+  );
+};
 CraftEventDateTimeBlock.craft = { 
   displayName: 'Date Time Block', 
   rules: { canDrag: () => true },
@@ -593,19 +582,20 @@ CraftEventDateTimeBlock.craft = {
 };
 
 export const CraftEventLocationBlock = (props: any) => {
-  const hasContent = props.event?.address || props.event?.virtual_url;
+  const event = useEvent(props);
+  const hasContent = event?.address || event?.virtual_url;
   return (
-    <CraftSection name="LocationBlock">
+    <CraftSection name="Location">
       {hasContent ? (
-        <EventLocationBlock {...props} />
+        <EventLocationBlock {...props} event={event} />
       ) : (
-        <Placeholder name="Location (Info)" description="No location or virtual URL provided." />
+        <Placeholder name="Location" description="No location or virtual URL provided." />
       )}
     </CraftSection>
   );
 };
 CraftEventLocationBlock.craft = { 
-  displayName: 'EventLocationBlock', 
+  displayName: 'Location', 
   rules: { canDrag: () => true },
   related: {
     settings: LocationSettings
@@ -648,6 +638,7 @@ export const CraftAttendeesSection = (props: any) => (
 CraftAttendeesSection.craft = { displayName: 'AttendeesSection', rules: { canDrag: () => true } };
 
 export const CraftEventHero = (props: any) => {
+  const event = useEvent(props);
   const align = props.align || 'text-left';
   const flexAlign = align === 'text-center' ? 'items-center' : align === 'text-right' ? 'items-end' : 'items-start';
 
@@ -655,7 +646,7 @@ export const CraftEventHero = (props: any) => {
     <CraftSection name="Event Hero">
       <div className={clsx("space-y-4 flex flex-col", flexAlign, align)}>
         <div className="space-y-2 w-full">
-          <h3 className="text-xl md:text-3xl font-bold">{props.event?.title || 'Untitled Event'}</h3>
+          <h3 className="text-xl md:text-3xl font-bold">{event?.title || 'Untitled Event'}</h3>
         </div>
       </div>
     </CraftSection>

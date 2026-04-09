@@ -131,16 +131,36 @@ function ManageLayoutToolbar() {
     if (!event?._id) return;
 
     try {
-      const nodes = query.node('ROOT').get().data.nodes;
-      const layoutSections = nodes.map((id) => ({
+      const nodes = query.getNodes();
+      const rootNodes = query.node('ROOT').get().data.nodes;
+      
+      const layoutSections = rootNodes.map((id) => ({
         id,
         hidden: false,
       }));
+
+      // Extract updated event data from nodes
+      // We look for any node that has an 'event' prop and collect changes
+      let updatedEvent: any = {};
+      Object.values(nodes).forEach(node => {
+        if (node.data.props.event) {
+          updatedEvent = { ...updatedEvent, ...node.data.props.event };
+        }
+      });
 
       updateEventSettings({
         variables: {
           id: event._id,
           input: {
+            title: updatedEvent.title,
+            description: updatedEvent.description,
+            start: updatedEvent.start,
+            end: updatedEvent.end,
+            timezone: updatedEvent.timezone,
+            address: updatedEvent.address,
+            latitude: updatedEvent.latitude,
+            longitude: updatedEvent.longitude,
+            virtual_url: updatedEvent.virtual_url,
             layout_sections: layoutSections,
           },
         },
