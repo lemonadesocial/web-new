@@ -2,6 +2,7 @@
 import React from 'react';
 import { useEditor } from '@craftjs/core';
 import { Button } from '$lib/components/core';
+import { resolver } from './craft/resolver';
 
 export function SettingsPanel() {
   const { selected, actions } = useEditor((state) => {
@@ -10,6 +11,7 @@ export function SettingsPanel() {
       selected: selectedNodeId
         ? {
             id: selectedNodeId,
+            type: state.nodes[selectedNodeId].data.type,
             name: state.nodes[selectedNodeId].data.displayName,
             settings: state.nodes[selectedNodeId].related && state.nodes[selectedNodeId].related.settings,
           }
@@ -19,10 +21,15 @@ export function SettingsPanel() {
 
   if (!selected) return null;
 
+  // Find the component's craft settings via the resolver
+  const ComponentClass = (resolver as any)[selected.type as any];
+  const displayName = ComponentClass?.craft?.displayName || selected.name;
+  const SettingsComponent = ComponentClass?.craft?.related?.settings;
+
   return (
     <div className="flex flex-col h-full w-full max-w-[448px] bg-overlay-primary overflow-hidden border border-card-border rounded-sm">
       <div className="flex items-center justify-between px-4 py-2 border-b border-card-border shrink-0 gap-3">
-        <p className="truncate flex-1">{selected.name}</p>
+        <p className="truncate flex-1 font-medium">{displayName}</p>
         <Button
           variant="tertiary-alt"
           size="sm"

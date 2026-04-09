@@ -12,11 +12,46 @@ import { EventLocationBlock } from '$lib/components/features/event/EventLocation
 import { CommunitySection } from '$lib/components/features/event/CommunitySection';
 import { HostedBySection } from '$lib/components/features/event/HostedBySection';
 import { AttendeesSection } from '$lib/components/features/event/AttendeesSection';
-import { Button, Input, Toggle, Divider, Segment } from '$lib/components/core';
+import { Button, Input, Toggle, Divider, Segment, Card } from '$lib/components/core';
 import { getEventCohosts } from '$lib/utils/event';
 import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
 import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
+import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
+
+const HeroSettings = () => {
+  const { actions, props } = useSettings();
+  
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Title</p>
+        <Input 
+          value={props.event?.title || ''} 
+          onChange={(e) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.title = e.target.value;
+          })}
+          placeholder="Enter event title..."
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Alignment</p>
+        <Segment
+          items={[
+            { label: 'Left', value: 'text-left' },
+            { label: 'Center', value: 'text-center' },
+            { label: 'Right', value: 'text-right' },
+          ]}
+          selected={props.align || 'text-left'}
+          onSelect={(item) => actions.setProp((props: any) => props.align = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+    </div>
+  );
+};
 
 const AboutSettings = () => {
   const { actions, props } = useSettings();
@@ -112,40 +147,40 @@ const ColSettings = () => {
 };
 
 const DateTimeSettings = () => {
-  const { props } = useSettings();
+  const { actions, props } = useSettings();
   
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <p className="font-medium">Show Date & Time</p>
-        <Toggle checked={true} onChange={() => {}} />
-      </div>
-      
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 opacity-60">
-          <p className="text-[10px] text-tertiary uppercase font-bold tracking-wider">Starts</p>
-          <div className="flex gap-2">
-            <Input value="Wed, 14 May" readOnly className="flex-1" size="sm" />
-            <Input value="07:00 PM" readOnly className="w-28" size="sm" />
-          </div>
-        </div>
-        
-        <div className="flex flex-col gap-2 opacity-60">
-          <p className="text-[10px] text-tertiary uppercase font-bold tracking-wider">Ends</p>
-          <div className="flex gap-2">
-            <Input value="Wed, 14 May" readOnly className="flex-1" size="sm" />
-            <Input value="08:00 PM" readOnly className="w-28" size="sm" />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-           <p className="text-[10px] text-tertiary uppercase font-bold tracking-wider">Timezone</p>
-           <div className="flex items-center gap-2 p-2 border border-card-border rounded-md bg-accent-400/5 cursor-not-allowed">
-              <i className="icon-web size-4 text-tertiary" />
-              <p className="text-sm truncate flex-1">{props.event?.timezone || 'GMT+0:00 UTC'}</p>
+        <DateTimeGroup
+          placement="bottom"
+          start={props.event?.start}
+          end={props.event?.end}
+          timezone={props.event?.timezone}
+          onSelect={(dateRange) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.start = dateRange.start;
+            props.event.end = dateRange.end;
+          })}
+        />
+        <Timezone
+          placement="bottom-end"
+          onSelect={(timezoneOption) => actions.setProp((props: any) => {
+            if (!props.event) props.event = {};
+            props.event.timezone = timezoneOption.value;
+          })}
+          strategy="absolute"
+          className="w-full"
+          trigger={() => (
+            <div className="flex items-center gap-2 p-3 border border-card-border rounded-md bg-card cursor-pointer hover:bg-card-hover transition-colors">
+              <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{props.event?.timezone || 'Select Timezone'}</p>
+              </div>
               <i className="icon-chevron-down size-4 text-quaternary" />
-           </div>
-        </div>
+            </div>
+          )}
+        />
       </div>
     </div>
   );
@@ -347,6 +382,7 @@ Container.craft = {
   isCanvas: true,
   rules: {
     canMoveIn: () => true,
+    canSelect: () => false,
   },
 };
 
@@ -544,12 +580,12 @@ export const CraftGallerySection = (props: any) => {
 CraftGallerySection.craft = { displayName: 'GallerySection', rules: { canDrag: () => true } };
 
 export const CraftEventDateTimeBlock = (props: any) => (
-  <CraftSection name="DateTime">
+  <CraftSection name="Date Time">
     <EventDateTimeBlock {...props} />
   </CraftSection>
 );
 CraftEventDateTimeBlock.craft = { 
-  displayName: 'EventDateTimeBlock', 
+  displayName: 'Date Time Block', 
   rules: { canDrag: () => true },
   related: {
     settings: DateTimeSettings
@@ -612,34 +648,24 @@ export const CraftAttendeesSection = (props: any) => (
 CraftAttendeesSection.craft = { displayName: 'AttendeesSection', rules: { canDrag: () => true } };
 
 export const CraftEventHero = (props: any) => {
+  const align = props.align || 'text-left';
+  const flexAlign = align === 'text-center' ? 'items-center' : align === 'text-right' ? 'items-end' : 'items-start';
+
   return (
     <CraftSection name="Event Hero">
-      <div className="space-y-4">
-        <div className="space-y-2">
+      <div className={clsx("space-y-4 flex flex-col", flexAlign, align)}>
+        <div className="space-y-2 w-full">
           <h3 className="text-xl md:text-3xl font-bold">{props.event?.title || 'Untitled Event'}</h3>
-        </div>
-        
-        <div className="flex flex-col gap-4 opacity-50 pointer-events-none">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-md bg-accent-400/10 border border-accent-400/20 flex flex-col items-center justify-center shrink-0">
-               <span className="text-[10px] uppercase font-bold text-accent-500">Mar</span>
-               <span className="text-sm font-bold">25</span>
-            </div>
-            <div className="flex flex-col">
-               <p className="text-sm font-medium">Wednesday, March 25</p>
-               <p className="text-xs text-tertiary">07:00 PM - 08:00 PM GMT+7</p>
-            </div>
-          </div>
         </div>
       </div>
     </CraftSection>
   );
 };
 CraftEventHero.craft = { 
-  displayName: 'EventHero', 
+  displayName: 'Event Title', 
   rules: { canDrag: () => true },
   related: {
-    settings: AboutSettings
+    settings: HeroSettings
   }
 };
 

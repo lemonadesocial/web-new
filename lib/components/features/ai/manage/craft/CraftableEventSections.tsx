@@ -131,7 +131,7 @@ export function CraftableEventSections({ event, attending }: { event: Event; att
       nodes: [],
       linkedNodes: {},
       parent: 'main-col',
-      displayName: 'Date & Time',
+      displayName: 'Date Time Block',
       custom: {},
     },
     'location-block': {

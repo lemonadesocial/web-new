@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, motion, MotionStyle } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { useFloating, offset, flip, shift, Placement, ReferenceType } from '@floating-ui/react';
+import { useFloating, offset, flip, shift, Placement, ReferenceType, autoUpdate } from '@floating-ui/react';
 
 type MenuState = {
   isOpen?: boolean;
@@ -145,6 +145,7 @@ function MenuRoot({
     onOpenChange: toggle,
     strategy,
     placement,
+    whileElementsMounted: autoUpdate,
     middleware: [offset(10), ...(withFlip ? [flip(), shift({ padding: 8 })] : [])],
   });
 
