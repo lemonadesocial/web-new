@@ -28,6 +28,19 @@ const useEvent = (props: any) => {
   return (layoutState.data as Event) || props.event;
 };
 
+const getEmbedUrl = (url: string) => {
+  if (!url) return null;
+  // YouTube
+  let match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  if (match) return `https://www.youtube.com/embed/${match[1]}`;
+  
+  // Vimeo
+  match = url.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/);
+  if (match) return `https://player.vimeo.com/video/${match[1]}`;
+  
+  return null;
+};
+
 const SidebarImageSettings = () => {
   const { actions, props } = useSettings();
   const [uploading, setUploading] = React.useState(false);
@@ -133,6 +146,44 @@ const AboutSettings = () => {
             props.event.description = value;
           })}
           placeholder="Who should come? What's the event about?"
+        />
+      </div>
+    </div>
+  );
+};
+
+const RichTextSettings = () => {
+  const { actions, props } = useSettings();
+  
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Content</p>
+        <TextEditor 
+          content={props.content || ''} 
+          onChange={(value) => actions.setProp((props: any) => {
+            props.content = value;
+          })}
+          placeholder="Type something here..."
+        />
+      </div>
+    </div>
+  );
+};
+
+const VideoEmbedSettings = () => {
+  const { actions, props } = useSettings();
+  
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Video URL</p>
+        <Input 
+          value={props.url || ''} 
+          onChange={(e) => actions.setProp((props: any) => {
+            props.url = e.target.value;
+          })}
+          placeholder="YouTube or Vimeo URL"
         />
       </div>
     </div>
@@ -535,6 +586,52 @@ Col.craft = {
 };
 
 // Wrapped Versions
+export const CraftRichText = (props: any) => {
+  return (
+    <CraftSection name="Rich Text">
+      {props.content ? (
+        <div dangerouslySetInnerHTML={{ __html: props.content }} className="event-description" />
+      ) : (
+        <Placeholder name="Rich Text" description="Click to edit content" />
+      )}
+    </CraftSection>
+  );
+};
+CraftRichText.craft = { 
+  displayName: 'RichText', 
+  rules: { canDrag: () => true },
+  related: {
+    settings: RichTextSettings
+  }
+};
+
+export const CraftVideoEmbed = (props: any) => {
+  const embedUrl = getEmbedUrl(props.url);
+  return (
+    <CraftSection name="Video Embed">
+      {embedUrl ? (
+        <div className="aspect-video w-full overflow-hidden rounded-lg">
+          <iframe 
+            src={embedUrl} 
+            className="w-full h-full" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowFullScreen 
+          />
+        </div>
+      ) : (
+        <Placeholder name="Video Embed" description="Add a video link in settings" />
+      )}
+    </CraftSection>
+  );
+};
+CraftVideoEmbed.craft = { 
+  displayName: 'VideoEmbed', 
+  rules: { canDrag: () => true },
+  related: {
+    settings: VideoEmbedSettings
+  }
+};
+
 export const CraftAboutSection = (props: any) => {
   const event = useEvent(props);
   const hasContent = event?.description;
@@ -748,6 +845,8 @@ export const resolver = {
   Container,
   Grid,
   Col,
+  RichText: CraftRichText,
+  VideoEmbed: CraftVideoEmbed,
   AboutSection: CraftAboutSection,
   LocationSection: CraftLocationSection,
   EventAccess: CraftEventAccess,

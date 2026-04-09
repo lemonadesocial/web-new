@@ -1,25 +1,42 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
-import { Card } from '$lib/components/core';
+import { Button, Card, Input, modal } from '$lib/components/core';
+import { storeManageLayout } from './store';
 
-const myTemplates = [
-  { id: 'nft', name: 'NFT Drop' },
-  { id: 'album', name: 'Album Release' },
-  { id: 'new', name: 'New Template', icon: 'icon-plus' },
-];
+function CreateTemplateModal({ onClose }: { onClose: () => void }) {
+  const [name, setName] = React.useState('');
 
-const exploreTemplates = [
-  { id: 'default', name: 'Default' },
-  { id: 'conference', name: 'Conference' },
-  { id: 'festival', name: 'Festival' },
-  { id: 'meetup', name: 'Meetup' },
-  { id: 'workshop', name: 'Workshop' },
-  { id: 'concert', name: 'Concert' },
-];
+  const handleCreate = () => {
+    if (!name.trim()) return;
+    storeManageLayout.setIsCreatingTemplate(true, name);
+    storeManageLayout.setBuilderTab('sections');
+    onClose();
+  };
+
+  return (
+    <div className="p-6 flex flex-col gap-4">
+      <div className="space-y-1">
+        <p className="text-lg font-medium">Create New Template</p>
+        <p className="text-tertiary text-sm">Enter a name for your custom template.</p>
+      </div>
+      <Input placeholder="Template Name" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+      <div className="flex justify-end gap-2">
+        <Button variant="tertiary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleCreate} disabled={!name.trim()}>
+          Create
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export function TemplateTool() {
   const [selected, setSelected] = React.useState('conference');
+  const [myTemplates, setMyTemplates] = React.useState<any[]>([]);
+  const [exploreTemplates, setExploreTemplates] = React.useState<any[]>([]);
 
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
@@ -42,24 +59,33 @@ export function TemplateTool() {
               }}
             />
           ))}
+          <TemplateCard
+            name="New Template"
+            icon="icon-plus"
+            onClick={() => {
+              modal.open(CreateTemplateModal);
+            }}
+          />
         </div>
       </section>
 
-      <section className="p-5">
-        <div className="mb-4">
-          <p className="text-lg">Explore</p>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          {exploreTemplates.map((item) => (
-            <TemplateCard
-              key={item.id}
-              name={item.name}
-              active={selected === item.id}
-              onClick={() => setSelected(item.id)}
-            />
-          ))}
-        </div>
-      </section>
+      {exploreTemplates.length > 0 && (
+        <section className="p-5">
+          <div className="mb-4">
+            <p className="text-lg">Explore</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {exploreTemplates.map((item) => (
+              <TemplateCard
+                key={item.id}
+                name={item.name}
+                active={selected === item.id}
+                onClick={() => setSelected(item.id)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

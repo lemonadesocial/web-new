@@ -151,6 +151,18 @@ function ManageLayoutToolbar() {
       const layout_data = JSON.parse(query.serialize());
       console.log('@@@ layout_data', layout_data);
 
+      if (state.isCreatingTemplate) {
+        // TODO: Implement create template BE logic
+        // 1. Create template with state.templateName and layout_data
+        // 2. Create page config
+        toast.info(`Creating template: ${state.templateName}`);
+        console.log('Creating template with data:', {
+          name: state.templateName,
+          layout_data,
+        });
+        return;
+      }
+
       updateEventSettings({
         variables: {
           id: event._id,

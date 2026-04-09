@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { TemplateTool } from './TemplateTool';
 import { SectionTool } from './SectionTool';
+import { storeManageLayout, useStoreManageLayout } from './store';
 
 const segments: SegmentItem<string>[] = [
   { label: 'Builder', value: 'builder', iconLeft: 'icon-cards-outline' },
@@ -43,8 +44,10 @@ const tabs = [
     ),
   },
 ];
+
 function BuilderTabs() {
-  const [selectedTab, setSelectedTab] = React.useState<'template' | 'sections' | 'theme'>('template');
+  const state = useStoreManageLayout();
+  const selectedTab = state.builderTab;
 
   const Comp = tabs.find((item) => item.key === selectedTab)?.component || null;
   return (
@@ -58,7 +61,7 @@ function BuilderTabs() {
               item.key === selectedTab && 'border-b-2 border-b-primary',
               'pb-2.5',
             )}
-            onClick={() => setSelectedTab(item.key as 'template' | 'sections' | 'theme')}
+            onClick={() => storeManageLayout.setBuilderTab(item.key as any)}
           >
             <div>
               <p className={clsx(item.key === selectedTab ? 'text-primary' : 'text-tertiary', 'font-medium')}>

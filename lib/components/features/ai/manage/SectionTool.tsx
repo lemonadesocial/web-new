@@ -29,10 +29,8 @@ const eventSections = [
 ];
 
 const universalSections = [
-  { id: 'u1', name: 'Rich Text', component: 'AboutSection' },
-  { id: 'u2', name: 'Image Banner', component: 'AboutSection' },
-  { id: 'u3', name: 'Video Embed', component: 'AboutSection' },
-  { id: 'u4', name: 'CTA Block', component: 'AboutSection' },
+  { id: 'u1', name: 'Rich Text', component: 'RichText' },
+  { id: 'u3', name: 'Video Embed', component: 'VideoEmbed' },
 ];
 
 export function SectionTool() {
