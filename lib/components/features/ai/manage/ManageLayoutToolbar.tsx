@@ -133,7 +133,7 @@ function ManageLayoutToolbar() {
     try {
       const nodes = query.getNodes();
       const rootNodes = query.node('ROOT').get().data.nodes;
-      
+
       const layoutSections = rootNodes.map((id) => ({
         id,
         hidden: false,
@@ -142,11 +142,14 @@ function ManageLayoutToolbar() {
       // Extract updated event data from nodes
       // We look for any node that has an 'event' prop and collect changes
       let updatedEvent: any = {};
-      Object.values(nodes).forEach(node => {
+      Object.values(nodes).forEach((node) => {
         if (node.data.props.event) {
           updatedEvent = { ...updatedEvent, ...node.data.props.event };
         }
       });
+
+      const layout_data = JSON.parse(query.serialize());
+      console.log('@@@ layout_data', layout_data);
 
       updateEventSettings({
         variables: {
@@ -360,12 +363,7 @@ function ManageLayoutToolbar() {
                   disabled={!canRedo}
                   onClick={() => actions.history.redo()}
                 />
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  loading={savingLayout}
-                  onClick={handleSaveLayout}
-                >
+                <Button size="sm" variant="secondary" loading={savingLayout} onClick={handleSaveLayout}>
                   Save Changes
                 </Button>
               </div>
