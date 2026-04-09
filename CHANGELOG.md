@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.34.0](https://github.com/lemonadesocial/web-new/compare/v10.33.0...v10.34.0) (2026-04-09)
+
+
+### Features
+
+* add event transfer to visibility discovery ([9b79086](https://github.com/lemonadesocial/web-new/commit/9b790869b47345477658e553c12a5cf54302560f))
+
 ## [10.33.0](https://github.com/lemonadesocial/web-new/compare/v10.32.1...v10.33.0) (2026-04-08)
 
 
