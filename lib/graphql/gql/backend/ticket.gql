@@ -273,7 +273,6 @@ mutation updateEventTicketType($input: EventTicketTypeInput!, $id: MongoID!) {
     offers {
       _id
       auto
-      broadcast_rooms
       position
       provider
       provider_id

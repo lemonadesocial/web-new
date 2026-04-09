@@ -350,6 +350,14 @@ export type DocumentPaginatedResponse = {
   pageInfo: PaginatedResponsePageInfo;
 };
 
+export type LangchainTool = {
+  __typename?: 'LangchainTool';
+  description: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  parameters: Scalars['JSON']['output'];
+  type: Scalars['String']['output'];
+};
+
 export type ListDocumentsResponse = {
   __typename?: 'ListDocumentsResponse';
   items: Array<Document>;
@@ -420,6 +428,7 @@ export type Query = {
   config: Config;
   configs: ConfigPaginatedResponse;
   documents: DocumentPaginatedResponse;
+  langchainTools: Array<LangchainTool>;
   listDocuments: ListDocumentsResponse;
 };
 

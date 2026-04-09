@@ -59,10 +59,8 @@ query GetEvent($id: MongoID, $shortid: String) {
       _id
       start
       end
-      broadcast
       description
       title
-      broadcast
       photos_expanded {
         _id
         key
@@ -248,9 +246,6 @@ query GetEvents(
         }
       }
     }
-    broadcasts {
-      provider_id
-    }
     address {
       title
       city
@@ -261,7 +256,6 @@ query GetEvents(
     accepted
     sessions {
       _id
-      broadcast
       description
       end
       speaker_users
@@ -681,7 +675,6 @@ query listEventTicketTypes($event: MongoID!) {
     offers {
       _id
       auto
-      broadcast_rooms
       position
       provider
       provider_id
