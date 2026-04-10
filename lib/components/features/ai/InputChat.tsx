@@ -73,6 +73,19 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
+  const applyPageDesign = (structureData: unknown, message: string) => {
+    const triggers = getAIPageEditTriggers();
+    if (!triggers) {
+      console.warn('[AI Designer] Editor bridge not available — page design not applied');
+      return;
+    }
+    if (structureData) {
+      const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+      triggers.applyStructureData(data);
+      toast.success(message);
+    }
+  };
+
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
     {
@@ -166,34 +179,13 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
           })
           .with('create_page_config', () => {
-            const triggers = getAIPageEditTriggers();
-            if (!triggers) return;
-            const structureData = tool.data?.structure_data;
-            if (structureData) {
-              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
-              triggers.applyStructureData(data);
-              toast.success('Design applied!');
-            }
+            applyPageDesign(tool.data?.structure_data, 'Design applied!');
           })
           .with('generate_page_from_description', () => {
-            const triggers = getAIPageEditTriggers();
-            if (!triggers) return;
-            const structureData = tool.data?.structure_data;
-            if (structureData) {
-              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
-              triggers.applyStructureData(data);
-              toast.success('Design applied!');
-            }
+            applyPageDesign(tool.data?.structure_data, 'Design applied!');
           })
           .with('update_page_config_section', () => {
-            const triggers = getAIPageEditTriggers();
-            if (!triggers) return;
-            const structureData = tool.data?.structure_data;
-            if (structureData) {
-              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
-              triggers.applyStructureData(data);
-              toast.success('Design updated!');
-            }
+            applyPageDesign(tool.data?.structure_data, 'Design updated!');
           });
       },
       onError: (error) => {

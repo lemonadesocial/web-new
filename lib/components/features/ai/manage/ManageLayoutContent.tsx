@@ -138,21 +138,24 @@ function ManageLayoutContent() {
     }
   }, [state.layoutType, event, ready, shortid]);
 
+  const editorRef = React.useRef({ actions, query });
+  editorRef.current = { actions, query };
+
   React.useEffect(() => {
     setAIPageEditTriggers({
       applyStructureData: (data: string) => {
-        actions.deserialize(data);
+        editorRef.current.actions.deserialize(data);
       },
       getStructureData: () => {
         try {
-          return query.serialize();
+          return editorRef.current.query.serialize();
         } catch {
           return null;
         }
       },
     });
     return () => setAIPageEditTriggers(null);
-  }, [actions, query]);
+  }, []);
 
   if (!ready) return null;
 
