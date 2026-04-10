@@ -14,7 +14,7 @@ const segments: SegmentItem<string>[] = [
   { label: 'AI Designer', value: 'ai', iconLeft: 'icon-sparkles' },
 ];
 
-const PAGE_DESIGNER_CONFIG_ID = '69d90d16efcee5f80a71caaf';
+const PAGE_DESIGNER_CONFIG_ID = process.env.NEXT_PUBLIC_PAGE_DESIGNER_CONFIG;
 
 export function DesignTool() {
   const state = useStoreManageLayout();
@@ -26,6 +26,11 @@ export function DesignTool() {
       aiChatDispatch({
         type: AIChatActionKind.set_config,
         payload: { config: PAGE_DESIGNER_CONFIG_ID },
+      });
+    } else {
+      aiChatDispatch({
+        type: AIChatActionKind.set_config,
+        payload: { config: undefined },
       });
     }
   }, [segment, aiChatDispatch]);
