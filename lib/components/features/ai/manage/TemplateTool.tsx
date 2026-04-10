@@ -1,38 +1,139 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
-import { Button, Card, Input, modal } from '$lib/components/core';
+import { useForm, Controller } from 'react-hook-form';
+import { Button, Card, Input, LabeledInput, Menu, MenuItem, modal, Textarea } from '$lib/components/core';
 import { storeManageLayout, useStoreManageLayout } from './store';
-import { useQuery } from '$lib/graphql/request';
-import { ListTemplatesDocument, Template } from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import {
+  CreateTemplateDocument,
+  ListTemplatesDocument,
+  Template,
+  TemplateCategory,
+} from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 
-function CreateTemplateModal({ onClose }: { onClose: () => void }) {
-  const [name, setName] = React.useState('');
+interface CreateTemplateForm {
+  name: string;
+  category: TemplateCategory;
+  description: string;
+  slug: string;
+  thumbnail_url: string;
+}
 
-  const handleCreate = async () => {
-    if (!name.trim()) return;
+function CreateTemplateModal() {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<CreateTemplateForm>({
+    defaultValues: {
+      name: '',
+      category: TemplateCategory.Custom,
+      description: '',
+      slug: '',
+      thumbnail_url: '',
+    },
+  });
 
-    storeManageLayout.setIsCreatingTemplate(true, name);
+  const [createTemplate, { loading }] = useMutation(CreateTemplateDocument);
+
+  const onSubmit = async (data: CreateTemplateForm) => {
+    createTemplate({
+      variables: {
+        input: {
+          ...data,
+          config: {},
+          tags: [],
+        },
+      },
+    });
+
+    storeManageLayout.setIsCreatingTemplate(true, data.name);
     storeManageLayout.setBuilderTab('sections');
-    onClose();
+    modal.close();
   };
 
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <div className="p-6 flex flex-col gap-6">
       <div className="space-y-1">
         <p className="text-lg font-medium">Create New Template</p>
-        <p className="text-tertiary text-sm">Enter a name for your custom template.</p>
+        <p className="text-tertiary text-sm">Enter the details for your custom template.</p>
       </div>
-      <Input placeholder="Template Name" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
-      <div className="flex justify-end gap-2">
-        <Button variant="tertiary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button onClick={handleCreate} disabled={!name.trim()}>
-          Create
-        </Button>
-      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <LabeledInput label="Template Name" required>
+          <Input
+            placeholder="e.g. My Awesome Layout"
+            {...register('name', { required: 'Name is required' })}
+            error={!!errors.name}
+            autoFocus
+          />
+        </LabeledInput>
+
+        <LabeledInput label="Slug">
+          <Input placeholder="e.g. my-awesome-layout" {...register('slug')} />
+        </LabeledInput>
+
+        <LabeledInput label="Category">
+          <Controller
+            name="category"
+            control={control}
+            render={({ field }) => (
+              <Menu.Root placement="bottom-start" className="w-full">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <div
+                      onClick={toggle}
+                      className="w-full h-10 px-2.5 flex items-center justify-between rounded-sm bg-primary/8 border border-transparent hover:border-tertiary cursor-pointer transition-colors"
+                    >
+                      <span className={clsx('capitalize text-base font-medium', !field.value ? 'text-quaternary' : 'text-primary')}>
+                        {field.value || 'Select a category'}
+                      </span>
+                      <i className="icon-chevron-down size-4 text-tertiary" />
+                    </div>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="w-56 p-1 max-h-60 overflow-y-auto no-scrollbar backdrop-blur-md!">
+
+                  {({ toggle }) => (
+                    <>
+                      {Object.values(TemplateCategory).map((cat) => (
+                        <MenuItem
+                          key={cat}
+                          title={cat.charAt(0).toUpperCase() + cat.slice(1)}
+                          onClick={() => {
+                            field.onChange(cat);
+                            toggle();
+                          }}
+                        />
+                      ))}
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+            )}
+          />
+        </LabeledInput>
+
+        <LabeledInput label="Thumbnail URL">
+          <Input placeholder="https://..." {...register('thumbnail_url')} />
+        </LabeledInput>
+
+        <LabeledInput label="Description">
+          <Textarea placeholder="Describe your template..." {...register('description')} rows={3} />
+        </LabeledInput>
+
+        <div className="flex justify-end gap-2 mt-2">
+          <Button variant="tertiary" onClick={() => modal.close()} type="button">
+            Cancel
+          </Button>
+          <Button type="submit" loading={loading}>
+            Create
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -65,7 +166,9 @@ export function TemplateTool() {
             name="New Template"
             icon="icon-plus"
             onClick={() => {
-              modal.open(CreateTemplateModal);
+              modal.open(CreateTemplateModal, {
+                className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
+              });
             }}
           />
           {myTemplates.map((item) => (
