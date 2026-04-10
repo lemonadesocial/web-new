@@ -14,7 +14,7 @@ const segments: SegmentItem<string>[] = [
   { label: 'AI Designer', value: 'ai', iconLeft: 'icon-sparkles' },
 ];
 
-const PAGE_DESIGNER_CONFIG_ID = '<<PLACEHOLDER_CONFIG_ID>>';
+const PAGE_DESIGNER_CONFIG_ID = '69d90d16efcee5f80a71caaf';
 
 export function DesignTool() {
   const state = useStoreManageLayout();
