@@ -10,11 +10,16 @@ import { isEqual, merge } from 'lodash';
 import { Button, Menu, MenuItem, modal, sheet, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
+  CreatePageConfigDocument,
+  CreateTemplateDocument,
   Event,
   GetUpcomingEventsDocument,
+  PageConfig,
   PublishEventDocument,
+  Template,
   UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
+  UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -127,7 +132,22 @@ function ManageLayoutToolbar() {
     });
   };
 
-  const handleSaveLayout = () => {
+  const [updateSpace, { loading: savingSpace }] = useMutation(UpdateSpaceDocument, {
+    onComplete: (_, data) => {
+      if (data?.updateSpace?._id) {
+        toast.success('Space layout saved successfully!');
+        store.setData({ ...state.data, ...data.updateSpace } as any);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save space layout');
+    },
+  });
+
+  const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
+  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument);
+
+  const handleSaveLayout = async () => {
     if (!event?._id) return;
 
     try {
@@ -139,47 +159,100 @@ function ManageLayoutToolbar() {
         hidden: false,
       }));
 
-      // Extract updated event data from nodes
-      // We look for any node that has an 'event' prop and collect changes
-      let updatedEvent: any = {};
+      // Extract updated event/space data from nodes
+      let updatedData: any = {};
       Object.values(nodes).forEach((node) => {
         if (node.data.props.event) {
-          updatedEvent = { ...updatedEvent, ...node.data.props.event };
+          updatedData = { ...updatedData, ...node.data.props.event };
+        }
+        if (node.data.props.space) {
+          updatedData = { ...updatedData, ...node.data.props.space };
         }
       });
 
       const layout_data = JSON.parse(query.serialize());
       console.log('@@@ layout_data', layout_data);
 
+      let template_id;
+
       if (state.isCreatingTemplate) {
-        // TODO: Implement create template BE logic
-        // 1. Create template with state.templateName and layout_data
-        // 2. Create page config
-        toast.info(`Creating template: ${state.templateName}`);
-        console.log('Creating template with data:', {
-          name: state.templateName,
-          layout_data,
-        });
-        return;
+        try {
+          // 1. Create template
+          const templateResult = await createTemplate({
+            variables: {
+              input: {
+                name: state.templateName || 'New Template',
+                slug: (state.templateName || 'new-template').toLowerCase().replace(/\s+/g, '-'),
+                category: 'CUSTOM',
+                description: 'Custom template created from builder',
+                thumbnail_url: '', // TODO: generate thumbnail or use default
+                tags: [],
+                structure_data: layout_data,
+                target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
+                config: {},
+              },
+            },
+          });
+
+          const newTemplate = templateResult.data?.createTemplate as Template;
+          if (!newTemplate?._id) throw new Error('Failed to create template');
+
+          template_id = newTemplate._id;
+
+          toast.success('Template and layout created successfully!');
+          store.setIsCreatingTemplate(false);
+        } catch (e: any) {
+          toast.error(e.message || 'Failed to create template');
+        }
       }
 
-      updateEventSettings({
+      // 2. Create page config
+      const pageConfigResult = await createPageConfig({
         variables: {
-          id: event._id,
           input: {
-            title: updatedEvent.title,
-            description: updatedEvent.description,
-            start: updatedEvent.start,
-            end: updatedEvent.end,
-            timezone: updatedEvent.timezone,
-            address: updatedEvent.address,
-            latitude: updatedEvent.latitude,
-            longitude: updatedEvent.longitude,
-            virtual_url: updatedEvent.virtual_url,
-            layout_sections: layoutSections,
+            name: state.templateName || 'New Template',
+            owner_id: event._id,
+            owner_type: state.layoutType === 'event' ? 'event' : 'space',
+            template_id,
+            structure_data: layout_data,
           },
         },
       });
+
+      const newPageConfig = pageConfigResult.data?.createPageConfig as PageConfig;
+      if (!newPageConfig?._id) throw new Error('Failed to create page config');
+
+      // 3. Update event/space data
+      if (state.layoutType === 'event') {
+        await updateEventSettings({
+          variables: {
+            id: event._id,
+            input: {
+              title: updatedData.title,
+              description: updatedData.description,
+              start: updatedData.start,
+              end: updatedData.end,
+              timezone: updatedData.timezone,
+              address: updatedData.address,
+              latitude: updatedData.latitude,
+              longitude: updatedData.longitude,
+              virtual_url: updatedData.virtual_url,
+              layout_sections: layoutSections,
+            },
+          },
+        });
+      } else {
+        await updateSpace({
+          variables: {
+            id: event._id,
+            input: {
+              title: updatedData.title,
+              description: updatedData.description,
+              theme_data: themeState,
+            },
+          },
+        });
+      }
     } catch (e) {
       toast.error('Failed to parse layout structure');
     }
@@ -375,7 +448,12 @@ function ManageLayoutToolbar() {
                   disabled={!canRedo}
                   onClick={() => actions.history.redo()}
                 />
-                <Button size="sm" variant="secondary" loading={savingLayout} onClick={handleSaveLayout}>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  onClick={handleSaveLayout}
+                >
                   Save Changes
                 </Button>
               </div>
@@ -483,7 +561,7 @@ function ManageLayoutToolbar() {
                   size="sm"
                   variant="secondary"
                   className="rounded-full px-4"
-                  loading={savingLayout}
+                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes

@@ -20,7 +20,6 @@ fragment TemplateFragment on Template {
   created_at
   creator_id
   creator_type
-  space_id
   subscription_tier_min
   config
   structure_data

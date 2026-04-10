@@ -19,8 +19,8 @@ fragment PageConfigFragment on PageConfig {
   structure_data
 }
 
-query GetPageConfig($id: MongoID!) {
-  getPageConfig(id: $id) {
+query GetPageConfig($id: MongoID, $ownerType: PageConfigOwnerType, $ownerId: MongoID) {
+  getPageConfig(_id: $id, owner_type: $ownerType, owner_id: $ownerId) {
     ...PageConfigFragment
   }
 }

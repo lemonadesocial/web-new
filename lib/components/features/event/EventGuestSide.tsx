@@ -3,7 +3,8 @@ import React from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
+import { Editor, Frame } from '@craftjs/core';
+import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
@@ -31,6 +32,7 @@ import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
 import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
+import { resolver } from '../ai/manage/craft/resolver';
 
 export function EventGuestSide({
   event: initEvent,
@@ -69,6 +71,12 @@ export function EventGuestSideContent({
     setIsClient(true);
   }, []);
 
+  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
+    variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
+    skip: !event?._id || isEditable,
+  });
+  const pageConfig = pageConfigData?.getPageConfig;
+
   const me = useMe();
 
   const isHost = me?._id && event && hosting(event, me._id);
@@ -99,6 +107,22 @@ export function EventGuestSideContent({
   const renderContent = () => {
     if (isEditable && isClient) {
       return <CraftableEventSections event={event} attending={attending} />;
+    }
+
+    if (pageConfig?.structure_data && isClient) {
+      return (
+        <Editor enabled={false} resolver={resolver}>
+          <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
+            <Frame
+              data={
+                typeof pageConfig.structure_data === 'string'
+                  ? pageConfig.structure_data
+                  : JSON.stringify(pageConfig.structure_data)
+              }
+            />
+          </div>
+        </Editor>
+      );
     }
 
     return (

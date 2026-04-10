@@ -2,13 +2,17 @@
 import React from 'react';
 import clsx from 'clsx';
 import { Button, Card, Input, modal } from '$lib/components/core';
-import { storeManageLayout } from './store';
+import { storeManageLayout, useStoreManageLayout } from './store';
+import { useQuery } from '$lib/graphql/request';
+import { ListTemplatesDocument, Template } from '$lib/graphql/generated/backend/graphql';
+import { useMe } from '$lib/hooks/useMe';
 
 function CreateTemplateModal({ onClose }: { onClose: () => void }) {
   const [name, setName] = React.useState('');
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!name.trim()) return;
+
     storeManageLayout.setIsCreatingTemplate(true, name);
     storeManageLayout.setBuilderTab('sections');
     onClose();
@@ -34,9 +38,20 @@ function CreateTemplateModal({ onClose }: { onClose: () => void }) {
 }
 
 export function TemplateTool() {
-  const [selected, setSelected] = React.useState('conference');
-  const [myTemplates, setMyTemplates] = React.useState<any[]>([]);
-  const [exploreTemplates, setExploreTemplates] = React.useState<any[]>([]);
+  const me = useMe();
+  const state = useStoreManageLayout();
+  const [selected, setSelected] = React.useState('');
+
+  const { data, loading } = useQuery(ListTemplatesDocument, {
+    variables: {
+      limit: 100,
+      target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
+    },
+  });
+
+  const templates = (data?.listTemplates || []) as Template[];
+  const myTemplates = templates.filter((t) => t.creator_id === me?._id);
+  const exploreTemplates = templates.filter((t) => t.creator_id !== me?._id);
 
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
@@ -46,19 +61,6 @@ export function TemplateTool() {
           <p className="text-tertiary text-sm">Build your own templates, or let LemonAI create one for you.</p>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {myTemplates.map((item) => (
-            <TemplateCard
-              key={item.id}
-              name={item.name}
-              icon={item.icon}
-              active={selected === item.id}
-              onClick={() => {
-                if (item.id !== 'new') {
-                  setSelected(item.id);
-                }
-              }}
-            />
-          ))}
           <TemplateCard
             name="New Template"
             icon="icon-plus"
@@ -66,6 +68,15 @@ export function TemplateTool() {
               modal.open(CreateTemplateModal);
             }}
           />
+          {myTemplates.map((item) => (
+            <TemplateCard
+              key={item._id}
+              name={item.name}
+              thumbnail={item.thumbnail_url}
+              active={selected === item._id}
+              onClick={() => setSelected(item._id)}
+            />
+          ))}
         </div>
       </section>
 
@@ -77,10 +88,11 @@ export function TemplateTool() {
           <div className="grid grid-cols-3 gap-3">
             {exploreTemplates.map((item) => (
               <TemplateCard
-                key={item.id}
+                key={item._id}
                 name={item.name}
-                active={selected === item.id}
-                onClick={() => setSelected(item.id)}
+                thumbnail={item.thumbnail_url}
+                active={selected === item._id}
+                onClick={() => setSelected(item._id)}
               />
             ))}
           </div>
@@ -93,11 +105,13 @@ export function TemplateTool() {
 function TemplateCard({
   name,
   icon,
+  thumbnail,
   active,
   onClick,
 }: {
   name: string;
   icon?: string;
+  thumbnail?: string;
   active?: boolean;
   onClick?: () => void;
 }) {
@@ -105,11 +119,15 @@ function TemplateCard({
     <div className="flex flex-col gap-2 cursor-pointer group" onClick={onClick}>
       <Card.Root
         className={clsx(
-          'aspect-[3/4] p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all',
+          'aspect-[3/4] p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all overflow-hidden',
           active ? 'outline-2 outline-offset-0 outline-white border-white' : 'group-hover:bg-card-hover',
         )}
       >
-        {icon && <i className={clsx(icon, 'size-6 text-quaternary')} />}
+        {thumbnail ? (
+          <img src={thumbnail} alt={name} className="w-full h-full object-cover" />
+        ) : (
+          icon && <i className={clsx(icon, 'size-6 text-quaternary')} />
+        )}
       </Card.Root>
       <p className={clsx('text-[11px] text-center truncate', active ? 'text-primary' : 'text-tertiary')}>{name}</p>
     </div>
