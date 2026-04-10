@@ -26,6 +26,12 @@ import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
 import { useMe } from '$lib/hooks/useMe';
+import { useEditor } from '@craftjs/core';
+import {
+  CreatePageConfigDocument,
+  PageConfigOwnerType,
+  UpdatePageConfigDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -45,6 +51,9 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
+  const { actions: editorActions } = useEditor();
+
+  const [createPageConfig] = useMutation(CreatePageConfigDocument);
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const hasActivity = !!state.messages.length || !!state.thinking;
@@ -77,9 +86,69 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     {
       onComplete: (_, income) => {
         dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
-        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...income.run, role: 'assistant' }] } });
 
-        const tool = income.run?.metadata?.tool;
+        let runResult = income.run;
+        if (typeof runResult.metadata === 'string') {
+          try {
+            runResult = { ...runResult, metadata: JSON.parse(runResult.metadata) };
+          } catch (e) {
+            console.error('Failed to parse metadata', e);
+          }
+        }
+
+        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...runResult, role: 'assistant' }] } });
+
+        let structureData = runResult.metadata?.structure_data;
+
+        // Fallback: Check if structure_data is inside the message if metadata is empty
+        if (!structureData && runResult.message) {
+          try {
+            // Check for JSON block in message (common if AI is lazy)
+            const jsonMatch = runResult.message.match(/\{[\s\S]*"ROOT"[\s\S]*\}/);
+            if (jsonMatch) {
+              const parsed = JSON.parse(jsonMatch[0]);
+              if (parsed.ROOT) {
+                structureData = jsonMatch[0];
+              }
+            }
+          } catch (e) {
+            console.error('Failed to parse structure_data from message fallback', e);
+          }
+        }
+
+        if (structureData) {
+          try {
+            const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+            editorActions.deserialize(data);
+            toast.success('Design updated!');
+
+            const eventId = (state.data as { event_id?: string } | undefined)?.event_id;
+            if (eventId) {
+              createPageConfig({
+                variables: {
+                  input: {
+                    owner_id: eventId,
+                    owner_type: PageConfigOwnerType.Event,
+                    structure_data: data,
+                  },
+                },
+                onComplete: (res) => {
+                  if (res.createPageConfig) {
+                    dispatch({
+                      type: AIChatActionKind.set_page_config,
+                      payload: { pageConfig: res.createPageConfig },
+                    });
+                    client.refetchQueries({ include: [GetPageConfigDocument] });
+                  }
+                },
+              });
+            }
+          } catch (e) {
+            console.error('Failed to parse structure_data', e);
+          }
+        }
+
+        const tool = runResult.metadata?.tool;
         match(tool?.name)
           .with('create_event', async () => {
             dispatch({
@@ -181,12 +250,13 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
+
     run({
       variables: {
         message: text,
         config: state.config || AI_CONFIG,
         session: state.session,
-        data: state.data || {},
+        data: { ...(state.data as object || {}), system_prompt: state.systemPrompt },
         standId: state.standId,
       },
     });
@@ -372,7 +442,12 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                 className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
-              <p className={clsx('text-sm max-w-33 truncate text-tertiary', (compact || isMobile) ? 'hidden' : 'hidden md:block')}>
+              <p
+                className={clsx(
+                  'text-sm max-w-33 truncate text-tertiary',
+                  compact || isMobile ? 'hidden' : 'hidden md:block',
+                )}
+              >
                 {selectedSpace?.title || 'Select community'}
               </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
@@ -380,7 +455,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
           )}
         </Menu.Trigger>
         <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
-          {({toggle}) => (
+          {({ toggle }) => (
             <>
               {spaces.map((space) => (
                 <MenuItem
@@ -388,7 +463,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                   title={space.title}
                   onClick={() => {
                     onSelectSpace(space);
-                    toggle()
+                    toggle();
                   }}
                 />
               ))}
@@ -433,7 +508,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
             strokeDashoffset={ringOffset}
           />
         </svg>
-        <span className={clsx((compact || isMobile) ? 'hidden' : 'hidden md:inline')}>
+        <span className={clsx(compact || isMobile ? 'hidden' : 'hidden md:inline')}>
           {formatCredits(selectedSpace?.credits)} / {formatCredits(selectedSpace?.credits_high_water_mark)}
         </span>
       </button>

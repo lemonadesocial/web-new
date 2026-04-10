@@ -9,7 +9,7 @@ import { useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetPageConfigDocument, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
@@ -65,6 +65,34 @@ function ManageLayoutContent() {
   const event =
     (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
+
+  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
+    variables: { ownerType: PageConfigOwnerType.Event, ownerId: eventId },
+    skip: !eventId,
+  });
+  const pageConfig = pageConfigData?.getPageConfig;
+
+  React.useEffect(() => {
+    if (pageConfig) {
+      aiChatDispatch({
+        type: AIChatActionKind.set_page_config,
+        payload: { pageConfig },
+      });
+    }
+  }, [pageConfig, aiChatDispatch]);
+
+  React.useEffect(() => {
+    if (pageConfig?.structure_data) {
+      try {
+        const data = typeof pageConfig.structure_data === 'string' 
+          ? pageConfig.structure_data 
+          : JSON.stringify(pageConfig.structure_data);
+        actions.deserialize(data);
+      } catch (e) {
+        console.error('Failed to parse pageConfig structure_data', e);
+      }
+    }
+  }, [pageConfig, actions]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -143,7 +171,7 @@ function ManageLayoutContent() {
               if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
-            <EventGuestSide event={event} autoSave={false} isEditable={true} />
+            <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfig} />
           </div>
         </main>
       ) : null,

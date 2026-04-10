@@ -116,7 +116,7 @@ export function EventGuestSideContent({
 
   const renderContent = () => {
     if (isEditable && isClient) {
-      return <CraftableEventSections event={event} attending={attending} />;
+      return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
     }
 
     if (pageConfig?.structure_data && isClient) {
