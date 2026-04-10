@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
 import { Editor, Frame } from '@craftjs/core';
-import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
@@ -36,10 +36,12 @@ import { resolver } from '../ai/manage/craft/resolver';
 
 export function EventGuestSide({
   event: initEvent,
+  pageConfig,
   autoSave = true,
   isEditable = false,
 }: {
   event: Event;
+  pageConfig?: GetPageConfigQuery['getPageConfig'];
   autoSave?: boolean;
   isEditable?: boolean;
 }) {
@@ -51,16 +53,23 @@ export function EventGuestSide({
   useTracker(initEvent._id);
 
   return (
-    <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} autoSave={autoSave} isEditable={isEditable} />
+    <EventGuestSideContent
+      event={(data?.getEvent as Event) || initEvent}
+      pageConfig={pageConfig}
+      autoSave={autoSave}
+      isEditable={isEditable}
+    />
   );
 }
 
 export function EventGuestSideContent({
   event,
+  pageConfig: initPageConfig,
   autoSave = true,
   isEditable = false,
 }: {
   event: Event;
+  pageConfig?: GetPageConfigQuery['getPageConfig'];
   autoSave?: boolean;
   isEditable?: boolean;
 }) {
@@ -73,6 +82,7 @@ export function EventGuestSideContent({
 
   const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
+    initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
     skip: !event?._id || isEditable,
   });
   const pageConfig = pageConfigData?.getPageConfig;

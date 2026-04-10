@@ -1,8 +1,14 @@
 import React from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { htmlToText } from 'html-to-text';
+import { cookies } from 'next/headers';
 
-import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetPageConfigDocument,
+  PageConfigOwnerType,
+} from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 
@@ -33,8 +39,8 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
         action: {
           type: 'launch_miniapp',
           name: 'Get Tickets',
-        }
-      }
+        },
+      },
     };
 
     return {
@@ -56,7 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
       other: {
         'fc:miniapp': JSON.stringify(miniapp),
         'fa:frame': JSON.stringify(miniapp),
-      }
+      },
     };
   } catch {
     return {
@@ -69,6 +75,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
 
 export default async function Page({ params }: { params: Promise<{ shortid: string }> }) {
   const shortid = (await params).shortid;
+  const cookieStore = await cookies();
 
   const client = getClient();
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
@@ -78,5 +85,12 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
 
   if (event.external_url) redirect(event.external_url);
 
-  return <EventGuestSide event={event} />;
+  const { data: pageConfigData } = await client.query({
+    query: GetPageConfigDocument,
+    variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
+    headers: { Cookie: decodeURIComponent(cookieStore?.toString()) },
+    fetchPolicy: 'network-only',
+  });
+
+  return <EventGuestSide event={event} pageConfig={pageConfigData?.getPageConfig} />;
 }
