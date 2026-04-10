@@ -29,7 +29,6 @@ type State = {
   config: string;
   configs: Config[];
   standId?: string;
-  systemPrompt?: string;
   pageConfig?: GetPageConfigQuery['getPageConfig'];
 };
 
@@ -58,7 +57,6 @@ export enum AIChatActionKind {
   'set_data_run',
   'set_config',
   'set_configs',
-  'set_system_prompt',
   'set_page_config',
   'reset',
 }
@@ -159,10 +157,6 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_configs: {
       return { ...state, configs: action.payload?.configs || [] };
-    }
-
-    case AIChatActionKind.set_system_prompt: {
-      return { ...state, systemPrompt: action.payload?.systemPrompt };
     }
 
     case AIChatActionKind.set_page_config: {

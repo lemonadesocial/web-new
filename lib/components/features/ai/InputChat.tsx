@@ -26,12 +26,7 @@ import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
 import { useMe } from '$lib/hooks/useMe';
-import { useEditor } from '@craftjs/core';
-import {
-  CreatePageConfigDocument,
-  PageConfigOwnerType,
-  UpdatePageConfigDocument,
-} from '$lib/graphql/generated/backend/graphql';
+import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -51,9 +46,6 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
-  const { actions: editorActions } = useEditor();
-
-  const [createPageConfig] = useMutation(CreatePageConfigDocument);
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const hasActivity = !!state.messages.length || !!state.thinking;
@@ -97,56 +89,6 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
         }
 
         dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...runResult, role: 'assistant' }] } });
-
-        let structureData = runResult.metadata?.structure_data;
-
-        // Fallback: Check if structure_data is inside the message if metadata is empty
-        if (!structureData && runResult.message) {
-          try {
-            // Check for JSON block in message (common if AI is lazy)
-            const jsonMatch = runResult.message.match(/\{[\s\S]*"ROOT"[\s\S]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              if (parsed.ROOT) {
-                structureData = jsonMatch[0];
-              }
-            }
-          } catch (e) {
-            console.error('Failed to parse structure_data from message fallback', e);
-          }
-        }
-
-        if (structureData) {
-          try {
-            const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
-            editorActions.deserialize(data);
-            toast.success('Design updated!');
-
-            const eventId = (state.data as { event_id?: string } | undefined)?.event_id;
-            if (eventId) {
-              createPageConfig({
-                variables: {
-                  input: {
-                    owner_id: eventId,
-                    owner_type: PageConfigOwnerType.Event,
-                    structure_data: data,
-                  },
-                },
-                onComplete: (res) => {
-                  if (res.createPageConfig) {
-                    dispatch({
-                      type: AIChatActionKind.set_page_config,
-                      payload: { pageConfig: res.createPageConfig },
-                    });
-                    client.refetchQueries({ include: [GetPageConfigDocument] });
-                  }
-                },
-              });
-            }
-          } catch (e) {
-            console.error('Failed to parse structure_data', e);
-          }
-        }
 
         const tool = runResult.metadata?.tool;
         match(tool?.name)
@@ -222,6 +164,36 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
               fetchPolicy: 'network-only',
             });
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
+          })
+          .with('create_page_config', () => {
+            const triggers = getAIPageEditTriggers();
+            if (!triggers) return;
+            const structureData = tool.data?.structure_data;
+            if (structureData) {
+              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+              triggers.applyStructureData(data);
+              toast.success('Design applied!');
+            }
+          })
+          .with('generate_page_from_description', () => {
+            const triggers = getAIPageEditTriggers();
+            if (!triggers) return;
+            const structureData = tool.data?.structure_data;
+            if (structureData) {
+              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+              triggers.applyStructureData(data);
+              toast.success('Design applied!');
+            }
+          })
+          .with('update_page_config_section', () => {
+            const triggers = getAIPageEditTriggers();
+            if (!triggers) return;
+            const structureData = tool.data?.structure_data;
+            if (structureData) {
+              const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+              triggers.applyStructureData(data);
+              toast.success('Design updated!');
+            }
           });
       },
       onError: (error) => {
@@ -256,7 +228,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
         message: text,
         config: state.config || AI_CONFIG,
         session: state.session,
-        data: { ...(state.data as object || {}), system_prompt: state.systemPrompt },
+        data: state.data || {},
         standId: state.standId,
       },
     });

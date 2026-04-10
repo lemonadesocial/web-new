@@ -14,33 +14,7 @@ const segments: SegmentItem<string>[] = [
   { label: 'AI Designer', value: 'ai', iconLeft: 'icon-sparkles' },
 ];
 
-const DESIGN_SYSTEM_PROMPT = `You are an expert event page designer using CraftJS. 
-Your goal is to design a beautiful, functional event page by returning a valid structure_data JSON object.
-The structure_data should follow the CraftJS format and use the following available components:
-- Container (ROOT)
-- Grid
-- Col
-- RichText (props: content)
-- VideoEmbed (props: url)
-- AboutSection (props: event)
-- LocationSection (props: event)
-- EventAccess (props: event)
-- EventCollectibles (props: event)
-- SubEventSection (props: event)
-- GallerySection (props: event)
-- EventDateTimeBlock (props: event)
-- EventLocationBlock (props: event)
-- CommunitySection (props: event)
-- HostedBySection (props: event)
-- AttendeesSection (props: event)
-- EventHero (props: event, align: 'text-left' | 'text-center' | 'text-right')
-- EventSidebarImage (props: event)
-
-IMPORTANT: 
-1. You MUST return your response with the design in the 'metadata.structure_data' field.
-2. DO NOT include the JSON structure in the 'message' field. The 'message' field should only contain a brief, friendly description of the changes you made.
-3. Ensure the output is a valid structure_data that can be loaded into the CraftJS editor.
-4. If you are asked to "update" or "change" something, return the ENTIRE updated structure_data, not just the changes.`;
+const PAGE_DESIGNER_CONFIG_ID = '<<PLACEHOLDER_CONFIG_ID>>';
 
 export function DesignTool() {
   const state = useStoreManageLayout();
@@ -50,13 +24,8 @@ export function DesignTool() {
   React.useEffect(() => {
     if (segment === 'ai') {
       aiChatDispatch({
-        type: AIChatActionKind.set_system_prompt,
-        payload: { systemPrompt: DESIGN_SYSTEM_PROMPT },
-      });
-    } else {
-      aiChatDispatch({
-        type: AIChatActionKind.set_system_prompt,
-        payload: { systemPrompt: undefined },
+        type: AIChatActionKind.set_config,
+        payload: { config: PAGE_DESIGNER_CONFIG_ID },
       });
     }
   }, [segment, aiChatDispatch]);

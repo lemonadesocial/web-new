@@ -21,6 +21,7 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
 import { useEditor } from '@craftjs/core';
+import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
@@ -50,7 +51,7 @@ function ManageLayoutContent() {
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
-  const { isSelected, actions } = useEditor((state) => ({
+  const { isSelected, actions, query } = useEditor((state) => ({
     isSelected: state.events.selected.size > 0,
   }));
 
@@ -136,6 +137,22 @@ function ManageLayoutContent() {
       if (!ready) setReady(true);
     }
   }, [state.layoutType, event, ready, shortid]);
+
+  React.useEffect(() => {
+    setAIPageEditTriggers({
+      applyStructureData: (data: string) => {
+        actions.deserialize(data);
+      },
+      getStructureData: () => {
+        try {
+          return query.serialize();
+        } catch {
+          return null;
+        }
+      },
+    });
+    return () => setAIPageEditTriggers(null);
+  }, [actions, query]);
 
   if (!ready) return null;
 
