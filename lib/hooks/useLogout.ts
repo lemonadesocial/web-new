@@ -1,15 +1,22 @@
 'use client';
+import { useContext } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 
 import { ory } from '$lib/utils/ory';
 import { hydraClientIdAtom, sessionAtom } from '$lib/jotai';
+import { GraphQLWSContext } from '$lib/graphql/subscription/context';
 
 export function useRawLogout() {
   const setSession = useSetAtom(sessionAtom);
   const hydraClientId = useAtomValue(hydraClientIdAtom);
+  const { dispose } = useContext(GraphQLWSContext);
 
   return async () => {
+    // Dispose WebSocket connection BEFORE clearing local state
+    // to prevent close-code handlers from racing with cleanup.
+    dispose();
+
     if (!hydraClientId) {
       const res = await ory?.createBrowserLogoutFlow();
       await ory?.updateLogoutFlow({ token: res?.data.logout_token });
@@ -39,4 +46,4 @@ export function useLogOut() {
     url.searchParams.delete('authCookie');
     window.location.href = url.toString();
   };
-};
+}

@@ -22,6 +22,8 @@ import { useMutation } from '$lib/graphql/request';
 import { DeleteUserDocument } from '$lib/graphql/generated/backend/graphql';
 import { useLogOut } from '$lib/hooks/useLogout';
 
+import { useRouter } from 'next/navigation';
+
 import { ListItem } from './list-item';
 import { OAuthClient } from './oauth-client';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
@@ -42,6 +44,7 @@ export function Content() {
   const { handleConnect } = useLinkFarcaster();
   const openClaimUsername = useClaimUsername();
 
+  const router = useRouter();
   const { userData } = useFarcasterUserData(me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null);
   const [deleteUser] = useMutation(DeleteUserDocument);
 
@@ -237,6 +240,16 @@ export function Content() {
         >
           <i className="icon-delete size-5 text-error" />
           <p className="text-error">Delete Account</p>
+        </div>
+      </div>
+
+      <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
+        <div
+          className="flex gap-4 items-center cursor-pointer py-3 px-4"
+          onClick={() => router.push('settings/security/sessions')}
+        >
+          <i className="icon-smartphone size-5 text-tertiary" />
+          <p>Active Sessions</p>
         </div>
       </div>
     </div>

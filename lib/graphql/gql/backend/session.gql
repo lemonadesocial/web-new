@@ -1,0 +1,44 @@
+fragment ActiveSession on Session {
+  _id
+  kratos_identity_id
+  kratos_session_id
+  device_name
+  device_model
+  os
+  app_version
+  client_type
+  ip_address
+  last_active_at
+  is_current
+  has_active_websocket
+}
+
+query getMyActiveSessions {
+  getMyActiveSessions {
+    ...ActiveSession
+  }
+}
+
+mutation revokeMySession($sessionId: MongoID!) {
+  revokeMySession(session_id: $sessionId) {
+    ...ActiveSession
+  }
+}
+
+mutation requestStepUpVerification {
+  requestStepUpVerification {
+    success
+  }
+}
+
+mutation verifyStepUpVerification($code: String!) {
+  verifyStepUpVerification(code: $code) {
+    step_up_token
+  }
+}
+
+mutation revokeAllOtherSessions($stepUpToken: String!) {
+  revokeAllOtherSessions(step_up_token: $stepUpToken) {
+    revoked_count
+  }
+}

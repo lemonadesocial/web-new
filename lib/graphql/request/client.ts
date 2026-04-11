@@ -310,6 +310,13 @@ export class GraphqlClient {
       defaultHeaders['x-lens-profile-id'] = session.lens_address;
     }
 
+    // Session tracking headers for device fingerprinting
+    defaultHeaders['X-Client-Type'] = 'web';
+    defaultHeaders['X-Client-App-Version'] = process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0';
+    if (typeof navigator !== 'undefined') {
+      defaultHeaders['X-Client-Locale'] = navigator.language;
+    }
+
     return { ...defaultHeaders, ...headers, ...this.customHeader };
   }
 }
