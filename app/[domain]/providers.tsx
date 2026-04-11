@@ -120,9 +120,13 @@ export default function Providers({ children, space }: { children: React.ReactNo
 
   return (
     <GraphqlClientProvider client={defaultClient}>
-      <GraphQLWSProvider url={wsUrl} connectionParams={wsConnectionParams}>
-        {children}
-      </GraphQLWSProvider>
+      {session ? (
+        <GraphQLWSProvider url={wsUrl} connectionParams={wsConnectionParams}>
+          {children}
+        </GraphQLWSProvider>
+      ) : (
+        children
+      )}
     </GraphqlClientProvider>
   );
 }

@@ -27,7 +27,6 @@ export const GraphQLWSProvider = ({
   children,
 }: GraphQLWSProviderProps) => {
   const [client, setClient] = useState<Client | null>(null);
-  const retriesRef = useRef(0);
   const clientRef = useRef<Client | null>(null);
 
   const buildClient = useCallback(() => {
@@ -63,14 +62,12 @@ export const GraphQLWSProvider = ({
             // 4403: Token expired but Kratos session still valid.
             // Silent refresh + reconnect. The graphql-ws client's built-in retry
             // will reconnect automatically. No logout, no route change.
-            retriesRef.current = 0;
             return;
           }
 
           if (code !== undefined && RECONNECTABLE_CLOSE_CODES.includes(code)) {
             // 1006/1011/1012: Transient network failures.
             // CRITICAL: These are NOT revocation signals. Let the client reconnect with backoff.
-            retriesRef.current += 1;
             return;
           }
         },
