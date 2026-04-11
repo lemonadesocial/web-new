@@ -73,6 +73,8 @@ jobs:
           echo "NEXT_PUBLIC_AI_API_HTTP=${{ vars.STAGING_NEXT_PUBLIC_AI_API_HTTP }}" >> .env
           echo "NEXT_PUBLIC_AI_CONFIG=${{ vars.STAGING_NEXT_PUBLIC_AI_CONFIG }}" >> .env
           echo "NEXT_PUBLIC_SENTRY_DSN=${{ vars.STAGING_NEXT_PUBLIC_SENTRY_DSN }}" >> .env
+          echo "NEXT_PUBLIC_PAGE_DESIGNER_CONFIG=${{ vars.STAGING_NEXT_PUBLIC_PAGE_DESIGNER_CONFIG }}" >> .env
+          
 
       - name: Configure environment
         run: |
