@@ -29,6 +29,9 @@ export const GraphQLWSProvider = ({
   const [client, setClient] = useState<Client | null>(null);
   const clientRef = useRef<Client | null>(null);
 
+  // IMPORTANT: connectionParams identity controls when the WS client reconnects.
+  // Adding reactive values here (e.g., session token) would cause reconnection on every change.
+  // Keep deps array empty to maintain a stable connection. Auth is handled via cookies/headers.
   const buildClient = useCallback(() => {
     if (!url) return null;
 

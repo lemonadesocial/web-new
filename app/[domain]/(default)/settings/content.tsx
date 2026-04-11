@@ -226,7 +226,19 @@ export function Content() {
       )}
 
       <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
-      <div
+        {/* Relative path is safe here: from /{domain}/settings, the browser resolves
+            'settings/security/sessions' to /{domain}/settings/security/sessions. */}
+        <div
+          className="flex gap-4 items-center cursor-pointer py-3 px-4"
+          onClick={() => router.push('settings/security/sessions')}
+        >
+          <i className="icon-smartphone size-5 text-tertiary" />
+          <p>Active Sessions</p>
+        </div>
+      </div>
+
+      <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
+        <div
           className="flex gap-4 items-center cursor-pointer py-3 px-4"
           onClick={() => logOut(true)}
         >
@@ -240,16 +252,6 @@ export function Content() {
         >
           <i className="icon-delete size-5 text-error" />
           <p className="text-error">Delete Account</p>
-        </div>
-      </div>
-
-      <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
-        <div
-          className="flex gap-4 items-center cursor-pointer py-3 px-4"
-          onClick={() => router.push('settings/security/sessions')}
-        >
-          <i className="icon-smartphone size-5 text-tertiary" />
-          <p>Active Sessions</p>
         </div>
       </div>
     </div>

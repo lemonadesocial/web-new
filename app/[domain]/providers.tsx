@@ -89,9 +89,10 @@ export default function Providers({ children, space }: { children: React.ReactNo
         fetchPolicy: 'network-only',
       }).then(({ data }) => {
         if (data?.getMe) {
-          setUser(data.getMe as User);
+          const user = data.getMe as User;
+          setUser(user);
           Sentry.setUser({
-            id: (data.getMe as any)._id,
+            id: user._id,
             email: data.getMe.email || undefined,
           });
         }
