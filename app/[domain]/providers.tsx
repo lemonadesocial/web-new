@@ -91,7 +91,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
         if (data?.getMe) {
           setUser(data.getMe as User);
           Sentry.setUser({
-            id: data.getMe._id,
+            id: (data.getMe as any)._id,
             email: data.getMe.email || undefined,
           });
         }

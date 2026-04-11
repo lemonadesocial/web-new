@@ -43,10 +43,11 @@ vi.mock('graphql-ws', () => ({
 }));
 
 vi.mock('$lib/jotai', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { atom } = require('jotai');
-  const sessionAtom = atom<any>(null);
-  const hydraClientIdAtom = atom<string | null>(null);
-  const userAtom = atom<any>(null);
+  const sessionAtom = atom(null);
+  const hydraClientIdAtom = atom(null);
+  const userAtom = atom(null);
   return { sessionAtom, hydraClientIdAtom, userAtom };
 });
 
@@ -173,7 +174,7 @@ describe('WebSocket close-code handler', () => {
     expect(capturedOnClosed).toBeTruthy();
 
     const store = getDefaultStore();
-    store.set(sessionAtom, { token: 'some-token' });
+    store.set(sessionAtom, { _id: 'test-id', token: 'some-token' });
 
     capturedOnClosed!({ code: 4401 });
 
@@ -188,12 +189,12 @@ describe('WebSocket close-code handler', () => {
     expect(capturedOnClosed).toBeTruthy();
 
     const store = getDefaultStore();
-    store.set(sessionAtom, { token: 'some-token' });
+    store.set(sessionAtom, { _id: 'test-id', token: 'some-token' });
 
     capturedOnClosed!({ code: 4403 });
 
     // Session should NOT be cleared
-    expect(store.get(sessionAtom)).toEqual({ token: 'some-token' });
+    expect(store.get(sessionAtom)).toEqual({ _id: 'test-id', token: 'some-token' });
     // Should NOT redirect
     expect(window.location.href).toBe('http://localhost:3000/test');
     expect(localStorage.clear).not.toHaveBeenCalled();
@@ -204,11 +205,11 @@ describe('WebSocket close-code handler', () => {
     expect(capturedOnClosed).toBeTruthy();
 
     const store = getDefaultStore();
-    store.set(sessionAtom, { token: 'some-token' });
+    store.set(sessionAtom, { _id: 'test-id', token: 'some-token' });
 
     capturedOnClosed!({ code: 1006 });
 
-    expect(store.get(sessionAtom)).toEqual({ token: 'some-token' });
+    expect(store.get(sessionAtom)).toEqual({ _id: 'test-id', token: 'some-token' });
     expect(window.location.href).toBe('http://localhost:3000/test');
     expect(localStorage.clear).not.toHaveBeenCalled();
   });
@@ -218,11 +219,11 @@ describe('WebSocket close-code handler', () => {
     expect(capturedOnClosed).toBeTruthy();
 
     const store = getDefaultStore();
-    store.set(sessionAtom, { token: 'some-token' });
+    store.set(sessionAtom, { _id: 'test-id', token: 'some-token' });
 
     capturedOnClosed!({ code: 1011 });
 
-    expect(store.get(sessionAtom)).toEqual({ token: 'some-token' });
+    expect(store.get(sessionAtom)).toEqual({ _id: 'test-id', token: 'some-token' });
     expect(window.location.href).toBe('http://localhost:3000/test');
     expect(localStorage.clear).not.toHaveBeenCalled();
   });
@@ -232,11 +233,11 @@ describe('WebSocket close-code handler', () => {
     expect(capturedOnClosed).toBeTruthy();
 
     const store = getDefaultStore();
-    store.set(sessionAtom, { token: 'some-token' });
+    store.set(sessionAtom, { _id: 'test-id', token: 'some-token' });
 
     capturedOnClosed!({ code: 1012 });
 
-    expect(store.get(sessionAtom)).toEqual({ token: 'some-token' });
+    expect(store.get(sessionAtom)).toEqual({ _id: 'test-id', token: 'some-token' });
     expect(window.location.href).toBe('http://localhost:3000/test');
     expect(localStorage.clear).not.toHaveBeenCalled();
   });
