@@ -3,7 +3,9 @@ import React from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
+import { Editor, Frame } from '@craftjs/core';
+import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
@@ -30,7 +32,20 @@ import { useTracker } from '$lib/hooks/useTracker';
 import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
-export function EventGuestSide({ event: initEvent, autoSave = true }: { event: Event; autoSave?: boolean }) {
+import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
+import { resolver } from '../ai/manage/craft/resolver';
+
+export function EventGuestSide({
+  event: initEvent,
+  pageConfig,
+  autoSave = true,
+  isEditable = false,
+}: {
+  event: Event;
+  pageConfig?: GetPageConfigQuery['getPageConfig'];
+  autoSave?: boolean;
+  isEditable?: boolean;
+}) {
   const { data } = useQuery(GetEventDocument, {
     variables: { id: initEvent._id },
     initData: { getEvent: initEvent } as unknown as GetEventQuery,
@@ -38,11 +53,41 @@ export function EventGuestSide({ event: initEvent, autoSave = true }: { event: E
 
   useTracker(initEvent._id);
 
-  return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} autoSave={autoSave} />;
+  return (
+    <EventGuestSideContent
+      event={(data?.getEvent as Event) || initEvent}
+      pageConfig={pageConfig}
+      autoSave={autoSave}
+      isEditable={isEditable}
+    />
+  );
 }
 
-export function EventGuestSideContent({ event, autoSave = true }: { event: Event; autoSave?: boolean }) {
+export function EventGuestSideContent({
+  event,
+  pageConfig: initPageConfig,
+  autoSave = true,
+  isEditable = false,
+}: {
+  event: Event;
+  pageConfig?: GetPageConfigQuery['getPageConfig'];
+  autoSave?: boolean;
+  isEditable?: boolean;
+}) {
   const [state] = useEventTheme();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
+    variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
+    initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
+    skip: !event?._id || isEditable,
+  });
+  const pageConfig = pageConfigData?.getPageConfig;
+  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   const me = useMe();
 
@@ -53,81 +98,63 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
 
   const router = useRouter();
 
-  return (
-    <div className={clsx('flex gap-18', state.theme && state.config.color)}>
-      <div className="hidden md:flex w-74 flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          {event.new_new_photos_expanded?.[0] ? (
-            <img
-              src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
-              alt={event.title}
-              loading="lazy"
-              className="aspect-square object-contain border rounded-md"
+  const renderSections = () => {
+    return (event.layout_sections || DEFAULT_LAYOUT_SECTIONS).map((item) => {
+      switch (item.id) {
+        case 'registration':
+          return event ? <EventAccess key={item.id} event={event} /> : null;
+        case 'about':
+          return <AboutSection key={item.id} event={event} />;
+        case 'collectibles':
+          return attending ? <EventCollectibles key={item.id} event={event} /> : null;
+        case 'location':
+          return <LocationSection key={item.id} event={event} />;
+
+        default:
+          return null;
+      }
+    });
+  };
+
+  const renderContent = () => {
+    if (isEditable && isClient) {
+      return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
+    }
+
+    if (pageConfigFields?.structure_data && isClient) {
+      return (
+        <Editor enabled={false} resolver={resolver}>
+          <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
+            <Frame
+              data={
+                typeof pageConfigFields.structure_data === 'string'
+                  ? pageConfigFields.structure_data
+                  : JSON.stringify(pageConfigFields.structure_data)
+              }
             />
-          ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
-          )}
+          </div>
+        </Editor>
+      );
+    }
 
-          {isHost && (
-            <>
-              <EventThemeBuilder eventId={event._id} autoSave={autoSave} />
-              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-                <p className="text-accent-500">You have manage access for this event.</p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  iconRight="icon-arrow-outward"
-                  className="rounded-full"
-                  onClick={() => router.push(`/e/manage/${event.shortid}`)}
-                >
-                  Manage
-                </Button>
-              </div>
-            </>
-          )}
+    return (
+      <div className={clsx('flex gap-18', state.theme, state.config.name, state.config.color, state.config.mode)}>
+        <div className="hidden md:flex w-74 flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            {event.new_new_photos_expanded?.[0] ? (
+              <img
+                src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
+                alt={event.title}
+                loading="lazy"
+                className="aspect-square object-contain border rounded-md"
+              />
+            ) : (
+              <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
+            )}
 
-          {
-            isUserPromoter && (
-              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-                <p className="text-accent-500">You have check in access for this event.</p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  iconRight="icon-arrow-outward"
-                  className="rounded-full"
-                  onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
-                >
-                  Check In
-                </Button>
-              </div>
-            )
-          }
-        </div>
-
-        <PendingCohostRequest event={event} />
-        <CommunitySection event={event} />
-        <HostedBySection event={event} />
-        <AttendeesSection event={event} />
-      </div>
-
-      <div className="flex-1 flex flex-col gap-6 w-full">
-        <div className="block md:hidden">
-          {event.new_new_photos_expanded?.[0] ? (
-            <img
-              src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
-              alt={event.title}
-              loading="lazy"
-              className="aspect-square object-contain border rounded-md"
-            />
-          ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
-          )}
-
-          {isHost && (
-            <>
-              <Spacer className="h-4" />
-              <div className="flex flex-col gap-4">
-                <EventThemeBuilder eventId={event._id} />
+            {isHost && (
+              <>
+                <EventThemeBuilder eventId={event._id} autoSave={false} />
                 <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                   <p className="text-accent-500">You have manage access for this event.</p>
                   <Button
@@ -140,12 +167,10 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
                     Manage
                   </Button>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-{
-            isUserPromoter && (
+            {isUserPromoter && (
               <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                 <p className="text-accent-500">You have check in access for this event.</p>
                 <Button
@@ -158,64 +183,112 @@ export function EventGuestSideContent({ event, autoSave = true }: { event: Event
                   Check In
                 </Button>
               </div>
-            )
-          }
+            )}
+          </div>
 
-          {event.private && (
-            <>
-              <Spacer className="h-6" />
-              <Badge className="bg-gradient-to-r from-accent-500/16 to-warning-500/16">
-                <div className="bg-gradient-to-r from-accent-500 to-warning-500 bg-clip-text flex items-center gap-1">
-                  <i aria-hidden="true" className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 " />
-                  <span className="text-transparent bg-clip-text">Private Event</span>
-                </div>
-              </Badge>
-            </>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
-
-          {!!hosts.length && (
-            <p className="md:hidden text-secondary text-sm">
-              Hosted By{' '}
-              {hosts
-                .map((p) => p.display_name || p.name)
-                .join(', ')
-                .replace(/,(?=[^,]*$)/, ' & ')}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <EventDateTimeBlock event={event} />
-          <EventLocationBlock event={event} />
-        </div>
-        {(event.layout_sections || DEFAULT_LAYOUT_SECTIONS)?.map((item) => {
-          switch (item.id) {
-            case 'registration':
-              return event ? <EventAccess key={item.id} event={event} /> : null;
-            case 'about':
-              return <AboutSection key={item.id} event={event} />;
-            case 'collectibles':
-              return attending ? <EventCollectibles key={item.id} event={event} /> : null;
-            case 'location':
-              return <LocationSection key={item.id} event={event} />;
-
-            default:
-              break;
-          }
-        })}
-
-        <SubEventSection event={event} />
-        <GallerySection event={event} />
-        <div className="flex flex-col gap-6 md:hidden">
+          <PendingCohostRequest event={event} />
           <CommunitySection event={event} />
+          <HostedBySection event={event} />
           <AttendeesSection event={event} />
         </div>
-        <Spacer className="h-8" />
+
+        <div className="flex-1 flex flex-col gap-6 w-full">
+          <div className="block md:hidden">
+            {event.new_new_photos_expanded?.[0] ? (
+              <img
+                src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
+                alt={event.title}
+                loading="lazy"
+                className="aspect-square object-contain border rounded-md"
+              />
+            ) : (
+              <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
+            )}
+
+            {isHost && (
+              <>
+                <Spacer className="h-4" />
+                <div className="flex flex-col gap-4">
+                  <EventThemeBuilder eventId={event._id} autoSave={false} />
+                  <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                    <p className="text-accent-500">You have manage access for this event.</p>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      iconRight="icon-arrow-outward"
+                      className="rounded-full"
+                      onClick={() => router.push(`/e/manage/${event.shortid}`)}
+                    >
+                      Manage
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isUserPromoter && (
+              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                <p className="text-accent-500">You have check in access for this event.</p>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconRight="icon-arrow-outward"
+                  className="rounded-full"
+                  onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
+                >
+                  Check In
+                </Button>
+              </div>
+            )}
+
+            {event.private && (
+              <>
+                <Spacer className="h-6" />
+                <Badge className="bg-gradient-to-r from-accent-500/16 to-warning-500/16">
+                  <div className="bg-gradient-to-r from-accent-500 to-warning-500 bg-clip-text flex items-center gap-1">
+                    <i
+                      aria-hidden="true"
+                      className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 "
+                    />
+                    <span className="text-transparent bg-clip-text">Private Event</span>
+                  </div>
+                </Badge>
+              </>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
+
+            {!!hosts.length && (
+              <p className="md:hidden text-secondary text-sm">
+                Hosted By{' '}
+                {hosts
+                  .map((p) => p.display_name || p.name)
+                  .join(', ')
+                  .replace(/,(?=[^,]*$)/, ' & ')}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <EventDateTimeBlock event={event} />
+            <EventLocationBlock event={event} />
+          </div>
+
+          {renderSections()}
+
+          <SubEventSection event={event} />
+          <GallerySection event={event} />
+          <div className="flex flex-col gap-6 md:hidden">
+            <CommunitySection event={event} />
+            <AttendeesSection event={event} />
+          </div>
+          <Spacer className="h-8" />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  return renderContent();
 }

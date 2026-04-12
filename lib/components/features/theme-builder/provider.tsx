@@ -4,11 +4,20 @@ import { defaultTheme, getRandomColor, getRandomFont, patterns, shaders, ThemeVa
 import { merge } from 'lodash';
 import { PassportTemplate } from './passports/types';
 
-export const EventThemeContext = React.createContext(null);
+type ThemeContextValue = [ThemeValues, React.Dispatch<ThemeBuilderAction>];
+
+export const EventThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function EventThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
-  const value = React.useMemo(() => [state, dispatch] as const, [state]);
+
+  React.useEffect(() => {
+    if (themeData) {
+      dispatch({ type: ThemeBuilderActionKind.reset, payload: themeData });
+    }
+  }, [themeData]);
+
+  const value = React.useMemo(() => [state, dispatch] as ThemeContextValue, [state]);
 
   return <EventThemeContext.Provider value={value}>{children}</EventThemeContext.Provider>;
 }
@@ -20,11 +29,11 @@ export function useEventTheme(): [state: ThemeValues, dispatch: React.Dispatch<T
   return context;
 }
 
-export const ThemeContext = React.createContext(null);
+export const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
-  const value = React.useMemo(() => [state, dispatch] as const, [state]);
+  const value = React.useMemo(() => [state, dispatch] as ThemeContextValue, [state]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

@@ -1,0 +1,38 @@
+fragment PageConfigFragment on PageConfig {
+  _id
+  name
+  description
+  owner_id
+  owner_type
+  status
+  version
+  published_version
+  thumbnail_url
+  created_at
+  created_by
+  last_edited_by
+  locked_at
+  locked_by
+  template_id
+  template_version_installed
+  space_id
+  structure_data
+}
+
+query GetPageConfig($id: MongoID, $ownerType: PageConfigOwnerType, $ownerId: MongoID) {
+  getPageConfig(_id: $id, owner_type: $ownerType, owner_id: $ownerId) {
+    ...PageConfigFragment
+  }
+}
+
+mutation CreatePageConfig($input: CreatePageConfigInput!) {
+  createPageConfig(input: $input) {
+    ...PageConfigFragment
+  }
+}
+
+mutation UpdatePageConfig($id: MongoID!, $input: UpdatePageConfigInput!) {
+  updatePageConfig(id: $id, input: $input) {
+    ...PageConfigFragment
+  }
+}

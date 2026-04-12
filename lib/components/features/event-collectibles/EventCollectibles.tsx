@@ -30,3 +30,4 @@ export function EventCollectibles({ event }: { event: Event }) {
     </div>
   );
 }
+

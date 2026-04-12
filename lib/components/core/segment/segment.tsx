@@ -4,7 +4,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from '../button';
 
-interface SegmentItem<T> {
+export interface SegmentItem<T> {
   label?: string;
   value: T;
   icon?: string;

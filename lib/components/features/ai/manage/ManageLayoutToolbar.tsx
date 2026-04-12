@@ -10,11 +10,19 @@ import { isEqual, merge } from 'lodash';
 import { Button, Menu, MenuItem, modal, sheet, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
+  CreatePageConfigDocument,
+  CreateTemplateDocument,
   Event,
   GetUpcomingEventsDocument,
+  PageConfig,
   PublishEventDocument,
+  Template,
+  UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
+  UpdateSpaceDocument,
+  SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import {
@@ -29,6 +37,7 @@ import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
+import { useEditor } from '@craftjs/core';
 
 const devices = {
   desktop: {
@@ -44,6 +53,12 @@ function ManageLayoutToolbar() {
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
+
+  const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
+    canUndo: query.history.canUndo(),
+    canRedo: query.history.canRedo(),
+    isSelected: state.events.selected.size > 0,
+  }));
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -71,6 +86,19 @@ function ManageLayoutToolbar() {
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to save theme');
+    },
+  });
+
+  const [updateEventSettings, { loading: savingLayout }] = useMutation(UpdateEventSettingsDocument, {
+    onComplete: (_, data) => {
+      if (data?.updateEvent?._id) {
+        toast.success('Layout saved successfully!');
+        store.setData({ ...state.data, ...data.updateEvent } as Event);
+        updateEvent(data.updateEvent);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save layout');
     },
   });
 
@@ -104,6 +132,133 @@ function ManageLayoutToolbar() {
         input: { theme_data: themeState },
       },
     });
+  };
+
+  const [updateSpace, { loading: savingSpace }] = useMutation(UpdateSpaceDocument, {
+    onComplete: (_, data) => {
+      const updatedSpace = useFragment(SpaceFragmentDoc, data?.updateSpace);
+      if (updatedSpace?._id) {
+        toast.success('Space layout saved successfully!');
+        store.setData({ ...state.data, ...updatedSpace } as any);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save space layout');
+    },
+  });
+
+  const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
+  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument);
+
+  const handleSaveLayout = async () => {
+    if (!event?._id) return;
+
+    try {
+      const nodes = query.getNodes();
+      const rootNodes = query.node('ROOT').get().data.nodes;
+
+      const layoutSections = rootNodes.map((id) => ({
+        id,
+        hidden: false,
+      }));
+
+      // Extract updated event/space data from nodes
+      let updatedData: any = {};
+      Object.values(nodes).forEach((node) => {
+        if (node.data.props.event) {
+          updatedData = { ...updatedData, ...node.data.props.event };
+        }
+        if (node.data.props.space) {
+          updatedData = { ...updatedData, ...node.data.props.space };
+        }
+      });
+
+      const layout_data = JSON.parse(query.serialize());
+      console.log('@@@ layout_data', layout_data);
+
+      let template_id;
+
+      if (state.isCreatingTemplate) {
+        try {
+          // 1. Create template
+          const templateResult = await createTemplate({
+            variables: {
+              input: {
+                name: state.templateName || 'New Template',
+                slug: (state.templateName || 'new-template').toLowerCase().replace(/\s+/g, '-'),
+                category: 'CUSTOM',
+                description: 'Custom template created from builder',
+                thumbnail_url: '', // TODO: generate thumbnail or use default
+                tags: [],
+                structure_data: layout_data,
+                target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
+                config: {},
+              },
+            },
+          });
+
+          const newTemplate = templateResult.data?.createTemplate as Template;
+          if (!newTemplate?._id) throw new Error('Failed to create template');
+
+          template_id = newTemplate._id;
+
+          toast.success('Template and layout created successfully!');
+          store.setIsCreatingTemplate(false);
+        } catch (e: any) {
+          toast.error(e.message || 'Failed to create template');
+        }
+      }
+
+      // 2. Create page config
+      const pageConfigResult = await createPageConfig({
+        variables: {
+          input: {
+            name: state.templateName || 'New Template',
+            owner_id: event._id,
+            owner_type: state.layoutType === 'event' ? 'event' : 'space',
+            template_id,
+            structure_data: layout_data,
+          },
+        },
+      });
+
+      const newPageConfig = pageConfigResult.data?.createPageConfig as PageConfig;
+      if (!newPageConfig?._id) throw new Error('Failed to create page config');
+
+      // 3. Update event/space data
+      if (state.layoutType === 'event') {
+        await updateEventSettings({
+          variables: {
+            id: event._id,
+            input: {
+              title: updatedData.title,
+              description: updatedData.description,
+              start: updatedData.start,
+              end: updatedData.end,
+              timezone: updatedData.timezone,
+              address: updatedData.address,
+              latitude: updatedData.latitude,
+              longitude: updatedData.longitude,
+              virtual_url: updatedData.virtual_url,
+              layout_sections: layoutSections,
+            },
+          },
+        });
+      } else {
+        await updateSpace({
+          variables: {
+            id: event._id,
+            input: {
+              title: updatedData.title,
+              description: updatedData.description,
+              theme_data: themeState,
+            },
+          },
+        });
+      }
+    } catch (e) {
+      toast.error('Failed to parse layout structure');
+    }
   };
 
   const handleResetTheme = () => {
@@ -148,7 +303,7 @@ function ManageLayoutToolbar() {
       <div className="hidden md:flex h-14 items-center px-4 gap-4">
         <motion.div
           initial={false}
-          animate={{ width: state.showSidebarLeft ? 432 : 'auto' }}
+          animate={{ width: state.showSidebarLeft ? 420 : 'auto' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="flex items-center gap-3 overflow-hidden"
         >
@@ -196,9 +351,6 @@ function ManageLayoutToolbar() {
                   size="sm"
                   onClick={() => {
                     store.setActiveTab(key as ActiveTabType);
-                    if (!['design', 'preview'].includes(key)) {
-                      store.setPreviewMode('desktop');
-                    }
                   }}
                   className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
                 >
@@ -206,21 +358,21 @@ function ManageLayoutToolbar() {
                 </Button>
               ))}
             </div>
+          </div>
 
-            {['design', 'preview'].includes(state.activeTab) && (
-              <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-                {Object.entries(devices).map(([key, item]) => (
-                  <Button
-                    key={key}
-                    icon={item.icon}
-                    variant="tertiary"
-                    size="sm"
-                    onClick={() => store.setPreviewMode(key as any)}
-                    className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                  ></Button>
-                ))}
-              </div>
-            )}
+          <div className="flex-1 flex items-center justify-center gap-2">
+            <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+              {Object.entries(devices).map(([key, item]) => (
+                <Button
+                  key={key}
+                  icon={item.icon}
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => store.setPreviewMode(key as any)}
+                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                ></Button>
+              ))}
+            </div>
 
             <Button variant="tertiary-alt" icon="icon-arrow-outward" size="sm" onClick={handleOpenPublicPage} />
           </div>
@@ -253,7 +405,14 @@ function ManageLayoutToolbar() {
                     <PreviewLinkPopup />
                   </Menu.Content>
                 </Menu.Root>
-                <Button size="sm" variant="tertiary-alt" onClick={() => store.setActiveTab('manage')}>
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  onClick={() => {
+                    handleResetTheme();
+                    store.setActiveTab('manage');
+                  }}
+                >
                   Close
                 </Button>
               </>
@@ -274,6 +433,33 @@ function ManageLayoutToolbar() {
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
+            )}
+
+            {['design', 'preview'].includes(state.activeTab) && (
+              <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-arrow-back-sharp"
+                  disabled={!canUndo}
+                  onClick={() => actions.history.undo()}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-arrow-back-sharp rotate-180"
+                  disabled={!canRedo}
+                  onClick={() => actions.history.redo()}
+                />
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  onClick={handleSaveLayout}
+                >
+                  Save Changes
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -356,6 +542,35 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
+            {['preview', 'design'].includes(state.activeTab) && (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  className="rounded-full aspect-square"
+                  icon="icon-arrow-back-sharp"
+                  disabled={!canUndo}
+                  onClick={() => actions.history.undo()}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  className="rounded-full aspect-square"
+                  icon="icon-arrow-back-sharp rotate-180"
+                  disabled={!canRedo}
+                  onClick={() => actions.history.redo()}
+                />
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="rounded-full px-4"
+                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  onClick={handleSaveLayout}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            )}
             {['preview', 'design'].includes(state.activeTab) && (
               <Button
                 size="sm"

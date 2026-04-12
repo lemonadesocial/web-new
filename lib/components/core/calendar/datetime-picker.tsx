@@ -236,48 +236,50 @@ export function Timezone({
   return (
     <Menu.Root strategy={strategy} className={className} placement={placement}>
       <Menu.Trigger>{trigger()}</Menu.Trigger>
-      <Menu.Content className="p-0 border-0 rounded-md!">
-        {({ toggle }) => (
-          <Card.Root>
-            <Card.Header className="p-0">
-              <Input
-                className="rounded-none border-none"
-                value={query}
-                autoFocus
-                onChange={(e) => {
-                  const text = e.target.value;
-                  setQuery(text);
-                  if (!text) setZone(timezoneOptions);
-                  else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
-                }}
-              />
-            </Card.Header>
-            <Card.Content className="p-0 md:w-111.5">
-              <div className="p-1 overflow-auto h-42.5">
-                {zones.map((zone, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={clsx(
-                        'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
-                        value?.value === zone.value,
-                      )}
-                      onClick={() => {
-                        onSelect(zone);
-                        setQuery('');
-                        toggle();
-                      }}
-                    >
-                      <p>{zone.value}</p>
-                      <p>{zone.short}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </Card.Content>
-          </Card.Root>
-        )}
-      </Menu.Content>
+      <FloatingPortal>
+        <Menu.Content className="p-0 border-0 rounded-md z-200">
+          {({ toggle }) => (
+            <Card.Root>
+              <Card.Header className="p-0">
+                <Input
+                  className="rounded-none border-none"
+                  value={query}
+                  autoFocus
+                  onChange={(e) => {
+                    const text = e.target.value;
+                    setQuery(text);
+                    if (!text) setZone(timezoneOptions);
+                    else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
+                  }}
+                />
+              </Card.Header>
+              <Card.Content className="p-0 w-72 md:w-96">
+                <div className="p-1 overflow-auto h-64">
+                  {zones.map((zone, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className={clsx(
+                          'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
+                          value?.value === zone.value,
+                        )}
+                        onClick={() => {
+                          onSelect(zone);
+                          setQuery('');
+                          toggle();
+                        }}
+                      >
+                        <p className="truncate mr-2">{zone.value}</p>
+                        <p className="shrink-0 text-tertiary text-xs">{zone.short}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card.Content>
+            </Card.Root>
+          )}
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }

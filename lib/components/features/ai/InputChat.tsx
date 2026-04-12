@@ -26,6 +26,7 @@ import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { communityAvatar } from '$lib/utils/community';
 import { useMe } from '$lib/hooks/useMe';
+import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
@@ -72,14 +73,37 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
+  const applyPageDesign = (structureData: unknown, message: string) => {
+    const triggers = getAIPageEditTriggers();
+    if (!triggers) {
+      console.warn('[AI Designer] Editor bridge not available — page design not applied');
+      return;
+    }
+    if (structureData) {
+      const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+      triggers.applyStructureData(data);
+      toast.success(message);
+    }
+  };
+
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
     {
       onComplete: (_, income) => {
         dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
-        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...income.run, role: 'assistant' }] } });
 
-        const tool = income.run?.metadata?.tool;
+        let runResult = income.run;
+        if (typeof runResult.metadata === 'string') {
+          try {
+            runResult = { ...runResult, metadata: JSON.parse(runResult.metadata) };
+          } catch (e) {
+            console.error('Failed to parse metadata', e);
+          }
+        }
+
+        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...runResult, role: 'assistant' }] } });
+
+        const tool = runResult.metadata?.tool;
         match(tool?.name)
           .with('create_event', async () => {
             dispatch({
@@ -153,6 +177,15 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
               fetchPolicy: 'network-only',
             });
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
+          })
+          .with('create_page_config', () => {
+            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          })
+          .with('generate_page_from_description', () => {
+            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          })
+          .with('update_page_config_section', () => {
+            applyPageDesign(tool.data?.structure_data, 'Design updated!');
           });
       },
       onError: (error) => {
@@ -181,6 +214,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
+
     run({
       variables: {
         message: text,
@@ -372,7 +406,12 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                 className="rounded-full object-cover"
                 alt={selectedSpace?.title || 'Community avatar'}
               />
-              <p className={clsx('text-sm max-w-33 truncate text-tertiary', (compact || isMobile) ? 'hidden' : 'hidden md:block')}>
+              <p
+                className={clsx(
+                  'text-sm max-w-33 truncate text-tertiary',
+                  compact || isMobile ? 'hidden' : 'hidden md:block',
+                )}
+              >
                 {selectedSpace?.title || 'Select community'}
               </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
@@ -380,7 +419,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
           )}
         </Menu.Trigger>
         <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">
-          {({toggle}) => (
+          {({ toggle }) => (
             <>
               {spaces.map((space) => (
                 <MenuItem
@@ -388,7 +427,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                   title={space.title}
                   onClick={() => {
                     onSelectSpace(space);
-                    toggle()
+                    toggle();
                   }}
                 />
               ))}
@@ -433,7 +472,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
             strokeDashoffset={ringOffset}
           />
         </svg>
-        <span className={clsx((compact || isMobile) ? 'hidden' : 'hidden md:inline')}>
+        <span className={clsx(compact || isMobile ? 'hidden' : 'hidden md:inline')}>
           {formatCredits(selectedSpace?.credits)} / {formatCredits(selectedSpace?.credits_high_water_mark)}
         </span>
       </button>

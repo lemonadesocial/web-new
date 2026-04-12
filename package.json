@@ -17,6 +17,7 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@craftjs/core": "^0.2.12",
     "@date-fns/tz": "^1.2.0",
     "@dicebear/core": "^9.2.2",
     "@dicebear/glass": "^9.2.2",
@@ -97,6 +98,7 @@
     "react": "^19.0.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.0.0",
+    "react-grid-layout": "^2.2.3",
     "react-hook-form": "^7.54.2",
     "react-markdown": "^10.1.0",
     "react-modal-sheet": "^5.2.1",
@@ -122,6 +124,7 @@
     "@playwright/test": "^1.50.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
+    "@types/html-to-text": "^9.0.4",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/linkify-it": "^5.0.0",

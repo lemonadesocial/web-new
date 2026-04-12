@@ -1,0 +1,50 @@
+fragment TemplateFragment on Template {
+  _id
+  name
+  slug
+  description
+  thumbnail_url
+  category
+  target
+  visibility
+  tags
+  version
+  install_count
+  rating_average
+  rating_count
+  marketplace_listed
+  featured
+  price_cents
+  currency
+  published_at
+  created_at
+  creator_id
+  creator_type
+  subscription_tier_min
+  config
+  structure_data
+}
+
+query ListTemplates($skip: Int, $limit: Int, $target: String) {
+  listTemplates(skip: $skip, limit: $limit, target: $target) {
+    ...TemplateFragment
+  }
+}
+
+query GetTemplate($id: MongoID!) {
+  getTemplate(id: $id) {
+    ...TemplateFragment
+  }
+}
+
+mutation CreateTemplate($input: CreateTemplateInput!) {
+  createTemplate(input: $input) {
+    ...TemplateFragment
+  }
+}
+
+mutation UpdateTemplate($id: MongoID!, $input: UpdateTemplateInput!) {
+  updateTemplate(id: $id, input: $input) {
+    ...TemplateFragment
+  }
+}

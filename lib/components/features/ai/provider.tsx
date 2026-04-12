@@ -1,5 +1,6 @@
 'use client';
 import { Config, RunResult } from '$lib/graphql/generated/ai/graphql';
+import { GetPageConfigQuery } from '$lib/graphql/generated/backend/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
 import { AI_CONFIG } from '$lib/utils/constants';
@@ -28,6 +29,7 @@ type State = {
   config: string;
   configs: Config[];
   standId?: string;
+  pageConfig?: GetPageConfigQuery['getPageConfig'];
 };
 
 const session = uuidV4();
@@ -55,6 +57,7 @@ export enum AIChatActionKind {
   'set_data_run',
   'set_config',
   'set_configs',
+  'set_page_config',
   'reset',
 }
 
@@ -154,6 +157,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_configs: {
       return { ...state, configs: action.payload?.configs || [] };
+    }
+
+    case AIChatActionKind.set_page_config: {
+      return { ...state, pageConfig: action.payload?.pageConfig };
     }
 
     case AIChatActionKind.reset: {

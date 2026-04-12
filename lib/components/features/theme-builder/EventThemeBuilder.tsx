@@ -386,22 +386,41 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-1">
-            {Object.entries(fonts.title).map(([key]) => (
-              <button
-                key={key}
-                type="button"
-                className="w-full text-left text-sm px-2 py-1.5 rounded-sm hover:bg-card-hover"
-                onClick={() =>
-                  dispatch({
-                    type: ThemeBuilderActionKind.select_font,
-                    payload: { font_title: key, variables: { font: { '--font-title': fonts.title[key] } } },
-                  })
-                }
-              >
-                {capitalize(join(split(key, '_'), ' '))}
-              </button>
-            ))}
+          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-3">
+            <div className="grid grid-cols-4 gap-3">
+              {Object.entries(fonts.title).map(([key, font]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className="flex flex-col items-center gap-1.5 cursor-pointer group"
+                  onClick={() =>
+                    dispatch({
+                      type: ThemeBuilderActionKind.select_font,
+                      payload: { font_title: key, variables: { font: { '--font-title': fonts.title[key] } } },
+                    })
+                  }
+                >
+                  <div
+                    className={clsx(
+                      'size-14 rounded-sm border-2 flex items-center justify-center group-hover:border-primary/50 transition-colors',
+                      (data.font_title || 'default') === key ? 'border-primary' : 'border-white/10',
+                    )}
+                  >
+                    <span style={{ fontFamily: font }} className="text-2xl text-primary">
+                      Ag
+                    </span>
+                  </div>
+                  <p
+                    className={clsx(
+                      'text-[10px] truncate w-full text-center',
+                      (data.font_title || 'default') === key ? 'text-primary' : 'text-tertiary',
+                    )}
+                  >
+                    {capitalize(join(split(key, '_'), ' '))}
+                  </p>
+                </button>
+              ))}
+            </div>
           </Menu.Content>
         </MaybeFloatingPortal>
       </Menu.Root>
@@ -419,22 +438,41 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
           />
         </Menu.Trigger>
         <MaybeFloatingPortal enabled={menuInPortal}>
-          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-1">
-            {Object.entries(fonts.body).map(([key]) => (
-              <button
-                key={key}
-                type="button"
-                className="w-full text-left text-sm px-2 py-1.5 rounded-sm hover:bg-card-hover"
-                onClick={() =>
-                  dispatch({
-                    type: ThemeBuilderActionKind.select_font,
-                    payload: { font_body: key, variables: { font: { '--font-body': fonts.body[key] } } },
-                  })
-                }
-              >
-                {capitalize(join(split(key, '_'), ' '))}
-              </button>
-            ))}
+          <Menu.Content className="w-75 max-h-80 overflow-auto no-scrollbar p-3">
+            <div className="grid grid-cols-4 gap-3">
+              {Object.entries(fonts.body).map(([key, font]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className="flex flex-col items-center gap-1.5 cursor-pointer group"
+                  onClick={() =>
+                    dispatch({
+                      type: ThemeBuilderActionKind.select_font,
+                      payload: { font_body: key, variables: { font: { '--font-body': fonts.body[key] } } },
+                    })
+                  }
+                >
+                  <div
+                    className={clsx(
+                      'size-14 rounded-sm border-2 flex items-center justify-center group-hover:border-primary/50 transition-colors',
+                      (data.font_body || 'default') === key ? 'border-primary' : 'border-white/10',
+                    )}
+                  >
+                    <span style={{ fontFamily: font }} className="text-2xl text-primary">
+                      Ag
+                    </span>
+                  </div>
+                  <p
+                    className={clsx(
+                      'text-[10px] truncate w-full text-center',
+                      (data.font_body || 'default') === key ? 'text-primary' : 'text-tertiary',
+                    )}
+                  >
+                    {capitalize(join(split(key, '_'), ' '))}
+                  </p>
+                </button>
+              ))}
+            </div>
           </Menu.Content>
         </MaybeFloatingPortal>
       </Menu.Root>
@@ -645,7 +683,7 @@ function EventBuilderPaneOptions() {
                   'w-full h-full',
                   data.theme === 'shader' && `rounded-full item-color-${data.config.name}`,
                   data.theme === 'pattern' &&
-                    `pattern rounded-full ${data.config.name} ${data.config.color} relative! opacity-100!`,
+                  `pattern rounded-full ${data.config.name} ${data.config.color} relative! opacity-100!`,
                   data.theme === 'image' && 'h-8 w-10.75 rounded-xs bg-cover!',
                 )}
                 style={
