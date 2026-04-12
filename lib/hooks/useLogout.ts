@@ -15,6 +15,8 @@ const RevokeCurrentSessionDocument = `
   }
 ` as unknown as TypedDocumentNode<{ revokeCurrentSession: boolean }, Record<string, never>>;
 
+const REVOKE_TIMEOUT_MS = 2000;
+
 export function useRawLogout() {
   const setSession = useSetAtom(sessionAtom);
   const hydraClientId = useAtomValue(hydraClientIdAtom);
@@ -25,10 +27,29 @@ export function useRawLogout() {
     // Notify backend to close any live WS connections for this session. Must run
     // BEFORE Kratos logout so the auth cookie is still valid when the request
     // reaches the backend. Failure is non-blocking — the periodic revalidator
-    // catches stale sockets within 5 minutes.
-    const { error: revokeError } = await revokeCurrentSession({});
+    // catches stale sockets within 5 minutes. A 2s timeout prevents a backend
+    // hang from blocking logout UX indefinitely.
+    const revokeWithTimeout = Promise.race([
+      revokeCurrentSession({}),
+      new Promise<{ error: Error }>((resolve) =>
+        setTimeout(
+          () =>
+            resolve({ error: new Error('revokeCurrentSession timeout') }),
+          REVOKE_TIMEOUT_MS,
+        ),
+      ),
+    ]);
+    const { error: revokeError } = await revokeWithTimeout;
     if (revokeError) {
-      Sentry.captureException(revokeError, { tags: { flow: 'logout' } });
+      const isTimeout =
+        revokeError instanceof Error &&
+        revokeError.message === 'revokeCurrentSession timeout';
+      Sentry.captureException(revokeError, {
+        tags: {
+          flow: 'logout',
+          ...(isTimeout ? { reason: 'timeout' } : {}),
+        },
+      });
     }
 
     // Dispose WebSocket connection BEFORE clearing local state
