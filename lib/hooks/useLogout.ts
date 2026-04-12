@@ -29,6 +29,9 @@ export function useRawLogout() {
     // reaches the backend. Failure is non-blocking — the periodic revalidator
     // catches stale sockets within 5 minutes. A 2s timeout prevents a backend
     // hang from blocking logout UX indefinitely.
+    // Promise.race leaks the losing revokeCurrentSession promise on timeout —
+    // acceptable since logout is terminal (page navigates); AbortController
+    // plumbing through useMutation is out of scope for this fix.
     const revokeWithTimeout = Promise.race([
       revokeCurrentSession({}),
       new Promise<{ error: Error }>((resolve) =>

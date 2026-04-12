@@ -649,6 +649,64 @@ describe('useRawLogout - session revocation on logout', () => {
     });
   });
 
+  it('captures Sentry with reason: timeout when mutation exceeds 2s and still completes logout', async () => {
+    const Sentry = await import('@sentry/nextjs');
+    const ory = (await import('$lib/utils/ory')).ory as any;
+
+    const mockLocalStorageClear = vi.fn();
+    vi.stubGlobal('localStorage', {
+      clear: mockLocalStorageClear,
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+
+    // Mutation returns a never-resolving promise so the 2s timeout branch wins.
+    mockMutate.mockImplementation(() => new Promise(() => {}));
+
+    ory.createBrowserLogoutFlow.mockClear();
+    ory.updateLogoutFlow.mockClear();
+    ory.createBrowserLogoutFlow.mockResolvedValue({
+      data: { logout_token: 'test-token' },
+    });
+    ory.updateLogoutFlow.mockResolvedValue(undefined);
+
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await mountLogout(vi.fn());
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('logout-btn'));
+      });
+
+      // Advance past the 2s REVOKE_TIMEOUT_MS and flush pending microtasks.
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+
+      vi.useRealTimers();
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.any(Error),
+          expect.objectContaining({
+            tags: expect.objectContaining({
+              flow: 'logout',
+              reason: 'timeout',
+            }),
+          }),
+        );
+        // Logout still completes despite the timeout.
+        expect(ory.updateLogoutFlow).toHaveBeenCalled();
+        expect(mockLocalStorageClear).toHaveBeenCalled();
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does NOT block logout when mutation fails — Kratos logout + storage clear still run', async () => {
     const mockLocalStorageClear = vi.fn();
     const mockSessionStorageClear = vi.fn();
