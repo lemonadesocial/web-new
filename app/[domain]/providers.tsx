@@ -1,16 +1,18 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useAccount, useChainId } from 'wagmi';
 import { sdk } from '@farcaster/miniapp-sdk';
 import * as Sentry from '@sentry/nextjs';
 
 import { GraphqlClientProvider } from '$lib/graphql/request';
+import { GraphQLWSProvider } from '$lib/graphql/subscription';
 import { initializeAppKit } from '$lib/utils/appkit';
 import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';
 import { hydraClientIdAtom, sessionAtom, userAtom } from '$lib/jotai';
 import { defaultClient } from '$lib/graphql/request/instances';
+import { GRAPHQL_URL } from '$lib/utils/constants';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
@@ -87,9 +89,10 @@ export default function Providers({ children, space }: { children: React.ReactNo
         fetchPolicy: 'network-only',
       }).then(({ data }) => {
         if (data?.getMe) {
-          setUser(data.getMe as User);
+          const user = data.getMe as User;
+          setUser(user);
           Sentry.setUser({
-            id: data.getMe._id,
+            id: user._id,
             email: data.getMe.email || undefined,
           });
         }
@@ -103,11 +106,28 @@ export default function Providers({ children, space }: { children: React.ReactNo
     Sentry.setUser(null);
   }, [session]);
 
+  const wsUrl = useMemo(() => {
+    if (!GRAPHQL_URL) return '';
+    return GRAPHQL_URL.replace(/^http/, 'ws');
+  }, []);
+
+  const wsConnectionParams = useMemo(() => ({
+    'X-Client-Type': 'web',
+    'X-Client-App-Version': process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0',
+    'X-Client-Locale': typeof navigator !== 'undefined' ? navigator.language : 'en',
+  }), []);
+
   if (chainsLoading || !appKitReady || !miniAppReady || loadingAuth) return null;
 
   return (
     <GraphqlClientProvider client={defaultClient}>
-      {children}
+      {session ? (
+        <GraphQLWSProvider url={wsUrl} connectionParams={wsConnectionParams}>
+          {children}
+        </GraphQLWSProvider>
+      ) : (
+        children
+      )}
     </GraphqlClientProvider>
   );
 }
