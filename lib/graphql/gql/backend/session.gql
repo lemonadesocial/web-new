@@ -25,6 +25,10 @@ mutation revokeMySession($sessionId: MongoID!) {
   }
 }
 
+mutation revokeCurrentSession {
+  revokeCurrentSession
+}
+
 mutation requestStepUpVerification {
   requestStepUpVerification {
     success

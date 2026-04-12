@@ -499,3 +499,256 @@ describe('useLogout WS dispose', () => {
     });
   });
 });
+
+// ============================================================
+// Test Suite 5: useRawLogout - session revocation on logout
+// ============================================================
+describe('useRawLogout - session revocation on logout', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+    mockMutate.mockReset();
+    mockMutate.mockResolvedValue({ data: null, error: null });
+    (globalThis as any).__mockMutate = mockMutate;
+
+    // Reset localStorage/sessionStorage stubs
+    vi.stubGlobal('localStorage', {
+      clear: vi.fn(),
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+    vi.stubGlobal('sessionStorage', {
+      clear: vi.fn(),
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+  });
+
+  async function mountLogout(disposeImpl: () => void) {
+    const { GraphQLWSContext } = await import('$lib/graphql/subscription/context');
+    const { useRawLogout } = await import('$lib/hooks/useLogout');
+
+    function TestComponent() {
+      const rawLogout = useRawLogout();
+      return (
+        <button data-testid="logout-btn" onClick={() => rawLogout()}>
+          Logout
+        </button>
+      );
+    }
+
+    await act(async () => {
+      render(
+        <GraphQLWSContext.Provider value={{ client: null, dispose: disposeImpl }}>
+          <TestComponent />
+        </GraphQLWSContext.Provider>,
+      );
+    });
+  }
+
+  it('calls revokeCurrentSession mutation BEFORE Kratos logout flow', async () => {
+    const callOrder: string[] = [];
+    mockMutate.mockImplementation(async () => {
+      callOrder.push('revokeCurrentSession');
+      return { data: null, error: null };
+    });
+
+    const ory = (await import('$lib/utils/ory')).ory as any;
+    ory.createBrowserLogoutFlow.mockImplementation(async () => {
+      callOrder.push('createBrowserLogoutFlow');
+      return { data: { logout_token: 'test-token' } };
+    });
+    ory.updateLogoutFlow.mockImplementation(async () => {
+      callOrder.push('updateLogoutFlow');
+    });
+
+    await mountLogout(vi.fn());
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('logout-btn'));
+    });
+
+    await waitFor(() => {
+      expect(callOrder).toContain('revokeCurrentSession');
+      expect(callOrder).toContain('createBrowserLogoutFlow');
+    });
+
+    expect(callOrder.indexOf('revokeCurrentSession')).toBeLessThan(
+      callOrder.indexOf('createBrowserLogoutFlow'),
+    );
+    expect(callOrder.indexOf('createBrowserLogoutFlow')).toBeLessThan(
+      callOrder.indexOf('updateLogoutFlow'),
+    );
+  });
+
+  it('calls dispose() BEFORE setSession(null) / localStorage.clear() (invariant preserved)', async () => {
+    const callOrder: string[] = [];
+    const mockDisposeCtx = vi.fn(() => callOrder.push('dispose'));
+    const mockLocalStorageClear = vi.fn(() => callOrder.push('localStorage.clear'));
+
+    vi.stubGlobal('localStorage', {
+      clear: mockLocalStorageClear,
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+
+    mockMutate.mockImplementation(async () => {
+      callOrder.push('revokeCurrentSession');
+      return { data: null, error: null };
+    });
+
+    await mountLogout(mockDisposeCtx);
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('logout-btn'));
+    });
+
+    await waitFor(() => {
+      expect(mockDisposeCtx).toHaveBeenCalled();
+      expect(mockLocalStorageClear).toHaveBeenCalled();
+    });
+
+    const disposeIdx = callOrder.indexOf('dispose');
+    const clearIdx = callOrder.indexOf('localStorage.clear');
+    expect(disposeIdx).toBeGreaterThanOrEqual(0);
+    expect(clearIdx).toBeGreaterThanOrEqual(0);
+    expect(disposeIdx).toBeLessThan(clearIdx);
+  });
+
+  it('captures exception to Sentry with flow: logout tag when mutation returns { error }', async () => {
+    const Sentry = await import('@sentry/nextjs');
+    const revokeError = new Error('network failure');
+    mockMutate.mockResolvedValue({ data: null, error: revokeError });
+
+    await mountLogout(vi.fn());
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('logout-btn'));
+    });
+
+    await waitFor(() => {
+      expect(Sentry.captureException).toHaveBeenCalledWith(
+        revokeError,
+        expect.objectContaining({
+          tags: expect.objectContaining({ flow: 'logout' }),
+        }),
+      );
+    });
+  });
+
+  it('captures Sentry with reason: timeout when mutation exceeds 2s and still completes logout', async () => {
+    const Sentry = await import('@sentry/nextjs');
+    const ory = (await import('$lib/utils/ory')).ory as any;
+
+    const mockLocalStorageClear = vi.fn();
+    vi.stubGlobal('localStorage', {
+      clear: mockLocalStorageClear,
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+
+    // Mutation returns a never-resolving promise so the 2s timeout branch wins.
+    mockMutate.mockImplementation(() => new Promise(() => {}));
+
+    ory.createBrowserLogoutFlow.mockClear();
+    ory.updateLogoutFlow.mockClear();
+    ory.createBrowserLogoutFlow.mockResolvedValue({
+      data: { logout_token: 'test-token' },
+    });
+    ory.updateLogoutFlow.mockResolvedValue(undefined);
+
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await mountLogout(vi.fn());
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('logout-btn'));
+      });
+
+      // Advance past the 2s REVOKE_TIMEOUT_MS and flush pending microtasks.
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+
+      vi.useRealTimers();
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.any(Error),
+          expect.objectContaining({
+            tags: expect.objectContaining({
+              flow: 'logout',
+              reason: 'timeout',
+            }),
+          }),
+        );
+        // Logout still completes despite the timeout.
+        expect(ory.updateLogoutFlow).toHaveBeenCalled();
+        expect(mockLocalStorageClear).toHaveBeenCalled();
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does NOT block logout when mutation fails — Kratos logout + storage clear still run', async () => {
+    const mockLocalStorageClear = vi.fn();
+    const mockSessionStorageClear = vi.fn();
+    vi.stubGlobal('localStorage', {
+      clear: mockLocalStorageClear,
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+    vi.stubGlobal('sessionStorage', {
+      clear: mockSessionStorageClear,
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    });
+
+    mockMutate.mockResolvedValue({
+      data: null,
+      error: new Error('revoke failed'),
+    });
+
+    const ory = (await import('$lib/utils/ory')).ory as any;
+    ory.createBrowserLogoutFlow.mockClear();
+    ory.updateLogoutFlow.mockClear();
+
+    const mockDisposeCtx = vi.fn();
+    await mountLogout(mockDisposeCtx);
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('logout-btn'));
+    });
+
+    await waitFor(() => {
+      expect(ory.createBrowserLogoutFlow).toHaveBeenCalled();
+      expect(ory.updateLogoutFlow).toHaveBeenCalled();
+      expect(mockDisposeCtx).toHaveBeenCalled();
+      expect(mockLocalStorageClear).toHaveBeenCalled();
+      expect(mockSessionStorageClear).toHaveBeenCalled();
+    });
+  });
+});
