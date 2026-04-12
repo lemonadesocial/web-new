@@ -175,7 +175,7 @@ export function TemplateTool() {
             <TemplateCard
               key={item._id}
               name={item.name}
-              thumbnail={item.thumbnail_url}
+              thumbnail={item.thumbnail_url ?? undefined}
               active={selected === item._id}
               onClick={() => setSelected(item._id)}
             />
@@ -193,7 +193,7 @@ export function TemplateTool() {
               <TemplateCard
                 key={item._id}
                 name={item.name}
-                thumbnail={item.thumbnail_url}
+                thumbnail={item.thumbnail_url ?? undefined}
                 active={selected === item._id}
                 onClick={() => setSelected(item._id)}
               />

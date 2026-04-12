@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash';
 import { useEffect, useMemo } from 'react';
 
-import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, NewPaymentState, PaymentRefundInfo, Ticket } from '$lib/graphql/generated/backend/graphql';
+import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetEventQuery, GetMyEventJoinRequestDocument, GetMyTicketsDocument, NewPaymentState, PaymentRefundInfo, Ticket } from '$lib/graphql/generated/backend/graphql';
 
 import { attending, getAssignedTicket } from '$lib/utils/event';
 import { useClient, useMutation, useQuery } from '$lib/graphql/request';
@@ -78,9 +78,10 @@ export function EventAccess({ event }: { event: Event }) {
       data: {
         getEvent: {
           ...event,
+          __typename: 'Event' as const,
           accepted: [...(event.accepted || []), me?._id],
         },
-      },
+      } as unknown as GetEventQuery,
     });
   };
 

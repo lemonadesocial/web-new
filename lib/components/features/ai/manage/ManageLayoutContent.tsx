@@ -9,7 +9,8 @@ import { useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { Event, GetEventDocument, GetPageConfigDocument, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetPageConfigDocument, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
@@ -72,6 +73,7 @@ function ManageLayoutContent() {
     skip: !eventId,
   });
   const pageConfig = pageConfigData?.getPageConfig;
+  const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   React.useEffect(() => {
     if (pageConfig) {
@@ -83,17 +85,17 @@ function ManageLayoutContent() {
   }, [pageConfig, aiChatDispatch]);
 
   React.useEffect(() => {
-    if (pageConfig?.structure_data) {
+    if (pageConfigData_?.structure_data) {
       try {
-        const data = typeof pageConfig.structure_data === 'string' 
-          ? pageConfig.structure_data 
-          : JSON.stringify(pageConfig.structure_data);
+        const data = typeof pageConfigData_.structure_data === 'string'
+          ? pageConfigData_.structure_data
+          : JSON.stringify(pageConfigData_.structure_data);
         actions.deserialize(data);
       } catch (e) {
         console.error('Failed to parse pageConfig structure_data', e);
       }
     }
-  }, [pageConfig, actions]);
+  }, [pageConfigData_, actions]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -181,14 +183,14 @@ function ManageLayoutContent() {
           )}
           style={themeState.variables.font as React.CSSProperties}
           onClick={(e) => {
-            if (e.target === e.currentTarget) actions.selectNode(null);
+            if (e.target === e.currentTarget) actions.selectNode(undefined);
           }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
           <div
             className="page relative z-10 mx-auto px-4 xl:px-0 pt-10 pb-20"
             onClick={(e) => {
-              if (e.target === e.currentTarget) actions.selectNode(null);
+              if (e.target === e.currentTarget) actions.selectNode(undefined);
             }}
           >
             <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfig} />

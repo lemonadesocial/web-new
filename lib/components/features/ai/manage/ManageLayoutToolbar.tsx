@@ -20,7 +20,9 @@ import {
   UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
   UpdateSpaceDocument,
+  SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import {
@@ -134,9 +136,10 @@ function ManageLayoutToolbar() {
 
   const [updateSpace, { loading: savingSpace }] = useMutation(UpdateSpaceDocument, {
     onComplete: (_, data) => {
-      if (data?.updateSpace?._id) {
+      const updatedSpace = useFragment(SpaceFragmentDoc, data?.updateSpace);
+      if (updatedSpace?._id) {
         toast.success('Space layout saved successfully!');
-        store.setData({ ...state.data, ...data.updateSpace } as any);
+        store.setData({ ...state.data, ...updatedSpace } as any);
       }
     },
     onError: (error) => {

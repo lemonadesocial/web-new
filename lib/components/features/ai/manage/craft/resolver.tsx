@@ -12,7 +12,7 @@ import { EventLocationBlock } from '$lib/components/features/event/EventLocation
 import { CommunitySection } from '$lib/components/features/event/CommunitySection';
 import { HostedBySection } from '$lib/components/features/event/HostedBySection';
 import { AttendeesSection } from '$lib/components/features/event/AttendeesSection';
-import { Button, Input, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete, FileInput } from '$lib/components/core';
+import { Button, Input, Textarea, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete, FileInput } from '$lib/components/core';
 import { getEventCohosts } from '$lib/utils/event';
 import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
@@ -204,9 +204,8 @@ const RegistrationSettings = () => {
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Description</p>
-        <Input 
-          textarea
-          value={props.event?.registration_description || 'Ready to join us? Pick your ticket, grab your spot, and get ready for a weekend of music, art, and culture.'} 
+        <Textarea
+          value={props.event?.registration_description || 'Ready to join us? Pick your ticket, grab your spot, and get ready for a weekend of music, art, and culture.'}
           onChange={(e) => actions.setProp((props: any) => props.event.registration_description = e.target.value)}
           rows={3}
         />

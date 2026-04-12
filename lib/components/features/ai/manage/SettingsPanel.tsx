@@ -35,7 +35,7 @@ export function SettingsPanel() {
           variant="tertiary-alt"
           size="sm"
           icon="icon-keyboard-double-arrow-left"
-          onClick={() => actions.selectNode(null)}
+          onClick={() => actions.selectNode(undefined)}
           className="aspect-square"
         />
       </div>

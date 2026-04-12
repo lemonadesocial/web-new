@@ -4,7 +4,8 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
 import { Editor, Frame } from '@craftjs/core';
-import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
@@ -86,6 +87,7 @@ export function EventGuestSideContent({
     skip: !event?._id || isEditable,
   });
   const pageConfig = pageConfigData?.getPageConfig;
+  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   const me = useMe();
 
@@ -119,15 +121,15 @@ export function EventGuestSideContent({
       return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
     }
 
-    if (pageConfig?.structure_data && isClient) {
+    if (pageConfigFields?.structure_data && isClient) {
       return (
         <Editor enabled={false} resolver={resolver}>
           <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
             <Frame
               data={
-                typeof pageConfig.structure_data === 'string'
-                  ? pageConfig.structure_data
-                  : JSON.stringify(pageConfig.structure_data)
+                typeof pageConfigFields.structure_data === 'string'
+                  ? pageConfigFields.structure_data
+                  : JSON.stringify(pageConfigFields.structure_data)
               }
             />
           </div>

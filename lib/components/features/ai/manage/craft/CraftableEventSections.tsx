@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
 import { useEditor, Frame, Element } from '@craftjs/core';
-import { Event, GetPageConfigQuery } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetPageConfigQuery, PageConfigFragmentFragmentDoc } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { Container, Grid, Col } from './resolver';
 
@@ -25,13 +26,15 @@ export function CraftableEventSections({
     location: 'LocationSection',
   };
 
+  const pageConfigData = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+
   React.useEffect(() => {
     if (initialized) return;
 
-    if (pageConfig?.structure_data) {
-      const data = typeof pageConfig.structure_data === 'string' 
-        ? pageConfig.structure_data 
-        : JSON.stringify(pageConfig.structure_data);
+    if (pageConfigData?.structure_data) {
+      const data = typeof pageConfigData.structure_data === 'string'
+        ? pageConfigData.structure_data
+        : JSON.stringify(pageConfigData.structure_data);
       actions.deserialize(data);
       setInitialized(true);
       return;
