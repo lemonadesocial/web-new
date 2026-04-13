@@ -764,7 +764,7 @@ const ContainerSettings = () => {
           type="number"
           value={props.width || ''} 
           onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width (Auto)"
+          placeholder="Full Width (e.g. 1080)"
         />
       </div>
     </div>
