@@ -69,64 +69,9 @@ function SectionCard({ name, componentName }: { name: string; componentName: str
           // Drop the section directly.
           connectors.create(ref, <Element is={component as any} event={event} />, {
             onCreate: (nodeId) => {
-              const activeDropZone = aiManageLayoutStore.get(storeAtom).activeDropZone;
-              
-              if (activeDropZone) {
-                const { side, sectionId } = activeDropZone;
-                storeManageLayout.setActiveDropZone(null);
-
-                // Need a small timeout to let Craft.js finish the initial insertion
-                setTimeout(() => {
-                  const targetNode = query.node(sectionId).get();
-                  if (!targetNode) return;
-                  const parentId = targetNode.data.parent;
-                  if (!parentId) return;
-
-                  const parent = query.node(parentId).get();
-
-                  // 1. If target is already in a Column, add a sibling Column to the Grid
-                  if (parent.data.type === resolver.Col) {
-                    const gridId = parent.data.parent;
-                    if (gridId) {
-                      const grid = query.node(gridId).get();
-                      if (grid.data.type === resolver.Grid) {
-                        const newColTree = query.parseReactElement(<Element is={resolver.Col} canvas />).toNodeTree();
-                        const colIndex = grid.data.nodes.indexOf(parentId);
-                        const insertIndex = side === 'left' ? colIndex : colIndex + 1;
-                        
-                        actions.addNodeTree(newColTree, gridId, insertIndex);
-                        actions.move(nodeId, newColTree.rootNodeId, 0);
-                        actions.selectNode(nodeId);
-                        return;
-                      }
-                    }
-                  }
-
-                  // 2. Otherwise, wrap in a new Grid
-                  const gridTree = query.parseReactElement(
-                    <Element is={resolver.Grid} canvas>
-                      <Element is={resolver.Col} canvas width="1/2" />
-                      <Element is={resolver.Col} canvas width="1/2" />
-                    </Element>
-                  ).toNodeTree();
-
-                  const index = query.node(parentId).get().data.nodes.indexOf(sectionId);
-                  actions.addNodeTree(gridTree, parentId, index);
-
-                  const newGridId = gridTree.rootNodeId;
-                  const newGrid = query.node(newGridId).get();
-                  const col1Id = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
-                  const col2Id = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
-
-                  actions.move(sectionId, col1Id, 0);
-                  actions.move(nodeId, col2Id, 0);
-                  actions.selectNode(nodeId);
-                }, 100);
-              } else {
-                setTimeout(() => {
-                  actions.selectNode(nodeId);
-                }, 100);
-              }
+              setTimeout(() => {
+                actions.selectNode(nodeId);
+              }, 100);
             },
           });
         }
