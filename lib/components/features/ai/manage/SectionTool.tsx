@@ -7,6 +7,27 @@ import { useStoreManageLayout } from './store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { resolver } from './craft/resolver';
 
+const eventSections = [
+  { id: 'Hero', name: 'Event Title', component: 'EventHero' },
+  { id: 'Registration', name: 'CTA Block', component: 'EventAccess' },
+  { id: 'About', name: 'About', component: 'AboutSection' },
+  { id: 'DateTime', name: 'Date & Time', component: 'EventDateTimeBlock' },
+  { id: 'LocationBlock', name: 'Location', component: 'EventLocationBlock' },
+  { id: 'Location', name: 'Map', component: 'LocationSection' },
+  { id: 'Schedule', name: 'Schedule', component: 'SubEventSection' },
+  { id: 'Gallery', name: 'Gallery', component: 'GallerySection' },
+  { id: 'Collectibles', name: 'Collectibles', component: 'EventCollectibles' },
+  { id: 'Community', name: 'Community', component: 'CommunitySection' },
+  { id: 'HostedBy', name: 'Hosted By', component: 'HostedBySection' },
+  { id: 'Attendees', name: 'Attendees', component: 'AttendeesSection' },
+  { id: 'SidebarImage', name: 'Event Image', component: 'EventSidebarImage' },
+];
+
+const universalSections = [
+  { id: 'u1', name: 'Rich Text', component: 'RichText' },
+  { id: 'u3', name: 'Video Embed', component: 'VideoEmbed' },
+];
+
 export function SectionTool() {
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
