@@ -418,6 +418,76 @@ const Placeholder = ({ name, description }: { name: string; description?: string
   </div>
 );
 
+const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: string }) => {
+  const { actions, query, isDragging, draggedNodeId } = useEditor((state) => ({
+    isDragging: state.events.dragged !== null,
+    draggedNodeId: state.events.dragged ? Array.from(state.events.dragged)[0] : null,
+  }));
+  const [isOver, setIsOver] = React.useState(false);
+
+  if (!isDragging) return null;
+
+  return (
+    <div
+      className={clsx(
+        "absolute top-0 bottom-0 w-1/4 max-w-[100px] z-[200] transition-all duration-200",
+        side === 'left' ? "left-0" : "right-0",
+        isOver ? "bg-primary/20 backdrop-blur-sm border-2 border-primary border-dashed rounded-md" : "bg-transparent opacity-0 hover:opacity-100"
+      )}
+      onMouseEnter={() => setIsOver(true)}
+      onMouseLeave={() => setIsOver(false)}
+      onMouseUp={() => {
+        if (!draggedNodeId) return;
+        const currentDraggedId = draggedNodeId;
+        setIsOver(false);
+
+        setTimeout(() => {
+          const node = query.node(sectionId).get();
+          if (!node) return;
+          const parentId = node.data.parent;
+          if (!parentId) return;
+
+          const parent = query.node(parentId).get();
+
+          if (parent.data.type === Col) {
+            const gridId = parent.data.parent;
+            if (gridId) {
+              const grid = query.node(gridId).get();
+              if (grid.data.type === Grid) {
+                const newColTree = query.parseReactElement(<Element is={Col} canvas />).toNodeTree();
+                const colIndex = grid.data.nodes.indexOf(parentId);
+                const insertIndex = side === 'left' ? colIndex : colIndex + 1;
+                
+                actions.addNodeTree(newColTree, gridId, insertIndex);
+                actions.move(currentDraggedId, newColTree.rootNodeId, 0);
+                return;
+              }
+            }
+          }
+
+          const gridTree = query.parseReactElement(
+             <Element is={Grid} canvas>
+               <Element is={Col} canvas width="1/2" />
+               <Element is={Col} canvas width="1/2" />
+             </Element>
+          ).toNodeTree();
+
+          const index = query.node(parentId).get().data.nodes.indexOf(sectionId);
+          actions.addNodeTree(gridTree, parentId, index);
+
+          const newGridId = gridTree.rootNodeId;
+          const newGrid = query.node(newGridId).get();
+          const col1Id = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
+          const col2Id = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
+
+          actions.move(sectionId, col1Id, 0);
+          actions.move(currentDraggedId, col2Id, 0);
+        }, 50);
+      }}
+    />
+  );
+};
+
 export const CraftSection = ({ children, name }: { children: React.ReactNode; name?: string }) => {
   const {
     id,
@@ -525,6 +595,9 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     >
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
       <div className="absolute inset-0 z-40" />
+      
+      <SideDropZone side="left" sectionId={id} />
+      <SideDropZone side="right" sectionId={id} />
 
       {selected && (
         <>
@@ -574,9 +647,9 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
                 props.height = Math.max(50, Math.round(currentHeight + info.delta.y));
               });
             }}
-            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/resize-h"
+            className="absolute bottom-[-8px] left-1/2 -translate-x-1/2 w-12 h-4 z-100 cursor-ns-resize flex items-center justify-center bg-primary text-primary-invert rounded-full shadow-md border border-card-border"
           >
-            <div className="w-12 h-1.5 bg-primary rounded-full opacity-20 group-hover/resize-h:opacity-100 transition-opacity" />
+            <div className="w-4 h-0.5 bg-current rounded-full" />
           </motion.div>
 
           {/* Width Resize Handle (Right) */}
@@ -594,9 +667,9 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
                 }
               });
             }}
-            className="absolute top-0 right-0 bottom-0 w-2 z-100 cursor-ew-resize flex items-center justify-center group/resize-w"
+            className="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-12 z-100 cursor-ew-resize flex items-center justify-center bg-primary text-primary-invert rounded-full shadow-md border border-card-border"
           >
-            <div className="h-12 w-1.5 bg-primary rounded-full opacity-20 group-hover/resize-w:opacity-100 transition-opacity" />
+             <div className="h-4 w-0.5 bg-current rounded-full" />
           </motion.div>
 
           {/* Corner Resize Handle (Bottom-Right) */}
@@ -614,10 +687,8 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
                 }
               });
             }}
-            className="absolute bottom-0 right-0 w-4 h-4 z-110 cursor-nwse-resize flex items-center justify-center group/resize-c"
-          >
-            <div className="w-2 h-2 border-r-2 border-b-2 border-primary opacity-40 group-hover/resize-c:opacity-100 transition-opacity" />
-          </motion.div>
+            className="absolute bottom-[-8px] right-[-8px] w-5 h-5 z-110 cursor-nwse-resize bg-primary rounded-full shadow-md border border-card-border"
+          />
         </>
       )}
 
