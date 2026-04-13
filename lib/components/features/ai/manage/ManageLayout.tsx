@@ -28,12 +28,11 @@ function ManageLayout() {
 
   return (
     <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
-      <Editor 
-        resolver={resolver} 
-        enabled={true}
+      <Editor
+        resolver={resolver}
+        enabled={state.activeTab !== 'manage'}
         indicator={{
-          success: 'var(--color-accent-400)',
-          error: 'var(--color-danger-400)',
+          success: 'var(--color-accent-400)',          error: 'var(--color-danger-400)',
           transition: '0.2s',
           thickness: 3,
           className: 'z-200'

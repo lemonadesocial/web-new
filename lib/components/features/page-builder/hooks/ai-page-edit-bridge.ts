@@ -7,6 +7,7 @@
 export interface AIPageEditTriggers {
   applyStructureData: (data: string) => void;
   getStructureData: () => string | null;
+  resetToDefault: () => void;
 }
 
 let _triggers: AIPageEditTriggers | null = null;

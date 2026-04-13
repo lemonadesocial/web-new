@@ -138,6 +138,10 @@ function CreateTemplateModal() {
   );
 }
 
+import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
+
+// ... rest of the file ...
+
 export function TemplateTool() {
   const me = useMe();
   const state = useStoreManageLayout();
@@ -153,6 +157,11 @@ export function TemplateTool() {
   const templates = (data?.listTemplates || []) as Template[];
   const myTemplates = templates.filter((t) => t.creator_id === me?._id);
   const exploreTemplates = templates.filter((t) => t.creator_id !== me?._id);
+
+  const handleReset = () => {
+    setSelected('default');
+    getAIPageEditTriggers()?.resetToDefault();
+  };
 
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
@@ -170,6 +179,12 @@ export function TemplateTool() {
                 className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
               });
             }}
+          />
+          <TemplateCard
+            name="Default"
+            icon="icon-refresh"
+            active={selected === 'default'}
+            onClick={handleReset}
           />
           {myTemplates.map((item) => (
             <TemplateCard

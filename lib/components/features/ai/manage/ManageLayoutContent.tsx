@@ -142,8 +142,8 @@ function ManageLayoutContent() {
     }
   }, [state.layoutType, event, ready, shortid]);
 
-  const editorRef = React.useRef({ actions, query });
-  editorRef.current = { actions, query };
+  const editorRef = React.useRef({ actions, query, state });
+  editorRef.current = { actions, query, state };
 
   React.useEffect(() => {
     setAIPageEditTriggers({
@@ -155,6 +155,155 @@ function ManageLayoutContent() {
           return editorRef.current.query.serialize();
         } catch {
           return null;
+        }
+      },
+      resetToDefault: () => {
+        const { state, actions } = editorRef.current;
+        if (state.layoutType === 'event') {
+          const event = state.data as Event;
+          const sectionMap: Record<string, string> = {
+            registration: 'EventAccess',
+            about: 'AboutSection',
+            collectibles: 'EventCollectibles',
+            location: 'LocationSection',
+          };
+          
+          const sections = (event?.layout_sections || [
+            { id: 'registration', hidden: false },
+            { id: 'about', hidden: false },
+            { id: 'collectibles', hidden: false },
+            { id: 'location', hidden: false },
+          ]).reduce((acc: any, item: any) => {
+            const componentName = sectionMap[item.id];
+            if (!componentName) return acc;
+            
+            acc[item.id] = {
+              type: { resolvedName: componentName },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'main-col',
+              displayName: componentName,
+              custom: {},
+            };
+            return acc;
+          }, {});
+
+          const json = {
+            ROOT: {
+              type: { resolvedName: 'Container' },
+              isCanvas: true,
+              props: { className: 'w-full' },
+              nodes: ['main-grid'],
+              linkedNodes: {},
+              parent: null,
+              displayName: 'Container',
+              custom: {},
+            },
+            'main-grid': {
+              type: { resolvedName: 'Grid' },
+              isCanvas: true,
+              props: { gap: '18' },
+              nodes: ['sidebar-col', 'main-col'],
+              linkedNodes: {},
+              parent: 'ROOT',
+              displayName: 'Grid',
+              custom: {},
+            },
+            'sidebar-col': {
+              type: { resolvedName: 'Col' },
+              isCanvas: true,
+              props: { width: '74' },
+              nodes: ['sidebar-image', 'community-section', 'hosted-by-section', 'attendees-section'],
+              linkedNodes: {},
+              parent: 'main-grid',
+              displayName: 'Sidebar Column',
+              custom: {},
+            },
+            'sidebar-image': {
+              type: { resolvedName: 'EventSidebarImage' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'sidebar-col',
+              displayName: 'Event Image',
+              custom: {},
+            },
+            'community-section': {
+              type: { resolvedName: 'CommunitySection' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'sidebar-col',
+              displayName: 'Community',
+              custom: {},
+            },
+            'hosted-by-section': {
+              type: { resolvedName: 'HostedBySection' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'sidebar-col',
+              displayName: 'Hosted By',
+              custom: {},
+            },
+            'attendees-section': {
+              type: { resolvedName: 'AttendeesSection' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'sidebar-col',
+              displayName: 'Attendees',
+              custom: {},
+            },
+            'main-col': {
+              type: { resolvedName: 'Col' },
+              isCanvas: true,
+              props: { width: '' },
+              nodes: ['event-hero', 'datetime-block', 'location-block', ...Object.keys(sections)],
+              linkedNodes: {},
+              parent: 'main-grid',
+              displayName: 'Main Column',
+              custom: {},
+            },
+            'event-hero': {
+              type: { resolvedName: 'EventHero' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'main-col',
+              displayName: 'Event Hero',
+              custom: {},
+            },
+            'datetime-block': {
+              type: { resolvedName: 'EventDateTimeBlock' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'main-col',
+              displayName: 'Date Time Block',
+              custom: {},
+            },
+            'location-block': {
+              type: { resolvedName: 'EventLocationBlock' },
+              isCanvas: false,
+              props: { event },
+              nodes: [],
+              linkedNodes: {},
+              parent: 'main-col',
+              displayName: 'Location Info',
+              custom: {},
+            },
+            ...sections,
+          };
+          actions.deserialize(JSON.stringify(json));
         }
       },
     });

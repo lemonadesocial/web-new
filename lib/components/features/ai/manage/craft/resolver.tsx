@@ -770,7 +770,31 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   );
 };
 
-export const Container = ({ children, height, width, ...props }: any) => {
+const ContainerSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium">Centered Content</p>
+        <Toggle
+          selected={props.centered || false}
+          onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const Container = ({ children, height, width, centered, ...props }: any) => {
   const { connectors: { connect } } = useNode();
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
   
@@ -778,7 +802,11 @@ export const Container = ({ children, height, width, ...props }: any) => {
     <div 
       {...props} 
       ref={(ref: any) => connect(ref)} 
-      className={`flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 ${props.className || ''}`}
+      className={clsx(
+        "flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 transition-all",
+        centered && "max-w-67.5rem mx-auto",
+        props.className
+      )}
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
@@ -793,8 +821,11 @@ Container.craft = {
   isCanvas: true,
   rules: {
     canMoveIn: () => true,
-    canSelect: () => false,
+    canSelect: () => true,
   },
+  related: {
+    settings: ContainerSettings
+  }
 };
 
 export const Grid = ({ children, gap = '18', height, width, ...props }: any) => {
