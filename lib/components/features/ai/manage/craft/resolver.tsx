@@ -125,15 +125,24 @@ const HeroSettings = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Width (px)</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Width (px)</p>
+          {props.width && (
+            <button 
+              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
+              onClick={() => actions.setProp((props: any) => props.width = '')}
+            >
+              Set Full
+            </button>
+          )}
+        </div>
         <Input 
           type="number"
           value={props.width || ''} 
           onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width"
+          placeholder="Leave empty for Full Screen"
         />
-      </div>
-      <div className="flex flex-col gap-2">
+      </div>      <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Alignment</p>
         <Segment
           items={[
@@ -263,15 +272,24 @@ const ColSettings = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Width (px)</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Width (px)</p>
+          {props.width && (
+            <button 
+              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
+              onClick={() => actions.setProp((props: any) => props.width = '')}
+            >
+              Set Full
+            </button>
+          )}
+        </div>
         <Input 
           type="number"
           value={props.width || ''} 
           onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width"
+          placeholder="Leave empty for Full Screen"
         />
-      </div>
-    </div>
+      </div>    </div>
   );
 };
 
@@ -759,12 +777,22 @@ const ContainerSettings = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Width (px)</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Width (px)</p>
+          {props.width && (
+            <button 
+              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
+              onClick={() => actions.setProp((props: any) => props.width = '')}
+            >
+              Set Full
+            </button>
+          )}
+        </div>
         <Input 
           type="number"
           value={props.width || ''} 
           onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width (e.g. 1080)"
+          placeholder="Leave empty for Full Screen"
         />
       </div>
     </div>
@@ -844,15 +872,24 @@ const GridSettings = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Width (px)</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Width (px)</p>
+          {props.width && (
+            <button 
+              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
+              onClick={() => actions.setProp((props: any) => props.width = '')}
+            >
+              Set Full
+            </button>
+          )}
+        </div>
         <Input 
           type="number"
           value={props.width || ''} 
           onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width"
+          placeholder="Leave empty for Full Screen"
         />
-      </div>
-    </div>
+      </div>    </div>
   );
 };
 
