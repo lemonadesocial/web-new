@@ -6,6 +6,7 @@ import {
   GetSpaceDocument,
   GetSpaceQuery,
   Space,
+  SubscriptionItemType,
   UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
@@ -14,6 +15,8 @@ import { TitleDescModal } from '../modals/TitleDescModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { ChangeStatusModal } from '../modals/ChangeStatusModal';
 import { CustomDomainPane } from '../panes/CustomDomainPane';
+import { isSpaceUpgradeRequired } from '../../upgrade-to-pro/feature-guard';
+import { SpaceUpgradeRequiredModal } from '../../upgrade-to-pro/SpaceUpgradeRequiredModal';
 import { uploadFiles } from '$lib/utils/file';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
@@ -63,6 +66,22 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
   };
 
   const hostNames = space?.hostnames?.filter((hostname) => !hostname.endsWith('lemonade.social'));
+
+  const handleAddDomain = () => {
+    if (isSpaceUpgradeRequired(space, SubscriptionItemType.Plus)) {
+      modal.open(SpaceUpgradeRequiredModal, {
+        props: {
+          space,
+          featureName: 'Custom Domain',
+          requiredTier: SubscriptionItemType.Plus,
+          description: 'Upgrade this space to Plus to connect your own domain.',
+        },
+      });
+      return;
+    }
+
+    drawer.open(CustomDomainPane, { props: { space } });
+  };
 
   return (
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
@@ -256,7 +275,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
           <Button
             variant="secondary"
             className="w-fit"
-            onClick={() => drawer.open(CustomDomainPane, { props: { space } })}
+            onClick={handleAddDomain}
           >
             Add Domain
           </Button>
@@ -360,6 +379,22 @@ export function CustomDomainSection({ space }: { space: Space }) {
     }
   };
 
+  const handleAddDomain = () => {
+    if (isSpaceUpgradeRequired(space, SubscriptionItemType.Plus)) {
+      modal.open(SpaceUpgradeRequiredModal, {
+        props: {
+          space,
+          featureName: 'Custom Domain',
+          requiredTier: SubscriptionItemType.Plus,
+          description: 'Upgrade this space to Plus to connect your own domain.',
+        },
+      });
+      return;
+    }
+
+    drawer.open(CustomDomainPane, { props: { space } });
+  };
+
   return (
     <>
       {hostNames && hostNames.length > 0 ? (
@@ -450,7 +485,7 @@ export function CustomDomainSection({ space }: { space: Space }) {
         <Button
           variant="secondary"
           className="w-fit"
-          onClick={() => drawer.open(CustomDomainPane, { props: { space } })}
+          onClick={handleAddDomain}
         >
           Add Domain
         </Button>
