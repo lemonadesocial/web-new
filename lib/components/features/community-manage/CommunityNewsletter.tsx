@@ -23,7 +23,7 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import { useConfirmation } from '$lib/hooks/useConfirmation';
 import { RECIPIENT_TYPE_MAP } from '$lib/utils/email';
 import { htmlToInlineText } from '$lib/utils/string';
-import { isToday } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useCommunityManageSpace } from './CommunityManageSpaceContext';
@@ -62,7 +62,7 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
     },
   });
 
-  const { data: verificationData, loading: loadingVerification } = useQuery(GetSpaceVerificationSubmissionDocument, {
+  const { data: verificationData, loading: loadingVerification, refetch: refetchVerification } = useQuery(GetSpaceVerificationSubmissionDocument, {
     variables: { space: ctx?.space._id || '' },
     skip: !ctx?.space._id,
     fetchPolicy: 'cache-and-network',
@@ -243,7 +243,14 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
                 outlined
                 iconRight="icon-chevron-right"
                 className="w-fit"
-                onClick={() => drawer.open(VerifyCommunityPane, { props: { uid: spaceIdOrSlug } })}
+                onClick={() =>
+                  drawer.open(VerifyCommunityPane, {
+                    props: {
+                      space: ctx!.space,
+                      onCompleted: refetchVerification,
+                    },
+                  })
+                }
               >
                 Verify
               </Button>
