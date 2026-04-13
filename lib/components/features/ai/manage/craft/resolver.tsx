@@ -521,7 +521,9 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     props: node.data.props,
   }));
 
-  const { actions, query } = useEditor();
+  const { actions, query, enabled } = useEditor((state) => ({
+    enabled: state.options.enabled
+  }));
   const [isResizing, setIsResizing] = React.useState(false);
 
   const getPosition = () => {
@@ -567,13 +569,15 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
 
   return (
     <div
-      ref={(ref: any) => ref && connect(isResizing ? ref : drag(ref))}
+      ref={(ref: any) => ref && connect(isResizing || !enabled ? ref : drag(ref))}
       onClick={(e) => {
+        if (!enabled) return;
         e.stopPropagation();
         actions.selectNode(id);
       }}
       className={clsx(
-        "relative group/section w-full p-3 cursor-pointer flex flex-col overflow-visible",
+        "relative group/section w-full p-3 flex flex-col overflow-visible",
+        enabled && "cursor-pointer",
         isResizing && "z-[300]"
       )}
       style={{ 
@@ -584,12 +588,16 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
       }}
     >
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
-      <div className="absolute inset-0 z-40" />
+      {enabled && <div className="absolute inset-0 z-40" />}
       
-      <SideDropZone side="left" sectionId={id} />
-      <SideDropZone side="right" sectionId={id} />
+      {enabled && (
+        <>
+          <SideDropZone side="left" sectionId={id} />
+          <SideDropZone side="right" sectionId={id} />
+        </>
+      )}
 
-      {selected && (
+      {enabled && selected && (
         <>
           <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
             <Button
@@ -713,7 +721,7 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
         </>
       )}
 
-      {(selected || hovered) && (
+      {enabled && (selected || hovered) && (
         <div 
           className={clsx(
             "absolute inset-0 z-50 pointer-events-none border-2 rounded-lg transition-colors",
