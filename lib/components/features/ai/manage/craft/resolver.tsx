@@ -757,6 +757,15 @@ const ContainerSettings = () => {
           placeholder="Auto"
         />
       </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (px)</p>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Full Width (Auto)"
+        />
+      </div>
     </div>
   );
 };
