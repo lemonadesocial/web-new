@@ -595,6 +595,10 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     }
   };
 
+  const width = props.width;
+  const height = props.height;
+  const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
+
   return (
     <div
       ref={(ref: any) => ref && connect(drag(ref))}
@@ -604,8 +608,8 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
       }}
       className="relative group/section w-full p-3 cursor-pointer flex flex-col"
       style={{ 
-        height: props.height ? `${props.height}px` : 'auto',
-        width: props.width && !props.width.includes('/') ? `${props.width}px` : '100%',
+        height: height ? `${height}px` : 'auto',
+        width: widthStyle,
         maxWidth: '100%',
         margin: '0 auto'
       }}
@@ -726,6 +730,8 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
 
 export const Container = ({ children, height, width, ...props }: any) => {
   const { connectors: { connect } } = useNode();
+  const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
+  
   return (
     <div 
       {...props} 
@@ -734,7 +740,7 @@ export const Container = ({ children, height, width, ...props }: any) => {
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: width && !width.includes('/') ? `${width}px` : '100%',
+        width: widthStyle,
         margin: '0 auto'
       }}
     >
@@ -755,6 +761,8 @@ export const Grid = ({ children, gap = '18', height, width, ...props }: any) => 
     selected: node.events.selected
   }));
   const { actions } = useEditor();
+  const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
+
   return (
     <div 
       ref={(ref: any) => connect(ref)} 
@@ -771,7 +779,7 @@ export const Grid = ({ children, gap = '18', height, width, ...props }: any) => 
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: width && !width.includes('/') ? `${width}px` : '100%',
+        width: widthStyle,
         margin: '0 auto'
       }}
       {...props}
@@ -812,6 +820,8 @@ export const Col = ({ children, width, height, ...props }: any) => {
     selected: node.events.selected
   }));
   const { actions } = useEditor();
+  const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : 'auto');
+
   return (
     <div 
       ref={(ref: any) => connect(ref)} 
@@ -828,7 +838,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: width && !width.includes('/') ? `${width}px` : 'auto'
+        width: widthStyle
       }}
       {...props}
     >
