@@ -781,7 +781,7 @@ export const Container = ({ children, height, width, centered, ...props }: any) 
       ref={(ref: any) => connect(ref)} 
       className={clsx(
         "flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 transition-all",
-        centered && "max-w-67.5rem mx-auto",
+        centered && "page mx-auto",
         !enabled && "min-h-0 pb-0!",
         props.className
       )}
@@ -873,7 +873,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
       }}
       className={clsx(
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid',
-        centered && "max-w-67.5rem mx-auto",
+        centered && "page mx-auto",
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
         !enabled && 'min-h-0'
