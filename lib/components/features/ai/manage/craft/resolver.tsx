@@ -877,7 +877,11 @@ export const Col = ({ children, width, height, ...props }: any) => {
     selected: node.events.selected
   }));
   const { actions } = useEditor();
-  const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : 'auto');
+  
+  // Only apply inline width if it's a numeric value (e.g. "300"). 
+  // For presets like "74", "1/2", etc., we use Tailwind classes.
+  const isNumericWidth = width && !isNaN(Number(width)) && width !== '74';
+  const widthStyle = isNumericWidth ? `${width}px` : (typeof width === 'string' && width.includes('/') ? width : 'auto');
 
   return (
     <div 
@@ -889,13 +893,13 @@ export const Col = ({ children, width, height, ...props }: any) => {
       }}
       className={clsx(
         'flex flex-col gap-6 min-h-[50px] transition-all relative group/col',
-        width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : 'flex-1 w-full',
+        width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : (isNumericWidth ? '' : 'flex-1 w-full'),
         selected && 'ring-2 ring-primary/30'
       )}
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: widthStyle
+        width: widthStyle === 'auto' ? undefined : widthStyle
       }}
       {...props}
     >
