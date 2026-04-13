@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNode, useEditor } from '@craftjs/core';
+import { useNode, useEditor, Element } from '@craftjs/core';
 import clsx from 'clsx';
 import { AboutSection } from '$lib/components/features/event/AboutSection';
 import { LocationSection } from '$lib/components/features/event/LocationSection';
@@ -22,6 +22,7 @@ import { useStoreManageLayout } from '../store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
+import { motion } from 'framer-motion';
 
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
@@ -112,6 +113,15 @@ const HeroSettings = () => {
             props.event.title = e.target.value;
           })}
           placeholder="Enter event title..."
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -217,20 +227,31 @@ const RegistrationSettings = () => {
 const GridSettings = () => {
   const { actions, props } = useSettings();
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-sm font-medium">Gap</p>
-      <Segment
-        items={[
-          { label: 'None', value: '0' },
-          { label: 'Small', value: '4' },
-          { label: 'Medium', value: '8' },
-          { label: 'Large', value: '18' },
-        ]}
-        selected={props.gap || '18'}
-        onSelect={(item) => actions.setProp((props: any) => props.gap = item.value)}
-        size="sm"
-        className="w-full"
-      />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Gap</p>
+        <Segment
+          items={[
+            { label: 'None', value: '0' },
+            { label: 'Small', value: '4' },
+            { label: 'Medium', value: '8' },
+            { label: 'Large', value: '18' },
+          ]}
+          selected={props.gap || '18'}
+          onSelect={(item) => actions.setProp((props: any) => props.gap = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
     </div>
   );
 };
@@ -238,21 +259,32 @@ const GridSettings = () => {
 const ColSettings = () => {
   const { actions, props } = useSettings();
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-sm font-medium">Width (Desktop)</p>
-      <Segment
-        items={[
-          { label: 'Auto', value: '' },
-          { label: 'Sidebar (300px)', value: '74' },
-          { label: '1/2', value: '1/2' },
-          { label: '1/3', value: '1/3' },
-          { label: '2/3', value: '2/3' },
-        ]}
-        selected={props.width || ''}
-        onSelect={(item) => actions.setProp((props: any) => props.width = item.value)}
-        size="sm"
-        className="w-full"
-      />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (Desktop)</p>
+        <Segment
+          items={[
+            { label: 'Auto', value: '' },
+            { label: 'Sidebar (300px)', value: '74' },
+            { label: '1/2', value: '1/2' },
+            { label: '1/3', value: '1/3' },
+            { label: '2/3', value: '2/3' },
+          ]}
+          selected={props.width || ''}
+          onSelect={(item) => actions.setProp((props: any) => props.width = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
     </div>
   );
 };
@@ -365,9 +397,12 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     connectors: { connect, drag },
     selected,
     hovered,
+    props,
+    actions: { setProp },
   } = useNode((node) => ({
     selected: node.events.selected,
     hovered: node.events.hovered,
+    props: node.data.props,
   }));
 
   const { actions, query } = useEditor();
@@ -403,6 +438,36 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     actions.move(id, parentId, index + 2);
   };
 
+  const split = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const node = query.node(id).get();
+    const parentId = node.data.parent;
+    if (!parentId) return;
+
+    // 1. Create a new Grid with 2 Columns
+    // Column 1 will contain the current section content
+    // Column 2 will be empty
+    const gridNode = (
+      <Element is={Grid} canvas>
+        <Element is={Col} canvas />
+        <Element is={Col} canvas />
+      </Element>
+    );
+
+    // 2. Wrap current section in a Grid
+    // We can't easily "wrap" in Craft.js without manually moving nodes.
+    // Instead, we'll suggest the user to use the Grid component if they want columns,
+    // OR we can try to implement a "Convert to Grid" logic.
+    
+    // For now, let's keep it simple: if it's already in a Col, we can't easily split it further 
+    // without nesting. 
+    
+    // A better way for "drag to same line" is to make Grid/Col internal and 
+    // allow dropping a section next to another.
+  };
+
   const remove = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -412,38 +477,92 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   return (
     <div
       ref={(ref: any) => ref && connect(drag(ref))}
-      onClick={() => actions.selectNode(id)}
+      onClick={(e) => {
+        e.stopPropagation();
+        actions.selectNode(id);
+      }}
       className="relative group/section w-full p-3 cursor-pointer"
+      style={{ height: props.height ? `${props.height}px` : 'auto' }}
     >
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
       <div className="absolute inset-0 z-40" />
 
       {selected && (
-        <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
-          <Button
-            size="xs"
-            variant="tertiary-alt"
-            icon="icon-arrow-back-sharp rotate-90"
-            disabled={isFirst}
-            onClick={moveUp}
-            className="h-7 w-7 p-0"
-          />
-          <Button
-            size="xs"
-            variant="tertiary-alt"
-            icon="icon-arrow-back-sharp -rotate-90"
-            disabled={isLast}
-            onClick={moveDown}
-            className="h-7 w-7 p-0"
-          />
-          <Button
-            size="xs"
-            variant="tertiary-alt"
-            icon="icon-delete"
-            onClick={remove}
-            className="h-7 w-7 p-0 hover:text-error!"
-          />
-        </div>
+        <>
+          <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-arrow-back-sharp rotate-90"
+              disabled={isFirst}
+              onClick={moveUp}
+              className="h-7 w-7 p-0"
+            />
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-arrow-back-sharp -rotate-90"
+              disabled={isLast}
+              onClick={moveDown}
+              className="h-7 w-7 p-0"
+            />
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-layout-outline"
+              onClick={() => {
+                // To support "same line", we can add another column to the parent Grid if it exists
+                const node = query.node(id).get();
+                const parentId = node.data.parent;
+                if (parentId) {
+                  const parent = query.node(parentId).get();
+                  if (parent.data.type === Grid || parent.data.type === Col) {
+                    // Already in a layout, maybe add sibling?
+                  } else if (parent.data.type === Container) {
+                    // Root container, wrap this section in a new Grid
+                    const newNode = query.parseReactElement(
+                      <Element is={Grid} canvas>
+                        <Element is={Col} canvas width="1/2">
+                          <Element is={node.data.type} {...node.data.props} />
+                        </Element>
+                        <Element is={Col} canvas width="1/2" />
+                      </Element>
+                    ).toNodeTree();
+                    
+                    actions.addNodeTree(newNode, parentId, index);
+                    actions.delete(id);
+                  }
+                }
+              }}
+              className="h-7 w-7 p-0"
+              title="Split into columns"
+            />
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-delete"
+              onClick={remove}
+              className="h-7 w-7 p-0 hover:text-error!"
+            />
+          </div>
+
+          {/* Resize Handle */}
+          <motion.div
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={(e, info) => {
+              setProp((props: any) => {
+                const currentHeight = props.height || 200; // fallback if auto
+                props.height = Math.max(50, Math.round(currentHeight + info.delta.y));
+              });
+            }}
+            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/resize"
+          >
+            <div className="w-12 h-1.5 bg-primary rounded-full opacity-40 group-hover/resize:opacity-100 transition-opacity" />
+          </motion.div>
+        </>
       )}
 
       {(selected || hovered) && (
@@ -454,21 +573,21 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
         />
       )}
       
-      <div className="w-full">
+      <div className="w-full h-full overflow-hidden">
         {children || <Placeholder name={name || 'Section'} />}
       </div>
     </div>
   );
 };
 
-export const Container = ({ children, ...props }: any) => {
+export const Container = ({ children, height, ...props }: any) => {
   const { connectors: { connect } } = useNode();
   return (
     <div 
       {...props} 
       ref={(ref: any) => connect(ref)} 
       className={`flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 ${props.className || ''}`}
-      style={{ ...props.style }}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
     >
       {children}
     </div>
@@ -482,7 +601,7 @@ Container.craft = {
   },
 };
 
-export const Grid = ({ children, gap = '18', ...props }: any) => {
+export const Grid = ({ children, gap = '18', height, ...props }: any) => {
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
@@ -500,6 +619,7 @@ export const Grid = ({ children, gap = '18', ...props }: any) => {
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         selected && 'ring-2 ring-primary/50 ring-offset-2'
       )}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
       {...props}
     >
       {selected && (
@@ -533,7 +653,7 @@ Grid.craft = {
   }
 };
 
-export const Col = ({ children, width, ...props }: any) => {
+export const Col = ({ children, width, height, ...props }: any) => {
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
@@ -551,6 +671,7 @@ export const Col = ({ children, width, ...props }: any) => {
         width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : 'flex-1 w-full',
         selected && 'ring-2 ring-primary/30'
       )}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
       {...props}
     >
       {selected && (
@@ -681,6 +802,9 @@ export const CraftEventAccess = (props: any) => (
 CraftEventAccess.craft = { 
   displayName: 'CTA Block', 
   rules: { canDrag: () => true },
+  related: {
+    settings: RegistrationSettings
+  }
 };
 
 export const CraftEventCollectibles = (props: any) => {
@@ -690,7 +814,11 @@ export const CraftEventCollectibles = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventCollectibles.craft = { displayName: 'EventCollectibles', rules: { canDrag: () => true } };
+CraftEventCollectibles.craft = { 
+  displayName: 'EventCollectibles', 
+  rules: { canDrag: () => true },
+  // No specific settings for collectibles yet, but we could add them if needed
+};
 
 export const CraftSubEventSection = (props: any) => {
   const hasContent = props.event?.subevent_enabled;
@@ -704,7 +832,11 @@ export const CraftSubEventSection = (props: any) => {
     </CraftSection>
   );
 };
-CraftSubEventSection.craft = { displayName: 'SubEventSection', rules: { canDrag: () => true } };
+CraftSubEventSection.craft = { 
+  displayName: 'SubEventSection', 
+  rules: { canDrag: () => true },
+  // No specific settings yet
+};
 
 export const CraftGallerySection = (props: any) => {
   const hasContent = props.event?.new_new_photos_expanded?.length > 1;
@@ -718,7 +850,11 @@ export const CraftGallerySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftGallerySection.craft = { displayName: 'GallerySection', rules: { canDrag: () => true } };
+CraftGallerySection.craft = { 
+  displayName: 'GallerySection', 
+  rules: { canDrag: () => true },
+  // No specific settings yet
+};
 
 export const CraftEventDateTimeBlock = (props: any) => {
   const event = useEvent(props);
@@ -769,7 +905,11 @@ export const CraftCommunitySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftCommunitySection.craft = { displayName: 'CommunitySection', rules: { canDrag: () => true } };
+CraftCommunitySection.craft = { 
+  displayName: 'CommunitySection', 
+  rules: { canDrag: () => true },
+  // No specific settings yet
+};
 
 export const CraftHostedBySection = (props: any) => {
   const hasContent = getEventCohosts(props.event).length > 0;
@@ -783,14 +923,22 @@ export const CraftHostedBySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftHostedBySection.craft = { displayName: 'HostedBySection', rules: { canDrag: () => true } };
+CraftHostedBySection.craft = { 
+  displayName: 'HostedBySection', 
+  rules: { canDrag: () => true },
+  // No specific settings yet
+};
 
 export const CraftAttendeesSection = (props: any) => (
   <CraftSection name="Attendees">
     <AttendeesSection {...props} />
   </CraftSection>
 );
-CraftAttendeesSection.craft = { displayName: 'AttendeesSection', rules: { canDrag: () => true } };
+CraftAttendeesSection.craft = { 
+  displayName: 'AttendeesSection', 
+  rules: { canDrag: () => true },
+  // No specific settings yet
+};
 
 export const CraftEventHero = (props: any) => {
   const event = useEvent(props);

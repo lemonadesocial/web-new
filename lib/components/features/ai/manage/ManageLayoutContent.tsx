@@ -84,13 +84,15 @@ function ManageLayoutContent() {
     }
   }, [pageConfig, aiChatDispatch]);
 
+  const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
-    if (pageConfigData_?.structure_data) {
+    if (pageConfigData_?.structure_data && !hasInitializedRef.current) {
       try {
         const data = typeof pageConfigData_.structure_data === 'string'
           ? pageConfigData_.structure_data
           : JSON.stringify(pageConfigData_.structure_data);
         actions.deserialize(data);
+        hasInitializedRef.current = true;
       } catch (e) {
         console.error('Failed to parse pageConfig structure_data', e);
       }
