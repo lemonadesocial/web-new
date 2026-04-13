@@ -485,8 +485,8 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
           // 2. Otherwise, wrap the section in a new Grid
           const gridTree = query.parseReactElement(
              <resolver.Grid canvas>
-               <resolver.Col canvas width="1/2" />
-               <resolver.Col canvas width="1/2" />
+               <resolver.Col canvas />
+               <resolver.Col canvas />
              </resolver.Grid>
           ).toNodeTree();
 
@@ -516,7 +516,7 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
   return (
     <div
       className={clsx(
-        "absolute top-0 bottom-0 w-16 z-[999] cursor-copy",
+        "absolute top-0 bottom-0 w-1/4 z-[999] cursor-copy",
         side === 'left' ? "left-0" : "right-0"
       )}
       onMouseEnter={() => {
@@ -538,10 +538,10 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
       {isOver && (
         <div 
           className={clsx(
-            "absolute top-0 bottom-0 w-[3px] bg-accent-400 z-[1000]",
+            "absolute top-0 bottom-0 w-[4px] bg-accent-400 z-[1000] transition-all duration-200",
             side === 'left' ? "left-0" : "right-0"
           )}
-          style={{ boxShadow: '0 0 12px var(--color-accent-400), 0 0 4px var(--color-accent-400)' }}
+          style={{ boxShadow: '0 0 15px var(--color-accent-400), 0 0 5px var(--color-accent-400)' }}
         />
       )}
     </div>
