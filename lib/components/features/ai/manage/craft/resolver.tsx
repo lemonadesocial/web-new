@@ -763,6 +763,7 @@ const ContainerSettings = () => {
 
 export const Container = ({ children, height, width, centered, ...props }: any) => {
   const { connectors: { connect } } = useNode();
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
   
   return (
@@ -772,6 +773,7 @@ export const Container = ({ children, height, width, centered, ...props }: any) 
       className={clsx(
         "flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 transition-all",
         centered && "max-w-67.5rem mx-auto",
+        !enabled && "min-h-0 pb-0!",
         props.className
       )}
       style={{ 
@@ -847,14 +849,16 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
-  const { actions } = useEditor();
+  const { actions, enabled } = useEditor((state) => ({
+    enabled: state.options.enabled
+  }));
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
 
   return (
     <div 
       ref={(ref: any) => connect(ref)} 
       onClick={(e) => {
-        if (e.target !== e.currentTarget) return;
+        if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
         actions.selectNode(id);
       }}
@@ -862,7 +866,8 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid',
         centered && "max-w-67.5rem mx-auto",
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
-        selected && 'ring-2 ring-primary/50 ring-offset-2'
+        enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
+        !enabled && 'min-h-0'
       )}
       style={{ 
         ...props.style, 
@@ -872,7 +877,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
       {...props}
     >
       {children}
-      {React.Children.count(children) === 0 && (
+      {enabled && React.Children.count(children) === 0 && (
         <div className="flex-1 border-2 border-dashed border-primary/20 rounded-lg p-10 flex items-center justify-center text-tertiary/40">
            Empty Grid
         </div>
@@ -892,7 +897,9 @@ export const Col = ({ children, width, height, ...props }: any) => {
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
-  const { actions } = useEditor();
+  const { actions, enabled } = useEditor((state) => ({
+    enabled: state.options.enabled
+  }));
   
   // Only apply inline width if it's a numeric value (e.g. "300"). 
   // For presets like "74", "1/2", etc., we use Tailwind classes.
@@ -903,14 +910,15 @@ export const Col = ({ children, width, height, ...props }: any) => {
     <div 
       ref={(ref: any) => connect(ref)} 
       onClick={(e) => {
-        if (e.target !== e.currentTarget) return;
+        if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
         actions.selectNode(id);
       }}
       className={clsx(
         'flex flex-col gap-6 min-h-[50px] transition-all relative group/col',
         width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : (isNumericWidth ? '' : 'flex-1 w-full'),
-        selected && 'ring-2 ring-primary/30'
+        enabled && selected && 'ring-2 ring-primary/30',
+        !enabled && 'min-h-0'
       )}
       style={{ 
         ...props.style, 
@@ -919,7 +927,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
       }}
       {...props}
     >
-      {selected && (
+      {enabled && selected && (
         <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
           <Button
             size="xs"
@@ -934,7 +942,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
         </div>
       )}
       {children}
-      {React.Children.count(children) === 0 && (
+      {enabled && React.Children.count(children) === 0 && (
         <div className="flex-1 border-2 border-dashed border-primary/10 rounded-lg min-h-[100px] flex items-center justify-center text-tertiary/30 text-xs">
            Drop sections here
         </div>
