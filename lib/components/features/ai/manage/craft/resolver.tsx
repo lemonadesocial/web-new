@@ -738,13 +738,14 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
 };
 
 const ContainerSettings = () => {
-  const { actions, props } = useSettings();
+  const { id, actions, props } = useSettings();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Centered Content</p>
         <Toggle
-          selected={props.centered || false}
+          id={`centered-${id}`}
+          checked={props.centered || false}
           onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
         />
       </div>
@@ -807,13 +808,14 @@ Container.craft = {
 };
 
 const GridSettings = () => {
-  const { actions, props } = useSettings();
+  const { id, actions, props } = useSettings();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Centered Content</p>
         <Toggle
-          selected={props.centered || false}
+          id={`centered-grid-${id}`}
+          checked={props.centered || false}
           onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
         />
       </div>
