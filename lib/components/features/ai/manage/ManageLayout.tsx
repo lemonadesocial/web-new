@@ -27,7 +27,7 @@ function ManageLayout() {
   if (!isAuthenticated || !me) return null;
 
   return (
-    <div className="h-dvh flex flex-col bg-overlay-primary">
+    <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
       <Editor 
         resolver={resolver} 
         enabled={true}

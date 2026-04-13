@@ -174,14 +174,16 @@ function ManageLayoutContent() {
       event ? (
         <main
           data-theme-scope="event-preview"
+          data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
-            'relative isolate flex flex-col w-full h-full',
+            'relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
             themeState.theme,
             themeState.config.name,
             themeState.config.color,
-            themeState.config.mode,
+            themeState.config.mode === 'light' && 'light',
+            themeState.config.mode === 'dark' && 'dark',
           )}
-          style={themeState.variables.font as React.CSSProperties}
+          style={{ ...themeState.variables.font, position: 'relative' } as React.CSSProperties}
           onClick={(e) => {
             if (e.target === e.currentTarget) actions.selectNode(undefined);
           }}
