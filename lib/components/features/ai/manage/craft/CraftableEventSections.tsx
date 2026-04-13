@@ -63,7 +63,7 @@ export function CraftableEventSections({
       ROOT: {
         type: { resolvedName: 'Container' },
         isCanvas: true,
-        props: { className: 'w-full' },
+        props: { className: 'w-full', centered: true },
         nodes: ['main-grid'],
         linkedNodes: {},
         parent: null,
