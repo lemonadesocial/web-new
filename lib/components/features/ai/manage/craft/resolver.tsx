@@ -233,47 +233,6 @@ const RegistrationSettings = () => {
   );
 };
 
-const GridSettings = () => {
-  const { actions, props } = useSettings();
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Gap</p>
-        <Segment
-          items={[
-            { label: 'None', value: '0' },
-            { label: 'Small', value: '4' },
-            { label: 'Medium', value: '8' },
-            { label: 'Large', value: '18' },
-          ]}
-          selected={props.gap || '18'}
-          onSelect={(item) => actions.setProp((props: any) => props.gap = item.value)}
-          size="sm"
-          className="w-full"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Height (px)</p>
-        <Input 
-          type="number"
-          value={props.height || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
-          placeholder="Auto"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Width (px)</p>
-        <Input 
-          type="number"
-          value={props.width || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Full Width"
-        />
-      </div>
-    </div>
-  );
-};
-
 const ColSettings = () => {
   const { actions, props } = useSettings();
   return (
