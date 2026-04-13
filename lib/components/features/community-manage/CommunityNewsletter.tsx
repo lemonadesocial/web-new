@@ -28,6 +28,8 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useCommunityManageSpace } from './CommunityManageSpaceContext';
 import { NewsletterStatsPane } from './panes/NewsletterStatsPane';
+import { VerifyCommunityPane } from './VerifyCommunityPane';
+import { VerificationSubmissionStatusCard } from './VerificationSubmissionStatusCard';
 
 interface CommunityNewsletterProps {
   spaceIdOrSlug: string;
@@ -60,14 +62,19 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
     },
   });
 
-  const { data: verificationData, loading: loadingVerification } = useQuery(GetSpaceVerificationSubmissionDocument, {
+  const { data: verificationData, loading: loadingVerification, refetch: refetchVerification } = useQuery(GetSpaceVerificationSubmissionDocument, {
     variables: { space: ctx?.space._id || '' },
     skip: !ctx?.space._id,
     fetchPolicy: 'cache-and-network',
   });
 
+  const verificationSubmission = verificationData?.getSpaceVerificationSubmission || null;
   const isLoadingVerification = loadingVerification && !verificationData;
-  const isVerified = verificationData?.getSpaceVerificationSubmission?.state === SpaceVerificationState.Approved;
+  const isVerified = verificationSubmission?.state === SpaceVerificationState.Approved;
+  const isVerificationPending =
+    !!verificationSubmission &&
+    verificationSubmission.state !== SpaceVerificationState.Approved &&
+    verificationSubmission.state !== SpaceVerificationState.Rejected;
 
   const {
     data: newslettersData,
@@ -221,6 +228,8 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
               <DraftListSkeleton />
               <Skeleton animate className="h-9 w-26 rounded-sm" />
             </>
+          ) : isVerificationPending ? (
+            <VerificationSubmissionStatusCard submission={verificationSubmission!} />
           ) : !isVerified ? (
             <div className="flex flex-col gap-3 rounded-md border border-card-border bg-warning-300/16 px-4 py-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-0.5">
@@ -234,7 +243,14 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
                 outlined
                 iconRight="icon-chevron-right"
                 className="w-fit"
-                onClick={() => router.push(`/s/manage/${spaceIdOrSlug}/verify`)}
+                onClick={() =>
+                  drawer.open(VerifyCommunityPane, {
+                    props: {
+                      space: ctx!.space,
+                      onCompleted: refetchVerification,
+                    },
+                  })
+                }
               >
                 Verify
               </Button>
