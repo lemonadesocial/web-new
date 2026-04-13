@@ -194,7 +194,7 @@ function ManageLayoutContent() {
             ROOT: {
               type: { resolvedName: 'Container' },
               isCanvas: true,
-              props: { className: 'w-full' },
+              props: { className: 'w-full', centered: true },
               nodes: ['main-grid'],
               linkedNodes: {},
               parent: null,
@@ -341,7 +341,7 @@ function ManageLayoutContent() {
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
           <div
-            className="page relative z-10 mx-auto px-4 xl:px-0 pt-10 pb-20"
+            className="relative z-10 w-full pt-10 pb-20"
             onClick={(e) => {
               if (e.target === e.currentTarget) actions.selectNode(undefined);
             }}
