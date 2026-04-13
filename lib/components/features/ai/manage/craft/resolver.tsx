@@ -18,7 +18,7 @@ import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
 import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
-import { useStoreManageLayout } from '../store';
+import { useStoreManageLayout, storeManageLayout, aiManageLayoutStore, storeAtom } from '../store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
@@ -421,40 +421,37 @@ const Placeholder = ({ name, description }: { name: string; description?: string
 const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: string }) => {
   const { actions, query, isDragging, draggedNodeId } = useEditor((state) => {
     const dragged = state.events.dragged;
-    const isDragging = (dragged && dragged.size > 0) || !!state.events.indicator;
     return {
-      isDragging,
+      isDragging: (dragged && dragged.size > 0) || !!state.events.indicator,
       draggedNodeId: dragged && dragged.size > 0 ? Array.from(dragged)[0] : null,
     };
   });
   const [isOver, setIsOver] = React.useState(false);
 
+  // Use refs to capture current state for the window mouseup listener
+  const isOverRef = React.useRef(isOver);
+  const draggedNodeIdRef = React.useRef(draggedNodeId);
+  
+  React.useEffect(() => {
+    isOverRef.current = isOver;
+  }, [isOver]);
+
+  React.useEffect(() => {
+    draggedNodeIdRef.current = draggedNodeId;
+  }, [draggedNodeId]);
+
   React.useEffect(() => {
     if (!isDragging) {
       setIsOver(false);
+      return;
     }
-  }, [isDragging]);
 
-  if (!isDragging) return null;
+    const handleMouseUp = () => {
+      // Small delay to ensure Craft.js state is updated but we still have our refs
+      const currentDraggedId = draggedNodeIdRef.current;
+      const wasOver = isOverRef.current;
 
-  return (
-    <div
-      className={clsx(
-        "absolute top-0 bottom-0 w-1/4 max-w-[120px] z-[200] transition-all duration-200",
-        side === 'left' ? "left-0" : "right-0",
-        isOver ? "bg-primary/30 backdrop-blur-sm border-2 border-primary border-dashed rounded-md" : "bg-transparent"
-      )}
-      onMouseEnter={() => {
-        setIsOver(true);
-        storeManageLayout.setActiveDropZone({ side, sectionId });
-      }}
-      onMouseLeave={() => {
-        setIsOver(false);
-        storeManageLayout.setActiveDropZone(null);
-      }}
-      onMouseUp={() => {
-        if (!draggedNodeId) return;
-        const currentDraggedId = draggedNodeId;
+      if (wasOver && currentDraggedId) {
         setIsOver(false);
         storeManageLayout.setActiveDropZone(null);
 
@@ -465,43 +462,89 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
           if (!parentId) return;
 
           const parent = query.node(parentId).get();
+          const resolver = query.getResolver();
 
-          if (parent.data.type === Col) {
+          // 1. If target is already in a Column, add a sibling Column to the Grid
+          if (parent.data.type === resolver.Col) {
             const gridId = parent.data.parent;
             if (gridId) {
               const grid = query.node(gridId).get();
-              if (grid.data.type === Grid) {
-                const newColTree = query.parseReactElement(<Element is={Col} canvas />).toNodeTree();
+              if (grid.data.type === resolver.Grid) {
+                const newColTree = query.parseReactElement(<resolver.Col canvas />).toNodeTree();
                 const colIndex = grid.data.nodes.indexOf(parentId);
                 const insertIndex = side === 'left' ? colIndex : colIndex + 1;
                 
                 actions.addNodeTree(newColTree, gridId, insertIndex);
                 actions.move(currentDraggedId, newColTree.rootNodeId, 0);
+                actions.selectNode(currentDraggedId);
                 return;
               }
             }
           }
 
+          // 2. Otherwise, wrap the section in a new Grid
           const gridTree = query.parseReactElement(
-             <Element is={Grid} canvas>
-               <Element is={Col} canvas width="1/2" />
-               <Element is={Col} canvas width="1/2" />
-             </Element>
+             <resolver.Grid canvas>
+               <resolver.Col canvas width="1/2" />
+               <resolver.Col canvas width="1/2" />
+             </resolver.Grid>
           ).toNodeTree();
 
-          const index = query.node(parentId).get().data.nodes.indexOf(sectionId);
+          const siblings = query.node(parentId).get().data.nodes;
+          const index = siblings.indexOf(sectionId);
           actions.addNodeTree(gridTree, parentId, index);
 
           const newGridId = gridTree.rootNodeId;
           const newGrid = query.node(newGridId).get();
-          const col1Id = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
-          const col2Id = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
+          
+          const targetColId = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
+          const newColId = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
 
-          actions.move(sectionId, col1Id, 0);
-          actions.move(currentDraggedId, col2Id, 0);
+          actions.move(sectionId, targetColId, 0);
+          actions.move(currentDraggedId, newColId, 0);
+          actions.selectNode(currentDraggedId);
         }, 50);
+      }
+    };
+
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [isDragging, sectionId, side, query, actions]);
+
+  if (!isDragging) return null;
+
+  return (
+    <div
+      className={clsx(
+        "absolute top-0 bottom-0 w-16 z-[999] cursor-copy",
+        side === 'left' ? "left-0" : "right-0"
+      )}
+      onMouseEnter={() => {
+        setIsOver(true);
+        storeManageLayout.setActiveDropZone({ side, sectionId });
       }}
-    />
+      onMouseLeave={() => {
+        setIsOver(false);
+        storeManageLayout.setActiveDropZone(null);
+      }}
+      onMouseOver={(e) => {
+        e.stopPropagation();
+        if (!isOver) {
+          setIsOver(true);
+          storeManageLayout.setActiveDropZone({ side, sectionId });
+        }
+      }}
+    >
+      {isOver && (
+        <div 
+          className={clsx(
+            "absolute top-0 bottom-0 w-[3px] bg-accent-400 z-[1000]",
+            side === 'left' ? "left-0" : "right-0"
+          )}
+          style={{ boxShadow: '0 0 12px var(--color-accent-400), 0 0 4px var(--color-accent-400)' }}
+        />
+      )}
+    </div>
   );
 };
 
@@ -520,6 +563,7 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   }));
 
   const { actions, query } = useEditor();
+  const [isResizing, setIsResizing] = React.useState(false);
 
   const getPosition = () => {
     const node = query.node(id).get();
@@ -558,60 +602,26 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     actions.delete(id);
   };
 
-  const handleSplit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const node = query.node(id).get();
-    const parentId = node.data.parent;
-    if (!parentId) return;
-
-    const parent = query.node(parentId).get();
-    
-    // If already in a Column, add a sibling Column to the Grid
-    if (parent.data.type === Col) {
-      const gridId = parent.data.parent;
-      if (gridId) {
-        const grid = query.node(gridId).get();
-        if (grid.data.type === Grid) {
-          const newCol = query.parseReactElement(<Element is={Col} canvas width="1/3" />).toNodeTree();
-          actions.addNodeTree(newCol, gridId, grid.data.nodes.indexOf(parentId) + 1);
-          return;
-        }
-      }
-    }
-
-    // If in Container, wrap in a new Grid
-    if (parent.data.type === Container || parent.data.type === Grid) {
-      const newNode = query.parseReactElement(
-        <Element is={Grid} canvas>
-          <Element is={Col} canvas width="1/2">
-            <Element is={node.data.type} {...node.data.props} />
-          </Element>
-          <Element is={Col} canvas width="1/2" />
-        </Element>
-      ).toNodeTree();
-      
-      actions.addNodeTree(newNode, parentId, index);
-      actions.delete(id);
-    }
-  };
-
   const width = props.width;
   const height = props.height;
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
 
   return (
     <div
-      ref={(ref: any) => ref && connect(drag(ref))}
+      ref={(ref: any) => ref && connect(isResizing ? ref : drag(ref))}
       onClick={(e) => {
         e.stopPropagation();
         actions.selectNode(id);
       }}
-      className="relative group/section w-full p-3 cursor-pointer flex flex-col"
+      className={clsx(
+        "relative group/section w-full p-3 cursor-pointer flex flex-col overflow-visible",
+        isResizing && "z-[300]"
+      )}
       style={{ 
         height: height ? `${height}px` : 'auto',
         width: widthStyle,
         maxWidth: '100%',
-        margin: '0 auto'
+        alignSelf: 'flex-start'
       }}
     >
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
@@ -642,14 +652,6 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
             <Button
               size="xs"
               variant="tertiary-alt"
-              icon="icon-layout-outline"
-              onClick={handleSplit}
-              className="h-7 w-7 p-0"
-              title="Split into columns"
-            />
-            <Button
-              size="xs"
-              variant="tertiary-alt"
               icon="icon-delete"
               onClick={remove}
               className="h-7 w-7 p-0 hover:text-error!"
@@ -657,67 +659,107 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
           </div>
 
           {/* Height Resize Handle (Bottom) */}
-          <motion.div
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0}
-            dragMomentum={false}
-            onDrag={(e, info) => {
-              setProp((props: any) => {
-                const currentHeight = props.height || 200;
-                props.height = Math.max(50, Math.round(currentHeight + info.delta.y));
-              });
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startY = e.pageY;
+              const startHeight = height || 200;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaY = moveEvent.pageY - startY;
+                setProp((props: any) => {
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute bottom-[-8px] left-1/2 -translate-x-1/2 w-12 h-4 z-100 cursor-ns-resize flex items-center justify-center bg-primary text-primary-invert rounded-full shadow-md border border-card-border"
+            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/handle-h bg-transparent"
           >
-            <div className="w-4 h-0.5 bg-current rounded-full" />
-          </motion.div>
+            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-h:opacity-100 transition-opacity shadow-sm" />
+          </div>
 
           {/* Width Resize Handle (Right) */}
-          <motion.div
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0}
-            dragMomentum={false}
-            onDrag={(e, info) => {
-              setProp((props: any) => {
-                const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
-                if (rect) {
-                  const currentWidth = rect.width;
-                  props.width = Math.max(100, Math.round(currentWidth + info.delta.x));
-                }
-              });
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = moveEvent.pageX - startX;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-12 z-100 cursor-ew-resize flex items-center justify-center bg-primary text-primary-invert rounded-full shadow-md border border-card-border"
+            className="absolute right-0 top-0 bottom-0 w-2 z-100 cursor-ew-resize flex items-center justify-center group/handle-w bg-transparent"
           >
-             <div className="h-4 w-0.5 bg-current rounded-full" />
-          </motion.div>
+             <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-w:opacity-100 transition-opacity shadow-sm" />
+          </div>
 
           {/* Corner Resize Handle (Bottom-Right) */}
-          <motion.div
-            drag
-            dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-            dragElastic={0}
-            dragMomentum={false}
-            onDrag={(e, info) => {
-              setProp((props: any) => {
-                const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
-                if (rect) {
-                  props.height = Math.max(50, Math.round(rect.height + info.delta.y));
-                  props.width = Math.max(100, Math.round(rect.width + info.delta.x));
-                }
-              });
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const startHeight = rect.height;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = moveEvent.pageX - startX;
+                const deltaY = moveEvent.pageY - startY;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute bottom-[-8px] right-[-8px] w-5 h-5 z-110 cursor-nwse-resize bg-primary rounded-full shadow-md border border-card-border"
+            className="absolute bottom-0 right-0 w-4 h-4 z-110 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tl-lg"
           />
         </>
       )}
 
       {(selected || hovered) && (
         <div 
-          className={`absolute inset-0 z-50 pointer-events-none border-2 rounded-lg transition-colors ${
-            selected ? 'border-primary' : 'border-primary/20'
-          }`}
+          className={clsx(
+            "absolute inset-0 z-50 pointer-events-none border-2 rounded-lg transition-colors",
+            selected ? 'border-primary shadow-[0_0_0_1px_rgba(255,255,255,0.2)]' : 'border-primary/20'
+          )}
         />
       )}
       
@@ -740,8 +782,7 @@ export const Container = ({ children, height, width, ...props }: any) => {
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: widthStyle,
-        margin: '0 auto'
+        width: widthStyle
       }}
     >
       {children}
@@ -779,25 +820,10 @@ export const Grid = ({ children, gap = '18', height, width, ...props }: any) => 
       style={{ 
         ...props.style, 
         height: height ? `${height}px` : 'auto',
-        width: widthStyle,
-        margin: '0 auto'
+        width: widthStyle
       }}
       {...props}
     >
-      {selected && (
-        <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
-          <Button
-            size="xs"
-            variant="tertiary-alt"
-            icon="icon-delete"
-            onClick={(e) => {
-              e.stopPropagation();
-              actions.delete(id);
-            }}
-            className="h-7 w-7 p-0 hover:text-error!"
-          />
-        </div>
-      )}
       {children}
       {React.Children.count(children) === 0 && (
         <div className="flex-1 border-2 border-dashed border-primary/20 rounded-lg p-10 flex items-center justify-center text-tertiary/40">
