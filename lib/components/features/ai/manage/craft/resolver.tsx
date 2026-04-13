@@ -125,6 +125,15 @@ const HeroSettings = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (px)</p>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Full Width"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Alignment</p>
         <Segment
           items={[
@@ -252,6 +261,15 @@ const GridSettings = () => {
           placeholder="Auto"
         />
       </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (px)</p>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Full Width"
+        />
+      </div>
     </div>
   );
 };
@@ -283,6 +301,15 @@ const ColSettings = () => {
           value={props.height || ''} 
           onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
           placeholder="Auto"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (px)</p>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Full Width"
         />
       </div>
     </div>
@@ -438,40 +465,47 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     actions.move(id, parentId, index + 2);
   };
 
-  const split = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const node = query.node(id).get();
-    const parentId = node.data.parent;
-    if (!parentId) return;
-
-    // 1. Create a new Grid with 2 Columns
-    // Column 1 will contain the current section content
-    // Column 2 will be empty
-    const gridNode = (
-      <Element is={Grid} canvas>
-        <Element is={Col} canvas />
-        <Element is={Col} canvas />
-      </Element>
-    );
-
-    // 2. Wrap current section in a Grid
-    // We can't easily "wrap" in Craft.js without manually moving nodes.
-    // Instead, we'll suggest the user to use the Grid component if they want columns,
-    // OR we can try to implement a "Convert to Grid" logic.
-    
-    // For now, let's keep it simple: if it's already in a Col, we can't easily split it further 
-    // without nesting. 
-    
-    // A better way for "drag to same line" is to make Grid/Col internal and 
-    // allow dropping a section next to another.
-  };
-
   const remove = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     actions.delete(id);
+  };
+
+  const handleSplit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const node = query.node(id).get();
+    const parentId = node.data.parent;
+    if (!parentId) return;
+
+    const parent = query.node(parentId).get();
+    
+    // If already in a Column, add a sibling Column to the Grid
+    if (parent.data.type === Col) {
+      const gridId = parent.data.parent;
+      if (gridId) {
+        const grid = query.node(gridId).get();
+        if (grid.data.type === Grid) {
+          const newCol = query.parseReactElement(<Element is={Col} canvas width="1/3" />).toNodeTree();
+          actions.addNodeTree(newCol, gridId, grid.data.nodes.indexOf(parentId) + 1);
+          return;
+        }
+      }
+    }
+
+    // If in Container, wrap in a new Grid
+    if (parent.data.type === Container || parent.data.type === Grid) {
+      const newNode = query.parseReactElement(
+        <Element is={Grid} canvas>
+          <Element is={Col} canvas width="1/2">
+            <Element is={node.data.type} {...node.data.props} />
+          </Element>
+          <Element is={Col} canvas width="1/2" />
+        </Element>
+      ).toNodeTree();
+      
+      actions.addNodeTree(newNode, parentId, index);
+      actions.delete(id);
+    }
   };
 
   return (
@@ -481,8 +515,13 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
         e.stopPropagation();
         actions.selectNode(id);
       }}
-      className="relative group/section w-full p-3 cursor-pointer"
-      style={{ height: props.height ? `${props.height}px` : 'auto' }}
+      className="relative group/section w-full p-3 cursor-pointer flex flex-col"
+      style={{ 
+        height: props.height ? `${props.height}px` : 'auto',
+        width: props.width && !props.width.includes('/') ? `${props.width}px` : '100%',
+        maxWidth: '100%',
+        margin: '0 auto'
+      }}
     >
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
       <div className="absolute inset-0 z-40" />
@@ -510,30 +549,7 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
               size="xs"
               variant="tertiary-alt"
               icon="icon-layout-outline"
-              onClick={() => {
-                // To support "same line", we can add another column to the parent Grid if it exists
-                const node = query.node(id).get();
-                const parentId = node.data.parent;
-                if (parentId) {
-                  const parent = query.node(parentId).get();
-                  if (parent.data.type === Grid || parent.data.type === Col) {
-                    // Already in a layout, maybe add sibling?
-                  } else if (parent.data.type === Container) {
-                    // Root container, wrap this section in a new Grid
-                    const newNode = query.parseReactElement(
-                      <Element is={Grid} canvas>
-                        <Element is={Col} canvas width="1/2">
-                          <Element is={node.data.type} {...node.data.props} />
-                        </Element>
-                        <Element is={Col} canvas width="1/2" />
-                      </Element>
-                    ).toNodeTree();
-                    
-                    actions.addNodeTree(newNode, parentId, index);
-                    actions.delete(id);
-                  }
-                }
-              }}
+              onClick={handleSplit}
               className="h-7 w-7 p-0"
               title="Split into columns"
             />
@@ -546,7 +562,7 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
             />
           </div>
 
-          {/* Resize Handle */}
+          {/* Height Resize Handle (Bottom) */}
           <motion.div
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
@@ -554,13 +570,53 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
             dragMomentum={false}
             onDrag={(e, info) => {
               setProp((props: any) => {
-                const currentHeight = props.height || 200; // fallback if auto
+                const currentHeight = props.height || 200;
                 props.height = Math.max(50, Math.round(currentHeight + info.delta.y));
               });
             }}
-            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/resize"
+            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/resize-h"
           >
-            <div className="w-12 h-1.5 bg-primary rounded-full opacity-40 group-hover/resize:opacity-100 transition-opacity" />
+            <div className="w-12 h-1.5 bg-primary rounded-full opacity-20 group-hover/resize-h:opacity-100 transition-opacity" />
+          </motion.div>
+
+          {/* Width Resize Handle (Right) */}
+          <motion.div
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={(e, info) => {
+              setProp((props: any) => {
+                const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
+                if (rect) {
+                  const currentWidth = rect.width;
+                  props.width = Math.max(100, Math.round(currentWidth + info.delta.x));
+                }
+              });
+            }}
+            className="absolute top-0 right-0 bottom-0 w-2 z-100 cursor-ew-resize flex items-center justify-center group/resize-w"
+          >
+            <div className="h-12 w-1.5 bg-primary rounded-full opacity-20 group-hover/resize-w:opacity-100 transition-opacity" />
+          </motion.div>
+
+          {/* Corner Resize Handle (Bottom-Right) */}
+          <motion.div
+            drag
+            dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={(e, info) => {
+              setProp((props: any) => {
+                const rect = (e.target as HTMLElement).parentElement?.getBoundingClientRect();
+                if (rect) {
+                  props.height = Math.max(50, Math.round(rect.height + info.delta.y));
+                  props.width = Math.max(100, Math.round(rect.width + info.delta.x));
+                }
+              });
+            }}
+            className="absolute bottom-0 right-0 w-4 h-4 z-110 cursor-nwse-resize flex items-center justify-center group/resize-c"
+          >
+            <div className="w-2 h-2 border-r-2 border-b-2 border-primary opacity-40 group-hover/resize-c:opacity-100 transition-opacity" />
           </motion.div>
         </>
       )}
@@ -580,14 +636,19 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   );
 };
 
-export const Container = ({ children, height, ...props }: any) => {
+export const Container = ({ children, height, width, ...props }: any) => {
   const { connectors: { connect } } = useNode();
   return (
     <div 
       {...props} 
       ref={(ref: any) => connect(ref)} 
       className={`flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 ${props.className || ''}`}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
+      style={{ 
+        ...props.style, 
+        height: height ? `${height}px` : 'auto',
+        width: width && !width.includes('/') ? `${width}px` : '100%',
+        margin: '0 auto'
+      }}
     >
       {children}
     </div>
@@ -601,7 +662,7 @@ Container.craft = {
   },
 };
 
-export const Grid = ({ children, gap = '18', height, ...props }: any) => {
+export const Grid = ({ children, gap = '18', height, width, ...props }: any) => {
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
@@ -619,7 +680,12 @@ export const Grid = ({ children, gap = '18', height, ...props }: any) => {
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         selected && 'ring-2 ring-primary/50 ring-offset-2'
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
+      style={{ 
+        ...props.style, 
+        height: height ? `${height}px` : 'auto',
+        width: width && !width.includes('/') ? `${width}px` : '100%',
+        margin: '0 auto'
+      }}
       {...props}
     >
       {selected && (
@@ -671,7 +737,11 @@ export const Col = ({ children, width, height, ...props }: any) => {
         width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : 'flex-1 w-full',
         selected && 'ring-2 ring-primary/30'
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto' }}
+      style={{ 
+        ...props.style, 
+        height: height ? `${height}px` : 'auto',
+        width: width && !width.includes('/') ? `${width}px` : 'auto'
+      }}
       {...props}
     >
       {selected && (
