@@ -828,7 +828,55 @@ Container.craft = {
   }
 };
 
-export const Grid = ({ children, gap = '18', height, width, ...props }: any) => {
+const GridSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium">Centered Content</p>
+        <Toggle
+          selected={props.centered || false}
+          onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Gap</p>
+        <Segment
+          items={[
+            { label: 'None', value: '0' },
+            { label: 'Small', value: '4' },
+            { label: 'Medium', value: '8' },
+            { label: 'Large', value: '18' },
+          ]}
+          selected={props.gap || '18'}
+          onSelect={(item) => actions.setProp((props: any) => props.gap = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Width (px)</p>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Full Width"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const Grid = ({ children, gap = '18', height, width, centered, ...props }: any) => {
   const { id, connectors: { connect }, selected } = useNode((node) => ({
     selected: node.events.selected
   }));
@@ -845,6 +893,7 @@ export const Grid = ({ children, gap = '18', height, width, ...props }: any) => 
       }}
       className={clsx(
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid',
+        centered && "max-w-67.5rem mx-auto",
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         selected && 'ring-2 ring-primary/50 ring-offset-2'
       )}
