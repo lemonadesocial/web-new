@@ -872,7 +872,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
         actions.selectNode(id);
       }}
       className={clsx(
-        'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid',
+        'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid rounded-lg',
         centered && "page mx-auto",
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
@@ -924,7 +924,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
         actions.selectNode(id);
       }}
       className={clsx(
-        'flex flex-col gap-6 min-h-[50px] transition-all relative group/col',
+        'flex flex-col gap-6 min-h-[50px] transition-all relative group/col rounded-lg',
         width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : (isNumericWidth ? '' : 'flex-1 w-full'),
         enabled && selected && 'ring-2 ring-primary/30',
         !enabled && 'min-h-0'
