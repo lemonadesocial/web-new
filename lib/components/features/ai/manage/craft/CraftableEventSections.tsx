@@ -63,7 +63,7 @@ export function CraftableEventSections({
       ROOT: {
         type: { resolvedName: 'Container' },
         isCanvas: true,
-        props: { className: 'w-full', centered: true, width: '1080' },
+        props: { className: 'w-full', centered: false, width: '' },
         nodes: ['main-grid'],
         linkedNodes: {},
         parent: null,
@@ -73,7 +73,7 @@ export function CraftableEventSections({
       'main-grid': {
         type: { resolvedName: 'Grid' },
         isCanvas: true,
-        props: { gap: '18' },
+        props: { gap: '18', centered: true, width: '1080' },
         nodes: ['sidebar-col', 'main-col'],
         linkedNodes: {},
         parent: 'ROOT',
