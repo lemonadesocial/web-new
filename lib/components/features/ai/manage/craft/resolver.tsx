@@ -766,7 +766,6 @@ export const Container = ({ children, height, width, centered, ...props }: any) 
       ref={(ref: any) => connect(ref)} 
       className={clsx(
         "flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 transition-all",
-        centered && "page mx-auto",
         !enabled && "min-h-0 pb-0!",
         props.className
       )}
