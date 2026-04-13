@@ -755,50 +755,6 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
   );
 };
 
-const ContainerSettings = () => {
-  const { id, actions, props } = useSettings();
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">Centered Content</p>
-        <Toggle
-          id={`centered-${id}`}
-          checked={props.centered || false}
-          onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Height (px)</p>
-        <Input 
-          type="number"
-          value={props.height || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
-          placeholder="Auto"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">Width (px)</p>
-          {props.width && (
-            <button 
-              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
-              onClick={() => actions.setProp((props: any) => props.width = '')}
-            >
-              Set Full
-            </button>
-          )}
-        </div>
-        <Input 
-          type="number"
-          value={props.width || ''} 
-          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
-          placeholder="Leave empty for Full Screen"
-        />
-      </div>
-    </div>
-  );
-};
-
 export const Container = ({ children, height, width, centered, ...props }: any) => {
   const { connectors: { connect } } = useNode();
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
@@ -828,11 +784,8 @@ Container.craft = {
   isCanvas: true,
   rules: {
     canMoveIn: () => true,
-    canSelect: () => true,
+    canSelect: () => false,
   },
-  related: {
-    settings: ContainerSettings
-  }
 };
 
 const GridSettings = () => {
