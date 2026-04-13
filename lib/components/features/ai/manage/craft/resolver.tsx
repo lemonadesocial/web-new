@@ -419,27 +419,44 @@ const Placeholder = ({ name, description }: { name: string; description?: string
 );
 
 const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: string }) => {
-  const { actions, query, isDragging, draggedNodeId } = useEditor((state) => ({
-    isDragging: state.events.dragged !== null,
-    draggedNodeId: state.events.dragged ? Array.from(state.events.dragged)[0] : null,
-  }));
+  const { actions, query, isDragging, draggedNodeId } = useEditor((state) => {
+    const dragged = state.events.dragged;
+    const isDragging = (dragged && dragged.size > 0) || !!state.events.indicator;
+    return {
+      isDragging,
+      draggedNodeId: dragged && dragged.size > 0 ? Array.from(dragged)[0] : null,
+    };
+  });
   const [isOver, setIsOver] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isDragging) {
+      setIsOver(false);
+    }
+  }, [isDragging]);
 
   if (!isDragging) return null;
 
   return (
     <div
       className={clsx(
-        "absolute top-0 bottom-0 w-1/4 max-w-[100px] z-[200] transition-all duration-200",
+        "absolute top-0 bottom-0 w-1/4 max-w-[120px] z-[200] transition-all duration-200",
         side === 'left' ? "left-0" : "right-0",
-        isOver ? "bg-primary/20 backdrop-blur-sm border-2 border-primary border-dashed rounded-md" : "bg-transparent opacity-0 hover:opacity-100"
+        isOver ? "bg-primary/30 backdrop-blur-sm border-2 border-primary border-dashed rounded-md" : "bg-transparent"
       )}
-      onMouseEnter={() => setIsOver(true)}
-      onMouseLeave={() => setIsOver(false)}
+      onMouseEnter={() => {
+        setIsOver(true);
+        storeManageLayout.setActiveDropZone({ side, sectionId });
+      }}
+      onMouseLeave={() => {
+        setIsOver(false);
+        storeManageLayout.setActiveDropZone(null);
+      }}
       onMouseUp={() => {
         if (!draggedNodeId) return;
         const currentDraggedId = draggedNodeId;
         setIsOver(false);
+        storeManageLayout.setActiveDropZone(null);
 
         setTimeout(() => {
           const node = query.node(sectionId).get();
