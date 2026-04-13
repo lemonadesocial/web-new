@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 const sizes: { [key: string]: string } = {
@@ -30,7 +30,7 @@ const iconSizeBase = {
   xs: 'size-4',
 };
 
-interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
+interface ButtonProps extends React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
   variant?: 'primary' | 'success' | 'danger' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat' | 'warning';
   icon?: string;

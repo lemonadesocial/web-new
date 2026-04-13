@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { format } from 'date-fns';
 
 import {
   CreateSpaceVerificationSubmissionDocument,
@@ -10,56 +9,20 @@ import {
   GetSpaceVerificationSubmissionDocument,
   Space,
   SpaceVerificationState,
-  SpaceVerificationSubmission,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { generateUrl } from '$lib/utils/cnd';
 import { isObjectId } from '$lib/utils/helpers';
 import { Button } from '$lib/components/core/button/button';
+import { drawer } from '$lib/components/core/dialog';
 import { Checkbox } from '$lib/components/core/input/checkbox';
 import { InputField } from '$lib/components/core/input/input-field';
 import { TextAreaField } from '$lib/components/core/input/textarea';
+import { Pane } from '$lib/components/core/pane/pane';
 import { toast } from '$lib/components/core/toast/toast';
-import Header from '$lib/components/layouts/header';
+import { VerificationSubmissionStatusCard } from './VerificationSubmissionStatusCard';
 
-function getVerificationStatusInfo(submission: SpaceVerificationSubmission): {
-  icon: string;
-  iconBg: string;
-  title: string;
-  description: string;
-  actionLabel?: string;
-} {
-  if (submission.state === SpaceVerificationState.Approved) {
-    return {
-      icon: 'icon-check text-success-500',
-      iconBg: 'bg-success-500/16',
-      title: 'Verification Request Approved',
-      description: 'Your community has been verified and you can now enjoy higher invite and newsletter limits.',
-    };
-  }
-
-  if (submission.state === SpaceVerificationState.Rejected) {
-    return {
-      icon: 'icon-x text-danger-400',
-      iconBg: 'bg-danger-400/16',
-      title: 'Verification Request Not approved',
-      description: 'We were unable to verify your community. Please make sure you provide accurate information.',
-      actionLabel: 'Submit Another Request',
-    };
-  }
-
-  return {
-    icon: 'icon-email text-tertiary',
-    iconBg: 'bg-(--btn-tertiary)',
-    title: 'Verification Request Received',
-    description: `We received your application on ${format(
-      new Date(submission.updated_at || submission.created_at),
-      'd MMMM',
-    )}. We process most submissions within 30 minutes and all submissions within 12 hours.`,
-  };
-}
-
-export function VerifyCommunityPage({ uid }: { uid: string }) {
+export function VerifyCommunityPane({ uid }: { uid: string }) {
   const [forceVerify, setForceVerify] = React.useState(false);
 
   const spaceVariables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
@@ -82,15 +45,35 @@ export function VerifyCommunityPage({ uid }: { uid: string }) {
 
   const verificationSubmission = verificationData?.getSpaceVerificationSubmission || null;
   const showHistory = !!verificationSubmission && !forceVerify;
-  const statusInfo = verificationSubmission ? getVerificationStatusInfo(verificationSubmission) : null;
+  const form = useVerifyCommunityForm({
+    space,
+    enabled: !!space && !loadingVerification && !showHistory,
+    onCompleted: async () => {
+      setForceVerify(false);
+      const result = await refetch();
+      const nextSubmission = result.data?.getSpaceVerificationSubmission;
+
+      if (
+        nextSubmission &&
+        nextSubmission.state !== SpaceVerificationState.Approved &&
+        nextSubmission.state !== SpaceVerificationState.Rejected
+      ) {
+        drawer.close();
+      }
+    },
+  });
 
   return (
-    <main className="h-dvh overflow-auto">
-      <Header />
-      <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
-        <div className="flex flex-col gap-8 pb-20">
+    <Pane.Root>
+      <Pane.Header.Root>
+        <Pane.Header.Left className="flex items-center gap-3">
+          <p className="truncate pt-1 text-base font-medium">Verify Community</p>
+        </Pane.Header.Left>
+      </Pane.Header.Root>
+
+      <Pane.Content className="overflow-auto p-4">
+        <div className="flex flex-col gap-6 pb-6">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold font-title">Verify Community</h1>
             <p className="text-tertiary">
               In order to increase your invite and newsletter limits, please share some information about your planned
               events and contacts.
@@ -114,39 +97,46 @@ export function VerifyCommunityPage({ uid }: { uid: string }) {
             </div>
           )}
 
-          {!!space && !loadingVerification && showHistory && !!statusInfo && (
-            <div className="rounded-lg border border-card-border bg-card p-4 flex flex-col gap-4">
-              <div className={`size-14 rounded-full flex items-center justify-center ${statusInfo.iconBg}`}>
-                <i aria-hidden="true" className={`${statusInfo.icon} size-8`} />
-              </div>
-              <div className="space-y-2">
-                <p className="text-lg leading-6">{statusInfo.title}</p>
-                <p className="text-sm text-secondary">{statusInfo.description}</p>
-                {verificationSubmission.state === SpaceVerificationState.Rejected && (
-                  <button
-                    type="button"
-                    className="text-sm text-accent-400 hover:text-accent-300 transition-colors"
-                    onClick={() => setForceVerify(true)}
-                  >
-                    {statusInfo.actionLabel}
-                  </button>
-                )}
-              </div>
-            </div>
+          {!!space && !loadingVerification && showHistory && !!verificationSubmission && (
+            <VerificationSubmissionStatusCard
+              submission={verificationSubmission}
+              onRejectedAction={() => setForceVerify(true)}
+            />
           )}
 
           {!!space && !loadingVerification && !showHistory && (
-            <VerifyCommunityForm
+            <VerifyCommunityFormFields
+              formId={form.formId}
               space={space}
-              onCompleted={async () => {
-                setForceVerify(false);
-                await refetch();
-              }}
+              values={form.values}
+              errors={form.errors}
+              recipientsNumber={form.recipientsNumber}
+              onChangeValue={form.onChangeValue}
+              onToggleValue={form.onToggleValue}
+              onSubmit={form.onSubmit}
             />
           )}
         </div>
-      </div>
-    </main>
+      </Pane.Content>
+
+      {!!space && !loadingVerification && !showHistory && (
+        <Pane.Footer>
+          <div className="border-t border-card-border p-4">
+            <Button
+              form={form.formId}
+              type="submit"
+              variant="secondary"
+              iconLeft="icon-done"
+              className="w-full justify-center"
+              loading={form.loading}
+              disabled={!form.canSubmit || form.loading}
+            >
+              Submit Request
+            </Button>
+          </div>
+        </Pane.Footer>
+      )}
+    </Pane.Root>
   );
 }
 
@@ -160,7 +150,15 @@ type FormValues = {
 
 type FormErrors = Partial<Record<keyof FormValues, string>>;
 
-function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted: () => Promise<void> | void }) {
+function useVerifyCommunityForm({
+  space,
+  enabled,
+  onCompleted,
+}: {
+  space?: Space;
+  enabled: boolean;
+  onCompleted: () => Promise<void> | void;
+}) {
   const [values, setValues] = React.useState<FormValues>({
     number_of_recipients: '',
     event_info: '',
@@ -169,6 +167,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
     confirmation_2: false,
   });
   const [errors, setErrors] = React.useState<FormErrors>({});
+  const formId = React.useId();
 
   const [createVerificationSubmission, { loading }] = useMutation(CreateSpaceVerificationSubmissionDocument, {
     onComplete: async () => {
@@ -180,7 +179,6 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
     },
   });
 
-  const completedInfo = !!space.image_avatar_expanded && !!space.description;
   const recipientsNumber = Number(values.number_of_recipients);
   const canSubmit =
     Number.isFinite(recipientsNumber) &&
@@ -220,7 +218,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!validate()) {
+    if (!enabled || !space || !validate()) {
       return;
     }
 
@@ -238,8 +236,50 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
     });
   };
 
+  const onChangeValue = React.useCallback((field: keyof FormValues, value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const onToggleValue = React.useCallback((field: 'confirmation_1' | 'confirmation_2', checked: boolean) => {
+    setValues((prev) => ({ ...prev, [field]: checked }));
+  }, []);
+
+  return {
+    canSubmit,
+    errors,
+    formId,
+    loading,
+    onChangeValue,
+    onSubmit,
+    onToggleValue,
+    recipientsNumber,
+    values,
+  };
+}
+
+function VerifyCommunityFormFields({
+  formId,
+  space,
+  values,
+  errors,
+  recipientsNumber,
+  onChangeValue,
+  onToggleValue,
+  onSubmit,
+}: {
+  formId: string;
+  space: Space;
+  values: FormValues;
+  errors: FormErrors;
+  recipientsNumber: number;
+  onChangeValue: (field: 'number_of_recipients' | 'event_info' | 'guests_info', value: string) => void;
+  onToggleValue: (field: 'confirmation_1' | 'confirmation_2', checked: boolean) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+}) {
+  const completedInfo = !!space.image_avatar_expanded && !!space.description;
+
   return (
-    <form onSubmit={onSubmit} className="max-w-128 w-full flex flex-col gap-6">
+    <form id={formId} onSubmit={onSubmit} className="max-w-128 w-full flex flex-col gap-6">
       <div className="rounded-md border border-card-border bg-card px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-sm border border-card-border overflow-hidden shrink-0 bg-(--btn-tertiary) flex items-center justify-center">
@@ -293,7 +333,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           className="max-w-40"
           placeholder="100"
           value={values.number_of_recipients}
-          onChangeText={(value) => setValues((prev) => ({ ...prev, number_of_recipients: value }))}
+          onChangeText={(value) => onChangeValue('number_of_recipients', value)}
           error={!!errors.number_of_recipients}
         />
         {errors.number_of_recipients && <p className="text-sm text-danger-400">{errors.number_of_recipients}</p>}
@@ -319,7 +359,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           className="min-h-24"
           rows={4}
           value={values.event_info}
-          onChangeText={(value) => setValues((prev) => ({ ...prev, event_info: value }))}
+          onChangeText={(value) => onChangeValue('event_info', value)}
         />
         {errors.event_info && <p className="text-sm text-danger-400">{errors.event_info}</p>}
       </label>
@@ -335,7 +375,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           className="min-h-24"
           rows={4}
           value={values.guests_info}
-          onChangeText={(value) => setValues((prev) => ({ ...prev, guests_info: value }))}
+          onChangeText={(value) => onChangeValue('guests_info', value)}
         />
         {errors.guests_info && <p className="text-sm text-danger-400">{errors.guests_info}</p>}
       </label>
@@ -345,7 +385,7 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           <Checkbox
             id="confirmation_1"
             value={values.confirmation_1}
-            onChange={(event) => setValues((prev) => ({ ...prev, confirmation_1: event.target.checked }))}
+            onChange={(event) => onToggleValue('confirmation_1', event.target.checked)}
           >
             <span>I confirm I will not import or contact people with inactive email addresses or who have unsubscribed.</span>
           </Checkbox>
@@ -356,25 +396,13 @@ function VerifyCommunityForm({ space, onCompleted }: { space: Space; onCompleted
           <Checkbox
             id="confirmation_2"
             value={values.confirmation_2}
-            onChange={(event) => setValues((prev) => ({ ...prev, confirmation_2: event.target.checked }))}
+            onChange={(event) => onToggleValue('confirmation_2', event.target.checked)}
           >
             <span>I confirm that I will only message people who have opted in and consented to receiving emails.</span>
           </Checkbox>
           {errors.confirmation_2 && <p className="text-sm text-danger-400">{errors.confirmation_2}</p>}
         </div>
       </div>
-
-      <Button
-        type="submit"
-        size="sm"
-        variant="secondary"
-        iconLeft="icon-done"
-        className="w-fit"
-        loading={loading}
-        disabled={!canSubmit || loading}
-      >
-        Submit Request
-      </Button>
     </form>
   );
 }
