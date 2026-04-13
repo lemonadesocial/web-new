@@ -66,16 +66,18 @@ export function ThemeGenerator({
   }, []);
 
   const modeKey = mode === 'auto' ? 'dark' : mode;
-  const modeVars = data.variables?.[modeKey === 'dark' ? 'dark' : 'light'];
   const isMinimalTheme = data.theme === 'minimal';
-  const backgroundColor = modeVars?.['--color-background'];
+  const modeVars = data.variables?.[modeKey === 'dark' ? 'dark' : 'light'];
+  const backgroundColor = modeVars?.['--color-background'] || (isMinimalTheme ? (modeKey === 'light' ? 'var(--color-accent-50)' : 'var(--color-accent-950)') : undefined);
   const selector = scopeSelector || '[data-theme-scope]';
+
   const scopedBackgroundStyle = scoped
     ? ({
         position: 'absolute',
         inset: 0,
         pointerEvents: 'none',
         zIndex: 0,
+        backgroundColor: isMinimalTheme ? backgroundColor : undefined,
         ...style,
       } as React.CSSProperties)
     : style;
@@ -90,8 +92,8 @@ export function ThemeGenerator({
               ${data.variables.font && generateCssVariables(data.variables.font)}
               ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
-              ${mode === 'dark' && data.variables.dark && generateCssVariables(data.variables.dark)}
-              ${mode === 'light' && data.variables.light && generateCssVariables(data.variables.light)}
+              ${(mode === 'dark' || (mode === 'auto' && modeKey === 'dark')) && data.variables.dark && generateCssVariables(data.variables.dark)}
+              ${(mode === 'light' || (mode === 'auto' && modeKey === 'light')) && data.variables.light && generateCssVariables(data.variables.light)}
             }`
               : `body {
               ${data.variables.font && generateCssVariables(data.variables.font)}
@@ -121,6 +123,7 @@ export function ThemeGenerator({
 
       {data?.theme && (
         <div
+          data-theme={mode}
           className={clsx(
             'background',
             data.theme,
@@ -129,6 +132,7 @@ export function ThemeGenerator({
             data?.config?.color,
             data?.config?.class,
             mode,
+            scoped && 'w-full h-full',
           )}
           style={scopedBackgroundStyle}
         >
