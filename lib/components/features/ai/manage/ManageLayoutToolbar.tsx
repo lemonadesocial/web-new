@@ -155,24 +155,12 @@ function ManageLayoutToolbar() {
     if (!event?._id) return;
 
     try {
-      const nodes = query.getNodes();
       const rootNodes = query.node('ROOT').get().data.nodes;
 
       const layoutSections = rootNodes.map((id) => ({
         id,
         hidden: false,
       }));
-
-      // Extract updated event/space data from nodes
-      let updatedData: any = {};
-      Object.values(nodes).forEach((node) => {
-        if (node.data.props.event) {
-          updatedData = { ...updatedData, ...node.data.props.event };
-        }
-        if (node.data.props.space) {
-          updatedData = { ...updatedData, ...node.data.props.space };
-        }
-      });
 
       const layout_data = JSON.parse(query.serialize());
       console.log('@@@ layout_data', layout_data);
@@ -228,19 +216,30 @@ function ManageLayoutToolbar() {
 
       // 3. Update event/space data
       if (state.layoutType === 'event') {
+        const address = event.address ? {
+          street_1: event.address.street_1,
+          city: event.address.city,
+          title: event.address.title,
+          region: event.address.region,
+          country: event.address.country,
+          additional_directions: event.address.additional_directions,
+          latitude: event.address.latitude,
+          longitude: event.address.longitude,
+        } : null;
+
         await updateEventSettings({
           variables: {
             id: event._id,
             input: {
-              title: updatedData.title,
-              description: updatedData.description,
-              start: updatedData.start,
-              end: updatedData.end,
-              timezone: updatedData.timezone,
-              address: updatedData.address,
-              latitude: updatedData.latitude,
-              longitude: updatedData.longitude,
-              virtual_url: updatedData.virtual_url,
+              title: event.title,
+              description: event.description,
+              start: event.start,
+              end: event.end,
+              timezone: event.timezone,
+              address: address,
+              latitude: event.latitude,
+              longitude: event.longitude,
+              virtual_url: event.virtual_url,
               layout_sections: layoutSections,
             },
           },
@@ -250,8 +249,8 @@ function ManageLayoutToolbar() {
           variables: {
             id: event._id,
             input: {
-              title: updatedData.title,
-              description: updatedData.description,
+              title: event.title,
+              description: event.description,
               theme_data: themeState,
             },
           },

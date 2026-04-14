@@ -37,7 +37,10 @@ import { RegisterButton } from './RegisterButton';
 import { AccessCard } from '../event-access/AccessCard';
 import { EventCountdown } from '../event-access/EventCountdown';
 
-const EventRegistrationContent: React.FC = () => {
+const EventRegistrationContent: React.FC<{ 
+  heading?: string;
+  description?: string;
+}> = ({ heading, description }) => {
   const signIn = useSignIn();
   const me = useMe();
   const approvalRequired = useAtomValue(approvalRequiredAtom);
@@ -86,7 +89,7 @@ const EventRegistrationContent: React.FC = () => {
 
   return (
     <Card.Root>
-      <Card.Header>{hasSingleFreeTicket ? 'Registration' : 'Get Tickets'}</Card.Header>
+      <Card.Header>{heading || (hasSingleFreeTicket ? 'Registration' : 'Get Tickets')}</Card.Header>
       {!!(approvalRequired || showCheckInEarn || event.guest_limit) && (
         <div className='p-3 flex flex-col gap-3 border-b border-card-border'>
           {
@@ -133,7 +136,7 @@ const EventRegistrationContent: React.FC = () => {
       <div className='flex flex-col gap-4 p-4'>
         <TicketSelect />
         <p>
-          {hasSingleFreeTicket ? 'Welcome! To join the event, please register below.' : 'Welcome! To join the event, please get your ticket below.'}
+          {description || (hasSingleFreeTicket ? 'Welcome! To join the event, please register below.' : 'Welcome! To join the event, please get your ticket below.')}
         </p>
         {
           me && (
@@ -150,7 +153,11 @@ const EventRegistrationContent: React.FC = () => {
   );
 };
 
-const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEvent }) => {
+const BaseEventRegistration: React.FC<{ 
+  event: Event;
+  heading?: string;
+  description?: string;
+}> = ({ event: initialEvent, heading, description }) => {
   const [event, setEvent] = useAtom(eventAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -272,13 +279,17 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
   );
 
   return <>
-    <EventRegistrationContent />
+    <EventRegistrationContent heading={heading} description={description} />
     <ModalContainer modal={registrationModal} />
   </>;
 };
 
-export const EventRegistration: React.FC<{ event: Event; }> = ({ event }) => (
+export const EventRegistration: React.FC<{ 
+  event: Event;
+  heading?: string;
+  description?: string;
+}> = ({ event, heading, description }) => (
   <EventRegistrationStoreProvider>
-    <BaseEventRegistration event={event} />
+    <BaseEventRegistration event={event} heading={heading} description={description} />
   </EventRegistrationStoreProvider>
 );

@@ -49,7 +49,7 @@ export function CraftableEventSections({
       acc[item.id] = {
         type: { resolvedName: componentName },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'main-col',
@@ -93,7 +93,7 @@ export function CraftableEventSections({
       'sidebar-image': {
         type: { resolvedName: 'EventSidebarImage' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'sidebar-col',
@@ -103,7 +103,7 @@ export function CraftableEventSections({
       'community-section': {
         type: { resolvedName: 'CommunitySection' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'sidebar-col',
@@ -113,7 +113,7 @@ export function CraftableEventSections({
       'hosted-by-section': {
         type: { resolvedName: 'HostedBySection' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'sidebar-col',
@@ -123,7 +123,7 @@ export function CraftableEventSections({
       'attendees-section': {
         type: { resolvedName: 'AttendeesSection' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'sidebar-col',
@@ -143,7 +143,7 @@ export function CraftableEventSections({
       'event-hero': {
         type: { resolvedName: 'EventHero' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'main-col',
@@ -153,7 +153,7 @@ export function CraftableEventSections({
       'datetime-block': {
         type: { resolvedName: 'EventDateTimeBlock' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'main-col',
@@ -163,7 +163,7 @@ export function CraftableEventSections({
       'location-block': {
         type: { resolvedName: 'EventLocationBlock' },
         isCanvas: false,
-        props: { event },
+        props: {},
         nodes: [],
         linkedNodes: {},
         parent: 'main-col',

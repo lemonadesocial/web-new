@@ -34,6 +34,7 @@ import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
 import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
 import { resolver } from '../ai/manage/craft/resolver';
+import { storeManageLayout } from '../ai/manage/store';
 
 export function EventGuestSide({
   event: initEvent,
@@ -80,6 +81,12 @@ export function EventGuestSideContent({
   React.useEffect(() => {
     setIsClient(true);
   }, []);
+
+  React.useEffect(() => {
+    if (event) {
+      storeManageLayout.setData(event);
+    }
+  }, [event]);
 
   const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
