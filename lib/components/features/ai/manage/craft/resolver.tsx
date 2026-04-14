@@ -1519,6 +1519,22 @@ CraftEventCollectibles.craft = {
   // No specific settings for collectibles yet, but we could add them if needed
 };
 
+const SubEventSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Section Title</p>
+        <Input 
+          value={props.title || 'Schedule'} 
+          onChange={(e) => actions.setProp((props: any) => props.title = e.target.value)}
+          placeholder="Schedule"
+        />
+      </div>
+    </div>
+  );
+};
+
 export const CraftSubEventSection = (props: any) => {
   const event = useEvent(props);
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
@@ -1537,9 +1553,11 @@ export const CraftSubEventSection = (props: any) => {
   );
 };
 CraftSubEventSection.craft = { 
-  displayName: 'SubEventSection', 
+  displayName: 'Schedule', 
   rules: { canDrag: () => true },
-  // No specific settings yet
+  related: {
+    settings: SubEventSettings
+  }
 };
 
 export const CraftGallerySection = (props: any) => {
