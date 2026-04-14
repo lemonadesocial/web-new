@@ -162,8 +162,22 @@ function ManageLayoutToolbar() {
         hidden: false,
       }));
 
-      const layout_data = JSON.parse(query.serialize());
-      console.log('@@@ layout_data', layout_data);
+      const serialized = query.serialize();
+      const layout_data_raw = JSON.parse(serialized);
+      
+      // Normalize layout data to ensure it has all fields expected by Frame
+      const layout_data = Object.keys(layout_data_raw).reduce((acc: any, key) => {
+        const node = layout_data_raw[key];
+        acc[key] = {
+          ...node,
+          linkedNodes: node.linkedNodes || {},
+          custom: node.custom || {},
+          props: node.props || {},
+        };
+        return acc;
+      }, {});
+
+      console.log('@@@ normalized layout_data', layout_data);
 
       let template_id;
 
