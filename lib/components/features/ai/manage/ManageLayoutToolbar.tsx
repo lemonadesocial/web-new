@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
@@ -50,6 +50,7 @@ const devices = {
 
 function ManageLayoutToolbar() {
   const router = useRouter();
+  const params = useParams();
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
@@ -269,12 +270,12 @@ function ManageLayoutToolbar() {
   };
 
   const handleOpenPublicPage = () => {
-    match(state.layoutType)
-      .with('event', () => {
-        const shortid = (state.data as Event)?.shortid;
-        if (shortid) window.open(`/e/${shortid}`);
-      })
-      .otherwise(() => {});
+    const shortid = (state.data as Event)?.shortid || (params?.shortid as string);
+    if (shortid) {
+      window.open(`/e/${shortid}`, '_blank');
+    } else {
+      toast.error('Could not find event shortid');
+    }
   };
 
   const handleOpenMobileChat = () => {
@@ -435,7 +436,7 @@ function ManageLayoutToolbar() {
               </Button>
             )}
 
-            {['design', 'preview'].includes(state.activeTab) && (
+            {state.activeTab === 'design' && state.builderTab === 'sections' && (
               <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
                 <Button
                   size="sm"
@@ -542,7 +543,7 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
-            {['preview', 'design'].includes(state.activeTab) && (
+            {state.activeTab === 'design' && state.builderTab === 'sections' && (
               <div className="flex gap-2">
                 <Button
                   size="sm"

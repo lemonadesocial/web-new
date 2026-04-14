@@ -95,6 +95,45 @@ const SidebarImageSettings = () => {
           )}
         </FileInput>
       </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Aspect Ratio</p>
+        <Segment
+          items={[
+            { label: 'Auto', value: 'aspect-auto' },
+            { label: 'Square', value: 'aspect-square' },
+            { label: 'Video', value: 'aspect-video' },
+          ]}
+          selected={props.aspectRatio || 'aspect-square'}
+          onSelect={(item) => actions.setProp((props: any) => props.aspectRatio = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Object Fit</p>
+        <Segment
+          items={[
+            { label: 'Cover', value: 'object-cover' },
+            { label: 'Contain', value: 'object-contain' },
+          ]}
+          selected={props.objectFit || 'object-cover'}
+          onSelect={(item) => actions.setProp((props: any) => props.objectFit = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
     </div>
   );
 };
@@ -396,14 +435,19 @@ const Placeholder = ({ name, description }: { name: string; description?: string
 );
 
 const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: string }) => {
-  const { actions, query, isDragging, draggedNodeId } = useEditor((state) => {
+  const { actions, query, isDragging, draggedNodeId, draggedNode } = useEditor((state) => {
     const dragged = state.events.dragged;
+    const nodeId = dragged && dragged.size > 0 ? Array.from(dragged)[0] : null;
     return {
       isDragging: (dragged && dragged.size > 0) || !!state.events.indicator,
-      draggedNodeId: dragged && dragged.size > 0 ? Array.from(dragged)[0] : null,
+      draggedNodeId: nodeId,
+      draggedNode: nodeId ? state.nodes[nodeId] : null,
     };
   });
   const [isOver, setIsOver] = React.useState(false);
+
+  // Skip drop zones if dragging a Grid or Column (they can't be nested)
+  const isDraggingLayout = draggedNode?.data?.displayName === 'Grid' || draggedNode?.data?.displayName === 'Column';
 
   // Use refs to capture current state for the window mouseup listener
   const isOverRef = React.useRef(isOver);
@@ -418,7 +462,7 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
   }, [draggedNodeId]);
 
   React.useEffect(() => {
-    if (!isDragging) {
+    if (!isDragging || isDraggingLayout) {
       setIsOver(false);
       return;
     }
@@ -442,12 +486,12 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
           const resolver = query.getResolver();
 
           // 1. If target is already in a Column, add a sibling Column to the Grid
-          if (parent.data.type === resolver.Col) {
+          if (parent.data.displayName === 'Column') {
             const gridId = parent.data.parent;
             if (gridId) {
               const grid = query.node(gridId).get();
-              if (grid.data.type === resolver.Grid) {
-                const newColTree = query.parseReactElement(<resolver.Col canvas />).toNodeTree();
+              if (grid.data.displayName === 'Grid') {
+                const newColTree = query.parseReactElement(<Col canvas />).toNodeTree();
                 const colIndex = grid.data.nodes.indexOf(parentId);
                 const insertIndex = side === 'left' ? colIndex : colIndex + 1;
                 
@@ -461,10 +505,10 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
 
           // 2. Otherwise, wrap the section in a new Grid
           const gridTree = query.parseReactElement(
-             <resolver.Grid canvas>
-               <resolver.Col canvas />
-               <resolver.Col canvas />
-             </resolver.Grid>
+             <Grid canvas>
+               <Col canvas />
+               <Col canvas />
+             </Grid>
           ).toNodeTree();
 
           const siblings = query.node(parentId).get().data.nodes;
@@ -486,9 +530,9 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
 
     window.addEventListener('mouseup', handleMouseUp);
     return () => window.removeEventListener('mouseup', handleMouseUp);
-  }, [isDragging, sectionId, side, query, actions]);
+  }, [isDragging, isDraggingLayout, sectionId, side, query, actions]);
 
-  if (!isDragging) return null;
+  if (!isDragging || isDraggingLayout) return null;
 
   return (
     <div
@@ -525,18 +569,18 @@ const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: 
   );
 };
 
-export const CraftSection = ({ children, name }: { children: React.ReactNode; name?: string }) => {
+export const CraftSection = ({ children, name, noPadding }: { children: React.ReactNode; name?: string; noPadding?: boolean; [key: string]: any }) => {
   const {
     id,
     connectors: { connect, drag },
     selected,
     hovered,
-    props,
+    nodeProps,
     actions: { setProp },
   } = useNode((node) => ({
     selected: node.events.selected,
     hovered: node.events.hovered,
-    props: node.data.props,
+    nodeProps: node.data.props,
   }));
 
   const { actions, query, enabled } = useEditor((state) => ({
@@ -581,8 +625,8 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
     actions.delete(id);
   };
 
-  const width = props.width;
-  const height = props.height;
+  const width = nodeProps.width;
+  const height = nodeProps.height;
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
 
   return (
@@ -594,17 +638,21 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
         actions.selectNode(id);
       }}
       className={clsx(
-        "relative group/section w-full p-3 flex flex-col overflow-visible",
-        enabled && "cursor-pointer",
+        "relative group/section w-full flex flex-col overflow-visible rounded-2xl transition-all",
+        enabled && "cursor-pointer hover:bg-primary/5",
         isResizing && "z-[300]"
       )}
       style={{ 
         height: height ? `${height}px` : 'auto',
         width: widthStyle,
-        maxWidth: '100%',
-        alignSelf: 'flex-start'
+        maxWidth: '100%'
       }}
     >
+      {/* Selection Border */}
+      {enabled && selected && (
+        <div className="absolute inset-0 z-50 pointer-events-none border-2 border-primary rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.2)]" />
+      )}
+
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
       {enabled && <div className="absolute inset-0 z-40" />}
       
@@ -643,17 +691,18 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
             />
           </div>
 
-          {/* Height Resize Handle (Bottom) */}
+          {/* Top Resize Handle */}
           <div
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
               setIsResizing(true);
               const startY = e.pageY;
-              const startHeight = height || 200;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startHeight = rect.height;
 
               const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaY = moveEvent.pageY - startY;
+                const deltaY = startY - moveEvent.pageY;
                 setProp((props: any) => {
                   props.height = Math.max(50, Math.round(startHeight + deltaY));
                 });
@@ -668,9 +717,40 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
               document.addEventListener('mousemove', onMouseMove);
               document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute bottom-0 left-0 right-0 h-2 z-100 cursor-ns-resize flex items-center justify-center group/handle-h bg-transparent"
+            className="absolute top-0 left-0 right-0 h-2 z-110 cursor-ns-resize flex items-center justify-center group/handle-t bg-transparent"
           >
-            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-h:opacity-100 transition-opacity shadow-sm" />
+            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-t:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Left Resize Handle */}
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = startX - moveEvent.pageX;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+            className="absolute left-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-l bg-transparent"
+          >
+             <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-l:opacity-100 transition-opacity shadow-sm" />
           </div>
 
           {/* Width Resize Handle (Right) */}
@@ -699,9 +779,40 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
               document.addEventListener('mousemove', onMouseMove);
               document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute right-0 top-0 bottom-0 w-2 z-100 cursor-ew-resize flex items-center justify-center group/handle-w bg-transparent"
+            className="absolute right-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-w bg-transparent"
           >
              <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-w:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Height Resize Handle (Bottom) */}
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startHeight = rect.height;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaY = moveEvent.pageY - startY;
+                setProp((props: any) => {
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+            className="absolute bottom-0 left-0 right-0 h-2 z-110 cursor-ns-resize flex items-center justify-center group/handle-h bg-transparent"
+          >
+            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-h:opacity-100 transition-opacity shadow-sm" />
           </div>
 
           {/* Corner Resize Handle (Bottom-Right) */}
@@ -734,21 +845,115 @@ export const CraftSection = ({ children, name }: { children: React.ReactNode; na
               document.addEventListener('mousemove', onMouseMove);
               document.addEventListener('mouseup', onMouseUp);
             }}
-            className="absolute bottom-0 right-0 w-4 h-4 z-110 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tl-lg"
+            className="absolute bottom-0 right-0 w-4 h-4 z-120 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-br-xl border-r-2 border-b-2 border-primary/40"
+          />
+
+          {/* Corner Resize Handle (Top-Left) */}
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const startHeight = rect.height;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = startX - moveEvent.pageX;
+                const deltaY = startY - moveEvent.pageY;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+            className="absolute top-0 left-0 w-4 h-4 z-120 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tl-xl border-l-2 border-t-2 border-primary/40"
+          />
+
+          {/* Corner Resize Handle (Top-Right) */}
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const startHeight = rect.height;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = moveEvent.pageX - startX;
+                const deltaY = startY - moveEvent.pageY;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+            className="absolute top-0 right-0 w-4 h-4 z-120 cursor-nesw-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tr-xl border-r-2 border-t-2 border-primary/40"
+          />
+
+          {/* Corner Resize Handle (Bottom-Left) */}
+          <div
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const startHeight = rect.height;
+
+              const onMouseMove = (moveEvent: MouseEvent) => {
+                const deltaX = startX - moveEvent.pageX;
+                const deltaY = moveEvent.pageY - startY;
+                setProp((props: any) => {
+                  props.width = Math.max(100, Math.round(startWidth + deltaX));
+                  props.height = Math.max(50, Math.round(startHeight + deltaY));
+                });
+              };
+
+              const onMouseUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+            className="absolute bottom-0 left-0 w-4 h-4 z-120 cursor-nesw-resize bg-transparent hover:bg-primary/10 transition-colors rounded-bl-xl border-l-2 border-b-2 border-primary/40"
           />
         </>
       )}
 
-      {enabled && (selected || hovered) && (
-        <div 
-          className={clsx(
-            "absolute inset-0 z-50 pointer-events-none border-2 rounded-lg transition-colors",
-            selected ? 'border-primary shadow-[0_0_0_1px_rgba(255,255,255,0.2)]' : 'border-primary/20'
-          )}
-        />
-      )}
-      
-      <div className="w-full h-full overflow-hidden">
+      <div className={clsx(
+        "w-full rounded-2xl flex-1", 
+        !noPadding && "p-3",
+        height ? "overflow-hidden" : "overflow-visible"
+      )}>
         {children || <Placeholder name={name || 'Section'} />}
       </div>
     </div>
@@ -782,7 +987,7 @@ export const Container = ({ children, height, width, centered, ...props }: any) 
 Container.craft = {
   isCanvas: true,
   rules: {
-    canMoveIn: () => true,
+    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Grid'),
     canSelect: () => false,
   },
 };
@@ -858,15 +1063,22 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
     <div 
       ref={(ref: any) => connect(ref)} 
       onClick={(e) => {
-        if (!enabled || e.target !== e.currentTarget) return;
-        e.stopPropagation();
-        actions.selectNode(id);
+        if (!enabled || (e.target !== e.currentTarget && !e.currentTarget.contains(e.target as Node))) return;
+        
+        // Only select grid if clicking on the grid itself (gutters/padding)
+        // or if it's explicitly intended.
+        if (e.target === e.currentTarget) {
+          e.stopPropagation();
+          actions.selectNode(id);
+        }
       }}
       className={clsx(
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid rounded-lg',
         centered && "page mx-auto",
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
+        enabled && 'border-2 border-transparent hover:border-primary/20',
+        enabled && React.Children.count(children) === 0 && 'p-4 min-h-[100px]!',
         !enabled && 'min-h-0'
       )}
       style={{ 
@@ -888,6 +1100,9 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
 Grid.craft = {
   isCanvas: true,
   displayName: 'Grid',
+  rules: {
+    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName !== 'Grid'),
+  },
   related: {
     settings: GridSettings
   }
@@ -915,9 +1130,11 @@ export const Col = ({ children, width, height, ...props }: any) => {
         actions.selectNode(id);
       }}
       className={clsx(
-        'flex flex-col gap-6 min-h-[50px] transition-all relative group/col rounded-lg',
+        'flex flex-col gap-6 min-h-[50px] transition-all relative group/col rounded-lg p-4',
         width === '74' ? 'md:w-74' : width === '1/2' ? 'md:w-1/2' : width === '1/3' ? 'md:w-1/3' : width === '2/3' ? 'md:w-2/3' : (isNumericWidth ? '' : 'flex-1 w-full'),
         enabled && selected && 'ring-2 ring-primary/30',
+        enabled && 'border border-dashed border-transparent hover:border-primary/10',
+        enabled && React.Children.count(children) === 0 && 'min-h-[100px]!',
         !enabled && 'min-h-0'
       )}
       style={{ 
@@ -953,6 +1170,9 @@ export const Col = ({ children, width, height, ...props }: any) => {
 Col.craft = {
   isCanvas: true,
   displayName: 'Column',
+  rules: {
+    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName !== 'Grid' && node.data.displayName !== 'Column'),
+  },
   related: {
     settings: ColSettings
   }
@@ -1218,18 +1438,23 @@ CraftEventHero.craft = {
 
 export const CraftEventSidebarImage = (props: any) => {
   const event = useEvent(props);
+  const aspectRatio = props.aspectRatio || 'aspect-square';
+  const objectFit = props.objectFit || 'object-cover';
+
   return (
-    <CraftSection name="Event Image">
+    <CraftSection name="Event Image" noPadding {...props}>
+      <div className={clsx("w-full h-full overflow-hidden rounded-2xl", aspectRatio)}>
        {event?.new_new_photos_expanded?.[0] ? (
             <img
               src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
               alt={event.title}
               loading="lazy"
-              className="aspect-square object-contain border rounded-md"
+              className={clsx("w-full h-full border-none", objectFit)}
             />
           ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
+            <img className={clsx("w-full h-full border-none", objectFit)} src={randomEventDP()} alt="Event cover" />
           )}
+      </div>
     </CraftSection>
   );
 };

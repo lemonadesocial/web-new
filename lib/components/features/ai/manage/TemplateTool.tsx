@@ -172,15 +172,6 @@ export function TemplateTool() {
         </div>
         <div className="grid grid-cols-3 gap-3">
           <TemplateCard
-            name="New Template"
-            icon="icon-plus"
-            onClick={() => {
-              modal.open(CreateTemplateModal, {
-                className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
-              });
-            }}
-          />
-          <TemplateCard
             name="Default"
             icon="icon-refresh"
             active={selected === 'default'}
@@ -195,6 +186,15 @@ export function TemplateTool() {
               onClick={() => setSelected(item._id)}
             />
           ))}
+          <TemplateCard
+            name="New Template"
+            icon="icon-plus"
+            onClick={() => {
+              modal.open(CreateTemplateModal, {
+                className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
+              });
+            }}
+          />
         </div>
       </section>
 

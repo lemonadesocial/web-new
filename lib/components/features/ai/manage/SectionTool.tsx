@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { Card } from '$lib/components/core';
 import { useEditor, Element } from '@craftjs/core';
-import { useStoreManageLayout } from './store';
+import { aiManageLayoutStore, storeAtom, storeManageLayout, useStoreManageLayout } from './store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { resolver } from './craft/resolver';
 
@@ -85,11 +85,11 @@ function SectionCard({ name, componentName }: { name: string; componentName: str
                   const parent = query.node(parentId).get();
 
                   // 1. If target is already in a Column, add a sibling Column to the Grid
-                  if (parent.data.type === resolver.Col) {
+                  if (parent.data.displayName === 'Column') {
                     const gridId = parent.data.parent;
                     if (gridId) {
                       const grid = query.node(gridId).get();
-                      if (grid.data.type === resolver.Grid) {
+                      if (grid.data.displayName === 'Grid') {
                         const newColTree = query.parseReactElement(<Element is={resolver.Col} canvas />).toNodeTree();
                         const colIndex = grid.data.nodes.indexOf(parentId);
                         const insertIndex = side === 'left' ? colIndex : colIndex + 1;

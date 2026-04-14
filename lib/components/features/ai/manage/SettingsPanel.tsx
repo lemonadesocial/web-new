@@ -2,9 +2,10 @@ import React from 'react';
 import { useEditor, useNode, NodeProvider } from '@craftjs/core';
 import { Button, NumberInput } from '$lib/components/core';
 import { resolver } from './craft/resolver';
-import { aiManageLayoutStore, storeAtom, storeManageLayout } from './store';
+import { aiManageLayoutStore, storeAtom, storeManageLayout, useStoreManageLayout } from './store';
 
 export function SettingsPanel() {
+  const state = useStoreManageLayout();
   const { selected, actions } = useEditor((state) => {
     const selectedNodeId = state.events.selected.size > 0 ? Array.from(state.events.selected)[0] : null;
     const node = selectedNodeId ? state.nodes[selectedNodeId] : null;
@@ -52,15 +53,17 @@ export function SettingsPanel() {
         )}
       </div>
 
-      <div className="p-4 border-t border-card-border bg-overlay-primary shrink-0 flex justify-center">
-        <Button
-          variant="secondary"
-          className="rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11 px-10"
-          onClick={() => window.dispatchEvent(new CustomEvent('craft-save'))}
-        >
-          Save Changes
-        </Button>
-      </div>
+      {state.builderTab === 'sections' && (
+        <div className="p-4 border-t border-card-border bg-overlay-primary shrink-0 flex justify-start">
+          <Button
+            variant="secondary"
+            className="rounded-sm bg-accent-500 hover:bg-accent-600 text-white font-bold h-11 px-10"
+            onClick={() => window.dispatchEvent(new CustomEvent('craft-save'))}
+          >
+            Save Changes
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
