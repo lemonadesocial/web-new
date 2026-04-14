@@ -434,12 +434,18 @@ const LocationSettings = () => {
   );
 };
 
-const Placeholder = ({ name, description }: { name: string; description?: string }) => (
-  <div className="w-full p-6 bg-accent-400/5 border border-dashed border-accent-400/20 rounded-md text-center">
-    <p className="text-accent-500 font-medium">{name} Section</p>
-    <p className="text-tertiary text-xs">{description || `No data provided for this ${name.toLowerCase()} section.`}</p>
-  </div>
-);
+const Placeholder = ({ name, description }: { name: string; description?: string }) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  
+  if (!enabled) return null;
+
+  return (
+    <div className="w-full p-6 bg-accent-400/5 border border-dashed border-accent-400/20 rounded-md text-center">
+      <p className="text-accent-500 font-medium">{name} Section</p>
+      <p className="text-tertiary text-xs">{description || `No data provided for this ${name.toLowerCase()} section.`}</p>
+    </div>
+  );
+};
 
 export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
   const [selectedTab, setSelectedTab] = React.useState(activeIndex);
@@ -738,6 +744,9 @@ export const CraftSection = ({ children, name, noPadding }: { children: React.Re
   const width = nodeProps.width;
   const height = nodeProps.height;
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
+
+  // If not enabled and no children, don't render anything
+  if (!enabled && !children) return null;
 
   return (
     <div
@@ -1378,6 +1387,9 @@ Col.craft = {
 
 // Wrapped Versions
 export const CraftRichText = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!props.content && !enabled) return null;
+
   return (
     <CraftSection name="Rich Text">
       {props.content ? (
@@ -1397,7 +1409,11 @@ CraftRichText.craft = {
 };
 
 export const CraftVideoEmbed = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const embedUrl = getEmbedUrl(props.url);
+
+  if (!embedUrl && !enabled) return null;
+
   return (
     <CraftSection name="Video Embed">
       {embedUrl ? (
@@ -1425,7 +1441,11 @@ CraftVideoEmbed.craft = {
 
 export const CraftAboutSection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.description;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="About">
       {hasContent ? (
@@ -1446,7 +1466,11 @@ CraftAboutSection.craft = {
 
 export const CraftLocationSection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.address;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="Map">
       {hasContent ? (
@@ -1497,7 +1521,11 @@ CraftEventCollectibles.craft = {
 
 export const CraftSubEventSection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.subevent_enabled;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="Schedule">
       {hasContent ? (
@@ -1516,7 +1544,11 @@ CraftSubEventSection.craft = {
 
 export const CraftGallerySection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.new_new_photos_expanded?.length > 1;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="Gallery">
       {hasContent ? (
@@ -1551,7 +1583,11 @@ CraftEventDateTimeBlock.craft = {
 
 export const CraftEventLocationBlock = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.address || event?.virtual_url;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="Location">
       {hasContent ? (
@@ -1572,7 +1608,11 @@ CraftEventLocationBlock.craft = {
 
 export const CraftCommunitySection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = event?.space;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="Community">
       {hasContent ? (
@@ -1591,7 +1631,11 @@ CraftCommunitySection.craft = {
 
 export const CraftHostedBySection = (props: any) => {
   const event = useEvent(props);
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const hasContent = getEventCohosts(event).length > 0;
+
+  if (!hasContent && !enabled) return null;
+
   return (
     <CraftSection name="HostedBy">
       {hasContent ? (
@@ -1675,81 +1719,155 @@ CraftEventSidebarImage.craft = {
   }
 };
 
-export const CraftImageBanner = (props: any) => (
-  <CraftSection name="Image Banner">
-    <Placeholder name="Image Banner" description="Drop your image here" />
-  </CraftSection>
-);
+export const CraftImageBanner = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Image Banner">
+      <Placeholder name="Image Banner" description="Drop your image here" />
+    </CraftSection>
+  );
+};
 CraftImageBanner.craft = { displayName: 'Image Banner' };
 
-export const CraftCardsGrid = (props: any) => (
-  <CraftSection name="Cards Grid">
-    <Placeholder name="Cards Grid" description="Feature your content in cards" />
-  </CraftSection>
-);
+export const CraftCardsGrid = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Cards Grid">
+      <Placeholder name="Cards Grid" description="Feature your content in cards" />
+    </CraftSection>
+  );
+};
 CraftCardsGrid.craft = { displayName: 'Cards Grid' };
 
-export const CraftTestimonials = (props: any) => (
-  <CraftSection name="Testimonials">
-    <Placeholder name="Testimonials" description="What people are saying" />
-  </CraftSection>
-);
+export const CraftTestimonials = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Testimonials">
+      <Placeholder name="Testimonials" description="What people are saying" />
+    </CraftSection>
+  );
+};
 CraftTestimonials.craft = { displayName: 'Testimonials' };
 
-export const CraftSocialLinks = (props: any) => (
-  <CraftSection name="Social Links">
-    <Placeholder name="Social Links" description="Connect your social media" />
-  </CraftSection>
-);
+export const CraftSocialLinks = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Social Links">
+      <Placeholder name="Social Links" description="Connect your social media" />
+    </CraftSection>
+  );
+};
 CraftSocialLinks.craft = { displayName: 'Social Links' };
 
-export const CraftCustomHTML = (props: any) => (
-  <CraftSection name="Custom HTML">
-    <Placeholder name="Custom HTML" description="Add your custom code" />
-  </CraftSection>
-);
+export const CraftCustomHTML = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Custom HTML">
+      <Placeholder name="Custom HTML" description="Add your custom code" />
+    </CraftSection>
+  );
+};
 CraftCustomHTML.craft = { displayName: 'Custom HTML' };
 
-export const CraftSpacer = (props: any) => (
-  <div className="w-full h-10 flex items-center justify-center border border-dashed border-card-border rounded-md text-[10px] text-quaternary uppercase tracking-widest">
-    Spacer
-  </div>
-);
-CraftSpacer.craft = { displayName: 'Spacer' };
+const SpacerSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || '40'} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="40"
+        />
+      </div>
+    </div>
+  );
+};
 
-export const CraftHeader = (props: any) => (
-  <CraftSection name="Header">
-    <Placeholder name="Header" description="Page header" />
-  </CraftSection>
-);
+export const CraftSpacer = ({ height = '40' }: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  
+  if (!enabled) {
+    return <div style={{ height: `${height}px` }} className="w-full" />;
+  }
+
+  return (
+    <div 
+      style={{ height: `${height}px` }}
+      className="w-full flex items-center justify-center border border-dashed border-card-border rounded-md text-[10px] text-quaternary uppercase tracking-widest bg-card/20"
+    >
+      Spacer
+    </div>
+  );
+};
+CraftSpacer.craft = { 
+  displayName: 'Spacer',
+  rules: { canDrag: () => true },
+  related: {
+    settings: SpacerSettings
+  }
+};
+
+export const CraftHeader = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Header">
+      <Placeholder name="Header" description="Page header" />
+    </CraftSection>
+  );
+};
 CraftHeader.craft = { displayName: 'Header' };
 
-export const CraftFooter = (props: any) => (
-  <CraftSection name="Footer">
-    <Placeholder name="Footer" description="Page footer" />
-  </CraftSection>
-);
+export const CraftFooter = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Footer">
+      <Placeholder name="Footer" description="Page footer" />
+    </CraftSection>
+  );
+};
 CraftFooter.craft = { displayName: 'Footer' };
 
-export const CraftMusicPlayer = (props: any) => (
-  <CraftSection name="Music Player">
-    <Placeholder name="Music Player" description="Share your music" />
-  </CraftSection>
-);
+export const CraftMusicPlayer = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Music Player">
+      <Placeholder name="Music Player" description="Share your music" />
+    </CraftSection>
+  );
+};
 CraftMusicPlayer.craft = { displayName: 'Music Player' };
 
-export const CraftWalletConnect = (props: any) => (
-  <CraftSection name="Wallet Connect">
-    <Placeholder name="Wallet Connect" description="Web3 connectivity" />
-  </CraftSection>
-);
+export const CraftWalletConnect = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Wallet Connect">
+      <Placeholder name="Wallet Connect" description="Web3 connectivity" />
+    </CraftSection>
+  );
+};
 CraftWalletConnect.craft = { displayName: 'Wallet Connect' };
 
-export const CraftPassport = (props: any) => (
-  <CraftSection name="Passport">
-    <Placeholder name="Passport" description="Digital identity" />
-  </CraftSection>
-);
+export const CraftPassport = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Passport">
+      <Placeholder name="Passport" description="Digital identity" />
+    </CraftSection>
+  );
+};
 CraftPassport.craft = { displayName: 'Passport' };
 
 export const resolver = {
