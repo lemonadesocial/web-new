@@ -73,25 +73,5 @@ export const useSettings = () => {
     props: node.data.props,
   }));
 
-  const setProp = (updater: (props: any) => void) => {
-    // 1. Update the Craft.js node props
-    actions.setProp(updater);
-
-    // 2. Broadcast to global store for other components to see
-    const current = aiManageLayoutStore.get(storeAtom);
-    if (current.data) {
-      // Clone the data to avoid proxy issues
-      const nextData = JSON.parse(JSON.stringify(current.data));
-      // Create a mock props object that matches the structure expected by updaters (props.event)
-      const mockProps = { event: nextData };
-
-      // Apply the same update to our cloned global data
-      updater(mockProps);
-
-      // Push the updated data back to the global store
-      storeManageLayout.setData(nextData);
-    }
-  };
-
-  return { id, actions: { ...actions, setProp }, props };
+  return { id, actions, props };
 };

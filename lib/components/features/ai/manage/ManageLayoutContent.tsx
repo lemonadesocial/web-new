@@ -181,7 +181,7 @@ function ManageLayoutContent() {
             acc[item.id] = {
               type: { resolvedName: componentName },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'main-col',
@@ -225,7 +225,7 @@ function ManageLayoutContent() {
             'sidebar-image': {
               type: { resolvedName: 'EventSidebarImage' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'sidebar-col',
@@ -235,7 +235,7 @@ function ManageLayoutContent() {
             'community-section': {
               type: { resolvedName: 'CommunitySection' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'sidebar-col',
@@ -245,7 +245,7 @@ function ManageLayoutContent() {
             'hosted-by-section': {
               type: { resolvedName: 'HostedBySection' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'sidebar-col',
@@ -255,7 +255,7 @@ function ManageLayoutContent() {
             'attendees-section': {
               type: { resolvedName: 'AttendeesSection' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'sidebar-col',
@@ -275,7 +275,7 @@ function ManageLayoutContent() {
             'event-hero': {
               type: { resolvedName: 'EventHero' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'main-col',
@@ -285,7 +285,7 @@ function ManageLayoutContent() {
             'datetime-block': {
               type: { resolvedName: 'EventDateTimeBlock' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'main-col',
@@ -295,7 +295,7 @@ function ManageLayoutContent() {
             'location-block': {
               type: { resolvedName: 'EventLocationBlock' },
               isCanvas: false,
-              props: { event },
+              props: {},
               nodes: [],
               linkedNodes: {},
               parent: 'main-col',

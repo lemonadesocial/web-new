@@ -44,6 +44,8 @@ const getEmbedUrl = (url: string) => {
 
 const SidebarImageSettings = () => {
   const { actions, props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   const [uploading, setUploading] = React.useState(false);
 
   const handleUpload = async (files: File[]) => {
@@ -53,14 +55,15 @@ const SidebarImageSettings = () => {
       const res = await uploadFiles([files[0]], 'event');
       if (res.length > 0) {
         const newImageId = res[0]._id;
-        actions.setProp((props: any) => {
-          if (!props.event) props.event = {};
-          if (!props.event.new_new_photos_expanded) props.event.new_new_photos_expanded = [];
-          props.event.new_new_photos_expanded = [newImageId, ...props.event.new_new_photos_expanded.slice(1)];
-          
-          if (!props.event.new_new_photos) props.event.new_new_photos = [];
-          props.event.new_new_photos = [newImageId, ...props.event.new_new_photos.slice(1)];
+        const newPhotosExpanded = [res[0], ...(event.new_new_photos_expanded || []).slice(1)];
+        const newPhotos = [newImageId, ...(event.new_new_photos || []).slice(1)];
+        
+        storeManageLayout.setData({
+          ...event,
+          new_new_photos_expanded: newPhotosExpanded as any,
+          new_new_photos: newPhotos,
         });
+
         toast.success('Image uploaded successfully!');
       }
     } catch (e) {
@@ -80,9 +83,9 @@ const SidebarImageSettings = () => {
               onClick={open}
               className="aspect-square w-full border-2 border-dashed border-card-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-card-hover transition-colors relative overflow-hidden"
             >
-              {props.event?.new_new_photos_expanded?.[0] ? (
+              {event?.new_new_photos_expanded?.[0] ? (
                 <img 
-                  src={generateUrl(props.event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)} 
+                  src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)} 
                   className="absolute inset-0 w-full h-full object-cover opacity-40"
                 />
               ) : null}
@@ -138,19 +141,20 @@ const SidebarImageSettings = () => {
   );
 };
 
+
+
 const HeroSettings = () => {
   const { actions, props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Title</p>
         <Input 
-          value={props.event?.title || ''} 
-          onChange={(e) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.title = e.target.value;
-          })}
+          value={event?.title || ''} 
+          onChange={(e) => storeManageLayout.setData({ ...event, title: e.target.value })}
           placeholder="Enter event title..."
         />
       </div>
@@ -199,19 +203,19 @@ const HeroSettings = () => {
   );
 };
 
+
 const AboutSettings = () => {
-  const { actions, props } = useSettings();
+  const { props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Description</p>
         <TextEditor 
-          content={props.event?.description || ''} 
-          onChange={(value) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.description = value;
-          })}
+          content={event?.description || ''} 
+          onChange={(value) => storeManageLayout.setData({ ...event, description: value })}
           placeholder="Who should come? What's the event about?"
         />
       </div>
@@ -265,15 +269,15 @@ const RegistrationSettings = () => {
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Heading</p>
         <Input 
-          value={props.event?.registration_heading || 'Registration'} 
-          onChange={(e) => actions.setProp((props: any) => props.event.registration_heading = e.target.value)}
+          value={props.registration_heading || 'Registration'} 
+          onChange={(e) => actions.setProp((props: any) => props.registration_heading = e.target.value)}
         />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Description</p>
         <Textarea
-          value={props.event?.registration_description || 'Ready to join us? Pick your ticket, grab your spot, and get ready for a weekend of music, art, and culture.'}
-          onChange={(e) => actions.setProp((props: any) => props.event.registration_description = e.target.value)}
+          value={props.registration_description || 'Ready to join us? Pick your ticket, grab your spot, and get ready for a weekend of music, art, and culture.'}
+          onChange={(e) => actions.setProp((props: any) => props.registration_description = e.target.value)}
           rows={3}
         />
       </div>
@@ -333,27 +337,28 @@ const ColSettings = () => {
 };
 
 const DateTimeSettings = () => {
-  const { actions, props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
         <DateTimeGroup
           placement="bottom"
-          start={props.event?.start}
-          end={props.event?.end}
-          timezone={props.event?.timezone}
-          onSelect={(dateRange) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.start = dateRange.start;
-            props.event.end = dateRange.end;
+          start={event?.start}
+          end={event?.end}
+          timezone={event?.timezone}
+          onSelect={(dateRange) => storeManageLayout.setData({
+            ...event,
+            start: dateRange.start,
+            end: dateRange.end,
           })}
         />
         <Timezone
           placement="bottom-end"
-          onSelect={(timezoneOption) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.timezone = timezoneOption.value;
+          onSelect={(timezoneOption) => storeManageLayout.setData({
+            ...event,
+            timezone: timezoneOption.value,
           })}
           strategy="absolute"
           className="w-full"
@@ -361,7 +366,7 @@ const DateTimeSettings = () => {
             <div className="flex items-center gap-2 p-3 border border-card-border rounded-md bg-card cursor-pointer hover:bg-card-hover transition-colors">
               <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{props.event?.timezone || 'Select Timezone'}</p>
+                <p className="text-sm font-medium">{event?.timezone || 'Select Timezone'}</p>
               </div>
               <i className="icon-chevron-down size-4 text-quaternary" />
             </div>
@@ -373,20 +378,21 @@ const DateTimeSettings = () => {
 };
 
 const MapSettings = () => {
-  const { actions, props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Event Location</p>
         <PlaceAutoComplete
-          value={props.event?.address?.title || ''}
+          value={event?.address?.title || ''}
           placeholder="What's the address?"
-          onSelect={(addressData) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.address = addressData;
-            props.event.latitude = addressData?.latitude;
-            props.event.longitude = addressData?.longitude;
+          onSelect={(addressData) => storeManageLayout.setData({
+            ...event,
+            address: addressData,
+            latitude: addressData?.latitude,
+            longitude: addressData?.longitude,
           })}
         />
       </div>
@@ -395,30 +401,31 @@ const MapSettings = () => {
 };
 
 const LocationSettings = () => {
-  const { actions, props } = useSettings();
+  const state = useStoreManageLayout();
+  const event = state.data as Event;
   
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Event Location</p>
         <PlaceAutoComplete
-          value={props.event?.address?.title || ''}
+          value={event?.address?.title || ''}
           placeholder="What's the address?"
-          onSelect={(addressData) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.address = addressData;
-            props.event.latitude = addressData?.latitude;
-            props.event.longitude = addressData?.longitude;
+          onSelect={(addressData) => storeManageLayout.setData({
+            ...event,
+            address: addressData,
+            latitude: addressData?.latitude,
+            longitude: addressData?.longitude,
           })}
         />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Join URL</p>
         <Input 
-          value={props.event?.virtual_url || ''} 
-          onChange={(e) => actions.setProp((props: any) => {
-            if (!props.event) props.event = {};
-            props.event.virtual_url = e.target.value;
+          value={event?.virtual_url || ''} 
+          onChange={(e) => storeManageLayout.setData({
+            ...event,
+            virtual_url: e.target.value,
           })}
           placeholder="https://example.com/join"
         />
@@ -1458,11 +1465,14 @@ CraftLocationSection.craft = {
   }
 };
 
-export const CraftEventAccess = (props: any) => (
-  <CraftSection name="CTA Block">
-    <EventAccess {...props} />
-  </CraftSection>
-);
+export const CraftEventAccess = (props: any) => {
+  const event = useEvent(props);
+  return (
+    <CraftSection name="CTA Block">
+      <EventAccess {...props} event={event} />
+    </CraftSection>
+  );
+};
 CraftEventAccess.craft = { 
   displayName: 'CTA Block', 
   rules: { canDrag: () => true },
@@ -1472,9 +1482,10 @@ CraftEventAccess.craft = {
 };
 
 export const CraftEventCollectibles = (props: any) => {
+  const event = useEvent(props);
   return (
     <CraftSection name="Collectibles">
-      <EventCollectibles {...props} />
+      <EventCollectibles {...props} event={event} />
     </CraftSection>
   );
 };
@@ -1485,11 +1496,12 @@ CraftEventCollectibles.craft = {
 };
 
 export const CraftSubEventSection = (props: any) => {
-  const hasContent = props.event?.subevent_enabled;
+  const event = useEvent(props);
+  const hasContent = event?.subevent_enabled;
   return (
     <CraftSection name="Schedule">
       {hasContent ? (
-        <SubEventSection {...props} />
+        <SubEventSection {...props} event={event} />
       ) : (
         <Placeholder name="Schedule" description="Sub-events are not enabled for this event." />
       )}
@@ -1503,11 +1515,12 @@ CraftSubEventSection.craft = {
 };
 
 export const CraftGallerySection = (props: any) => {
-  const hasContent = props.event?.new_new_photos_expanded?.length > 1;
+  const event = useEvent(props);
+  const hasContent = event?.new_new_photos_expanded?.length > 1;
   return (
     <CraftSection name="Gallery">
       {hasContent ? (
-        <GallerySection {...props} />
+        <GallerySection {...props} event={event} />
       ) : (
         <Placeholder name="Gallery" description="No photos provided for this event gallery." />
       )}
@@ -1558,11 +1571,12 @@ CraftEventLocationBlock.craft = {
 };
 
 export const CraftCommunitySection = (props: any) => {
-  const hasContent = props.event?.space;
+  const event = useEvent(props);
+  const hasContent = event?.space;
   return (
     <CraftSection name="Community">
       {hasContent ? (
-        <CommunitySection {...props} />
+        <CommunitySection {...props} event={event} />
       ) : (
         <Placeholder name="Community" description="No community associated with this event." />
       )}
@@ -1576,11 +1590,12 @@ CraftCommunitySection.craft = {
 };
 
 export const CraftHostedBySection = (props: any) => {
-  const hasContent = getEventCohosts(props.event).length > 0;
+  const event = useEvent(props);
+  const hasContent = getEventCohosts(event).length > 0;
   return (
     <CraftSection name="HostedBy">
       {hasContent ? (
-        <HostedBySection {...props} />
+        <HostedBySection {...props} event={event} />
       ) : (
         <Placeholder name="Hosted By" description="No hosts information available." />
       )}
@@ -1593,11 +1608,14 @@ CraftHostedBySection.craft = {
   // No specific settings yet
 };
 
-export const CraftAttendeesSection = (props: any) => (
-  <CraftSection name="Attendees">
-    <AttendeesSection {...props} />
-  </CraftSection>
-);
+export const CraftAttendeesSection = (props: any) => {
+  const event = useEvent(props);
+  return (
+    <CraftSection name="Attendees">
+      <AttendeesSection {...props} event={event} />
+    </CraftSection>
+  );
+};
 CraftAttendeesSection.craft = { 
   displayName: 'AttendeesSection', 
   rules: { canDrag: () => true },
