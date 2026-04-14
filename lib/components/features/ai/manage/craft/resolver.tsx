@@ -12,7 +12,7 @@ import { EventLocationBlock } from '$lib/components/features/event/EventLocation
 import { CommunitySection } from '$lib/components/features/event/CommunitySection';
 import { HostedBySection } from '$lib/components/features/event/HostedBySection';
 import { AttendeesSection } from '$lib/components/features/event/AttendeesSection';
-import { Button, Input, Textarea, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete, FileInput } from '$lib/components/core';
+import { Button, Input, Textarea, Toggle, Divider, Segment, Card, TextEditor, PlaceAutoComplete, FileInput, Accordion } from '$lib/components/core';
 import { getEventCohosts } from '$lib/utils/event';
 import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
@@ -434,139 +434,242 @@ const Placeholder = ({ name, description }: { name: string; description?: string
   </div>
 );
 
-const SideDropZone = ({ side, sectionId }: { side: 'left' | 'right'; sectionId: string }) => {
-  const { actions, query, isDragging, draggedNodeId, draggedNode } = useEditor((state) => {
-    const dragged = state.events.dragged;
-    const nodeId = dragged && dragged.size > 0 ? Array.from(dragged)[0] : null;
-    return {
-      isDragging: (dragged && dragged.size > 0) || !!state.events.indicator,
-      draggedNodeId: nodeId,
-      draggedNode: nodeId ? state.nodes[nodeId] : null,
-    };
-  });
-  const [isOver, setIsOver] = React.useState(false);
+export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
+  const [selectedTab, setSelectedTab] = React.useState(activeIndex);
+  const { id, connectors: { connect }, selected } = useNode((node) => ({
+    selected: node.events.selected,
+  }));
+  const { enabled, actions, query } = useEditor((state) => ({ enabled: state.options.enabled }));
 
-  // Skip drop zones if dragging a Grid or Column (they can't be nested)
-  const isDraggingLayout = draggedNode?.data?.displayName === 'Grid' || draggedNode?.data?.displayName === 'Column';
-
-  // Use refs to capture current state for the window mouseup listener
-  const isOverRef = React.useRef(isOver);
-  const draggedNodeIdRef = React.useRef(draggedNodeId);
-  
-  React.useEffect(() => {
-    isOverRef.current = isOver;
-  }, [isOver]);
-
-  React.useEffect(() => {
-    draggedNodeIdRef.current = draggedNodeId;
-  }, [draggedNodeId]);
-
-  React.useEffect(() => {
-    if (!isDragging || isDraggingLayout) {
-      setIsOver(false);
-      return;
-    }
-
-    const handleMouseUp = () => {
-      // Small delay to ensure Craft.js state is updated but we still have our refs
-      const currentDraggedId = draggedNodeIdRef.current;
-      const wasOver = isOverRef.current;
-
-      if (wasOver && currentDraggedId) {
-        setIsOver(false);
-        storeManageLayout.setActiveDropZone(null);
-
-        setTimeout(() => {
-          const node = query.node(sectionId).get();
-          if (!node) return;
-          const parentId = node.data.parent;
-          if (!parentId) return;
-
-          const parent = query.node(parentId).get();
-          const resolver = query.getResolver();
-
-          // 1. If target is already in a Column, add a sibling Column to the Grid
-          if (parent.data.displayName === 'Column') {
-            const gridId = parent.data.parent;
-            if (gridId) {
-              const grid = query.node(gridId).get();
-              if (grid.data.displayName === 'Grid') {
-                const newColTree = query.parseReactElement(<Col canvas />).toNodeTree();
-                const colIndex = grid.data.nodes.indexOf(parentId);
-                const insertIndex = side === 'left' ? colIndex : colIndex + 1;
-                
-                actions.addNodeTree(newColTree, gridId, insertIndex);
-                actions.move(currentDraggedId, newColTree.rootNodeId, 0);
-                actions.selectNode(currentDraggedId);
-                return;
-              }
-            }
-          }
-
-          // 2. Otherwise, wrap the section in a new Grid
-          const gridTree = query.parseReactElement(
-             <Grid canvas>
-               <Col canvas />
-               <Col canvas />
-             </Grid>
-          ).toNodeTree();
-
-          const siblings = query.node(parentId).get().data.nodes;
-          const index = siblings.indexOf(sectionId);
-          actions.addNodeTree(gridTree, parentId, index);
-
-          const newGridId = gridTree.rootNodeId;
-          const newGrid = query.node(newGridId).get();
-          
-          const targetColId = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
-          const newColId = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
-
-          actions.move(sectionId, targetColId, 0);
-          actions.move(currentDraggedId, newColId, 0);
-          actions.selectNode(currentDraggedId);
-        }, 50);
-      }
-    };
-
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => window.removeEventListener('mouseup', handleMouseUp);
-  }, [isDragging, isDraggingLayout, sectionId, side, query, actions]);
-
-  if (!isDragging || isDraggingLayout) return null;
+  const tabs = React.Children.toArray(children);
 
   return (
-    <div
-      className={clsx(
-        "absolute top-0 bottom-0 w-1/4 z-[999] cursor-copy",
-        side === 'left' ? "left-0" : "right-0"
-      )}
-      onMouseEnter={() => {
-        setIsOver(true);
-        storeManageLayout.setActiveDropZone({ side, sectionId });
-      }}
-      onMouseLeave={() => {
-        setIsOver(false);
-        storeManageLayout.setActiveDropZone(null);
-      }}
-      onMouseOver={(e) => {
+    <div 
+      ref={(ref: any) => connect(ref)} 
+      onClick={(e) => {
+        if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
-        if (!isOver) {
-          setIsOver(true);
-          storeManageLayout.setActiveDropZone({ side, sectionId });
-        }
+        actions.selectNode(id);
       }}
+      className={clsx("w-full flex flex-col gap-4 p-4 rounded-lg", enabled && "border border-dashed border-transparent hover:border-primary/20", enabled && selected && "border-primary/50 bg-primary/5")}
     >
-      {isOver && (
-        <div 
-          className={clsx(
-            "absolute top-0 bottom-0 w-[4px] bg-accent-400 z-[1000] transition-all duration-200",
-            side === 'left' ? "left-0" : "right-0"
-          )}
-          style={{ boxShadow: '0 0 15px var(--color-accent-400), 0 0 5px var(--color-accent-400)' }}
+      <div className="flex items-center border-b border-card-border overflow-x-auto no-scrollbar">
+        {tabs.map((tab: any, index) => (
+          <button
+            key={index}
+            onClick={() => setSelectedTab(index)}
+            className={clsx(
+              "px-6 py-3 text-sm font-medium transition-all border-b-2 shrink-0",
+              selectedTab === index ? "border-primary text-primary" : "border-transparent text-tertiary hover:text-secondary"
+            )}
+          >
+             {tab.props.label || `Tab ${index + 1}`}
+          </button>
+        ))}
+        {enabled && (
+           <Button 
+             size="xs" 
+             variant="tertiary" 
+             icon="icon-plus" 
+             className="ml-2 h-8 w-8 p-0"
+             onClick={(e) => {
+               e.stopPropagation();
+               const nodeTree = query.parseReactElement(<Element is={CraftTab} label={`Tab ${tabs.length + 1}`} canvas />).toNodeTree();
+               actions.addNodeTree(nodeTree, id);
+             }}
+           />
+        )}
+      </div>
+      <div className="flex-1">
+        {tabs.length > 0 ? tabs[selectedTab] : (
+          <div className="p-10 border-2 border-dashed border-primary/10 rounded-lg flex items-center justify-center text-tertiary/30 text-xs">
+            Add a tab to get started
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+CraftTabs.craft = {
+  isCanvas: true,
+  displayName: 'Tabs',
+  rules: {
+    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Tab'),
+  }
+};
+
+const TabSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Tab Label</p>
+        <Input 
+          value={props.label || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.label = e.target.value)}
+          placeholder="Enter tab name..."
         />
+      </div>
+    </div>
+  );
+};
+export const CraftTab = ({ children, label }: any) => {
+  const { id, connectors: { connect }, selected } = useNode((node) => ({
+    selected: node.events.selected,
+  }));
+  const { enabled, actions } = useEditor((state) => ({ enabled: state.options.enabled }));
+
+  return (
+    <div 
+      ref={(ref: any) => connect(ref)} 
+      className={clsx(
+        "w-full min-h-[100px] relative transition-all",
+        enabled && "border border-dashed border-transparent hover:border-primary/10",
+        enabled && selected && "border-primary/30"
+      )}
+    >
+      {enabled && selected && (
+        <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+          <Button
+            size="xs"
+            variant="tertiary-alt"
+            icon="icon-delete"
+            onClick={(e) => {
+              e.stopPropagation();
+              actions.delete(id);
+            }}
+            className="h-7 w-7 p-0 hover:text-error!"
+          />
+        </div>
+      )}
+      {children}
+      {enabled && React.Children.count(children) === 0 && (
+        <div className="flex-1 border-2 border-dashed border-primary/10 rounded-lg min-h-[100px] flex items-center justify-center text-tertiary/30 text-xs">
+           Drop sections here
+        </div>
       )}
     </div>
   );
+};
+CraftTab.craft = {
+  isCanvas: true,
+  displayName: 'Tab',
+  related: {
+    settings: TabSettings
+  }
+};
+
+export const CraftAccordion = ({ children }: any) => {
+  const { id, connectors: { connect }, selected } = useNode((node) => ({
+    selected: node.events.selected,
+  }));
+  const { enabled, actions, query } = useEditor((state) => ({ enabled: state.options.enabled }));
+
+  return (
+    <div 
+      ref={(ref: any) => connect(ref)} 
+      onClick={(e) => {
+        if (!enabled || e.target !== e.currentTarget) return;
+        e.stopPropagation();
+        actions.selectNode(id);
+      }}
+      className={clsx("w-full flex flex-col gap-2 p-4 rounded-lg", enabled && "border border-dashed border-transparent hover:border-primary/20", enabled && selected && "border-primary/50 bg-primary/5")}
+    >
+      <div className="flex flex-col divide-y divide-card-border border border-card-border rounded-lg overflow-hidden">
+        {children}
+      </div>
+      {enabled && (
+        <Button 
+          size="sm" 
+          variant="tertiary" 
+          icon="icon-plus" 
+          className="mt-2 w-full border-dashed"
+          onClick={(e) => {
+            e.stopPropagation();
+            const nodeTree = query.parseReactElement(<Element is={CraftAccordionItem} title={`Accordion Item ${React.Children.count(children) + 1}`} canvas />).toNodeTree();
+            actions.addNodeTree(nodeTree, id);
+          }}
+        >
+          Add Item
+        </Button>
+      )}
+    </div>
+  );
+};
+CraftAccordion.craft = {
+  isCanvas: true,
+  displayName: 'Accordion',
+  rules: {
+    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Accordion Item'),
+  }
+};
+
+const AccordionItemSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Item Title</p>
+        <Input 
+          value={props.title || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.title = e.target.value)}
+          placeholder="Enter item title..."
+        />
+      </div>
+    </div>
+  );
+};
+export const CraftAccordionItem = ({ children, title }: any) => {
+  const { id, connectors: { connect }, selected } = useNode((node) => ({
+    selected: node.events.selected,
+  }));
+  const { enabled, actions } = useEditor((state) => ({ enabled: state.options.enabled }));
+
+  return (
+    <div 
+      ref={(ref: any) => connect(ref)} 
+      className={clsx(
+        "w-full relative transition-all",
+        enabled && "border-2 border-dashed border-transparent hover:border-primary/20",
+        enabled && selected && "border-primary/30 bg-primary/5"
+      )}
+    >
+       <Accordion.Root open={enabled || selected} className="border-none!">
+        <Accordion.Header className="px-4 py-3 bg-card hover:bg-card-hover transition-colors">
+           <p className="font-medium text-sm">{title || 'Accordion Item'}</p>
+        </Accordion.Header>
+        <Accordion.Content className="p-4 bg-background">
+          {enabled && selected && (
+            <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+              <Button
+                size="xs"
+                variant="tertiary-alt"
+                icon="icon-delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions.delete(id);
+                }}
+                className="h-7 w-7 p-0 hover:text-error!"
+              />
+            </div>
+          )}
+          {children}
+          {enabled && React.Children.count(children) === 0 && (
+            <div className="flex-1 border-2 border-dashed border-primary/10 rounded-lg min-h-[50px] flex items-center justify-center text-tertiary/30 text-xs">
+              Drop sections here
+            </div>
+          )}
+        </Accordion.Content>
+      </Accordion.Root>
+    </div>
+  );
+};
+CraftAccordionItem.craft = {
+  isCanvas: true,
+  displayName: 'Accordion Item',
+  related: {
+    settings: AccordionItemSettings
+  }
 };
 
 export const CraftSection = ({ children, name, noPadding }: { children: React.ReactNode; name?: string; noPadding?: boolean; [key: string]: any }) => {
@@ -656,13 +759,6 @@ export const CraftSection = ({ children, name, noPadding }: { children: React.Re
       {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
       {enabled && <div className="absolute inset-0 z-40" />}
       
-      {enabled && (
-        <>
-          <SideDropZone side="left" sectionId={id} />
-          <SideDropZone side="right" sectionId={id} />
-        </>
-      )}
-
       {enabled && selected && (
         <>
           <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
@@ -960,18 +1056,109 @@ export const CraftSection = ({ children, name, noPadding }: { children: React.Re
   );
 };
 
-export const Container = ({ children, height, width, centered, ...props }: any) => {
-  const { connectors: { connect } } = useNode();
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+const ContainerSettings = () => {
+  const { id, actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium">Centered Content</p>
+        <Toggle
+          id={`centered-container-${id}`}
+          checked={props.centered || false}
+          onChange={(val) => actions.setProp((props: any) => (props.centered = val))}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium">Center Children</p>
+        <Toggle
+          id={`center-children-${id}`}
+          checked={props.centerChildren || false}
+          onChange={(val) => actions.setProp((props: any) => (props.centerChildren = val))}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Padding (Vertical)</p>
+        <Segment
+          items={[
+            { label: 'None', value: '0' },
+            { label: 'Small', value: '8' },
+            { label: 'Medium', value: '16' },
+            { label: 'Large', value: '32' },
+          ]}
+          selected={props.padding || '0'}
+          onSelect={(item) => actions.setProp((props: any) => props.padding = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Padding (Horizontal)</p>
+        <Segment
+          items={[
+            { label: 'None', value: '0' },
+            { label: 'Small', value: '1' },
+            { label: 'Medium', value: '4' },
+            { label: 'Large', value: '8' },
+          ]}
+          selected={props.px || '1'}
+          onSelect={(item) => actions.setProp((props: any) => props.px = item.value)}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input 
+          type="number"
+          value={props.height || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.height = e.target.value)}
+          placeholder="Auto"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Width (px)</p>
+          {props.width && (
+            <button 
+              className="text-[10px] text-accent-400 hover:underline uppercase font-bold"
+              onClick={() => actions.setProp((props: any) => props.width = '')}
+            >
+              Set Full
+            </button>
+          )}
+        </div>
+        <Input 
+          type="number"
+          value={props.width || ''} 
+          onChange={(e) => actions.setProp((props: any) => props.width = e.target.value)}
+          placeholder="Leave empty for Full Screen"
+        />
+      </div>    </div>
+  );
+};
+
+export const Container = ({ children, height, width, centered, centerChildren, padding = '0', px = '1', ...props }: any) => {
+  const { id, connectors: { connect } } = useNode();
+  const { actions, enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
   
   return (
     <div 
       {...props} 
       ref={(ref: any) => connect(ref)} 
+      onClick={(e) => {
+        if (!enabled || e.target !== e.currentTarget) return;
+        e.stopPropagation();
+        actions.selectNode(id);
+      }}
       className={clsx(
-        "flex flex-col gap-6 w-full min-h-[500px] pb-20 px-1 transition-all",
-        !enabled && "min-h-0 pb-0!",
+        "flex flex-col gap-6 w-full transition-all relative",
+        centered && "page mx-auto",
+        centerChildren && "items-center",
+        padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-0',
+        px === '1' ? 'px-1' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
+        enabled && "min-h-[100px] border border-dashed border-transparent hover:border-primary/20",
+        !enabled && "min-h-0",
         props.className
       )}
       style={{ 
@@ -986,10 +1173,14 @@ export const Container = ({ children, height, width, centered, ...props }: any) 
 };
 Container.craft = {
   isCanvas: true,
+  displayName: 'Container',
   rules: {
     canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Grid'),
-    canSelect: () => false,
+    canSelect: () => true,
   },
+  related: {
+    settings: ContainerSettings
+  }
 };
 
 const GridSettings = () => {
@@ -1466,10 +1657,91 @@ CraftEventSidebarImage.craft = {
   }
 };
 
+export const CraftImageBanner = (props: any) => (
+  <CraftSection name="Image Banner">
+    <Placeholder name="Image Banner" description="Drop your image here" />
+  </CraftSection>
+);
+CraftImageBanner.craft = { displayName: 'Image Banner' };
+
+export const CraftCardsGrid = (props: any) => (
+  <CraftSection name="Cards Grid">
+    <Placeholder name="Cards Grid" description="Feature your content in cards" />
+  </CraftSection>
+);
+CraftCardsGrid.craft = { displayName: 'Cards Grid' };
+
+export const CraftTestimonials = (props: any) => (
+  <CraftSection name="Testimonials">
+    <Placeholder name="Testimonials" description="What people are saying" />
+  </CraftSection>
+);
+CraftTestimonials.craft = { displayName: 'Testimonials' };
+
+export const CraftSocialLinks = (props: any) => (
+  <CraftSection name="Social Links">
+    <Placeholder name="Social Links" description="Connect your social media" />
+  </CraftSection>
+);
+CraftSocialLinks.craft = { displayName: 'Social Links' };
+
+export const CraftCustomHTML = (props: any) => (
+  <CraftSection name="Custom HTML">
+    <Placeholder name="Custom HTML" description="Add your custom code" />
+  </CraftSection>
+);
+CraftCustomHTML.craft = { displayName: 'Custom HTML' };
+
+export const CraftSpacer = (props: any) => (
+  <div className="w-full h-10 flex items-center justify-center border border-dashed border-card-border rounded-md text-[10px] text-quaternary uppercase tracking-widest">
+    Spacer
+  </div>
+);
+CraftSpacer.craft = { displayName: 'Spacer' };
+
+export const CraftHeader = (props: any) => (
+  <CraftSection name="Header">
+    <Placeholder name="Header" description="Page header" />
+  </CraftSection>
+);
+CraftHeader.craft = { displayName: 'Header' };
+
+export const CraftFooter = (props: any) => (
+  <CraftSection name="Footer">
+    <Placeholder name="Footer" description="Page footer" />
+  </CraftSection>
+);
+CraftFooter.craft = { displayName: 'Footer' };
+
+export const CraftMusicPlayer = (props: any) => (
+  <CraftSection name="Music Player">
+    <Placeholder name="Music Player" description="Share your music" />
+  </CraftSection>
+);
+CraftMusicPlayer.craft = { displayName: 'Music Player' };
+
+export const CraftWalletConnect = (props: any) => (
+  <CraftSection name="Wallet Connect">
+    <Placeholder name="Wallet Connect" description="Web3 connectivity" />
+  </CraftSection>
+);
+CraftWalletConnect.craft = { displayName: 'Wallet Connect' };
+
+export const CraftPassport = (props: any) => (
+  <CraftSection name="Passport">
+    <Placeholder name="Passport" description="Digital identity" />
+  </CraftSection>
+);
+CraftPassport.craft = { displayName: 'Passport' };
+
 export const resolver = {
   Container,
   Grid,
   Col,
+  Tabs: CraftTabs,
+  Tab: CraftTab,
+  Accordion: CraftAccordion,
+  AccordionItem: CraftAccordionItem,
   RichText: CraftRichText,
   VideoEmbed: CraftVideoEmbed,
   AboutSection: CraftAboutSection,
@@ -1485,4 +1757,15 @@ export const resolver = {
   AttendeesSection: CraftAttendeesSection,
   EventHero: CraftEventHero,
   EventSidebarImage: CraftEventSidebarImage,
+  ImageBanner: CraftImageBanner,
+  CardsGrid: CraftCardsGrid,
+  Testimonials: CraftTestimonials,
+  SocialLinks: CraftSocialLinks,
+  CustomHTML: CraftCustomHTML,
+  Spacer: CraftSpacer,
+  Header: CraftHeader,
+  Footer: CraftFooter,
+  MusicPlayer: CraftMusicPlayer,
+  WalletConnect: CraftWalletConnect,
+  Passport: CraftPassport,
 };

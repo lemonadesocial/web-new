@@ -25,7 +25,26 @@ const eventSections = [
 
 const universalSections = [
   { id: 'u1', name: 'Rich Text', component: 'RichText' },
+  { id: 'u2', name: 'Image Banner', component: 'ImageBanner' },
   { id: 'u3', name: 'Video Embed', component: 'VideoEmbed' },
+  { id: 'u4', name: 'CTA Block', component: 'EventAccess' },
+  { id: 'u5', name: 'Cards Grid', component: 'CardsGrid' },
+  { id: 'u6', name: 'Testimonials', component: 'Testimonials' },
+  { id: 'u7', name: 'Social Links', component: 'SocialLinks' },
+  { id: 'u8', name: 'Custom HTML', component: 'CustomHTML' },
+  { id: 'u9', name: 'Spacer', component: 'Spacer' },
+  { id: 'u10', name: 'Header', component: 'Header' },
+  { id: 'u11', name: 'Footer', component: 'Footer' },
+  { id: 'u12', name: 'Music Player', component: 'MusicPlayer' },
+  { id: 'u13', name: 'Wallet Connect', component: 'WalletConnect' },
+  { id: 'u14', name: 'Passport', component: 'Passport' },
+];
+
+const layoutContainers = [
+  { id: 'Columns', name: 'Columns', component: 'Grid' },
+  { id: 'Tabs', name: 'Tabs', component: 'Tabs' },
+  { id: 'Accordion', name: 'Accordion', component: 'Accordion' },
+  { id: 'Column', name: 'Column', component: 'Col' },
 ];
 
 export function SectionTool() {
@@ -52,6 +71,17 @@ export function SectionTool() {
           ))}
         </div>
       </section>
+
+      <section className="p-5">
+        <div className="mb-4">
+          <p className="text-lg">Layout Containers</p>
+        </div>
+        <div className="grid grid-cols-4 gap-3">
+          {layoutContainers.map((item) => (
+            <SectionCard key={item.id} name={item.name} componentName={item.component as any} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
@@ -66,67 +96,12 @@ function SectionCard({ name, componentName }: { name: string; componentName: str
     <div
       ref={(ref) => {
         if (ref) {
-          // Drop the section directly.
-          connectors.create(ref, <Element is={component as any} event={event} />, {
+          // Normal Craft.js drag and drop
+          connectors.create(ref, <Element is={component as any} event={event} canvas={componentName === 'Grid' || componentName === 'Col' || componentName === 'Tabs' || componentName === 'Accordion'} />, {
             onCreate: (nodeId) => {
-              const activeDropZone = aiManageLayoutStore.get(storeAtom).activeDropZone;
-              
-              if (activeDropZone) {
-                const { side, sectionId } = activeDropZone;
-                storeManageLayout.setActiveDropZone(null);
-
-                // Need a small timeout to let Craft.js finish the initial insertion
-                setTimeout(() => {
-                  const targetNode = query.node(sectionId).get();
-                  if (!targetNode) return;
-                  const parentId = targetNode.data.parent;
-                  if (!parentId) return;
-
-                  const parent = query.node(parentId).get();
-
-                  // 1. If target is already in a Column, add a sibling Column to the Grid
-                  if (parent.data.displayName === 'Column') {
-                    const gridId = parent.data.parent;
-                    if (gridId) {
-                      const grid = query.node(gridId).get();
-                      if (grid.data.displayName === 'Grid') {
-                        const newColTree = query.parseReactElement(<Element is={resolver.Col} canvas />).toNodeTree();
-                        const colIndex = grid.data.nodes.indexOf(parentId);
-                        const insertIndex = side === 'left' ? colIndex : colIndex + 1;
-                        
-                        actions.addNodeTree(newColTree, gridId, insertIndex);
-                        actions.move(nodeId, newColTree.rootNodeId, 0);
-                        actions.selectNode(nodeId);
-                        return;
-                      }
-                    }
-                  }
-
-                  // 2. Otherwise, wrap in a new Grid with flexible columns
-                  const gridTree = query.parseReactElement(
-                    <Element is={resolver.Grid} canvas>
-                      <Element is={resolver.Col} canvas />
-                      <Element is={resolver.Col} canvas />
-                    </Element>
-                  ).toNodeTree();
-
-                  const index = query.node(parentId).get().data.nodes.indexOf(sectionId);
-                  actions.addNodeTree(gridTree, parentId, index);
-
-                  const newGridId = gridTree.rootNodeId;
-                  const newGrid = query.node(newGridId).get();
-                  const col1Id = side === 'left' ? newGrid.data.nodes[1] : newGrid.data.nodes[0];
-                  const col2Id = side === 'left' ? newGrid.data.nodes[0] : newGrid.data.nodes[1];
-
-                  actions.move(sectionId, col1Id, 0);
-                  actions.move(nodeId, col2Id, 0);
-                  actions.selectNode(nodeId);
-                }, 100);
-              } else {
-                setTimeout(() => {
-                  actions.selectNode(nodeId);
-                }, 100);
-              }
+              setTimeout(() => {
+                actions.selectNode(nodeId);
+              }, 100);
             },
           });
         }

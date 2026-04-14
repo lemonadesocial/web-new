@@ -10,11 +10,6 @@ export type BuilderTabType = 'template' | 'sections' | 'theme';
 export type DesignModeType = 'builder' | 'ai';
 export type MobilePaneType = 'main' | 'chat' | 'config';
 
-export type DropZoneTarget = {
-  side: 'left' | 'right';
-  sectionId: string;
-};
-
 interface IStore {
   showSidebarLeft: boolean;
   device: DeviceType;
@@ -26,7 +21,6 @@ interface IStore {
   data?: Event | Space;
   isCreatingTemplate: boolean;
   templateName?: string;
-  activeDropZone?: DropZoneTarget | null;
 }
 
 const defaultStore: IStore = {
@@ -66,6 +60,5 @@ export const storeManageLayout = {
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
   setIsCreatingTemplate: (isCreatingTemplate: boolean, templateName?: string) =>
     aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, isCreatingTemplate, templateName })),
-  setActiveDropZone: (zone?: DropZoneTarget | null) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, activeDropZone: zone })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };
