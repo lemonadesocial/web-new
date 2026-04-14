@@ -4,7 +4,15 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
 import { Editor, Frame } from '@craftjs/core';
-import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetEventQuery,
+  GetPageConfigDocument,
+  GetPageConfigQuery,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
+} from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
@@ -102,7 +110,7 @@ export function EventGuestSideContent({
     } else {
       storeManageLayout.setFullScreen(false);
     }
-    
+
     // Reset fullScreen when component unmounts
     return () => storeManageLayout.setFullScreen(false);
   }, [pageConfigFields?.structure_data, isEditable]);
@@ -135,11 +143,12 @@ export function EventGuestSideContent({
   };
 
   const renderContent = () => {
-    if (isEditable && isClient) {
+    if (isEditable && isClient && event) {
       return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
     }
 
     if (pageConfigFields?.structure_data && isClient) {
+      console.log(pageConfigFields.structure_data);
       return (
         <Editor enabled={false} resolver={resolver}>
           <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>

@@ -6,12 +6,12 @@ import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { Container, Grid, Col } from './resolver';
 
-export function CraftableEventSections({ 
-  event, 
+export function CraftableEventSections({
+  event,
   attending,
-  pageConfig 
-}: { 
-  event: Event; 
+  pageConfig,
+}: {
+  event: Event;
   attending: boolean;
   pageConfig?: GetPageConfigQuery['getPageConfig'];
 }) {
@@ -26,15 +26,23 @@ export function CraftableEventSections({
     location: 'LocationSection',
   };
 
+  const displayMap: Record<string, string> = {
+    registration: 'CTA Block',
+    about: 'About',
+    collectibles: 'Collectibles',
+    location: 'Location',
+  };
+
   const pageConfigData = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   React.useEffect(() => {
     if (initialized) return;
 
     if (pageConfigData?.structure_data) {
-      const data = typeof pageConfigData.structure_data === 'string'
-        ? pageConfigData.structure_data
-        : JSON.stringify(pageConfigData.structure_data);
+      const data =
+        typeof pageConfigData.structure_data === 'string'
+          ? pageConfigData.structure_data
+          : JSON.stringify(pageConfigData.structure_data);
       actions.deserialize(data);
       setInitialized(true);
       return;
@@ -43,6 +51,7 @@ export function CraftableEventSections({
     // Construct initial state JSON for Craft.js if no pageConfig
     const sections = (event.layout_sections || DEFAULT_LAYOUT_SECTIONS).reduce((acc: any, item: any) => {
       const componentName = sectionMap[item.id];
+      const displayName = displayMap[item.id] || componentName;
       if (!componentName) return acc;
       if (item.id === 'collectibles' && !attending) return acc;
 
@@ -53,7 +62,7 @@ export function CraftableEventSections({
         nodes: [],
         linkedNodes: {},
         parent: 'main-col',
-        displayName: componentName,
+        displayName: displayName,
         custom: {},
       };
       return acc;
@@ -83,7 +92,7 @@ export function CraftableEventSections({
       'sidebar-col': {
         type: { resolvedName: 'Col' },
         isCanvas: true,
-        props: { width: '74' },
+        props: { width: '300' },
         nodes: ['sidebar-image', 'community-section', 'hosted-by-section', 'attendees-section'],
         linkedNodes: {},
         parent: 'main-grid',

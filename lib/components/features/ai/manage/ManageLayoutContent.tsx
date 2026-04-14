@@ -9,7 +9,13 @@ import { useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { Event, GetEventDocument, GetPageConfigDocument, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetPageConfigDocument,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
+} from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
@@ -88,9 +94,10 @@ function ManageLayoutContent() {
   React.useEffect(() => {
     if (pageConfigData_?.structure_data && !hasInitializedRef.current) {
       try {
-        const data = typeof pageConfigData_.structure_data === 'string'
-          ? pageConfigData_.structure_data
-          : JSON.stringify(pageConfigData_.structure_data);
+        const data =
+          typeof pageConfigData_.structure_data === 'string'
+            ? pageConfigData_.structure_data
+            : JSON.stringify(pageConfigData_.structure_data);
         actions.deserialize(data);
         actions.history.clear();
         hasInitializedRef.current = true;
@@ -168,16 +175,20 @@ function ManageLayoutContent() {
             collectibles: 'EventCollectibles',
             location: 'LocationSection',
           };
-          
-          const sections = (event?.layout_sections || [
-            { id: 'registration', hidden: false },
-            { id: 'about', hidden: false },
-            { id: 'collectibles', hidden: false },
-            { id: 'location', hidden: false },
-          ]).reduce((acc: any, item: any) => {
+
+          const displayMap: Record<string, string> = {
+            registration: 'CTA Block',
+            about: 'About',
+            collectibles: 'Collectibles',
+            location: 'Location',
+          };
+
+          const sections = (event?.layout_sections || DEFAULT_LAYOUT_SECTIONS).reduce((acc: any, item: any) => {
             const componentName = sectionMap[item.id];
+            const displayName = displayMap[item.id] || componentName;
             if (!componentName) return acc;
-            
+            if (item.id === 'collectibles' && !event?._id) return acc; // Simple check or pass attending if available
+
             acc[item.id] = {
               type: { resolvedName: componentName },
               isCanvas: false,
@@ -185,7 +196,7 @@ function ManageLayoutContent() {
               nodes: [],
               linkedNodes: {},
               parent: 'main-col',
-              displayName: componentName,
+              displayName: displayName,
               custom: {},
             };
             return acc;
@@ -215,7 +226,7 @@ function ManageLayoutContent() {
             'sidebar-col': {
               type: { resolvedName: 'Col' },
               isCanvas: true,
-              props: { width: '74' },
+              props: { width: '300' },
               nodes: ['sidebar-image', 'community-section', 'hosted-by-section', 'attendees-section'],
               linkedNodes: {},
               parent: 'main-grid',
@@ -304,6 +315,7 @@ function ManageLayoutContent() {
             },
             ...sections,
           };
+          console.log(JSON.stringify(json));
           actions.deserialize(JSON.stringify(json));
         }
       },
