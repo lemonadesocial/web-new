@@ -88,6 +88,17 @@ export function EventGuestSideContent({
     }
   }, [event]);
 
+  React.useEffect(() => {
+    if (pageConfigFields?.structure_data || isEditable) {
+      storeManageLayout.setFullScreen(true);
+    } else {
+      storeManageLayout.setFullScreen(false);
+    }
+    
+    // Reset fullScreen when component unmounts
+    return () => storeManageLayout.setFullScreen(false);
+  }, [pageConfigFields?.structure_data, isEditable]);
+
   const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
     initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
