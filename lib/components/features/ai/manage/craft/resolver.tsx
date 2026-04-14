@@ -743,6 +743,7 @@ export const CraftSection = ({ children, name, noPadding }: { children: React.Re
 
   const width = nodeProps.width;
   const height = nodeProps.height;
+  const aspectRatio = nodeProps.aspectRatio;
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : (width ? `${width}px` : '100%');
 
   // If not enabled and no children, don't render anything
@@ -758,11 +759,12 @@ export const CraftSection = ({ children, name, noPadding }: { children: React.Re
       }}
       className={clsx(
         "relative group/section w-full flex flex-col overflow-visible rounded-2xl transition-all",
+        aspectRatio,
         enabled && "cursor-pointer hover:bg-primary/5",
         isResizing && "z-[300]"
       )}
       style={{ 
-        height: height ? `${height}px` : 'auto',
+        height: height ? `${height}px` : (aspectRatio && aspectRatio !== 'aspect-auto' ? undefined : 'auto'),
         width: widthStyle,
         maxWidth: '100%'
       }}
@@ -1732,7 +1734,7 @@ export const CraftEventSidebarImage = (props: any) => {
 
   return (
     <CraftSection name="Event Image" noPadding {...props}>
-      <div className={clsx("w-full overflow-hidden rounded-2xl", aspectRatio, aspectRatio === 'aspect-auto' && "h-full")}>
+      <div className={clsx("w-full h-full overflow-hidden rounded-2xl", (aspectRatio === 'aspect-auto' || !aspectRatio) ? "" : "absolute inset-0")}>
        {event?.new_new_photos_expanded?.[0] ? (
             <img
               src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
