@@ -1560,6 +1560,22 @@ CraftSubEventSection.craft = {
   }
 };
 
+const GallerySettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Section Title</p>
+        <Input 
+          value={props.title || 'Gallery'} 
+          onChange={(e) => actions.setProp((props: any) => props.title = e.target.value)}
+          placeholder="Gallery"
+        />
+      </div>
+    </div>
+  );
+};
+
 export const CraftGallerySection = (props: any) => {
   const event = useEvent(props);
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
@@ -1578,9 +1594,11 @@ export const CraftGallerySection = (props: any) => {
   );
 };
 CraftGallerySection.craft = { 
-  displayName: 'GallerySection', 
+  displayName: 'Gallery', 
   rules: { canDrag: () => true },
-  // No specific settings yet
+  related: {
+    settings: GallerySettings
+  }
 };
 
 export const CraftEventDateTimeBlock = (props: any) => {
