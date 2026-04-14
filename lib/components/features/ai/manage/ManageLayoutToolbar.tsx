@@ -46,8 +46,6 @@ const devices = {
   },
 };
 
-const communityPreviewTabs = new Set(['design', 'preview']);
-
 function ManageLayoutToolbar() {
   const router = useRouter();
   const state = useStoreManageLayout();
@@ -59,9 +57,6 @@ function ManageLayoutToolbar() {
   const hasMultipleTabs = state.availableTabs.length > 1;
   const hasEventBuilderTabs = state.layoutType === 'event' && hasBuilderTabs;
   const isEventBuilderView = hasEventBuilderTabs && ['design', 'preview'].includes(state.activeTab);
-  const showDeviceToggle =
-    (state.layoutType === 'event' && hasBuilderTabs) ||
-    (state.layoutType === 'community' && communityPreviewTabs.has(state.activeTab));
   const showWorkspaceSwitcher = state.layoutType === 'event';
   const upgradeTarget = state.layoutType === 'event' ? event?.space : space?._id;
 
@@ -364,20 +359,18 @@ function ManageLayoutToolbar() {
           </div>
 
           <div className="flex-1 flex items-center justify-center gap-2">
-            {showDeviceToggle && (
-              <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-                {Object.entries(devices).map(([key, item]) => (
-                  <Button
-                    key={key}
-                    icon={item.icon}
-                    variant="tertiary"
-                    size="sm"
-                    onClick={() => store.setPreviewMode(key as any)}
-                    className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                  ></Button>
-                ))}
-              </div>
-            )}
+            <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+              {Object.entries(devices).map(([key, item]) => (
+                <Button
+                  key={key}
+                  icon={item.icon}
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => store.setPreviewMode(key as any)}
+                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                ></Button>
+              ))}
+            </div>
 
             <Button variant="tertiary-alt" icon="icon-arrow-outward" size="sm" onClick={handleOpenPublicPage} />
           </div>

@@ -37,9 +37,18 @@ type InputChatProps = {
   showTools?: boolean;
   readOnly?: boolean;
   compact?: boolean;
+  hideSpaceSelector?: boolean;
+  fixedSpaceId?: string;
 };
 
-export function InputChat({ variant = 'default', showTools = true, readOnly, compact }: InputChatProps) {
+export function InputChat({
+  variant = 'default',
+  showTools = true,
+  readOnly,
+  compact,
+  hideSpaceSelector = false,
+  fixedSpaceId,
+}: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -51,6 +60,22 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
   const hasActivity = !!state.messages.length || !!state.thinking;
   const isIdle = input.length === 0 && !hasActivity;
   const isCompact = isMobile || compact;
+  const currentSpaceId = (state.data as { space_id?: string } | undefined)?.space_id || state.standId;
+
+  React.useEffect(() => {
+    if (!fixedSpaceId || currentSpaceId === fixedSpaceId) return;
+
+    dispatch({
+      type: AIChatActionKind.set_data_run,
+      payload: {
+        data: {
+          ...((state.data as Record<string, unknown> | undefined) || {}),
+          space_id: fixedSpaceId,
+        },
+        standId: state.standId || fixedSpaceId,
+      },
+    });
+  }, [currentSpaceId, dispatch, fixedSpaceId, state.data, state.standId]);
 
   React.useEffect(() => {
     if (!isIdle) return;
@@ -211,6 +236,11 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!text) {
       return;
     }
+    const runData = {
+      ...((state.data as Record<string, unknown> | undefined) || {}),
+      ...(fixedSpaceId ? { space_id: fixedSpaceId } : {}),
+    };
+
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
@@ -220,8 +250,8 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
         message: text,
         config: state.config || AI_CONFIG,
         session: state.session,
-        data: state.data || {},
-        standId: state.standId,
+        data: runData,
+        standId: state.standId || fixedSpaceId,
       },
     });
   };
@@ -307,17 +337,24 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <SpaceSelector
-              compact={isCompact}
-              readOnly={readOnly}
-              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id || state.standId}
-              onSelectSpace={(space) =>
-                dispatch({
-                  type: AIChatActionKind.set_data_run,
-                  payload: { data: { space_id: space._id } },
-                })
-              }
-            />
+            {!hideSpaceSelector && (
+              <SpaceSelector
+                compact={isCompact}
+                readOnly={readOnly}
+                currentSpaceId={currentSpaceId}
+                onSelectSpace={(space) =>
+                  dispatch({
+                    type: AIChatActionKind.set_data_run,
+                    payload: {
+                      data: {
+                        ...((state.data as Record<string, unknown> | undefined) || {}),
+                        space_id: space._id,
+                      },
+                    },
+                  })
+                }
+              />
+            )}
             <Button
               icon="icon-arrow-foward-sharp -rotate-90"
               size="sm"

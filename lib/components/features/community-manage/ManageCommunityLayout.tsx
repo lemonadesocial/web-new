@@ -69,7 +69,7 @@ function ManageCommunityLayout({ children }: React.PropsWithChildren) {
       embedded
       onSpaceResolved={(space) =>
         setResolvedSpace((prev) =>
-          prev?._id === space._id && prev.slug === space.slug && prev.title === space.title ? prev : space,
+          prev && prev._id === space._id && prev.slug === space.slug && prev.title === space.title ? prev : space,
         )
       }
     >

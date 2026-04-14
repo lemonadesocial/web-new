@@ -163,6 +163,14 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
     }
   }, [ready, state.layoutType]);
 
+  const communityChatProps =
+    state.layoutType === 'community' && community?._id
+      ? ({
+          hideSpaceSelector: true,
+          fixedSpaceId: community._id,
+        } as const)
+      : undefined;
+
   const sidebarContent = match([state.layoutType, state.activeTab] as const)
     .with(['event', 'manage'], () => (
       <div className="h-full px-4">
@@ -171,7 +179,7 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
     ))
     .with(['community', 'manage'], () => (
       <div className="h-full px-4">
-        <AIChat compact />
+        <AIChat compact {...communityChatProps} />
       </div>
     ))
     .with(['event', 'design'], () => (
@@ -187,7 +195,7 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
     ))
     .with(['community', 'preview'], () => (
       <div className="h-full px-4">
-        <AIChat compact />
+        <AIChat compact {...communityChatProps} />
       </div>
     ))
     .otherwise(() => null);
@@ -216,7 +224,9 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
   if (!isReady) return null;
 
   const mobilePaneContent = match(state.mobilePane)
-    .with('chat', () => <AIChat compact />)
+    .with('chat', () =>
+      state.layoutType === 'community' ? <AIChat compact {...communityChatProps} /> : <AIChat compact />,
+    )
     .with('config', () => sidebarContent)
     .otherwise(() => null);
   const isChatPane = state.mobilePane === 'chat';
