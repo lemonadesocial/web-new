@@ -21,6 +21,7 @@ interface IStore {
   data?: Event | Space;
   isCreatingTemplate: boolean;
   templateName?: string;
+  fullScreen: boolean;
 }
 
 const defaultStore: IStore = {
@@ -32,6 +33,7 @@ const defaultStore: IStore = {
   designMode: 'builder',
   mobilePane: 'main',
   isCreatingTemplate: false,
+  fullScreen: false,
 };
 
 export const storeAtom = atom(defaultStore);
@@ -60,5 +62,6 @@ export const storeManageLayout = {
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
   setIsCreatingTemplate: (isCreatingTemplate: boolean, templateName?: string) =>
     aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, isCreatingTemplate, templateName })),
+  setFullScreen: (fullScreen: boolean) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, fullScreen })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };
