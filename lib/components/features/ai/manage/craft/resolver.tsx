@@ -1652,7 +1652,7 @@ export const CraftEventSidebarImage = (props: any) => {
 
   return (
     <CraftSection name="Event Image" noPadding {...props}>
-      <div className={clsx("w-full h-full overflow-hidden rounded-2xl", aspectRatio)}>
+      <div className={clsx("w-full overflow-hidden rounded-2xl", aspectRatio, aspectRatio === 'aspect-auto' && "h-full")}>
        {event?.new_new_photos_expanded?.[0] ? (
             <img
               src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
