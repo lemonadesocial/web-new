@@ -261,6 +261,17 @@ function ManageLayoutToolbar() {
     }
   };
 
+  const editorRef = React.useRef({ actions, query, state });
+  editorRef.current = { actions, query, state };
+
+  React.useEffect(() => {
+    const handleSave = () => {
+      handleSaveLayout();
+    };
+    window.addEventListener('craft-save', handleSave);
+    return () => window.removeEventListener('craft-save', handleSave);
+  }, [handleSaveLayout]);
+
   const handleResetTheme = () => {
     themeDispatch({
       type: ThemeBuilderActionKind.reset,
