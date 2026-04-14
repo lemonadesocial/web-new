@@ -92,6 +92,7 @@ function ManageLayoutContent() {
           ? pageConfigData_.structure_data
           : JSON.stringify(pageConfigData_.structure_data);
         actions.deserialize(data);
+        actions.history.clear();
         hasInitializedRef.current = true;
       } catch (e) {
         console.error('Failed to parse pageConfig structure_data', e);
