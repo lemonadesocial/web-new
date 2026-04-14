@@ -4,17 +4,19 @@ import { atom, createStore, useAtomValue } from 'jotai';
 export const aiManageLayoutStore = createStore();
 
 type DeviceType = 'desktop' | 'mobile';
-type LayoutType = 'event' | 'community';
+export type LayoutType = 'event' | 'community';
 export type ActiveTabType = 'manage' | 'design' | 'preview';
 export type BuilderTabType = 'template' | 'sections' | 'theme';
 export type DesignModeType = 'builder' | 'ai';
 export type MobilePaneType = 'main' | 'chat' | 'config';
+export const defaultAvailableTabs: ActiveTabType[] = ['manage', 'design', 'preview'];
 
 interface IStore {
   showSidebarLeft: boolean;
   device: DeviceType;
   layoutType: LayoutType;
   activeTab: ActiveTabType;
+  availableTabs: ActiveTabType[];
   builderTab: BuilderTabType;
   designMode: DesignModeType;
   mobilePane: MobilePaneType;
@@ -28,6 +30,7 @@ const defaultStore: IStore = {
   showSidebarLeft: true,
   device: 'desktop',
   activeTab: 'manage',
+  availableTabs: defaultAvailableTabs,
   builderTab: 'template',
   designMode: 'builder',
   mobilePane: 'main',
@@ -50,6 +53,12 @@ export const storeManageLayout = {
     })),
   setLayoutType: (type: LayoutType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, layoutType: type })),
   setActiveTab: (tab: ActiveTabType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, activeTab: tab })),
+  setAvailableTabs: (availableTabs: ActiveTabType[]) =>
+    aiManageLayoutStore.set(storeAtom, (prev) => ({
+      ...prev,
+      availableTabs,
+      activeTab: availableTabs.includes(prev.activeTab) ? prev.activeTab : availableTabs[0] || 'manage',
+    })),
   setBuilderTab: (tab: BuilderTabType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, builderTab: tab })),
   setDesignMode: (mode: DesignModeType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, designMode: mode })),
   setMobilePane: (pane: MobilePaneType) =>

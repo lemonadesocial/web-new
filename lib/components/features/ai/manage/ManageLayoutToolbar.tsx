@@ -19,10 +19,8 @@ import {
   Template,
   UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
-  UpdateSpaceDocument,
-  SpaceFragmentDoc,
+  Space,
 } from '$lib/graphql/generated/backend/graphql';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import {
@@ -48,11 +46,24 @@ const devices = {
   },
 };
 
+const communityPreviewTabs = new Set(['design', 'preview']);
+
 function ManageLayoutToolbar() {
   const router = useRouter();
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
+  const space = state.data as Space | undefined;
+  const visibleTabs = state.availableTabs.map((key) => [key, tabMappings[key]] as const);
+  const hasBuilderTabs = state.availableTabs.some((tab) => tab !== 'manage');
+  const hasMultipleTabs = state.availableTabs.length > 1;
+  const hasEventBuilderTabs = state.layoutType === 'event' && hasBuilderTabs;
+  const isEventBuilderView = hasEventBuilderTabs && ['design', 'preview'].includes(state.activeTab);
+  const showDeviceToggle =
+    (state.layoutType === 'event' && hasBuilderTabs) ||
+    (state.layoutType === 'community' && communityPreviewTabs.has(state.activeTab));
+  const showWorkspaceSwitcher = state.layoutType === 'event';
+  const upgradeTarget = state.layoutType === 'event' ? event?.space : space?._id;
 
   const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
     canUndo: query.history.canUndo(),
@@ -60,7 +71,7 @@ function ManageLayoutToolbar() {
     isSelected: state.events.selected.size > 0,
   }));
 
-  // NOTE: its bc using different store
+  // Event manage still mirrors the standalone event store for mutations.
   const updateEvent = useUpdateEvent();
 
   const [publishEvent, { loading: publishingEvent }] = useMutation(PublishEventDocument, {
@@ -106,8 +117,8 @@ function ManageLayoutToolbar() {
   const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(event?.theme_data));
 
   const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && isThemeDirty;
-  const brandTitle = event?.title || 'Event Manager';
-  const brandSubtitle = event?.space_expanded?.title || '';
+  const brandTitle = state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
+  const brandSubtitle = state.layoutType === 'event' ? event?.space_expanded?.title || '' : '';
   const isMobileSubPane = state.mobilePane !== 'main';
 
   const handlePublish = () => {
@@ -134,19 +145,6 @@ function ManageLayoutToolbar() {
     });
   };
 
-  const [updateSpace, { loading: savingSpace }] = useMutation(UpdateSpaceDocument, {
-    onComplete: (_, data) => {
-      const updatedSpace = useFragment(SpaceFragmentDoc, data?.updateSpace);
-      if (updatedSpace?._id) {
-        toast.success('Space layout saved successfully!');
-        store.setData({ ...state.data, ...updatedSpace } as any);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to save space layout');
-    },
-  });
-
   const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
   const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument);
 
@@ -162,7 +160,7 @@ function ManageLayoutToolbar() {
         hidden: false,
       }));
 
-      // Extract updated event/space data from nodes
+      // Collect updated event fields from the builder tree before saving.
       let updatedData: any = {};
       Object.values(nodes).forEach((node) => {
         if (node.data.props.event) {
@@ -225,37 +223,23 @@ function ManageLayoutToolbar() {
       const newPageConfig = pageConfigResult.data?.createPageConfig as PageConfig;
       if (!newPageConfig?._id) throw new Error('Failed to create page config');
 
-      // 3. Update event/space data
-      if (state.layoutType === 'event') {
-        await updateEventSettings({
-          variables: {
-            id: event._id,
-            input: {
-              title: updatedData.title,
-              description: updatedData.description,
-              start: updatedData.start,
-              end: updatedData.end,
-              timezone: updatedData.timezone,
-              address: updatedData.address,
-              latitude: updatedData.latitude,
-              longitude: updatedData.longitude,
-              virtual_url: updatedData.virtual_url,
-              layout_sections: layoutSections,
-            },
+      await updateEventSettings({
+        variables: {
+          id: event._id,
+          input: {
+            title: updatedData.title,
+            description: updatedData.description,
+            start: updatedData.start,
+            end: updatedData.end,
+            timezone: updatedData.timezone,
+            address: updatedData.address,
+            latitude: updatedData.latitude,
+            longitude: updatedData.longitude,
+            virtual_url: updatedData.virtual_url,
+            layout_sections: layoutSections,
           },
-        });
-      } else {
-        await updateSpace({
-          variables: {
-            id: event._id,
-            input: {
-              title: updatedData.title,
-              description: updatedData.description,
-              theme_data: themeState,
-            },
-          },
-        });
-      }
+        },
+      });
     } catch (e) {
       toast.error('Failed to parse layout structure');
     }
@@ -274,6 +258,10 @@ function ManageLayoutToolbar() {
         const shortid = (state.data as Event)?.shortid;
         if (shortid) window.open(`/e/${shortid}`);
       })
+      .with('community', () => {
+        const slugOrId = (state.data as Space)?.slug || (state.data as Space)?._id;
+        if (slugOrId) window.open(`/s/${slugOrId}`, '_blank');
+      })
       .otherwise(() => {});
   };
 
@@ -281,7 +269,12 @@ function ManageLayoutToolbar() {
     store.setMobilePane('chat');
   };
 
-  const openDesignSheet = () => {
+  const openDesignPane = () => {
+    if (state.layoutType === 'community') {
+      store.setMobilePane('config');
+      return;
+    }
+
     sheet.open(SheetMobileDesignAction, {
       detent: 'content',
       containerClass: 'overflow-visible',
@@ -311,24 +304,31 @@ function ManageLayoutToolbar() {
             <i className="icon-lemonade-logo size-5" />
           </button>
           <div className="flex-1">
-            <Menu.Root strategy="fixed" placement="bottom-start">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
-                    <div className="whitespace-nowrap">
-                      <div className="flex justify-between items-center gap-1">
-                        <p className="text-sm font-medium">{brandTitle}</p>
-                        <i className="icon-arrow-down size-4 text-tertiary" />
+            {showWorkspaceSwitcher ? (
+              <Menu.Root strategy="fixed" placement="bottom-start">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
+                      <div className="whitespace-nowrap">
+                        <div className="flex justify-between items-center gap-1">
+                          <p className="text-sm font-medium">{brandTitle}</p>
+                          <i className="icon-arrow-down size-4 text-tertiary" />
+                        </div>
+                        {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                       </div>
-                      {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                     </div>
-                  </div>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-0 w-xs">
-                <DropdownComponent shortid={event?.shortid} />
-              </Menu.Content>
-            </Menu.Root>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-0 w-xs">
+                  <DropdownComponent shortid={event?.shortid} />
+                </Menu.Content>
+              </Menu.Root>
+            ) : (
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{brandTitle}</p>
+                {!!brandSubtitle && <p className="text-tertiary text-xs truncate">{brandSubtitle}</p>}
+              </div>
+            )}
           </div>
 
           <Button
@@ -343,13 +343,16 @@ function ManageLayoutToolbar() {
         <div className="flex flex-1 justify-between items-center gap-2">
           <div className="flex gap-2">
             <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-              {Object.entries(tabMappings).map(([key, item]) => (
+              {visibleTabs.map(([key, item]) => (
                 <Button
                   key={key}
                   iconLeft={item.icon}
                   variant="tertiary"
                   size="sm"
                   onClick={() => {
+                    if (key === 'design' && state.layoutType === 'community' && !state.showSidebarLeft) {
+                      store.toggleSidebarLeft();
+                    }
                     store.setActiveTab(key as ActiveTabType);
                   }}
                   className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
@@ -361,18 +364,20 @@ function ManageLayoutToolbar() {
           </div>
 
           <div className="flex-1 flex items-center justify-center gap-2">
-            <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-              {Object.entries(devices).map(([key, item]) => (
-                <Button
-                  key={key}
-                  icon={item.icon}
-                  variant="tertiary"
-                  size="sm"
-                  onClick={() => store.setPreviewMode(key as any)}
-                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                ></Button>
-              ))}
-            </div>
+            {showDeviceToggle && (
+              <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+                {Object.entries(devices).map(([key, item]) => (
+                  <Button
+                    key={key}
+                    icon={item.icon}
+                    variant="tertiary"
+                    size="sm"
+                    onClick={() => store.setPreviewMode(key as any)}
+                    className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                  ></Button>
+                ))}
+              </div>
+            )}
 
             <Button variant="tertiary-alt" icon="icon-arrow-outward" size="sm" onClick={handleOpenPublicPage} />
           </div>
@@ -384,14 +389,16 @@ function ManageLayoutToolbar() {
                 outlined
                 iconLeft="icon-arrow-shape-up-stack-outline"
                 onClick={() => {
-                  router.push(`/upgrade/${event?.space}`);
+                  if (upgradeTarget) {
+                    router.push(`/upgrade/${upgradeTarget}`);
+                  }
                 }}
               >
                 Upgrade
               </Button>
             )}
 
-            {['design', 'preview'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <>
                 <Menu.Root placement="bottom-end" dismissable={false} className="z-100">
                   <Menu.Trigger>
@@ -429,13 +436,13 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            {state.activeTab === 'manage' && (
+            {state.layoutType === 'event' && state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
             )}
 
-            {['design', 'preview'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
                 <Button
                   size="sm"
@@ -454,7 +461,7 @@ function ManageLayoutToolbar() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={savingLayout || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
@@ -477,31 +484,35 @@ function ManageLayoutToolbar() {
             <i className="icon-lemonade-logo size-5" />
           </button>
           <div className="flex-1 flex justify-center">
-            <Menu.Root strategy="fixed" placement="bottom">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 cursor-pointer min-w-0 text-left"
-                    onClick={() => toggle()}
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1">
-                        <p className="text-lg font-medium truncate">{brandTitle}</p>
-                        <i className="icon-arrow-down size-5 text-tertiary shrink-0" />
+            {showWorkspaceSwitcher ? (
+              <Menu.Root strategy="fixed" placement="bottom">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 cursor-pointer min-w-0 text-left"
+                      onClick={() => toggle()}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1">
+                          <p className="text-lg font-medium truncate">{brandTitle}</p>
+                          <i className="icon-arrow-down size-5 text-tertiary shrink-0" />
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-0 w-2xs">
-                <DropdownComponent shortid={event?.shortid} />
-              </Menu.Content>
-            </Menu.Root>
+                    </button>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-0 w-2xs">
+                  <DropdownComponent shortid={event?.shortid} />
+                </Menu.Content>
+              </Menu.Root>
+            ) : (
+              <p className="text-lg font-medium truncate">{brandTitle}</p>
+            )}
           </div>
 
-          {state.mobilePane === 'chat' ? (
-            <Button variant="flat" icon="icon-settings" onClick={() => store.setMobilePane('main')} />
+          {isMobileSubPane ? (
+            <Button variant="flat" icon="icon-arrow-back-sharp" onClick={() => store.setMobilePane('main')} />
           ) : (
             <Button variant="flat" icon="icon-arrow-outward" onClick={handleOpenPublicPage} />
           )}
@@ -526,7 +537,7 @@ function ManageLayoutToolbar() {
             Chat
           </Button>
           <div className="flex gap-2 w-max">
-            {state.activeTab === 'manage' && state.mobilePane === 'main' && (
+            {state.layoutType === 'event' && state.activeTab === 'manage' && state.mobilePane === 'main' && (
               <Button size="sm" className="rounded-full" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
@@ -537,12 +548,14 @@ function ManageLayoutToolbar() {
               icon="icon-arrow-shape-up-stack-outline"
               className="rounded-full aspect-square"
               onClick={() => {
-                router.push(`/upgrade/${event?.space}`);
+                if (upgradeTarget) {
+                  router.push(`/upgrade/${upgradeTarget}`);
+                }
               }}
             >
               Upgrade
             </Button>
-            {['preview', 'design'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -564,14 +577,14 @@ function ManageLayoutToolbar() {
                   size="sm"
                   variant="secondary"
                   className="rounded-full px-4"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={savingLayout || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
                 </Button>
               </div>
             )}
-            {['preview', 'design'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <Button
                 size="sm"
                 variant="secondary"
@@ -600,34 +613,37 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            <Button
-              icon="icon-more-horiz"
-              variant="tertiary-alt"
-              className="rounded-full aspect-square"
-              size="sm"
-              onClick={() =>
-                sheet.open(SheetMobileMenuAction, {
-                  detent: 'content',
-                  containerClass: 'overflow-visible',
-                  contentClass: 'overflow-visible',
-                  props: {
-                    active: state.activeTab,
-                    onSelect: (action) => {
-                      store.setActiveTab(action);
-                      store.setMobilePane('main');
-                      if (action === 'design') {
-                        sheet.close();
-                        setTimeout(() => {
-                          openDesignSheet();
-                        }, 180);
-                      } else {
-                        sheet.close();
-                      }
+            {hasMultipleTabs && (
+              <Button
+                icon="icon-more-horiz"
+                variant="tertiary-alt"
+                className="rounded-full aspect-square"
+                size="sm"
+                onClick={() =>
+                  sheet.open(SheetMobileMenuAction, {
+                    detent: 'content',
+                    containerClass: 'overflow-visible',
+                    contentClass: 'overflow-visible',
+                    props: {
+                      active: state.activeTab,
+                      availableTabs: state.availableTabs,
+                      onSelect: (action) => {
+                        store.setActiveTab(action);
+                        store.setMobilePane('main');
+                        if (action === 'design') {
+                          sheet.close();
+                          setTimeout(() => {
+                            openDesignPane();
+                          }, 180);
+                        } else {
+                          sheet.close();
+                        }
+                      },
                     },
-                  },
-                })
-              }
-            ></Button>
+                  })
+                }
+              ></Button>
+            )}
           </div>
         </div>
       </div>
@@ -720,34 +736,42 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
 
 function SheetMobileMenuAction({
   active,
+  availableTabs,
   onSelect,
 }: {
   active: ActiveTabType;
+  availableTabs: ActiveTabType[];
   onSelect: (action: ActiveTabType) => void;
 }) {
   return (
     <div className="p-4 flex flex-col gap-3">
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'manage' && 'border-secondary!')}
-        onClick={() => onSelect('manage')}
-      >
-        Manage
-      </Button>
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'design' && 'border-secondary!')}
-        onClick={() => onSelect('design')}
-      >
-        Design
-      </Button>
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'preview' && 'border-secondary!')}
-        onClick={() => onSelect('preview')}
-      >
-        Preview
-      </Button>
+      {availableTabs.includes('manage') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'manage' && 'border-secondary!')}
+          onClick={() => onSelect('manage')}
+        >
+          Manage
+        </Button>
+      )}
+      {availableTabs.includes('design') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'design' && 'border-secondary!')}
+          onClick={() => onSelect('design')}
+        >
+          Design
+        </Button>
+      )}
+      {availableTabs.includes('preview') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'preview' && 'border-secondary!')}
+          onClick={() => onSelect('preview')}
+        >
+          Preview
+        </Button>
+      )}
     </div>
   );
 }

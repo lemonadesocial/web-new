@@ -124,71 +124,71 @@ export function CommunityEventsWithCalendar({ space: initSpace, customTitle, loc
   React.useEffect(() => {
     const main = document.getElementsByTagName('main')?.[0];
 
-    const handleScroll = async () => {
-      if (main) {
-        const { scrollTop, scrollHeight, clientHeight } = main;
+    if (!main) {
+      return;
+    }
 
-        if (Math.abs(scrollHeight - (scrollTop + clientHeight)) <= 1 && !fetching) {
-          if (selectedDate && canLoadMore.date && events.length >= LIMIT) {
+    const handleScroll = async () => {
+      const { scrollTop, scrollHeight, clientHeight } = main;
+
+      if (Math.abs(scrollHeight - (scrollTop + clientHeight)) <= 1 && !fetching) {
+        if (selectedDate && canLoadMore.date && events.length >= LIMIT) {
+          setFetching(true);
+          await resEventsByDate.fetchMore({
+            variables: { skip: events.length },
+            updateQuery: (existing, res) => {
+              if (res?.getEvents?.length) {
+                return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
+              } else {
+                setCanLoadMore((prev) => ({ ...prev, date: false }));
+              }
+
+              setCanLoadMore((prev) => ({ ...prev, date: false }));
+              return existing;
+            },
+          });
+        }
+
+        if (!selectedDate) {
+          if (eventListType === 'upcoming' && canLoadMore.upcomming && upcomingEvents.length >= LIMIT) {
             setFetching(true);
-            await resEventsByDate.fetchMore({
-              variables: { skip: events.length },
+
+            await resUpcomingEvents.fetchMore({
+              variables: { skip: upcomingEvents.length },
               updateQuery: (existing, res) => {
                 if (res?.getEvents?.length) {
                   return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
                 } else {
-                  setCanLoadMore((prev) => ({ ...prev, date: false }));
+                  setCanLoadMore((prev) => ({ ...prev, upcomming: false }));
                 }
 
-                setCanLoadMore((prev) => ({ ...prev, date: false }));
                 return existing;
               },
             });
           }
 
-          if (!selectedDate) {
-            if (eventListType === 'upcoming' && canLoadMore.upcomming && upcomingEvents.length >= LIMIT) {
-              setFetching(true);
+          if (eventListType === 'past' && canLoadMore.past && pastEvents.length >= LIMIT) {
+            setFetching(true);
+            await resPastEvents.fetchMore({
+              variables: { skip: pastEvents.length },
+              updateQuery: (existing, res) => {
+                if (res?.getEvents?.length) {
+                  return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
+                } else {
+                  setCanLoadMore((prev) => ({ ...prev, past: false }));
+                }
 
-              await resUpcomingEvents.fetchMore({
-                variables: { skip: upcomingEvents.length },
-                updateQuery: (existing, res) => {
-                  if (res?.getEvents?.length) {
-                    return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
-                  } else {
-                    setCanLoadMore((prev) => ({ ...prev, upcomming: false }));
-                  }
-
-                  return existing;
-                },
-              });
-            }
-
-            if (eventListType === 'past' && canLoadMore.past && pastEvents.length >= LIMIT) {
-              setFetching(true);
-              await resPastEvents.fetchMore({
-                variables: { skip: pastEvents.length },
-                updateQuery: (existing, res) => {
-                  if (res?.getEvents?.length) {
-                    return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
-                  } else {
-                    setCanLoadMore((prev) => ({ ...prev, past: false }));
-                  }
-
-                  return existing;
-                },
-              });
-            }
+                return existing;
+              },
+            });
           }
-
-          setFetching(false);
         }
+
+        setFetching(false);
       }
     };
 
-    if (main) {
-      main.addEventListener('scroll', handleScroll);
-    }
+    main.addEventListener('scroll', handleScroll);
 
     return () => {
       main.removeEventListener('scroll', handleScroll);

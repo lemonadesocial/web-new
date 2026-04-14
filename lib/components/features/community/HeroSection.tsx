@@ -21,9 +21,10 @@ import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/Co
 interface HeroSectionProps {
   space?: Space | null;
   renderTitle?: () => React.ReactElement;
+  hideManageControls?: boolean;
 }
 
-export function HeroSection({ space }: HeroSectionProps) {
+export function HeroSection({ space, hideManageControls = false }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const signIn = useSignIn();
@@ -98,10 +99,10 @@ export function HeroSection({ space }: HeroSectionProps) {
           {/* Subscribe button */}
           <div className="">
             <div className="flex items-center gap-3">
-              {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
+              {!hideManageControls && [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
                 <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
               )}
-              {canManage ? (
+              {!hideManageControls && canManage ? (
                 <Link href={`/s/manage/${space?.slug || space?._id}`} target="_blank">
                   <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
                     <span className="block">Manage</span>

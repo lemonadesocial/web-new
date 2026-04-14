@@ -1,3 +1,11 @@
-import { CommunityManageLayout } from "$lib/components/features/community-manage/CommunityManageLayout";
+import React from 'react';
 
-export default CommunityManageLayout;
+import ManageLayout from '$lib/components/features/ai/manage/ManageLayout';
+
+export default function Layout({ children }: React.PropsWithChildren) {
+  return (
+    <ManageLayout layoutType="community" availableTabs={['manage', 'design', 'preview']}>
+      {children}
+    </ManageLayout>
+  );
+}

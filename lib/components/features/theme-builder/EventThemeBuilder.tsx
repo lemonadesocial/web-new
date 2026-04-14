@@ -29,11 +29,13 @@ export function EventThemeBuilder({
   autoSave = true,
   inline = false,
   menuInPortal = true,
+  inlinePanelClassName,
 }: {
   eventId?: string;
   autoSave?: boolean;
   inline?: boolean;
   menuInPortal?: boolean;
+  inlinePanelClassName?: string;
 }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
@@ -75,7 +77,7 @@ export function EventThemeBuilder({
   }, [autoSave, data, eventId]);
 
   if (inline) {
-    return <InlineEventThemeBuilderPanel menuInPortal={menuInPortal} />;
+    return <InlineEventThemeBuilderPanel menuInPortal={menuInPortal} className={inlinePanelClassName} />;
   }
 
   return (
@@ -109,7 +111,13 @@ export function EventThemeBuilder({
   );
 }
 
-function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: boolean }) {
+function InlineEventThemeBuilderPanel({
+  menuInPortal = true,
+  className,
+}: {
+  menuInPortal?: boolean;
+  className?: string;
+}) {
   const [data, dispatch] = useEventTheme();
   const themeName = getThemeName(data);
   const menuStrategy = menuInPortal ? 'fixed' : 'absolute';
@@ -141,9 +149,10 @@ function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: 
 
   return (
     <div
-      className={clsx(
+      className={twMerge(
         'h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 pt-4 no-scrollbar space-y-3',
         menuInPortal ? 'overflow-auto' : 'overflow-visible',
+        className,
       )}
       style={
         {
