@@ -88,6 +88,14 @@ export function EventGuestSideContent({
     }
   }, [event]);
 
+  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
+    variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
+    initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
+    skip: !event?._id || isEditable,
+  });
+  const pageConfig = pageConfigData?.getPageConfig;
+  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+
   React.useEffect(() => {
     if (pageConfigFields?.structure_data || isEditable) {
       storeManageLayout.setFullScreen(true);
@@ -98,14 +106,6 @@ export function EventGuestSideContent({
     // Reset fullScreen when component unmounts
     return () => storeManageLayout.setFullScreen(false);
   }, [pageConfigFields?.structure_data, isEditable]);
-
-  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
-    variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
-    initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
-    skip: !event?._id || isEditable,
-  });
-  const pageConfig = pageConfigData?.getPageConfig;
-  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   const me = useMe();
 
