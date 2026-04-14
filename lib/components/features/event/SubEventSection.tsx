@@ -4,7 +4,6 @@ import React from 'react';
 import { EventListCard } from '../EventList';
 import { useQuery } from '$lib/graphql/request';
 import { EventPane } from '../pane';
-import { useInView } from 'react-intersection-observer';
 
 export function SubEventSection({ 
   event, 
@@ -13,10 +12,26 @@ export function SubEventSection({
   event?: Event; 
   title?: string;
 }) {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    rootMargin: '200px 0px',
-  });
+  const [inView, setInView] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px 0px' }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const { data, loading } = useQuery(GetEventsDocument, {
     variables: { skip: 0, limit: 20, subeventParent: event?._id },
@@ -29,7 +44,7 @@ export function SubEventSection({
   if (!loading && !events.length && inView) return null;
 
   return (
-    <div ref={ref} className="flex flex-col gap-2 w-full min-h-[100px]">
+    <div ref={containerRef} className="flex flex-col gap-2 w-full min-h-[100px]">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-bold">{title}</h3>
         {events.length > 0 && (
