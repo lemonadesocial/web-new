@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CraftSpacer (read-only mode) > matches snapshot (disabled) 1`] = `
+<div
+  class="w-full"
+  style="height: 40px;"
+/>
+`;
+
+exports[`CraftTabs (read-only mode) > matches snapshot (disabled, two tabs) 1`] = `
+<div
+  class="w-full flex flex-col gap-4 p-4 rounded-lg"
+>
+  <div
+    class="flex items-center border-b border-card-border overflow-x-auto no-scrollbar"
+  >
+    <button
+      class="px-6 py-3 text-sm font-medium transition-all border-b-2 shrink-0 border-primary text-primary"
+    >
+      A
+    </button>
+    <button
+      class="px-6 py-3 text-sm font-medium transition-all border-b-2 shrink-0 border-transparent text-tertiary hover:text-secondary"
+    >
+      B
+    </button>
+  </div>
+  <div
+    class="flex-1"
+  >
+    <div
+      class="w-full min-h-[100px] relative transition-all"
+    >
+      a
+    </div>
+  </div>
+</div>
+`;
