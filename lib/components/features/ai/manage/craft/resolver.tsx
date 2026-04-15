@@ -1141,7 +1141,7 @@ export const CraftSection = ({
 
               const onMouseMove = (moveEvent: MouseEvent) => {
                 const deltaX = startX - moveEvent.pageX;
-                const deltaY = moveEvent.pageY - startY;
+                const deltaY = startY - moveEvent.pageY;
                 setProp((props: any) => {
                   props.width = Math.max(100, Math.round(startWidth + deltaX));
                   props.height = Math.max(50, Math.round(startHeight + deltaY));
@@ -1900,60 +1900,239 @@ CraftEventSidebarImage.craft = {
   },
 };
 
-export const CraftImageBanner = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  if (!enabled) return null;
+const BannerSettings = () => {
+  const { actions, props } = useSettings();
+  const [uploading, setUploading] = React.useState(false);
+
+  const handleUpload = async (files: File[]) => {
+    if (!files.length) return;
+    try {
+      setUploading(true);
+      const res = await uploadFiles([files[0]], 'event');
+      if (res.length > 0) {
+        const url = generateUrl(res[0], EDIT_KEY.EVENT_PHOTO);
+        actions.setProp((props: any) => (props.url = url));
+        toast.success('Image uploaded successfully!');
+      }
+    } catch (_e) {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
-    <CraftSection name="Image Banner">
-      <Placeholder name="Image Banner" description="Drop your image here" />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Banner Image</p>
+        <FileInput onChange={handleUpload} multiple={false}>
+          {(open) => (
+            <button
+              type="button"
+              onClick={open}
+              className="aspect-video w-full border-2 border-dashed border-card-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-card-hover transition-colors relative overflow-hidden"
+            >
+              {props.url ? (
+                <img src={props.url} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              ) : null}
+
+              <div className="z-10 flex flex-col items-center gap-2">
+                <i
+                  className={clsx(uploading ? 'icon-loader animate-spin' : 'icon-upload-sharp', 'size-8 text-tertiary')}
+                />
+                <p className="text-xs text-tertiary">{uploading ? 'Uploading...' : 'Click to upload'}</p>
+              </div>
+            </button>
+          )}
+        </FileInput>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Image URL</p>
+        <Input
+          value={props.url || ''}
+          onChange={(e) => actions.setProp((props: any) => (props.url = e.target.value))}
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Height (px)</p>
+        <Input
+          type="number"
+          value={props.height || ''}
+          onChange={(e) => actions.setProp((props: any) => (props.height = e.target.value))}
+          placeholder="Auto"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const CraftImageBanner = (props: any) => {
+  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { url, height } = props;
+
+  if (!url && !enabled) return null;
+
+  return (
+    <CraftSection name="Image Banner" noPadding>
+      <div
+        className={clsx(
+          'w-full overflow-hidden rounded-2xl',
+          !url && 'bg-card/20 border border-dashed border-card-border',
+        )}
+        style={{ height: height ? `${height}px` : 'auto', minHeight: !url ? '200px' : '0' }}
+      >
+        {url ? (
+          <img src={url} alt="Banner" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Placeholder name="Image Banner" description="Add an image in settings" />
+          </div>
+        )}
+      </div>
     </CraftSection>
   );
 };
-CraftImageBanner.craft = { displayName: 'Image Banner' };
+CraftImageBanner.craft = {
+  displayName: 'Image Banner',
+  rules: { canDrag: () => true },
+  related: {
+    settings: BannerSettings,
+  },
+};
 
-export const CraftCardsGrid = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  if (!enabled) return null;
+const SocialLinksSettings = () => {
+  const { actions, props } = useSettings();
+  const links = props.links || [];
+
+  const addLink = () => {
+    actions.setProp((props: any) => {
+      if (!props.links) props.links = [];
+      props.links.push('');
+    });
+  };
+
+  const updateLink = (index: number, value: string) => {
+    actions.setProp((props: any) => {
+      props.links[index] = value;
+    });
+  };
+
+  const removeLink = (index: number) => {
+    actions.setProp((props: any) => {
+      props.links.splice(index, 1);
+    });
+  };
+
   return (
-    <CraftSection name="Cards Grid">
-      <Placeholder name="Cards Grid" description="Feature your content in cards" />
-    </CraftSection>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
+        <p className="text-sm font-medium">Links</p>
+        {links.map((link: string, index: number) => (
+          <div key={index} className="flex items-center gap-2">
+            <Input
+              value={link}
+              onChange={(e) => updateLink(index, e.target.value)}
+              placeholder="https://twitter.com/..."
+              className="flex-1"
+            />
+            <Button
+              size="xs"
+              variant="tertiary"
+              icon="icon-delete"
+              onClick={() => removeLink(index)}
+              className="shrink-0"
+            />
+          </div>
+        ))}
+        <Button size="sm" variant="tertiary" icon="icon-plus" onClick={addLink} className="w-full border-dashed">
+          Add Link
+        </Button>
+      </div>
+    </div>
   );
 };
-CraftCardsGrid.craft = { displayName: 'Cards Grid' };
 
-export const CraftTestimonials = (_props: any) => {
+export const CraftSocialLinks = (props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  if (!enabled) return null;
-  return (
-    <CraftSection name="Testimonials">
-      <Placeholder name="Testimonials" description="What people are saying" />
-    </CraftSection>
-  );
-};
-CraftTestimonials.craft = { displayName: 'Testimonials' };
+  const links = props.links || [];
 
-export const CraftSocialLinks = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  if (!enabled) return null;
+  if (links.length === 0 && !enabled) return null;
+
   return (
     <CraftSection name="Social Links">
-      <Placeholder name="Social Links" description="Connect your social media" />
+      <div className="flex flex-wrap gap-4 items-center">
+        {links.length > 0 ? (
+          links.map((link: string, index: number) => (
+            <a
+              key={index}
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 bg-card hover:bg-card-hover border border-card-border rounded-full transition-colors"
+            >
+              <i className="icon-link size-5 text-secondary" />
+            </a>
+          ))
+        ) : (
+          <Placeholder name="Social Links" description="Add links in settings" />
+        )}
+      </div>
     </CraftSection>
   );
 };
-CraftSocialLinks.craft = { displayName: 'Social Links' };
+CraftSocialLinks.craft = {
+  displayName: 'Social Links',
+  rules: { canDrag: () => true },
+  related: {
+    settings: SocialLinksSettings,
+  },
+};
 
-export const CraftCustomHTML = (_props: any) => {
+const CustomHTMLSettings = () => {
+  const { actions, props } = useSettings();
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">HTML Content</p>
+        <Textarea
+          value={props.html || ''}
+          onChange={(e) => actions.setProp((props: any) => (props.html = e.target.value))}
+          placeholder="<div>Add your HTML code here...</div>"
+          rows={10}
+          className="font-mono text-xs"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const CraftCustomHTML = (props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  if (!enabled) return null;
+  const { html } = props;
+
+  if (!html && !enabled) return null;
+
   return (
     <CraftSection name="Custom HTML">
-      <Placeholder name="Custom HTML" description="Add your custom code" />
+      {html ? (
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
+        <Placeholder name="Custom HTML" description="Add your HTML code in settings" />
+      )}
     </CraftSection>
   );
 };
-CraftCustomHTML.craft = { displayName: 'Custom HTML' };
+CraftCustomHTML.craft = {
+  displayName: 'Custom HTML',
+  rules: { canDrag: () => true },
+  related: {
+    settings: CustomHTMLSettings,
+  },
+};
 
 const SpacerSettings = () => {
   const { actions, props } = useSettings();
@@ -2075,8 +2254,8 @@ export const resolver = {
   EventHero: CraftEventHero,
   EventSidebarImage: CraftEventSidebarImage,
   ImageBanner: CraftImageBanner,
-  CardsGrid: CraftCardsGrid,
-  Testimonials: CraftTestimonials,
+  // CardsGrid: CraftCardsGrid,
+  // Testimonials: CraftTestimonials,
   SocialLinks: CraftSocialLinks,
   CustomHTML: CraftCustomHTML,
   Spacer: CraftSpacer,
@@ -2086,4 +2265,3 @@ export const resolver = {
   WalletConnect: CraftWalletConnect,
   Passport: CraftPassport,
 };
-
