@@ -3,6 +3,9 @@ import { atom } from 'jotai';
 
 export type ThemeValues = {
   theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image' | 'passport';
+  template?: {
+    image?: string;
+  };
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;

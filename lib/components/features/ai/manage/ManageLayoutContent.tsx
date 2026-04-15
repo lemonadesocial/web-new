@@ -337,6 +337,7 @@ function ManageLayoutContent() {
   const previewContent = match(state.layoutType)
     .with('event', () =>
       event ? (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- clicking empty canvas background to deselect nodes is a mouse-only affordance; keyboard users deselect via Escape handled elsewhere
         <main
           data-theme-scope="event-preview"
           data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
@@ -354,6 +355,7 @@ function ManageLayoutContent() {
           }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- background click to deselect node; non-interactive container */}
           <div
             className="relative z-10 w-full pt-10 pb-20"
             onClick={(e) => {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useEditor, useNode, NodeProvider } from '@craftjs/core';
-import { Button, NumberInput } from '$lib/components/core';
+import { Button } from '$lib/components/core';
 import { resolver } from './craft/resolver';
-import { aiManageLayoutStore, storeAtom, storeManageLayout, useStoreManageLayout } from './store';
+import { useStoreManageLayout } from './store';
 
 export function SettingsPanel() {
   const state = useStoreManageLayout();

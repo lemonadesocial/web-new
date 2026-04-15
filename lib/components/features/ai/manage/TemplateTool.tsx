@@ -68,6 +68,7 @@ function CreateTemplateModal() {
             placeholder="e.g. My Awesome Layout"
             {...register('name', { required: 'Name is required' })}
             error={!!errors.name}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- focusing the first field when the create-template modal opens is the expected UX
             autoFocus
           />
         </LabeledInput>
@@ -84,15 +85,16 @@ function CreateTemplateModal() {
               <Menu.Root placement="bottom-start" className="w-full">
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div
+                    <button
+                      type="button"
                       onClick={toggle}
-                      className="w-full h-10 px-2.5 flex items-center justify-between rounded-sm bg-primary/8 border border-transparent hover:border-tertiary cursor-pointer transition-colors"
+                      className="w-full h-10 px-2.5 flex items-center justify-between rounded-sm bg-primary/8 border border-transparent hover:border-tertiary cursor-pointer transition-colors text-left"
                     >
                       <span className={clsx('capitalize text-base font-medium', !field.value ? 'text-quaternary' : 'text-primary')}>
                         {field.value || 'Select a category'}
                       </span>
                       <i className="icon-chevron-down size-4 text-tertiary" />
-                    </div>
+                    </button>
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="w-56 p-1 max-h-60 overflow-y-auto no-scrollbar backdrop-blur-md!">
@@ -147,7 +149,7 @@ export function TemplateTool() {
   const state = useStoreManageLayout();
   const [selected, setSelected] = React.useState('');
 
-  const { data, loading } = useQuery(ListTemplatesDocument, {
+  const { data } = useQuery(ListTemplatesDocument, {
     variables: {
       limit: 100,
       target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
@@ -234,7 +236,7 @@ function TemplateCard({
   onClick?: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 cursor-pointer group" onClick={onClick}>
+    <button type="button" className="flex flex-col gap-2 cursor-pointer group text-left" onClick={onClick}>
       <Card.Root
         className={clsx(
           'aspect-[3/4] p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all overflow-hidden',
@@ -248,6 +250,6 @@ function TemplateCard({
         )}
       </Card.Root>
       <p className={clsx('text-[11px] text-center truncate', active ? 'text-primary' : 'text-tertiary')}>{name}</p>
-    </div>
+    </button>
   );
 }

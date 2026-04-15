@@ -1,9 +1,8 @@
 'use client';
 import React from 'react';
-import clsx from 'clsx';
 import { Card } from '$lib/components/core';
 import { useEditor, Element } from '@craftjs/core';
-import { aiManageLayoutStore, storeAtom, storeManageLayout, useStoreManageLayout } from './store';
+import { useStoreManageLayout } from './store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { resolver } from './craft/resolver';
 
@@ -87,7 +86,7 @@ export function SectionTool() {
 }
 
 function SectionCard({ name, componentName }: { name: string; componentName: string }) {
-  const { connectors, actions, query } = useEditor();
+  const { connectors, actions } = useEditor();
   const state = useStoreManageLayout();
   const event = state.data as Event | undefined;
   const component = resolver[componentName as keyof typeof resolver];
@@ -98,9 +97,9 @@ function SectionCard({ name, componentName }: { name: string; componentName: str
         if (ref) {
           // Normal Craft.js drag and drop
           connectors.create(ref, <Element is={component as any} event={event} canvas={componentName === 'Grid' || componentName === 'Col' || componentName === 'Tabs' || componentName === 'Accordion'} />, {
-            onCreate: (nodeId) => {
+            onCreate: (tree) => {
               setTimeout(() => {
-                actions.selectNode(nodeId);
+                actions.selectNode(tree.rootNodeId);
               }, 100);
             },
           });

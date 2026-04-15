@@ -76,7 +76,7 @@ export function EventGuestSide({
 export function EventGuestSideContent({
   event,
   pageConfig: initPageConfig,
-  autoSave = true,
+  autoSave: _autoSave = true,
   isEditable = false,
 }: {
   event: Event;
