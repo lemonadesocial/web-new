@@ -8,7 +8,6 @@ import { resolver } from './craft/resolver';
 
 const eventSections = [
   { id: 'Hero', name: 'Event Title', component: 'EventHero' },
-  { id: 'Registration', name: 'CTA Block', component: 'EventAccess' },
   { id: 'About', name: 'About', component: 'AboutSection' },
   { id: 'DateTime', name: 'Date & Time', component: 'EventDateTimeBlock' },
   { id: 'LocationBlock', name: 'Location', component: 'EventLocationBlock' },
@@ -26,22 +25,12 @@ const universalSections = [
   { id: 'u1', name: 'Rich Text', component: 'RichText' },
   { id: 'u2', name: 'Image Banner', component: 'ImageBanner' },
   { id: 'u3', name: 'Video Embed', component: 'VideoEmbed' },
-  { id: 'u4', name: 'CTA Block', component: 'EventAccess' },
-  { id: 'u5', name: 'Cards Grid', component: 'CardsGrid' },
-  { id: 'u6', name: 'Testimonials', component: 'Testimonials' },
   { id: 'u7', name: 'Social Links', component: 'SocialLinks' },
   { id: 'u8', name: 'Custom HTML', component: 'CustomHTML' },
-  { id: 'u9', name: 'Spacer', component: 'Spacer' },
-  { id: 'u10', name: 'Header', component: 'Header' },
-  { id: 'u11', name: 'Footer', component: 'Footer' },
-  { id: 'u12', name: 'Music Player', component: 'MusicPlayer' },
-  { id: 'u13', name: 'Wallet Connect', component: 'WalletConnect' },
-  { id: 'u14', name: 'Passport', component: 'Passport' },
 ];
 
 const layoutContainers = [
   { id: 'Columns', name: 'Columns', component: 'Grid' },
-  { id: 'Tabs', name: 'Tabs', component: 'Tabs' },
   { id: 'Accordion', name: 'Accordion', component: 'Accordion' },
   { id: 'Column', name: 'Column', component: 'Col' },
 ];
@@ -96,7 +85,7 @@ function SectionCard({ name, componentName }: { name: string; componentName: str
       ref={(ref) => {
         if (ref) {
           // Normal Craft.js drag and drop
-          connectors.create(ref, <Element is={component as any} event={event} canvas={componentName === 'Grid' || componentName === 'Col' || componentName === 'Tabs' || componentName === 'Accordion'} />, {
+          connectors.create(ref, <Element is={component as any} event={event} canvas={componentName === 'Grid' || componentName === 'Col' || componentName === 'Accordion'} />, {
             onCreate: (tree) => {
               setTimeout(() => {
                 actions.selectNode(tree.rootNodeId);
