@@ -1,10 +1,9 @@
 'use client';
 import React from 'react';
-import { useEditor, Frame, Element } from '@craftjs/core';
+import { useEditor, Frame } from '@craftjs/core';
 import { Event, GetPageConfigQuery, PageConfigFragmentFragmentDoc } from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
-import { Container, Grid, Col } from './resolver';
 import { formatStructureData } from '$lib/utils/page-config';
 
 export function CraftableEventSections({

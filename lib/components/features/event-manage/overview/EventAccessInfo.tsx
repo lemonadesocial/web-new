@@ -1,7 +1,6 @@
 'use client';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
@@ -21,13 +20,10 @@ import { useUpdateEvent } from '../store';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 import { UpdateEventLinkModal } from '../modals/UpdateEventLinkModal';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export function EventAccessInfo({ event }: { event: Event }) {
   const [uploading, setUploading] = useState(false);
   const updateEvent = useUpdateEvent();
-
-  const router = useRouter();
 
   const accessMissing = !event.address && !event.virtual_url;
 
@@ -54,7 +50,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
       }
 
       toast.success('Photo updated!');
-    } catch (e) {
+    } catch (_e) {
       toast.error('Failed to update photo');
     }
     setUploading(false);

@@ -17,9 +17,7 @@ import {
   Input,
   Textarea,
   Toggle,
-  Divider,
   Segment,
-  Card,
   TextEditor,
   PlaceAutoComplete,
   FileInput,
@@ -30,11 +28,10 @@ import { randomEventDP } from '$lib/utils/user';
 import { useSettings } from '../SettingsPanel';
 import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
-import { useStoreManageLayout, storeManageLayout, aiManageLayoutStore, storeAtom } from '../store';
+import { useStoreManageLayout, storeManageLayout } from '../store';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
-import { motion } from 'framer-motion';
 
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
@@ -44,7 +41,7 @@ const useEvent = (props: any) => {
 const getEmbedUrl = (url: string) => {
   if (!url) return null;
   // YouTube
-  let match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  let match = url.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/);
   if (match) return `https://www.youtube.com/embed/${match[1]}`;
 
   // Vimeo
@@ -78,7 +75,7 @@ const SidebarImageSettings = () => {
 
         toast.success('Image uploaded successfully!');
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error('Failed to upload image');
     } finally {
       setUploading(false);
@@ -91,7 +88,8 @@ const SidebarImageSettings = () => {
         <p className="text-sm font-medium">Event Image</p>
         <FileInput onChange={handleUpload} multiple={false}>
           {(open) => (
-            <div
+            <button
+              type="button"
               onClick={open}
               className="aspect-square w-full border-2 border-dashed border-card-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-card-hover transition-colors relative overflow-hidden"
             >
@@ -108,7 +106,7 @@ const SidebarImageSettings = () => {
                 />
                 <p className="text-xs text-tertiary">{uploading ? 'Uploading...' : 'Click to upload'}</p>
               </div>
-            </div>
+            </button>
           )}
         </FileInput>
       </div>
@@ -217,7 +215,7 @@ const HeroSettings = () => {
 };
 
 const AboutSettings = () => {
-  const { props } = useSettings();
+  const { props: _props } = useSettings();
   const state = useStoreManageLayout();
   const event = state.data as Event;
 
@@ -367,7 +365,7 @@ const DateTimeSettings = () => {
           placement="bottom"
           start={event?.start}
           end={event?.end}
-          timezone={event?.timezone}
+          timezone={event?.timezone ?? undefined}
           onSelect={(dateRange) =>
             storeManageLayout.setData({
               ...event,
@@ -493,6 +491,7 @@ export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
   const tabs = React.Children.toArray(children);
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drop target must be a div with connect ref; onClick delegates node selection which is already reachable via the Settings panel and keyboard tab navigation
     <div
       ref={(ref: any) => connect(ref)}
       onClick={(e) => {
@@ -572,7 +571,7 @@ const TabSettings = () => {
     </div>
   );
 };
-export const CraftTab = ({ children, label }: any) => {
+export const CraftTab = ({ children, label: _label }: any) => {
   const {
     id,
     connectors: { connect },
@@ -633,6 +632,7 @@ export const CraftAccordion = ({ children }: any) => {
   const { enabled, actions, query } = useEditor((state) => ({ enabled: state.options.enabled }));
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drop target must be a div with connect ref; onClick delegates node selection
     <div
       ref={(ref: any) => connect(ref)}
       onClick={(e) => {
@@ -770,12 +770,10 @@ export const CraftSection = ({
     id,
     connectors: { connect, drag },
     selected,
-    hovered,
     nodeProps,
     actions: { setProp },
   } = useNode((node) => ({
     selected: node.events.selected,
-    hovered: node.events.hovered,
     nodeProps: node.data.props,
   }));
 
@@ -830,6 +828,7 @@ export const CraftSection = ({
   if (!enabled && !children) return null;
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drag/drop container must be a div with connect/drag ref; selection already reachable via Settings panel
     <div
       ref={(ref: any) => ref && connect(isResizing || !enabled ? ref : drag(ref))}
       onClick={(e) => {
@@ -887,6 +886,9 @@ export const CraftSection = ({
 
           {/* Top Resize Handle */}
           <div
+            role="separator"
+            aria-orientation="horizontal"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -918,6 +920,9 @@ export const CraftSection = ({
 
           {/* Left Resize Handle */}
           <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -949,6 +954,9 @@ export const CraftSection = ({
 
           {/* Width Resize Handle (Right) */}
           <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -980,6 +988,9 @@ export const CraftSection = ({
 
           {/* Height Resize Handle (Bottom) */}
           <div
+            role="separator"
+            aria-orientation="horizontal"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -1011,6 +1022,8 @@ export const CraftSection = ({
 
           {/* Corner Resize Handle (Bottom-Right) */}
           <div
+            role="separator"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -1044,6 +1057,8 @@ export const CraftSection = ({
 
           {/* Corner Resize Handle (Top-Left) */}
           <div
+            role="separator"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -1077,6 +1092,8 @@ export const CraftSection = ({
 
           {/* Corner Resize Handle (Top-Right) */}
           <div
+            role="separator"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -1110,6 +1127,8 @@ export const CraftSection = ({
 
           {/* Corner Resize Handle (Bottom-Left) */}
           <div
+            role="separator"
+            aria-hidden="true"
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -1256,6 +1275,7 @@ export const Container = ({
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Container node must be a div with connect ref; selection is delegated to click, Settings panel provides keyboard entry point
     <div
       {...props}
       ref={(ref: any) => connect(ref)}
@@ -1369,6 +1389,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Grid node must be a div with connect ref; selection handled by click on gutter/padding only
     <div
       ref={(ref: any) => connect(ref)}
       onClick={(e) => {
@@ -1435,6 +1456,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
   const widthStyle = isNumericWidth ? `${width}px` : typeof width === 'string' && width.includes('/') ? width : 'auto';
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Col node must be a div with connect ref; selection delegated to click
     <div
       ref={(ref: any) => connect(ref)}
       onClick={(e) => {
@@ -1536,6 +1558,7 @@ export const CraftVideoEmbed = (props: any) => {
       {embedUrl ? (
         <div className="aspect-video w-full overflow-hidden rounded-lg">
           <iframe
+            title="Embedded video"
             src={embedUrl}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1696,7 +1719,7 @@ const GallerySettings = () => {
 export const CraftGallerySection = (props: any) => {
   const event = useEvent(props);
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-  const hasContent = event?.new_new_photos_expanded?.length > 1;
+  const hasContent = (event?.new_new_photos_expanded?.length ?? 0) > 1;
 
   if (!hasContent && !enabled) return null;
 
@@ -1877,7 +1900,7 @@ CraftEventSidebarImage.craft = {
   },
 };
 
-export const CraftImageBanner = (props: any) => {
+export const CraftImageBanner = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1888,7 +1911,7 @@ export const CraftImageBanner = (props: any) => {
 };
 CraftImageBanner.craft = { displayName: 'Image Banner' };
 
-export const CraftCardsGrid = (props: any) => {
+export const CraftCardsGrid = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1899,7 +1922,7 @@ export const CraftCardsGrid = (props: any) => {
 };
 CraftCardsGrid.craft = { displayName: 'Cards Grid' };
 
-export const CraftTestimonials = (props: any) => {
+export const CraftTestimonials = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1910,7 +1933,7 @@ export const CraftTestimonials = (props: any) => {
 };
 CraftTestimonials.craft = { displayName: 'Testimonials' };
 
-export const CraftSocialLinks = (props: any) => {
+export const CraftSocialLinks = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1921,7 +1944,7 @@ export const CraftSocialLinks = (props: any) => {
 };
 CraftSocialLinks.craft = { displayName: 'Social Links' };
 
-export const CraftCustomHTML = (props: any) => {
+export const CraftCustomHTML = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1973,7 +1996,7 @@ CraftSpacer.craft = {
   },
 };
 
-export const CraftHeader = (props: any) => {
+export const CraftHeader = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1984,7 +2007,7 @@ export const CraftHeader = (props: any) => {
 };
 CraftHeader.craft = { displayName: 'Header' };
 
-export const CraftFooter = (props: any) => {
+export const CraftFooter = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -1995,7 +2018,7 @@ export const CraftFooter = (props: any) => {
 };
 CraftFooter.craft = { displayName: 'Footer' };
 
-export const CraftMusicPlayer = (props: any) => {
+export const CraftMusicPlayer = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -2006,7 +2029,7 @@ export const CraftMusicPlayer = (props: any) => {
 };
 CraftMusicPlayer.craft = { displayName: 'Music Player' };
 
-export const CraftWalletConnect = (props: any) => {
+export const CraftWalletConnect = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (
@@ -2017,7 +2040,7 @@ export const CraftWalletConnect = (props: any) => {
 };
 CraftWalletConnect.craft = { displayName: 'Wallet Connect' };
 
-export const CraftPassport = (props: any) => {
+export const CraftPassport = (_props: any) => {
   const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
   if (!enabled) return null;
   return (

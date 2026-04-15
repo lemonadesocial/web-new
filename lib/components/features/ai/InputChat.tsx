@@ -14,12 +14,10 @@ import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } fr
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import {
-  CreatePageConfigDocument,
   Event,
   GetEventDocument,
   GetSpaceDocument,
   GetSpacesDocument,
-  PageConfigOwnerType,
   Space,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
@@ -48,7 +46,6 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
-  const [createPageConfig] = useMutation(CreatePageConfigDocument);
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const hasActivity = !!state.messages.length || !!state.thinking;
@@ -277,7 +274,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
         <div className="flex items-center gap-2">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {showTools && (
-              <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
+              <Menu.Root placement={state.messages.length ? 'top-start' : 'bottom-start'}>
                 <Menu.Trigger>
                   {({ toggle }) => (
                     <Button
@@ -398,8 +395,10 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
       <Menu.Root placement="top-start" readonly={readOnly}>
         <Menu.Trigger>
           {({ toggle }) => (
-            <div
+            <button
+              type="button"
               onClick={() => toggle()}
+              disabled={readOnly}
               className={clsx(
                 'h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border',
                 !readOnly && 'cursor-pointer',
@@ -421,7 +420,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                 {selectedSpace?.title || 'Select community'}
               </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
-            </div>
+            </button>
           )}
         </Menu.Trigger>
         <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">

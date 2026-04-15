@@ -55,10 +55,9 @@ function ManageLayoutToolbar() {
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
 
-  const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
+  const { actions, query, canUndo, canRedo } = useEditor((_state, query) => ({
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
-    isSelected: state.events.selected.size > 0,
   }));
 
   // NOTE: its bc using different store
@@ -272,7 +271,7 @@ function ManageLayoutToolbar() {
           },
         });
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error('Failed to parse layout structure');
     }
   };
@@ -341,7 +340,7 @@ function ManageLayoutToolbar() {
             <Menu.Root strategy="fixed" placement="bottom-start">
               <Menu.Trigger>
                 {({ toggle }) => (
-                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
+                  <button type="button" className="flex items-center gap-3 cursor-pointer text-left" onClick={() => toggle()}>
                     <div className="whitespace-nowrap">
                       <div className="flex justify-between items-center gap-1">
                         <p className="text-sm font-medium">{brandTitle}</p>
@@ -349,7 +348,7 @@ function ManageLayoutToolbar() {
                       </div>
                       {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                     </div>
-                  </div>
+                  </button>
                 )}
               </Menu.Trigger>
               <Menu.Content className="p-0 w-xs">
@@ -689,7 +688,8 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
     <div className="space-y-1">
       <div className="flex px-4 gap-4 border-b pt-1">
         {tabs.map((item) => (
-          <div
+          <button
+            type="button"
             key={item.key}
             className={clsx(
               'text-sm py-1 cursor-pointer hover:text-primary hover:border-b hover:border-primary',
@@ -698,7 +698,7 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
             onClick={() => setActive(item.key)}
           >
             <p>{item.label}</p>
-          </div>
+          </button>
         ))}
       </div>
       <div className="px-2 pb-1">
