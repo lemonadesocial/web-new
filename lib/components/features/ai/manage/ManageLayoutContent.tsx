@@ -25,6 +25,7 @@ import { mockWelcomeEvent } from '../InputChat';
 import { AIChat } from '../AIChat';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
+import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
 import { useEditor } from '@craftjs/core';
