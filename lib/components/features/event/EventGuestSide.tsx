@@ -43,6 +43,7 @@ import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
 import { resolver } from '../ai/manage/craft/resolver';
 import { storeManageLayout } from '../ai/manage/store';
+import { formatStructureData } from '$lib/utils/page-config';
 
 export function EventGuestSide({
   event: initEvent,
@@ -104,8 +105,13 @@ export function EventGuestSideContent({
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
+  const formattedStructureData = React.useMemo(
+    () => formatStructureData(pageConfigFields, pageConfig),
+    [pageConfigFields, pageConfig]
+  );
+
   React.useEffect(() => {
-    if (pageConfigFields?.structure_data || isEditable) {
+    if (formattedStructureData || isEditable) {
       storeManageLayout.setFullScreen(true);
     } else {
       storeManageLayout.setFullScreen(false);
@@ -113,7 +119,7 @@ export function EventGuestSideContent({
 
     // Reset fullScreen when component unmounts
     return () => storeManageLayout.setFullScreen(false);
-  }, [pageConfigFields?.structure_data, isEditable]);
+  }, [formattedStructureData, isEditable]);
 
   const me = useMe();
 
@@ -147,18 +153,11 @@ export function EventGuestSideContent({
       return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
     }
 
-    if (pageConfigFields?.structure_data && isClient) {
-      console.log(pageConfigFields.structure_data);
+    if (formattedStructureData && isClient) {
       return (
         <Editor enabled={false} resolver={resolver}>
           <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
-            <Frame
-              data={
-                typeof pageConfigFields.structure_data === 'string'
-                  ? pageConfigFields.structure_data
-                  : JSON.stringify(pageConfigFields.structure_data)
-              }
-            />
+            <Frame data={JSON.stringify(formattedStructureData)} />
           </div>
         </Editor>
       );
