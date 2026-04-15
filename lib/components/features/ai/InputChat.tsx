@@ -14,10 +14,12 @@ import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } fr
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import {
+  CreatePageConfigDocument,
   Event,
   GetEventDocument,
   GetSpaceDocument,
   GetSpacesDocument,
+  PageConfigOwnerType,
   Space,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
@@ -46,6 +48,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
+  const [createPageConfig] = useMutation(CreatePageConfigDocument);
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const hasActivity = !!state.messages.length || !!state.thinking;
@@ -73,7 +76,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
-  const applyPageDesign = (structureData: unknown, message: string) => {
+  const applyPageDesign = async (structureData: unknown, message: string) => {
     const triggers = getAIPageEditTriggers();
     if (!triggers) {
       console.warn('[AI Designer] Editor bridge not available — page design not applied');
@@ -178,14 +181,17 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
             });
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
           })
-          .with('create_page_config', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          .with('create_page_config', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
           })
-          .with('generate_page_from_description', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          .with('page_designer', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
           })
-          .with('update_page_config_section', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design updated!');
+          .with('generate_page_from_description', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
+          })
+          .with('update_page_config_section', async () => {
+            await applyPageDesign(tool.data, 'Design updated!');
           });
       },
       onError: (error) => {
