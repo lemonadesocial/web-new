@@ -199,14 +199,32 @@ function ConnectorCard({ item, isConnected, connectionId, space, basePath, refet
   const handleDisconnect = async (toggle: () => void) => {
     if (!connectionId || disconnecting) return;
 
-    await disconnectPlatform({
+    const { data } = await disconnectPlatform({
       variables: {
         connectionId,
       },
     });
 
     await refetchSpaceConnections();
-    toast.success('Connector disconnected.');
+
+    const result = data?.disconnectPlatform;
+    if (!result) {
+      // Unexpected — keep defensive fallback
+      toast.success('Connector disconnected.');
+      toggle();
+      return;
+    }
+
+    if (!result.tokenRevoked) {
+      // Revocation failure — BE has sanitized revocationError per PRD US-5.3; DO NOT re-sanitize.
+      // Toast has no 'warning' variant; reuse error (red).
+      toast.error(
+        result.revocationError ??
+          'Token could not be revoked on the external platform. Please revoke access manually in the provider settings.',
+      );
+    } else {
+      toast.success('Connector disconnected.');
+    }
     toggle();
   };
 
