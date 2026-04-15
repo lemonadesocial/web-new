@@ -164,7 +164,7 @@ function ManageLayoutToolbar() {
 
       const serialized = query.serialize();
       const layout_data_raw = JSON.parse(serialized);
-      
+
       // Normalize layout data to ensure it has all fields expected by Frame
       const layout_data = Object.keys(layout_data_raw).reduce((acc: any, key) => {
         const node = layout_data_raw[key];
@@ -230,16 +230,18 @@ function ManageLayoutToolbar() {
 
       // 3. Update event/space data
       if (state.layoutType === 'event') {
-        const address = event.address ? {
-          street_1: event.address.street_1,
-          city: event.address.city,
-          title: event.address.title,
-          region: event.address.region,
-          country: event.address.country,
-          additional_directions: event.address.additional_directions,
-          latitude: event.address.latitude,
-          longitude: event.address.longitude,
-        } : null;
+        const address = event.address
+          ? {
+              street_1: event.address.street_1,
+              city: event.address.city,
+              title: event.address.title,
+              region: event.address.region,
+              country: event.address.country,
+              additional_directions: event.address.additional_directions,
+              latitude: event.address.latitude,
+              longitude: event.address.longitude,
+            }
+          : null;
 
         await updateEventSettings({
           variables: {

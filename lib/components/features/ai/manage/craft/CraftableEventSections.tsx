@@ -5,6 +5,7 @@ import { Event, GetPageConfigQuery, PageConfigFragmentFragmentDoc } from '$lib/g
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { Container, Grid, Col } from './resolver';
+import { formatStructureData } from '$lib/utils/page-config';
 
 export function CraftableEventSections({
   event,
@@ -35,15 +36,16 @@ export function CraftableEventSections({
 
   const pageConfigData = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
+  const formattedStructureData = React.useMemo(
+    () => formatStructureData(pageConfigData, pageConfig),
+    [pageConfigData, pageConfig]
+  );
+
   React.useEffect(() => {
     if (initialized) return;
 
-    if (pageConfigData?.structure_data) {
-      const data =
-        typeof pageConfigData.structure_data === 'string'
-          ? pageConfigData.structure_data
-          : JSON.stringify(pageConfigData.structure_data);
-      actions.deserialize(data);
+    if (formattedStructureData) {
+      actions.deserialize(JSON.stringify(formattedStructureData));
       setInitialized(true);
       return;
     }
