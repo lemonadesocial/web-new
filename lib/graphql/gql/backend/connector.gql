@@ -111,7 +111,11 @@ mutation ConfigureConnection($input: ConfigureConnectionInput!) {
 }
 
 mutation DisconnectPlatform($connectionId: String!) {
-  disconnectPlatform(connectionId: $connectionId)
+  disconnectPlatform(connectionId: $connectionId) {
+    success
+    tokenRevoked
+    revocationError
+  }
 }
 
 mutation ExecuteConnectorAction($input: ExecuteConnectorActionInput!) {
