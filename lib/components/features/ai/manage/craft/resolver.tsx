@@ -29,7 +29,7 @@ import { useSettings } from '../SettingsPanel';
 import { generateUrl, EDIT_KEY } from '$lib/utils/cnd';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { useStoreManageLayout, storeManageLayout } from '../store';
-import { Event } from '$lib/graphql/generated/backend/graphql';
+import { Event, File as BackendFile } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 
@@ -1908,7 +1908,7 @@ const BannerSettings = () => {
     if (!files.length) return;
     try {
       setUploading(true);
-      const res = await uploadFiles([files[0]], 'event');
+      const res = (await uploadFiles([files[0]], 'event')) as BackendFile[];
       if (res.length > 0) {
         const url = generateUrl(res[0], EDIT_KEY.EVENT_PHOTO);
         actions.setProp((props: any) => (props.url = url));
