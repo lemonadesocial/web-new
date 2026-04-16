@@ -24,6 +24,8 @@ export type Scalars = {
 export type Config = {
   __typename?: 'Config';
   _id: Scalars['ObjectId']['output'];
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames?: Maybe<Array<Scalars['String']['output']>>;
   avatar?: Maybe<Scalars['String']['output']>;
   backstory?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTimeISO']['output'];
@@ -65,6 +67,20 @@ export type ConfigFilter = {
   _id_in?: InputMaybe<Array<Scalars['ObjectId']['input']>>;
   _id_lt?: InputMaybe<Scalars['ObjectId']['input']>;
   _id_lte?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_eq?: InputMaybe<Scalars['String']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_exists?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_gt?: InputMaybe<Scalars['String']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_gte?: InputMaybe<Scalars['String']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_lt?: InputMaybe<Scalars['String']['input']>;
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames_lte?: InputMaybe<Scalars['String']['input']>;
   avatar_eq?: InputMaybe<Scalars['String']['input']>;
   avatar_exists?: InputMaybe<Scalars['Boolean']['input']>;
   avatar_gt?: InputMaybe<Scalars['String']['input']>;
@@ -236,6 +252,8 @@ export type ConfigFilter = {
 };
 
 export type ConfigInput = {
+  /** Optional allowlist of tool names for this config. When omitted, all tools are available. */
+  allowedToolNames?: InputMaybe<Array<Scalars['String']['input']>>;
   avatar?: InputMaybe<Scalars['String']['input']>;
   backstory?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;

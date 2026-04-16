@@ -1,42 +1,40 @@
-fragment ActiveSessionFields on ActiveSession {
+fragment ActiveSession on ActiveSession {
   _id
   kratos_identity_id
   kratos_session_id
-  client_type
   device_name
   device_model
   os
   app_version
-  locale
+  client_type
   ip_address
-  created_at
   last_active_at
   is_current
   has_active_websocket
 }
 
-query GetMyActiveSessions {
+query getMyActiveSessions {
   getMyActiveSessions {
-    ...ActiveSessionFields
+    ...ActiveSession
   }
 }
 
-mutation RevokeMySession($sessionId: String!) {
+mutation revokeMySession($sessionId: String!) {
   revokeMySession(sessionId: $sessionId)
 }
 
-mutation RevokeCurrentSession {
+mutation revokeCurrentSession {
   revokeCurrentSession
 }
 
-mutation RevokeAllOtherSessions($stepUpToken: String!) {
-  revokeAllOtherSessions(stepUpToken: $stepUpToken)
-}
-
-mutation RequestStepUpVerification {
+mutation requestStepUpVerification {
   requestStepUpVerification
 }
 
-mutation VerifyStepUpVerification($code: String!) {
+mutation verifyStepUpVerification($code: String!) {
   verifyStepUpVerification(code: $code)
+}
+
+mutation revokeAllOtherSessions($stepUpToken: String!) {
+  revokeAllOtherSessions(stepUpToken: $stepUpToken)
 }
