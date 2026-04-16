@@ -1,36 +1,16 @@
 'use client';
-import React from 'react';
 import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { PageRenderer } from '$lib/components/features/page-builder/renderer';
-import { GetPageConfigQuery, PageConfigFragmentFragmentDoc } from '$lib/graphql/generated/backend/graphql';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
-import { sectionsToNodes, type PageSection } from '$utils/page-sections-mapper';
+import { GetPageConfigQuery } from '$lib/graphql/generated/backend/graphql';
 import { resolver } from './resolver';
 
 export function CraftableEventSections({
-  pageConfig,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  pageConfig: _pageConfig,
 }: {
   pageConfig?: GetPageConfigQuery['getPageConfig'];
 }) {
-  const { actions } = usePageEditor();
-  const [initialized, setInitialized] = React.useState(false);
-
-  const pageConfigData = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
-
-  React.useEffect(() => {
-    if (initialized) return;
-    if (!pageConfigData?.sections?.length) return;
-
-    try {
-      const nodes = sectionsToNodes(pageConfigData.sections as PageSection[]);
-      actions.deserialize(JSON.stringify(nodes));
-    } catch (e) {
-      console.error('Failed to deserialize pageConfig sections', e);
-    }
-
-    setInitialized(true);
-  }, [pageConfigData, initialized, actions]);
-
-  if (!initialized) return null;
+  const { nodes } = usePageEditor();
+  if (Object.keys(nodes).length === 0) return null;
   return <PageRenderer resolver={resolver} />;
 }

@@ -44,7 +44,7 @@ import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
 import { resolver } from '../ai/manage/craft/resolver';
 import { storeManageLayout } from '../ai/manage/store';
-import { formatStructureData } from '$lib/utils/page-config';
+import { sectionsToNodes, type PageSection } from '$utils/page-sections-mapper';
 
 function ReadOnlyPageView({ data, className }: { data: Record<string, any>; className?: string }) {
   const { actions } = usePageEditor();
@@ -123,10 +123,15 @@ export function EventGuestSideContent({
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
-  const formattedStructureData = React.useMemo(
-    () => formatStructureData(pageConfigFields, pageConfig),
-    [pageConfigFields, pageConfig]
-  );
+  const formattedStructureData = React.useMemo(() => {
+    const sections = pageConfigFields?.sections;
+    if (!sections?.length) return null;
+    try {
+      return sectionsToNodes(sections as PageSection[]);
+    } catch {
+      return null;
+    }
+  }, [pageConfigFields]);
 
   React.useEffect(() => {
     if (formattedStructureData || isEditable) {
