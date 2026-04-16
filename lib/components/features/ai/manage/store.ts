@@ -22,6 +22,7 @@ interface IStore {
   isCreatingTemplate: boolean;
   templateName?: string;
   fullScreen: boolean;
+  pageConfigId?: string;
 }
 
 const defaultStore: IStore = {
@@ -63,5 +64,6 @@ export const storeManageLayout = {
   setIsCreatingTemplate: (isCreatingTemplate: boolean, templateName?: string) =>
     aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, isCreatingTemplate, templateName })),
   setFullScreen: (fullScreen: boolean) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, fullScreen })),
+  setPageConfigId: (pageConfigId: string | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, pageConfigId })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };

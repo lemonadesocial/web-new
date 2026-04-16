@@ -26,11 +26,11 @@ const universalSections = [
   { id: 'u8', name: 'Custom HTML', component: 'CustomHTML' },
 ];
 
-const layoutContainers = [
-  { id: 'Columns', name: 'Columns', component: 'Grid' },
-  { id: 'Accordion', name: 'Accordion', component: 'Accordion' },
-  { id: 'Column', name: 'Column', component: 'Col' },
-];
+// const layoutContainers = [
+//   { id: 'Columns', name: 'Columns', component: 'Grid' },
+//   { id: 'Accordion', name: 'Accordion', component: 'Accordion' },
+//   { id: 'Column', name: 'Column', component: 'Col' },
+// ];
 
 export function SectionTool() {
   return (
@@ -57,16 +57,16 @@ export function SectionTool() {
         </div>
       </section>
 
-      <section className="p-5">
-        <div className="mb-4">
-          <p className="text-lg">Layout Containers</p>
-        </div>
-        <div className="grid grid-cols-4 gap-3">
-          {layoutContainers.map((item) => (
-            <SectionCard key={item.id} name={item.name} componentName={item.component} />
-          ))}
-        </div>
-      </section>
+      {/* <section className="p-5"> */}
+      {/*   <div className="mb-4"> */}
+      {/*     <p className="text-lg">Layout Containers</p> */}
+      {/*   </div> */}
+      {/*   <div className="grid grid-cols-4 gap-3"> */}
+      {/*     {layoutContainers.map((item) => ( */}
+      {/*       <SectionCard key={item.id} name={item.name} componentName={item.component} /> */}
+      {/*     ))} */}
+      {/*   </div> */}
+      {/* </section> */}
     </div>
   );
 }

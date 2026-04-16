@@ -17,11 +17,12 @@ import {
   PageConfig,
   PublishEventDocument,
   Template,
-  UpdateEventSettingsDocument,
   UpdateEventThemeDocument,
+  UpdatePageConfigDocument,
   UpdateSpaceDocument,
   SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { nodesToSections } from '$utils/page-sections-mapper';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -86,12 +87,11 @@ function ManageLayoutToolbar() {
     },
   });
 
-  const [updateEventSettings, { loading: savingLayout }] = useMutation(UpdateEventSettingsDocument, {
+  const [updatePageConfig, { loading: updatingPageConfig }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      if (data?.updateEvent?._id) {
+      if (data?.updatePageConfig?._id) {
         toast.success('Layout saved successfully!');
-        store.setData({ ...state.data, ...data.updateEvent } as Event);
-        updateEvent(data.updateEvent);
+        store.setPageConfigId(data.updatePageConfig._id);
       }
     },
     onError: (error) => {
@@ -145,41 +145,29 @@ function ManageLayoutToolbar() {
   });
 
   const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
-  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument);
+  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument, {
+    onComplete: (_, data) => {
+      if (data?.createPageConfig?._id) {
+        toast.success('Layout saved successfully!');
+        store.setPageConfigId(data.createPageConfig._id);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save layout');
+    },
+  });
 
   const handleSaveLayout = async () => {
     if (!event?._id) return;
 
     try {
-      const rootNodes = nodes['ROOT']?.nodes ?? [];
-
-      const layoutSections = rootNodes.map((id) => ({
-        id,
-        hidden: false,
-      }));
-
       const serialized = query.serialize();
-      const layout_data_raw = JSON.parse(serialized);
+      const sections = nodesToSections(serialized);
 
-      // Normalize layout data to ensure it has all fields expected by Frame
-      const layout_data = Object.keys(layout_data_raw).reduce((acc: any, key) => {
-        const node = layout_data_raw[key];
-        acc[key] = {
-          ...node,
-          linkedNodes: node.linkedNodes || {},
-          custom: node.custom || {},
-          props: node.props || {},
-        };
-        return acc;
-      }, {});
-
-      console.log('@@@ normalized layout_data', layout_data);
-
-      let template_id;
+      let template_id: string | undefined;
 
       if (state.isCreatingTemplate) {
         try {
-          // 1. Create template
           const templateResult = await createTemplate({
             variables: {
               input: {
@@ -187,89 +175,47 @@ function ManageLayoutToolbar() {
                 slug: (state.templateName || 'new-template').toLowerCase().replace(/\s+/g, '-'),
                 category: 'CUSTOM',
                 description: 'Custom template created from builder',
-                thumbnail_url: '', // TODO: generate thumbnail or use default
+                thumbnail_url: '',
                 tags: [],
-                structure_data: layout_data,
+                structure_data: JSON.parse(serialized),
                 target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
                 config: {},
               },
             },
           });
-
           const newTemplate = templateResult.data?.createTemplate as Template;
           if (!newTemplate?._id) throw new Error('Failed to create template');
-
           template_id = newTemplate._id;
-
-          toast.success('Template and layout created successfully!');
           store.setIsCreatingTemplate(false);
         } catch (e: any) {
           toast.error(e.message || 'Failed to create template');
         }
       }
 
-      // 2. Create page config
-      const pageConfigResult = await createPageConfig({
-        variables: {
-          input: {
-            name: state.templateName || 'New Template',
-            owner_id: event._id,
-            owner_type: state.layoutType === 'event' ? 'event' : 'space',
-            template_id,
-            structure_data: layout_data,
-          },
-        },
-      });
-
-      const newPageConfig = pageConfigResult.data?.createPageConfig as PageConfig;
-      if (!newPageConfig?._id) throw new Error('Failed to create page config');
-
-      // 3. Update event/space data
-      if (state.layoutType === 'event') {
-        const address = event.address
-          ? {
-              street_1: event.address.street_1,
-              city: event.address.city,
-              title: event.address.title,
-              region: event.address.region,
-              country: event.address.country,
-              additional_directions: event.address.additional_directions,
-              latitude: event.address.latitude,
-              longitude: event.address.longitude,
-            }
-          : null;
-
-        await updateEventSettings({
+      if (state.pageConfigId) {
+        // Update existing page config
+        await updatePageConfig({
           variables: {
-            id: event._id,
-            input: {
-              title: event.title,
-              description: event.description,
-              start: event.start,
-              end: event.end,
-              timezone: event.timezone,
-              address: address,
-              latitude: event.latitude,
-              longitude: event.longitude,
-              virtual_url: event.virtual_url,
-              layout_sections: layoutSections,
-            },
+            id: state.pageConfigId,
+            input: { sections: sections as any },
           },
         });
       } else {
-        await updateSpace({
+        // Create new page config
+        await createPageConfig({
           variables: {
-            id: event._id,
             input: {
-              title: event.title,
-              description: event.description,
-              theme_data: themeState,
+              name: event.title || 'Page Config',
+              owner_id: event._id,
+              owner_type: state.layoutType === 'event' ? 'event' : 'space',
+              template_id,
+              sections: sections as any,
             },
           },
         });
       }
     } catch (_e) {
-      toast.error('Failed to parse layout structure');
+      toast.error('Failed to save layout');
     }
   };
 
@@ -477,7 +423,7 @@ function ManageLayoutToolbar() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
@@ -587,7 +533,7 @@ function ManageLayoutToolbar() {
                   size="sm"
                   variant="secondary"
                   className="rounded-full px-4"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes

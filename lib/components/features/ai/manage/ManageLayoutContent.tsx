@@ -82,6 +82,7 @@ function ManageLayoutContent() {
   const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   React.useEffect(() => {
+    store.setPageConfigId((pageConfig as any)?._id ?? undefined);
     if (pageConfig) {
       aiChatDispatch({
         type: AIChatActionKind.set_page_config,
