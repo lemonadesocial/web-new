@@ -20,6 +20,17 @@ import { getErrorMessage } from '$lib/utils/error';
 
 import { CONNECTOR_ICONS, getConnectorErrorMessage } from './utils';
 
+function handleConnectorError(error: Error, fallbackMessage: string) {
+  const msg = getErrorMessage(error, '');
+  if (msg.toLowerCase().includes('connection is locked')) {
+    toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
+  } else if (msg.toLowerCase().includes('too many attempts')) {
+    toast.error('Too many attempts. Please wait an hour before trying again.');
+  } else {
+    toast.error(getErrorMessage(error, fallbackMessage));
+  }
+}
+
 type ConnectorsProps = {
   space: Space;
   basePath?: string;
@@ -156,16 +167,7 @@ function ConnectorCard({ item, isConnected, isLocked, connectionId, space, baseP
   }, [connectionId, connectorBasePath, router]);
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
-    onError: (error) => {
-      const msg = getErrorMessage(error, '');
-      if (msg.toLowerCase().includes('connection is locked')) {
-        toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
-      } else if (msg.toLowerCase().includes('too many attempts')) {
-        toast.error('Too many attempts. Please wait an hour before trying again.');
-      } else {
-        toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
-      }
-    },
+    onError: (error) => handleConnectorError(error, 'Unable to connect. Please try again.'),
   });
 
   const handleConnect = async () => {
@@ -336,16 +338,7 @@ function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModa
   const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
 
   const [submitApiKey, { loading }] = useMutation(SubmitApiKeyDocument, {
-    onError: (error) => {
-      const msg = getErrorMessage(error, '');
-      if (msg.toLowerCase().includes('connection is locked')) {
-        toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
-      } else if (msg.toLowerCase().includes('too many attempts')) {
-        toast.error('Too many attempts. Please wait an hour before trying again.');
-      } else {
-        toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
-      }
-    },
+    onError: (error) => handleConnectorError(error, 'Unable to connect. Please try again.'),
     onComplete() {
       refetchSpaceConnections();
 
