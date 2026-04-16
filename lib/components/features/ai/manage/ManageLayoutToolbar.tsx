@@ -37,7 +37,7 @@ import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
-import { useEditor } from '@craftjs/core';
+import { usePageEditor } from '$lib/components/features/page-builder/context';
 
 const devices = {
   desktop: {
@@ -55,10 +55,7 @@ function ManageLayoutToolbar() {
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
 
-  const { actions, query, canUndo, canRedo } = useEditor((_state, query) => ({
-    canUndo: query.history.canUndo(),
-    canRedo: query.history.canRedo(),
-  }));
+  const { actions, query, nodes, canUndo, canRedo } = usePageEditor();
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -154,7 +151,7 @@ function ManageLayoutToolbar() {
     if (!event?._id) return;
 
     try {
-      const rootNodes = query.node('ROOT').get().data.nodes;
+      const rootNodes = nodes['ROOT']?.nodes ?? [];
 
       const layoutSections = rootNodes.map((id) => ({
         id,

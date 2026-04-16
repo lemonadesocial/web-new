@@ -11,8 +11,7 @@ import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/g
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 import { hosting } from '$lib/utils/event';
 
-import { Editor } from '@craftjs/core';
-import { resolver } from './craft/resolver';
+import { PageEditorProvider } from '$lib/components/features/page-builder/context';
 import { useParams } from 'next/navigation';
 import { useQuery } from '$lib/graphql/request';
 
@@ -117,24 +116,14 @@ function ManageLayout() {
 
   return (
     <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
-      <Editor
-        resolver={resolver}
-        enabled={state.activeTab !== 'manage'}
-        indicator={{
-          success: 'var(--color-accent-400)',
-          error: 'var(--color-danger-400)',
-          transition: '0.2s',
-          thickness: 3,
-          className: 'z-200',
-        }}
-      >
+      <PageEditorProvider enabled={state.activeTab !== 'manage'}>
         <Header showUI={false} />
         <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={event?.theme_data}>
           <ManageLayoutToolbar />
           <ManageLayoutContent />
         </EventThemeProvider>
         <DrawerContainer />
-      </Editor>
+      </PageEditorProvider>
     </div>
   );
 }

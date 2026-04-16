@@ -27,7 +27,7 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
-import { useEditor } from '@craftjs/core';
+import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
 import { SettingsPanel } from './SettingsPanel';
@@ -59,9 +59,8 @@ function ManageLayoutContent() {
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
-  const { isSelected, actions, query } = useEditor((state) => ({
-    isSelected: state.events.selected.size > 0,
-  }));
+  const { selectedId, actions, query } = usePageEditor();
+  const isSelected = selectedId !== null;
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
   const cachedEvent = state.data as Event | undefined;
@@ -246,7 +245,7 @@ function ManageLayoutContent() {
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- background click to deselect node; non-interactive container */}
           <div
-            className="relative z-10 w-full pt-10 pb-20"
+            className="relative z-10 w-full pt-1 flex flex-1"
             onClick={(e) => {
               if (e.target === e.currentTarget) actions.selectNode(undefined);
             }}
