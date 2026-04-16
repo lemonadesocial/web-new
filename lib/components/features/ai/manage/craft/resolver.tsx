@@ -1916,25 +1916,53 @@ const BannerSettings = () => {
           placeholder="Auto"
         />
       </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Aspect Ratio</p>
+        <Segment
+          items={[
+            { label: 'Auto', value: 'aspect-auto' },
+            { label: 'Square', value: 'aspect-square' },
+            { label: 'Video', value: 'aspect-video' },
+          ]}
+          selected={props.aspectRatio || 'aspect-auto'}
+          onSelect={(item) => actions.setProp((props: any) => (props.aspectRatio = item.value))}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Object Fit</p>
+        <Segment
+          items={[
+            { label: 'Cover', value: 'object-cover' },
+            { label: 'Contain', value: 'object-contain' },
+          ]}
+          selected={props.objectFit || 'object-cover'}
+          onSelect={(item) => actions.setProp((props: any) => (props.objectFit = item.value))}
+          size="sm"
+          className="w-full"
+        />
+      </div>
     </div>
   );
 };
 
 export const CraftImageBanner = (props: any) => {
   const { enabled } = usePageEditor();
-  const { url, height } = props;
+  const { url, height, aspectRatio = 'aspect-auto', objectFit = 'object-cover' } = props;
   if (!url && !enabled) return null;
   return (
     <CraftSection name="Image Banner" noPadding>
       <div
         className={clsx(
           'w-full overflow-hidden rounded-2xl',
+          aspectRatio !== 'aspect-auto' && aspectRatio,
           !url && 'bg-card/20 border border-dashed border-card-border',
         )}
-        style={{ height: height ? `${height}px` : 'auto', minHeight: !url ? '200px' : '0' }}
+        style={{ height: height ? `${height}px` : undefined, minHeight: !url ? '200px' : undefined }}
       >
         {url ? (
-          <img src={url} alt="Banner" className="w-full h-full object-cover" />
+          <img src={url} alt="Banner" className={clsx('w-full h-full', objectFit)} />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Placeholder name="Image Banner" description="Add an image in settings" />
