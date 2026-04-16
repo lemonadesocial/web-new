@@ -85,13 +85,16 @@ const CANVAS_TYPES = new Set([
  */
 export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNode> {
   const nodes: Record<string, CraftNode> = {};
+  const sorted = [...sections].sort((a, b) => a.order - b.order);
+  const rootSection = sorted.find((s) => s.type === 'layout_container');
 
   function addSection(section: PageSection, parentId: string | null): void {
     const resolvedName = TYPE_TO_RESOLVED[section.type] ?? section.type;
-    const nodeId = section.craft_node_id || section.id;
+    const isRootSection = section === rootSection;
+    const nodeId = isRootSection ? 'ROOT' : section.craft_node_id || section.id;
     const childIds = (section.children ?? [])
       .sort((a, b) => a.order - b.order)
-      .map((c) => c.craft_node_id || c.id);
+      .map((c) => (c === rootSection ? 'ROOT' : c.craft_node_id || c.id));
 
     nodes[nodeId] = {
       type: { resolvedName },
@@ -110,16 +113,13 @@ export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNo
     }
   }
 
-  const sorted = [...sections].sort((a, b) => a.order - b.order);
-
   // Find the root container; fall back to building a default layout if absent
-  const rootSection = sorted.find((s) => s.type === 'layout_container');
-
   if (rootSection) {
     addSection(rootSection, null);
     // Top-level non-container sections that have no parent yet
     for (const s of sorted) {
-      if (s.type !== 'layout_container' && !nodes[s.craft_node_id || s.id]) {
+      const nodeId = s.craft_node_id || s.id;
+      if (s.type !== 'layout_container' && !nodes[nodeId]) {
         addSection(s, null);
       }
     }
