@@ -239,7 +239,7 @@ function ManageLayoutContent() {
           )}
           style={{ ...themeState.variables.font, position: 'relative' } as React.CSSProperties}
           onClick={(e) => {
-            if (e.target === e.currentTarget) actions.selectNode(undefined);
+            if (e.target === e.currentTarget) actions.selectNode(null);
           }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
@@ -247,7 +247,7 @@ function ManageLayoutContent() {
           <div
             className="relative z-10 w-full pt-1 flex flex-1"
             onClick={(e) => {
-              if (e.target === e.currentTarget) actions.selectNode(undefined);
+              if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
             <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfig} />
