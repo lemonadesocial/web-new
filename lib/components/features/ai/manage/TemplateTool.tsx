@@ -8,8 +8,11 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   CreateTemplateDocument,
   ListTemplatesDocument,
+  SubscriptionItemType,
   Template,
   TemplateCategory,
+  TemplateTarget,
+  TemplateVisibility,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 
@@ -46,6 +49,9 @@ function CreateTemplateModal() {
           ...data,
           config: {},
           tags: [],
+          subscription_tier_min: SubscriptionItemType.Free,
+          target: TemplateTarget.Event,
+          visibility: TemplateVisibility.Private,
         },
       },
     });
@@ -68,6 +74,7 @@ function CreateTemplateModal() {
             placeholder="e.g. My Awesome Layout"
             {...register('name', { required: 'Name is required' })}
             error={!!errors.name}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- focusing the first field when the create-template modal opens is the expected UX
             autoFocus
           />
         </LabeledInput>
@@ -84,15 +91,16 @@ function CreateTemplateModal() {
               <Menu.Root placement="bottom-start" className="w-full">
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div
+                    <button
+                      type="button"
                       onClick={toggle}
-                      className="w-full h-10 px-2.5 flex items-center justify-between rounded-sm bg-primary/8 border border-transparent hover:border-tertiary cursor-pointer transition-colors"
+                      className="w-full h-10 px-2.5 flex items-center justify-between rounded-sm bg-primary/8 border border-transparent hover:border-tertiary cursor-pointer transition-colors text-left"
                     >
                       <span className={clsx('capitalize text-base font-medium', !field.value ? 'text-quaternary' : 'text-primary')}>
                         {field.value || 'Select a category'}
                       </span>
                       <i className="icon-chevron-down size-4 text-tertiary" />
-                    </div>
+                    </button>
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="w-56 p-1 max-h-60 overflow-y-auto no-scrollbar backdrop-blur-md!">
@@ -138,12 +146,16 @@ function CreateTemplateModal() {
   );
 }
 
+import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
+
+// ... rest of the file ...
+
 export function TemplateTool() {
   const me = useMe();
   const state = useStoreManageLayout();
   const [selected, setSelected] = React.useState('');
 
-  const { data, loading } = useQuery(ListTemplatesDocument, {
+  const { data } = useQuery(ListTemplatesDocument, {
     variables: {
       limit: 100,
       target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
@@ -154,6 +166,11 @@ export function TemplateTool() {
   const myTemplates = templates.filter((t) => t.creator_id === me?._id);
   const exploreTemplates = templates.filter((t) => t.creator_id !== me?._id);
 
+  const handleReset = () => {
+    setSelected('default');
+    getAIPageEditTriggers()?.resetToDefault();
+  };
+
   return (
     <div className="flex flex-col divide-y divide-(--color-divider)">
       <section className="p-5">
@@ -163,13 +180,10 @@ export function TemplateTool() {
         </div>
         <div className="grid grid-cols-3 gap-3">
           <TemplateCard
-            name="New Template"
-            icon="icon-plus"
-            onClick={() => {
-              modal.open(CreateTemplateModal, {
-                className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
-              });
-            }}
+            name="Default"
+            icon="icon-refresh"
+            active={selected === 'default'}
+            onClick={handleReset}
           />
           {myTemplates.map((item) => (
             <TemplateCard
@@ -180,6 +194,15 @@ export function TemplateTool() {
               onClick={() => setSelected(item._id)}
             />
           ))}
+          <TemplateCard
+            name="New Template"
+            icon="icon-plus"
+            onClick={() => {
+              modal.open(CreateTemplateModal, {
+                className: 'md:w-[520px] w-full max-w-[calc(100vw-32px)]',
+              });
+            }}
+          />
         </div>
       </section>
 
@@ -219,7 +242,7 @@ function TemplateCard({
   onClick?: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 cursor-pointer group" onClick={onClick}>
+    <button type="button" className="flex flex-col gap-2 cursor-pointer group text-left" onClick={onClick}>
       <Card.Root
         className={clsx(
           'aspect-[3/4] p-0 flex items-center justify-center bg-(--btn-tertiary) border-transparent transition-all overflow-hidden',
@@ -233,6 +256,6 @@ function TemplateCard({
         )}
       </Card.Root>
       <p className={clsx('text-[11px] text-center truncate', active ? 'text-primary' : 'text-tertiary')}>{name}</p>
-    </div>
+    </button>
   );
 }

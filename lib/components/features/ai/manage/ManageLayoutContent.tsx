@@ -9,11 +9,17 @@ import { useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { Event, GetEventDocument, GetPageConfigDocument, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetPageConfigDocument,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
+} from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
-import { useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { mockWelcomeEvent } from '../InputChat';
 import { AIChat } from '../AIChat';
@@ -21,8 +27,10 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
-import { useEditor } from '@craftjs/core';
+import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
+import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
+import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
@@ -48,13 +56,12 @@ function ManageLayoutContent() {
   const isMobile = useIsMobile();
 
   const state = useStoreManageLayout();
-  const [themeState] = useEventTheme();
+  const [themeState, themeDispatch] = useEventTheme();
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
-  const { isSelected, actions, query } = useEditor((state) => ({
-    isSelected: state.events.selected.size > 0,
-  }));
+  const { selectedId, actions, query } = usePageEditor();
+  const isSelected = selectedId !== null;
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
   const cachedEvent = state.data as Event | undefined;
@@ -76,26 +83,40 @@ function ManageLayoutContent() {
   const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
 
   React.useEffect(() => {
+    store.setPageConfigId((pageConfig as any)?._id ?? undefined);
+    store.setSavedPageTheme((pageConfigData_ as any)?.theme ?? undefined);
     if (pageConfig) {
       aiChatDispatch({
         type: AIChatActionKind.set_page_config,
         payload: { pageConfig },
       });
     }
-  }, [pageConfig, aiChatDispatch]);
+  }, [pageConfig, pageConfigData_, aiChatDispatch]);
 
+  const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
-    if (pageConfigData_?.structure_data) {
-      try {
-        const data = typeof pageConfigData_.structure_data === 'string'
-          ? pageConfigData_.structure_data
-          : JSON.stringify(pageConfigData_.structure_data);
-        actions.deserialize(data);
-      } catch (e) {
-        console.error('Failed to parse pageConfig structure_data', e);
+    // Fire once the page config query has resolved (pageConfigData !== undefined),
+    // even when sections is empty — sectionsToNodes([]) builds a default layout.
+    if (pageConfigData === undefined || hasInitializedRef.current) return;
+    try {
+      const sections = ((pageConfigData_?.sections ?? []) as unknown as PageSection[]);
+      const nodes = sectionsToNodes(sections);
+      actions.deserialize(JSON.stringify(nodes));
+      actions.history.clear();
+
+      // Init theme: prefer PageConfig.theme, fall back to Event.theme_data
+      const storedTheme = (pageConfigData_ as any)?.theme as StoredPageTheme | undefined;
+      if (storedTheme) {
+        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: pageThemeToThemeValues(storedTheme) });
+      } else if (event?.theme_data) {
+        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: event.theme_data });
       }
+
+      hasInitializedRef.current = true;
+    } catch (e) {
+      console.error('Failed to deserialize pageConfig sections', e);
     }
-  }, [pageConfigData_, actions]);
+  }, [pageConfigData, pageConfigData_, actions]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -140,19 +161,69 @@ function ManageLayoutContent() {
     }
   }, [state.layoutType, event, ready, shortid]);
 
-  const editorRef = React.useRef({ actions, query });
-  editorRef.current = { actions, query };
+  const editorRef = React.useRef({ actions, query, state });
+  editorRef.current = { actions, query, state };
+
+  const themeDispatchRef = React.useRef(themeDispatch);
+  themeDispatchRef.current = themeDispatch;
 
   React.useEffect(() => {
     setAIPageEditTriggers({
       applyStructureData: (data: string) => {
         editorRef.current.actions.deserialize(data);
       },
+      applySections: (sections: PageSection[]) => {
+        const nodes = sectionsToNodes(sections);
+        editorRef.current.actions.deserialize(JSON.stringify(nodes));
+      },
+      applySectionUpdate: (section: PageSection) => {
+        const { actions, query } = editorRef.current;
+        const { nodeId, props } = sectionToNodePatch(section);
+        try {
+          query.node(nodeId).get();
+          actions.setProp(nodeId, (p: Record<string, unknown>) => Object.assign(p, props));
+        } catch {
+          // Node doesn't exist — inject at end of main-col
+          const nodes = sectionsToNodes([section]);
+          const newNode = nodes[nodeId];
+          if (newNode && query.node('main-col').get()) {
+            actions.addNode('main-col', newNode.type.resolvedName, newNode.displayName, newNode.props);
+          }
+        }
+      },
+      applyTheme: (theme: Record<string, unknown>) => {
+        const themeValues = pageThemeToThemeValues(theme as StoredPageTheme);
+        themeDispatchRef.current({ type: ThemeBuilderActionKind.reset, payload: themeValues });
+      },
+      getSections: () => {
+        try {
+          return nodesToSections(editorRef.current.query.serialize());
+        } catch {
+          return [];
+        }
+      },
       getStructureData: () => {
         try {
           return editorRef.current.query.serialize();
         } catch {
           return null;
+        }
+      },
+      resetToDefault: () => {
+        const { state, actions } = editorRef.current;
+        if (state.layoutType === 'event') {
+          const _event = state.data as Event;
+          const defaultSections: PageSection[] = [
+            { id: 'event-hero', type: 'event_hero', order: 0, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'event-hero' },
+            { id: 'datetime-block', type: 'event_datetime', order: 1, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'datetime-block' },
+            { id: 'location-block', type: 'event_location_block', order: 2, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'location-block' },
+            { id: 'about', type: 'event_about', order: 3, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'about' },
+            { id: 'registration', type: 'event_registration', order: 4, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'registration' },
+          ];
+          const nodes = sectionsToNodes(defaultSections);
+          console.log(JSON.stringify(nodes));
+          actions.deserialize(JSON.stringify(nodes));
+          // Satisfy exhaustive-deps — _event intentionally unused in default reset
         }
       },
     });
@@ -172,25 +243,29 @@ function ManageLayoutContent() {
   const previewContent = match(state.layoutType)
     .with('event', () =>
       event ? (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- clicking empty canvas background to deselect nodes is a mouse-only affordance; keyboard users deselect via Escape handled elsewhere
         <main
           data-theme-scope="event-preview"
+          data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
-            'relative isolate flex flex-col w-full h-full',
+            'relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
             themeState.theme,
             themeState.config.name,
             themeState.config.color,
-            themeState.config.mode,
+            themeState.config.mode === 'light' && 'light',
+            themeState.config.mode === 'dark' && 'dark',
           )}
-          style={themeState.variables.font as React.CSSProperties}
+          style={{ ...themeState.variables.font, position: 'relative' } as React.CSSProperties}
           onClick={(e) => {
-            if (e.target === e.currentTarget) actions.selectNode(undefined);
+            if (e.target === e.currentTarget) actions.selectNode(null);
           }}
         >
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- background click to deselect node; non-interactive container */}
           <div
-            className="page relative z-10 mx-auto px-4 xl:px-0 pt-10 pb-20"
+            className="relative z-10 w-full pt-1 flex flex-1"
             onClick={(e) => {
-              if (e.target === e.currentTarget) actions.selectNode(undefined);
+              if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
             <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfig} />

@@ -37,9 +37,16 @@ type InputChatProps = {
   showTools?: boolean;
   readOnly?: boolean;
   compact?: boolean;
+  configOverride?: string;
 };
 
-export function InputChat({ variant = 'default', showTools = true, readOnly, compact }: InputChatProps) {
+export function InputChat({
+  variant = 'default',
+  showTools = true,
+  readOnly,
+  compact,
+  configOverride,
+}: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -73,17 +80,38 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
-  const applyPageDesign = (structureData: unknown, message: string) => {
+  const applyPageDesign = async (payload: unknown, message: string) => {
     const triggers = getAIPageEditTriggers();
     if (!triggers) {
       console.warn('[AI Designer] Editor bridge not available — page design not applied');
       return;
     }
-    if (structureData) {
-      const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+    if (!payload) return;
+
+    // New format: { sections: [...], theme: {...} }
+    if (payload && typeof payload === 'object' && !Array.isArray(payload) && 'sections' in payload) {
+      const { sections, theme } = payload as { sections: unknown[]; theme?: Record<string, unknown> };
+      triggers.applySections(sections as any);
+      if (theme) triggers.applyTheme(theme);
+    } else if (Array.isArray(payload)) {
+      // Bare sections array (backward compat)
+      triggers.applySections(payload as any);
+    } else {
+      // Legacy fallback: raw CraftJS JSON string
+      const data = typeof payload === 'string' ? payload : JSON.stringify(payload);
       triggers.applyStructureData(data);
-      toast.success(message);
     }
+    toast.success(message);
+  };
+
+  const applySectionUpdate = async (section: unknown, message: string) => {
+    const triggers = getAIPageEditTriggers();
+    if (!triggers || !section) {
+      console.warn('[AI Designer] Editor bridge not available — section update not applied');
+      return;
+    }
+    triggers.applySectionUpdate(section as any);
+    toast.success(message);
   };
 
   const [run, { loading }] = useMutation(
@@ -178,14 +206,20 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
             });
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
           })
-          .with('create_page_config', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          .with('create_page_config', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
           })
-          .with('generate_page_from_description', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design applied!');
+          .with('page_designer', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
           })
-          .with('update_page_config_section', () => {
-            applyPageDesign(tool.data?.structure_data, 'Design updated!');
+          .with('generate_page_from_description', async () => {
+            await applyPageDesign(tool.data, 'Design applied!');
+          })
+          .with('update_page_config_section', async () => {
+            await applyPageDesign(tool.data, 'Design updated!');
+          })
+          .with('section_designer', async () => {
+            await applySectionUpdate(tool.data, 'Section updated!');
           });
       },
       onError: (error) => {
@@ -218,7 +252,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     run({
       variables: {
         message: text,
-        config: state.config || AI_CONFIG,
+        config: configOverride || state.config || AI_CONFIG,
         session: state.session,
         data: state.data || {},
         standId: state.standId,
@@ -271,7 +305,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
         <div className="flex items-center gap-2">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {showTools && (
-              <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
+              <Menu.Root placement={state.messages.length ? 'top-start' : 'bottom-start'}>
                 <Menu.Trigger>
                   {({ toggle }) => (
                     <Button
@@ -392,8 +426,10 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
       <Menu.Root placement="top-start" readonly={readOnly}>
         <Menu.Trigger>
           {({ toggle }) => (
-            <div
+            <button
+              type="button"
               onClick={() => toggle()}
+              disabled={readOnly}
               className={clsx(
                 'h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border',
                 !readOnly && 'cursor-pointer',
@@ -415,7 +451,7 @@ function SpaceSelector({ currentSpaceId, onSelectSpace, readOnly, compact }: Spa
                 {selectedSpace?.title || 'Select community'}
               </p>
               {!readOnly && <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />}
-            </div>
+            </button>
           )}
         </Menu.Trigger>
         <Menu.Content className="p-1 w-56 max-h-70 overflow-y-auto no-scrollbar overscroll-contain backdrop-blur-md!">

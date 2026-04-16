@@ -21,6 +21,10 @@ interface IStore {
   data?: Event | Space;
   isCreatingTemplate: boolean;
   templateName?: string;
+  fullScreen: boolean;
+  pageConfigId?: string;
+  /** Last persisted PageConfig.theme — used for dirty-check and Reset in the theme editor */
+  savedPageTheme?: Record<string, unknown>;
 }
 
 const defaultStore: IStore = {
@@ -32,6 +36,7 @@ const defaultStore: IStore = {
   designMode: 'builder',
   mobilePane: 'main',
   isCreatingTemplate: false,
+  fullScreen: false,
 };
 
 export const storeAtom = atom(defaultStore);
@@ -60,5 +65,8 @@ export const storeManageLayout = {
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
   setIsCreatingTemplate: (isCreatingTemplate: boolean, templateName?: string) =>
     aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, isCreatingTemplate, templateName })),
+  setFullScreen: (fullScreen: boolean) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, fullScreen })),
+  setPageConfigId: (pageConfigId: string | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, pageConfigId })),
+  setSavedPageTheme: (savedPageTheme: Record<string, unknown> | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, savedPageTheme })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };

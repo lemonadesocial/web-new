@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
@@ -14,14 +14,20 @@ import {
   CreateTemplateDocument,
   Event,
   GetUpcomingEventsDocument,
-  PageConfig,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
   PublishEventDocument,
+  SubscriptionItemType,
   Template,
-  UpdateEventSettingsDocument,
-  UpdateEventThemeDocument,
+  TemplateCategory,
+  TemplateTarget,
+  TemplateVisibility,
+  UpdatePageConfigDocument,
   UpdateSpaceDocument,
   SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { themeValuesToPageTheme, pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
+import { nodesToSections } from '$utils/page-sections-mapper';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -37,7 +43,7 @@ import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 import { PreviewLinkPopup } from './PreviewLinkPopup';
-import { useEditor } from '@craftjs/core';
+import { usePageEditor } from '$lib/components/features/page-builder/context';
 
 const devices = {
   desktop: {
@@ -50,15 +56,12 @@ const devices = {
 
 function ManageLayoutToolbar() {
   const router = useRouter();
+  const params = useParams();
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
 
-  const { actions, query, canUndo, canRedo, isSelected } = useEditor((state, query) => ({
-    canUndo: query.history.canUndo(),
-    canRedo: query.history.canRedo(),
-    isSelected: state.events.selected.size > 0,
-  }));
+  const { actions, query, nodes, canUndo, canRedo } = usePageEditor();
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -75,13 +78,13 @@ function ManageLayoutToolbar() {
       toast.error(error.message || 'Failed to publish event');
     },
   });
-  const [updateEventTheme, { loading: savingTheme }] = useMutation(UpdateEventThemeDocument, {
+  const [updatePageConfigTheme, { loading: savingTheme }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      const updatedEvent = data?.updateEvent;
-      if (updatedEvent?._id) {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
+      if (pageConfig?._id) {
         toast.success('Theme saved successfully!');
-        store.setData({ ...state.data, theme_data: themeState } as Event);
-        updateEvent({ theme_data: updatedEvent.theme_data });
+        store.setPageConfigId(pageConfig._id);
+        store.setSavedPageTheme(themeValuesToPageTheme(themeState) as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -89,12 +92,12 @@ function ManageLayoutToolbar() {
     },
   });
 
-  const [updateEventSettings, { loading: savingLayout }] = useMutation(UpdateEventSettingsDocument, {
+  const [updatePageConfig, { loading: updatingPageConfig }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      if (data?.updateEvent?._id) {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
+      if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
-        store.setData({ ...state.data, ...data.updateEvent } as Event);
-        updateEvent(data.updateEvent);
+        store.setPageConfigId(pageConfig._id);
       }
     },
     onError: (error) => {
@@ -103,9 +106,12 @@ function ManageLayoutToolbar() {
   });
 
   const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
-  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(event?.theme_data));
+  const savedThemeAsValues = state.savedPageTheme
+    ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
+    : (event?.theme_data || defaultTheme);
+  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
 
-  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && isThemeDirty;
+  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
   const brandTitle = event?.title || 'Event Manager';
   const brandSubtitle = event?.space_expanded?.title || '';
   const isMobileSubPane = state.mobilePane !== 'main';
@@ -125,11 +131,11 @@ function ManageLayoutToolbar() {
   };
 
   const handleSaveTheme = () => {
-    if (!event?._id) return;
-    updateEventTheme({
+    if (!state.pageConfigId) return;
+    updatePageConfigTheme({
       variables: {
-        id: event._id,
-        input: { theme_data: themeState },
+        id: state.pageConfigId,
+        input: { theme: themeValuesToPageTheme(themeState) as any },
       },
     });
   };
@@ -148,133 +154,108 @@ function ManageLayoutToolbar() {
   });
 
   const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
-  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument);
+  const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument, {
+    onComplete: (_, data) => {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.createPageConfig);
+      if (pageConfig?._id) {
+        toast.success('Layout saved successfully!');
+        store.setPageConfigId(pageConfig._id);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save layout');
+    },
+  });
 
   const handleSaveLayout = async () => {
     if (!event?._id) return;
 
     try {
-      const nodes = query.getNodes();
-      const rootNodes = query.node('ROOT').get().data.nodes;
+      const serialized = query.serialize();
+      const sections = nodesToSections(serialized);
 
-      const layoutSections = rootNodes.map((id) => ({
-        id,
-        hidden: false,
-      }));
-
-      // Extract updated event/space data from nodes
-      let updatedData: any = {};
-      Object.values(nodes).forEach((node) => {
-        if (node.data.props.event) {
-          updatedData = { ...updatedData, ...node.data.props.event };
-        }
-        if (node.data.props.space) {
-          updatedData = { ...updatedData, ...node.data.props.space };
-        }
-      });
-
-      const layout_data = JSON.parse(query.serialize());
-      console.log('@@@ layout_data', layout_data);
-
-      let template_id;
+      let template_id: string | undefined;
 
       if (state.isCreatingTemplate) {
         try {
-          // 1. Create template
           const templateResult = await createTemplate({
             variables: {
               input: {
                 name: state.templateName || 'New Template',
                 slug: (state.templateName || 'new-template').toLowerCase().replace(/\s+/g, '-'),
-                category: 'CUSTOM',
+                category: TemplateCategory.Custom,
                 description: 'Custom template created from builder',
-                thumbnail_url: '', // TODO: generate thumbnail or use default
+                thumbnail_url: '',
                 tags: [],
-                structure_data: layout_data,
-                target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
+                structure_data: JSON.parse(serialized),
+                target: state.layoutType === 'event' ? TemplateTarget.Event : TemplateTarget.Space,
                 config: {},
+                subscription_tier_min: SubscriptionItemType.Free,
+                visibility: TemplateVisibility.Private,
               },
             },
           });
-
           const newTemplate = templateResult.data?.createTemplate as Template;
           if (!newTemplate?._id) throw new Error('Failed to create template');
-
           template_id = newTemplate._id;
-
-          toast.success('Template and layout created successfully!');
           store.setIsCreatingTemplate(false);
         } catch (e: any) {
           toast.error(e.message || 'Failed to create template');
         }
       }
 
-      // 2. Create page config
-      const pageConfigResult = await createPageConfig({
-        variables: {
-          input: {
-            name: state.templateName || 'New Template',
-            owner_id: event._id,
-            owner_type: state.layoutType === 'event' ? 'event' : 'space',
-            template_id,
-            structure_data: layout_data,
-          },
-        },
-      });
-
-      const newPageConfig = pageConfigResult.data?.createPageConfig as PageConfig;
-      if (!newPageConfig?._id) throw new Error('Failed to create page config');
-
-      // 3. Update event/space data
-      if (state.layoutType === 'event') {
-        await updateEventSettings({
+      if (state.pageConfigId) {
+        // Update existing page config
+        await updatePageConfig({
           variables: {
-            id: event._id,
-            input: {
-              title: updatedData.title,
-              description: updatedData.description,
-              start: updatedData.start,
-              end: updatedData.end,
-              timezone: updatedData.timezone,
-              address: updatedData.address,
-              latitude: updatedData.latitude,
-              longitude: updatedData.longitude,
-              virtual_url: updatedData.virtual_url,
-              layout_sections: layoutSections,
-            },
+            id: state.pageConfigId,
+            input: { sections: sections as any },
           },
         });
       } else {
-        await updateSpace({
+        // Create new page config
+        await createPageConfig({
           variables: {
-            id: event._id,
             input: {
-              title: updatedData.title,
-              description: updatedData.description,
-              theme_data: themeState,
+              name: event.title || 'Page Config',
+              owner_id: event._id,
+              owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
+              template_id,
+              sections: sections as any,
             },
           },
         });
       }
-    } catch (e) {
-      toast.error('Failed to parse layout structure');
+    } catch (_e) {
+      toast.error('Failed to save layout');
     }
   };
+
+  const editorRef = React.useRef({ actions, query, state });
+  editorRef.current = { actions, query, state };
+
+  React.useEffect(() => {
+    const handleSave = () => {
+      handleSaveLayout();
+    };
+    window.addEventListener('craft-save', handleSave);
+    return () => window.removeEventListener('craft-save', handleSave);
+  }, [handleSaveLayout]);
 
   const handleResetTheme = () => {
     themeDispatch({
       type: ThemeBuilderActionKind.reset,
-      payload: event?.theme_data || defaultTheme,
+      payload: savedThemeAsValues,
     });
   };
 
   const handleOpenPublicPage = () => {
-    match(state.layoutType)
-      .with('event', () => {
-        const shortid = (state.data as Event)?.shortid;
-        if (shortid) window.open(`/e/${shortid}`);
-      })
-      .otherwise(() => {});
+    const shortid = (state.data as Event)?.shortid || (params?.shortid as string);
+    if (shortid) {
+      window.open(`/e/${shortid}`, '_blank');
+    } else {
+      toast.error('Could not find event shortid');
+    }
   };
 
   const handleOpenMobileChat = () => {
@@ -314,7 +295,7 @@ function ManageLayoutToolbar() {
             <Menu.Root strategy="fixed" placement="bottom-start">
               <Menu.Trigger>
                 {({ toggle }) => (
-                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
+                  <button type="button" className="flex items-center gap-3 cursor-pointer text-left" onClick={() => toggle()}>
                     <div className="whitespace-nowrap">
                       <div className="flex justify-between items-center gap-1">
                         <p className="text-sm font-medium">{brandTitle}</p>
@@ -322,7 +303,7 @@ function ManageLayoutToolbar() {
                       </div>
                       {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                     </div>
-                  </div>
+                  </button>
                 )}
               </Menu.Trigger>
               <Menu.Content className="p-0 w-xs">
@@ -435,7 +416,7 @@ function ManageLayoutToolbar() {
               </Button>
             )}
 
-            {['design', 'preview'].includes(state.activeTab) && (
+            {state.activeTab === 'design' && state.builderTab === 'sections' && (
               <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
                 <Button
                   size="sm"
@@ -454,7 +435,7 @@ function ManageLayoutToolbar() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
@@ -542,7 +523,7 @@ function ManageLayoutToolbar() {
             >
               Upgrade
             </Button>
-            {['preview', 'design'].includes(state.activeTab) && (
+            {state.activeTab === 'design' && state.builderTab === 'sections' && (
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -564,7 +545,7 @@ function ManageLayoutToolbar() {
                   size="sm"
                   variant="secondary"
                   className="rounded-full px-4"
-                  loading={savingLayout || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
@@ -662,7 +643,8 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
     <div className="space-y-1">
       <div className="flex px-4 gap-4 border-b pt-1">
         {tabs.map((item) => (
-          <div
+          <button
+            type="button"
             key={item.key}
             className={clsx(
               'text-sm py-1 cursor-pointer hover:text-primary hover:border-b hover:border-primary',
@@ -671,7 +653,7 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
             onClick={() => setActive(item.key)}
           >
             <p>{item.label}</p>
-          </div>
+          </button>
         ))}
       </div>
       <div className="px-2 pb-1">
