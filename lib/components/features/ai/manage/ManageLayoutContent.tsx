@@ -25,11 +25,11 @@ import { mockWelcomeEvent } from '../InputChat';
 import { AIChat } from '../AIChat';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
-import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
 import { useEditor } from '@craftjs/core';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
+import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
 import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
@@ -93,17 +93,14 @@ function ManageLayoutContent() {
 
   const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
-    if (pageConfigData_?.structure_data && !hasInitializedRef.current) {
+    if (pageConfigData_?.sections?.length && !hasInitializedRef.current) {
       try {
-        const data =
-          typeof pageConfigData_.structure_data === 'string'
-            ? pageConfigData_.structure_data
-            : JSON.stringify(pageConfigData_.structure_data);
-        actions.deserialize(data);
+        const nodes = sectionsToNodes(pageConfigData_.sections as PageSection[]);
+        actions.deserialize(JSON.stringify(nodes));
         actions.history.clear();
         hasInitializedRef.current = true;
       } catch (e) {
-        console.error('Failed to parse pageConfig structure_data', e);
+        console.error('Failed to deserialize pageConfig sections', e);
       }
     }
   }, [pageConfigData_, actions]);
@@ -159,6 +156,35 @@ function ManageLayoutContent() {
       applyStructureData: (data: string) => {
         editorRef.current.actions.deserialize(data);
       },
+      applySections: (sections: PageSection[]) => {
+        const nodes = sectionsToNodes(sections);
+        editorRef.current.actions.deserialize(JSON.stringify(nodes));
+      },
+      applySectionUpdate: (section: PageSection) => {
+        const { actions, query } = editorRef.current;
+        const { nodeId, props } = sectionToNodePatch(section);
+        try {
+          query.node(nodeId).get();
+          actions.setProp(nodeId, (p: Record<string, unknown>) => Object.assign(p, props));
+        } catch {
+          // Node doesn't exist — inject at end of main-col
+          const nodes = sectionsToNodes([section]);
+          const newNode = nodes[nodeId];
+          if (newNode && query.node('main-col').get()) {
+            actions.addNodeTree(
+              { rootNodeId: nodeId, nodes: { [nodeId]: { id: nodeId, data: { ...newNode, type: newNode.type } } } },
+              'main-col',
+            );
+          }
+        }
+      },
+      getSections: () => {
+        try {
+          return nodesToSections(editorRef.current.query.serialize());
+        } catch {
+          return [];
+        }
+      },
       getStructureData: () => {
         try {
           return editorRef.current.query.serialize();
@@ -169,155 +195,18 @@ function ManageLayoutContent() {
       resetToDefault: () => {
         const { state, actions } = editorRef.current;
         if (state.layoutType === 'event') {
-          const event = state.data as Event;
-          const sectionMap: Record<string, string> = {
-            registration: 'EventAccess',
-            about: 'AboutSection',
-            collectibles: 'EventCollectibles',
-            location: 'LocationSection',
-          };
-
-          const displayMap: Record<string, string> = {
-            registration: 'CTA Block',
-            about: 'About',
-            collectibles: 'Collectibles',
-            location: 'Location',
-          };
-
-          const sections = (event?.layout_sections || DEFAULT_LAYOUT_SECTIONS).reduce((acc: any, item: any) => {
-            const componentName = sectionMap[item.id];
-            const displayName = displayMap[item.id] || componentName;
-            if (!componentName) return acc;
-            if (item.id === 'collectibles' && !event?._id) return acc; // Simple check or pass attending if available
-
-            acc[item.id] = {
-              type: { resolvedName: componentName },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'main-col',
-              displayName: displayName,
-              custom: {},
-            };
-            return acc;
-          }, {});
-
-          const json = {
-            ROOT: {
-              type: { resolvedName: 'Container' },
-              isCanvas: true,
-              props: { className: 'w-full', centered: false, width: '' },
-              nodes: ['main-grid'],
-              linkedNodes: {},
-              parent: null,
-              displayName: 'Container',
-              custom: {},
-            },
-            'main-grid': {
-              type: { resolvedName: 'Grid' },
-              isCanvas: true,
-              props: { gap: '18', centered: true, width: '1080' },
-              nodes: ['sidebar-col', 'main-col'],
-              linkedNodes: {},
-              parent: 'ROOT',
-              displayName: 'Grid',
-              custom: {},
-            },
-            'sidebar-col': {
-              type: { resolvedName: 'Col' },
-              isCanvas: true,
-              props: { width: '300' },
-              nodes: ['sidebar-image', 'community-section', 'hosted-by-section', 'attendees-section'],
-              linkedNodes: {},
-              parent: 'main-grid',
-              displayName: 'Sidebar Column',
-              custom: {},
-            },
-            'sidebar-image': {
-              type: { resolvedName: 'EventSidebarImage' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'sidebar-col',
-              displayName: 'Event Image',
-              custom: {},
-            },
-            'community-section': {
-              type: { resolvedName: 'CommunitySection' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'sidebar-col',
-              displayName: 'Community',
-              custom: {},
-            },
-            'hosted-by-section': {
-              type: { resolvedName: 'HostedBySection' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'sidebar-col',
-              displayName: 'Hosted By',
-              custom: {},
-            },
-            'attendees-section': {
-              type: { resolvedName: 'AttendeesSection' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'sidebar-col',
-              displayName: 'Attendees',
-              custom: {},
-            },
-            'main-col': {
-              type: { resolvedName: 'Col' },
-              isCanvas: true,
-              props: { width: '' },
-              nodes: ['event-hero', 'datetime-block', 'location-block', ...Object.keys(sections)],
-              linkedNodes: {},
-              parent: 'main-grid',
-              displayName: 'Main Column',
-              custom: {},
-            },
-            'event-hero': {
-              type: { resolvedName: 'EventHero' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'main-col',
-              displayName: 'Event Hero',
-              custom: {},
-            },
-            'datetime-block': {
-              type: { resolvedName: 'EventDateTimeBlock' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'main-col',
-              displayName: 'Date Time Block',
-              custom: {},
-            },
-            'location-block': {
-              type: { resolvedName: 'EventLocationBlock' },
-              isCanvas: false,
-              props: {},
-              nodes: [],
-              linkedNodes: {},
-              parent: 'main-col',
-              displayName: 'Location Info',
-              custom: {},
-            },
-            ...sections,
-          };
-          console.log(JSON.stringify(json));
-          actions.deserialize(JSON.stringify(json));
+          const _event = state.data as Event;
+          const defaultSections: PageSection[] = [
+            { id: 'event-hero', type: 'event_hero', order: 0, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'event-hero' },
+            { id: 'datetime-block', type: 'event_datetime', order: 1, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'datetime-block' },
+            { id: 'location-block', type: 'event_location_block', order: 2, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'location-block' },
+            { id: 'about', type: 'event_about', order: 3, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'about' },
+            { id: 'registration', type: 'event_registration', order: 4, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'registration' },
+          ];
+          const nodes = sectionsToNodes(defaultSections);
+          console.log(JSON.stringify(nodes));
+          actions.deserialize(JSON.stringify(nodes));
+          // Satisfy exhaustive-deps — _event intentionally unused in default reset
         }
       },
     });
