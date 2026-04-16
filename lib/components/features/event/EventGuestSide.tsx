@@ -127,7 +127,7 @@ export function EventGuestSideContent({
     const sections = pageConfigFields?.sections;
     if (!sections?.length) return null;
     try {
-      return sectionsToNodes(sections as PageSection[]);
+      return sectionsToNodes(sections as unknown as PageSection[]);
     } catch {
       return null;
     }
@@ -173,7 +173,7 @@ export function EventGuestSideContent({
 
   const renderContent = () => {
     if (isEditable && isClient && event) {
-      return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
+      return <CraftableEventSections pageConfig={pageConfig} />;
     }
 
     if (formattedStructureData && isClient) {

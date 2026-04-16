@@ -99,7 +99,7 @@ function ManageLayoutContent() {
     // even when sections is empty — sectionsToNodes([]) builds a default layout.
     if (pageConfigData === undefined || hasInitializedRef.current) return;
     try {
-      const sections = ((pageConfigData_?.sections ?? []) as PageSection[]);
+      const sections = ((pageConfigData_?.sections ?? []) as unknown as PageSection[]);
       const nodes = sectionsToNodes(sections);
       actions.deserialize(JSON.stringify(nodes));
       actions.history.clear();

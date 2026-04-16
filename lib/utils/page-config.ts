@@ -1,7 +1,5 @@
-import { PageConfigFragmentFragment } from '$lib/graphql/generated/backend/graphql';
-
 export function formatStructureData(
-  pageConfigFields?: PageConfigFragmentFragment | null,
+  pageConfigFields?: any | null,
   pageConfig?: any
 ) {
   const rawDataFields = pageConfigFields?.structure_data;

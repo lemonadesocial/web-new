@@ -14,9 +14,14 @@ import {
   CreateTemplateDocument,
   Event,
   GetUpcomingEventsDocument,
-  PageConfig,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
   PublishEventDocument,
+  SubscriptionItemType,
   Template,
+  TemplateCategory,
+  TemplateTarget,
+  TemplateVisibility,
   UpdatePageConfigDocument,
   UpdateSpaceDocument,
   SpaceFragmentDoc,
@@ -75,9 +80,10 @@ function ManageLayoutToolbar() {
   });
   const [updatePageConfigTheme, { loading: savingTheme }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      if (data?.updatePageConfig?._id) {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
+      if (pageConfig?._id) {
         toast.success('Theme saved successfully!');
-        store.setPageConfigId(data.updatePageConfig._id);
+        store.setPageConfigId(pageConfig._id);
         store.setSavedPageTheme(themeValuesToPageTheme(themeState) as Record<string, unknown>);
       }
     },
@@ -88,9 +94,10 @@ function ManageLayoutToolbar() {
 
   const [updatePageConfig, { loading: updatingPageConfig }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      if (data?.updatePageConfig?._id) {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
+      if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
-        store.setPageConfigId(data.updatePageConfig._id);
+        store.setPageConfigId(pageConfig._id);
       }
     },
     onError: (error) => {
@@ -149,9 +156,10 @@ function ManageLayoutToolbar() {
   const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
   const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument, {
     onComplete: (_, data) => {
-      if (data?.createPageConfig?._id) {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.createPageConfig);
+      if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
-        store.setPageConfigId(data.createPageConfig._id);
+        store.setPageConfigId(pageConfig._id);
       }
     },
     onError: (error) => {
@@ -175,13 +183,15 @@ function ManageLayoutToolbar() {
               input: {
                 name: state.templateName || 'New Template',
                 slug: (state.templateName || 'new-template').toLowerCase().replace(/\s+/g, '-'),
-                category: 'CUSTOM',
+                category: TemplateCategory.Custom,
                 description: 'Custom template created from builder',
                 thumbnail_url: '',
                 tags: [],
                 structure_data: JSON.parse(serialized),
-                target: state.layoutType === 'event' ? 'EVENT' : 'SPACE',
+                target: state.layoutType === 'event' ? TemplateTarget.Event : TemplateTarget.Space,
                 config: {},
+                subscription_tier_min: SubscriptionItemType.Free,
+                visibility: TemplateVisibility.Private,
               },
             },
           });
@@ -209,7 +219,7 @@ function ManageLayoutToolbar() {
             input: {
               name: event.title || 'Page Config',
               owner_id: event._id,
-              owner_type: state.layoutType === 'event' ? 'event' : 'space',
+              owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
               template_id,
               sections: sections as any,
             },

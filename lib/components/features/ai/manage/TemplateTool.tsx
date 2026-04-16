@@ -8,8 +8,11 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   CreateTemplateDocument,
   ListTemplatesDocument,
+  SubscriptionItemType,
   Template,
   TemplateCategory,
+  TemplateTarget,
+  TemplateVisibility,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 
@@ -46,6 +49,9 @@ function CreateTemplateModal() {
           ...data,
           config: {},
           tags: [],
+          subscription_tier_min: SubscriptionItemType.Free,
+          target: TemplateTarget.Event,
+          visibility: TemplateVisibility.Private,
         },
       },
     });
