@@ -472,7 +472,7 @@ export const CraftSection = ({
   const { nodeProps, selected, actions: nodeActions } = usePageNode();
   const [isResizing, setIsResizing] = React.useState(false);
   const [isDragging, setIsDragging] = React.useState(false);
-  const [dragEdge, setDragEdge] = React.useState<'top' | 'bottom' | null>(null);
+  const [dragZone, setDragZone] = React.useState<'top' | 'bottom' | 'inline' | null>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
 
   const setProp = (updater: (p: any) => void) => nodeActions.setProp(updater);
@@ -533,24 +533,49 @@ export const CraftSection = ({
           (source.data.type === 'canvas-node' && source.data.nodeId !== id) || source.data.type === 'new-section',
         getData: ({ input }) => {
           const rect = el.getBoundingClientRect();
-          const edge: 'top' | 'bottom' = input.clientY < rect.top + rect.height / 2 ? 'top' : 'bottom';
-          return { nodeId: id, edge };
+          const relY = input.clientY - rect.top;
+          const threshold = rect.height * 0.25;
+          let zone: 'top' | 'bottom' | 'inline';
+          if (relY < threshold) zone = 'top';
+          else if (relY > rect.height - threshold) zone = 'bottom';
+          else zone = 'inline';
+          return { nodeId: id, zone };
         },
-        onDragEnter: ({ self }) => setDragEdge((self.data as any).edge),
-        onDrag: ({ self }) => setDragEdge((self.data as any).edge),
-        onDragLeave: () => setDragEdge(null),
+        onDragEnter: ({ self }) => setDragZone((self.data as any).zone),
+        onDrag: ({ self }) => setDragZone((self.data as any).zone),
+        onDragLeave: () => setDragZone(null),
         onDrop: ({ self, source }) => {
-          setDragEdge(null);
-          const edge = (self.data as any).edge as 'top' | 'bottom';
+          setDragZone(null);
+          const zone = (self.data as any).zone as 'top' | 'bottom' | 'inline';
           const { index: curIndex, parentId: curParent } = getPosition();
           if (!curParent) return;
-          const targetIndex = edge === 'top' ? curIndex : curIndex + 1;
 
-          if (source.data.type === 'canvas-node') {
-            actions.moveNode(source.data.nodeId as string, curParent, targetIndex);
-          } else if (source.data.type === 'new-section') {
-            const { componentName, displayName } = source.data as any;
-            actions.addNode(curParent, componentName, displayName, {}, targetIndex);
+          if (zone === 'top' || zone === 'bottom') {
+            const targetIndex = zone === 'top' ? curIndex : curIndex + 1;
+            if (source.data.type === 'canvas-node') {
+              actions.moveNode(source.data.nodeId as string, curParent, targetIndex);
+            } else if (source.data.type === 'new-section') {
+              const { componentName, displayName } = source.data as any;
+              actions.addNode(curParent, componentName, displayName, {}, targetIndex);
+            }
+          } else {
+            // inline: place side-by-side in an InlineGrid
+            const parentIsInlineGrid = nodes[curParent]?.type?.resolvedName === 'InlineGrid';
+            if (source.data.type === 'canvas-node') {
+              const sourceId = source.data.nodeId as string;
+              if (parentIsInlineGrid) {
+                actions.moveNode(sourceId, curParent, Number.MAX_SAFE_INTEGER);
+              } else {
+                actions.wrapInInlineGrid(id, sourceId);
+              }
+            } else if (source.data.type === 'new-section') {
+              const { componentName, displayName } = source.data as any;
+              if (parentIsInlineGrid) {
+                actions.addNode(curParent, componentName, displayName, {});
+              } else {
+                actions.wrapNewInInlineGrid(id, componentName, displayName);
+              }
+            }
           }
         },
       }),
@@ -584,11 +609,16 @@ export const CraftSection = ({
       }}
     >
       {/* Drop indicators */}
-      {dragEdge === 'top' && enabled && (
+      {dragZone === 'top' && enabled && (
         <div className="absolute -top-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
       )}
-      {dragEdge === 'bottom' && enabled && (
+      {dragZone === 'bottom' && enabled && (
         <div className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
+      )}
+      {dragZone === 'inline' && enabled && (
+        <div className="absolute inset-0 border-2 border-accent-400 bg-accent-400/10 z-[110] rounded-2xl pointer-events-none flex items-center justify-center">
+          <span className="bg-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Side by side</span>
+        </div>
       )}
 
       {/* Selection border */}
@@ -1156,24 +1186,29 @@ export const Container = ({
   const { selected } = usePageNode();
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const isEmpty = React.Children.count(children) === 0;
+  const [containerDropActive, setContainerDropActive] = React.useState(false);
 
-  // Empty-container drop target: when the col has no sections, accept drops directly
+  // Always-active drop target on the container div itself.
+  // The empty space below children has no element covering it, so drags there
+  // naturally hit the container div — no separate strip needed.
   React.useEffect(() => {
-    if (!enabled || !isEmpty || !containerRef.current) return;
+    if (!enabled || !containerRef.current) return;
     return dropTargetForElements({
       element: containerRef.current,
       canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDragEnter: () => setContainerDropActive(true),
+      onDragLeave: () => setContainerDropActive(false),
       onDrop: ({ source }) => {
+        setContainerDropActive(false);
         if (source.data.type === 'canvas-node') {
-          actions.moveNode(source.data.nodeId as string, id, 0);
+          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
         } else if (source.data.type === 'new-section') {
           const { componentName, displayName } = source.data as any;
-          actions.addNode(id, componentName, displayName, {}, 0);
+          actions.addNode(id, componentName, displayName, {});
         }
       },
     });
-  }, [enabled, id, isEmpty]);
+  }, [enabled, id]);
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -1186,13 +1221,14 @@ export const Container = ({
         actions.selectNode(id);
       }}
       className={clsx(
-        'flex flex-col gap-6 w-full transition-all relative flex-1 py-4',
+        'flex flex-col gap-6 w-full transition-all relative flex-1',
         centered && 'page mx-auto',
         centerChildren && 'items-center',
-        padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-0',
+        padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
         px === '1' ? 'px-1' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
-        enabled && 'min-h-[100px] border border-dashed border-transparent hover:border-primary/20',
-        enabled && selected && 'ring-1 ring-primary/30 bg-primary/10',
+        enabled && 'min-h-screen border border-dashed border-transparent hover:border-primary/20',
+        enabled && selected && 'ring-1 ring-primary/30',
+        enabled && containerDropActive && 'bg-accent-400/5',
         !enabled && 'min-h-0',
         props.className,
       )}
@@ -1409,6 +1445,136 @@ export const Col = ({ children, width, height, ...props }: any) => {
   );
 };
 Col.craft = { isCanvas: true, displayName: 'Column', related: { settings: ColSettings } };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// InlineGrid – horizontal auto-column grid, created by dropping section onto section
+// ─────────────────────────────────────────────────────────────────────────────
+
+const InlineGridSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Gap</p>
+        <Segment
+          items={[
+            { label: 'None', value: '0' },
+            { label: 'Small', value: '4' },
+            { label: 'Medium', value: '8' },
+            { label: 'Large', value: '16' },
+          ]}
+          selected={props.gap || '8'}
+          onSelect={(item) => actions.setProp((props: any) => (props.gap = item.value))}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Align Items</p>
+        <Segment
+          items={[
+            { label: 'Start', value: 'start' },
+            { label: 'Center', value: 'center' },
+            { label: 'End', value: 'end' },
+            { label: 'Stretch', value: 'stretch' },
+          ]}
+          selected={props.align || 'start'}
+          onSelect={(item) => actions.setProp((props: any) => (props.align = item.value))}
+          size="sm"
+          className="w-full"
+        />
+      </div>
+      <p className="text-xs text-tertiary">
+        Drag more sections onto any column to add columns. Drag a column out to remove it.
+      </p>
+    </div>
+  );
+};
+
+export const CraftInlineGrid = ({ children, gap = '8', align = 'start' }: any) => {
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
+  const divRef = React.useRef<HTMLDivElement>(null);
+  const [dropActive, setDropActive] = React.useState(false);
+  const count = React.Children.count(children);
+
+  React.useEffect(() => {
+    if (!enabled || !divRef.current) return;
+    return dropTargetForElements({
+      element: divRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDragEnter: () => setDropActive(true),
+      onDragLeave: () => setDropActive(false),
+      onDrop: ({ source }) => {
+        setDropActive(false);
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {});
+        }
+      },
+    });
+  }, [enabled, id]);
+
+  const gapStyle = gap === '16' ? '16px' : gap === '8' ? '8px' : gap === '4' ? '4px' : '0px';
+
+  return (
+    <div
+      ref={divRef}
+      className={clsx(
+        'w-full grid transition-all relative pt-5',
+        enabled && 'min-h-[50px] rounded-lg',
+        enabled && selected && 'ring-2 ring-accent-400/50 ring-offset-1',
+        enabled && dropActive && 'bg-accent-400/5',
+      )}
+      style={{ gridAutoFlow: 'column', gridAutoColumns: '1fr', gap: gapStyle, alignItems: align }}
+    >
+      {/* Floating label — z-[200] to sit above CraftSection's z-40 interaction blocker */}
+      {enabled && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          className="absolute top-0 left-0 right-0 z-[200] flex items-center justify-between px-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            actions.selectNode(id);
+          }}
+        >
+          <span
+            className={clsx(
+              'text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border cursor-pointer select-none transition-colors',
+              selected
+                ? 'bg-accent-500 text-white border-accent-500'
+                : 'bg-overlay-primary text-tertiary border-card-border hover:border-accent-400 hover:text-accent-400',
+            )}
+          >
+            Inline Grid · {count} col{count !== 1 ? 's' : ''}
+          </span>
+          {selected && (
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                actions.deleteNode(id);
+              }}
+              className="h-6 w-6 p-0 hover:text-error!"
+            />
+          )}
+        </div>
+      )}
+      {children}
+      {enabled && count === 0 && (
+        <div className="border-2 border-dashed border-accent-400/20 rounded-lg min-h-[80px] flex items-center justify-center text-tertiary/40 text-xs col-span-full">
+          Drop sections here to add columns
+        </div>
+      )}
+    </div>
+  );
+};
+CraftInlineGrid.craft = { isCanvas: true, displayName: 'Inline Grid', related: { settings: InlineGridSettings } };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wrapped section components
@@ -1983,6 +2149,7 @@ export const resolver: Record<string, React.ComponentType<any>> = {
   Container,
   Grid,
   Col,
+  InlineGrid: CraftInlineGrid,
   Tabs: CraftTabs,
   Tab: CraftTab,
   Accordion: CraftAccordion,

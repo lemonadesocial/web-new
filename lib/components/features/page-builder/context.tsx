@@ -11,7 +11,7 @@ function genId(): string {
 }
 
 const CANVAS_COMPONENTS = new Set([
-  'Container', 'Grid', 'Col', 'Tabs', 'Tab', 'Accordion', 'AccordionItem',
+  'Container', 'Grid', 'Col', 'Tabs', 'Tab', 'Accordion', 'AccordionItem', 'InlineGrid',
 ]);
 
 const MAX_HISTORY = 50;
@@ -34,6 +34,8 @@ type PageEditorAction =
   | { type: 'DELETE'; nodeId: string }
   | { type: 'MOVE'; nodeId: string; targetParentId: string; targetIndex: number }
   | { type: 'ADD'; parentId: string; nodeId: string; node: NodeRecord; index: number }
+  | { type: 'WRAP_IN_INLINE_GRID'; targetNodeId: string; sourceNodeId: string }
+  | { type: 'WRAP_NEW_IN_INLINE_GRID'; targetNodeId: string; newNodeId: string; newNode: NodeRecord }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'CLEAR_HISTORY' };
@@ -152,6 +154,81 @@ function reducer(state: PageEditorState, action: PageEditorAction): PageEditorSt
       };
     }
 
+    case 'WRAP_IN_INLINE_GRID': {
+      const { targetNodeId, sourceNodeId } = action;
+      const targetNode = state.nodes[targetNodeId];
+      const sourceNode = state.nodes[sourceNodeId];
+      if (!targetNode || !sourceNode) return state;
+
+      const parentId = targetNode.parent;
+      if (!parentId || !state.nodes[parentId]) return state;
+
+      const gridId = genId();
+      const nodes = { ...state.nodes };
+
+      const sourceParentId = sourceNode.parent;
+      if (sourceParentId && sourceParentId !== parentId && nodes[sourceParentId]) {
+        nodes[sourceParentId] = {
+          ...nodes[sourceParentId],
+          nodes: nodes[sourceParentId].nodes.filter((id) => id !== sourceNodeId),
+        };
+      }
+
+      nodes[gridId] = {
+        type: { resolvedName: 'InlineGrid' },
+        isCanvas: true,
+        props: { gap: '8' },
+        nodes: [targetNodeId, sourceNodeId],
+        linkedNodes: {},
+        parent: parentId,
+        displayName: 'Inline Grid',
+        custom: {},
+      };
+
+      nodes[parentId] = {
+        ...nodes[parentId],
+        nodes: state.nodes[parentId].nodes
+          .filter((id) => id !== sourceNodeId)
+          .map((id) => (id === targetNodeId ? gridId : id)),
+      };
+      nodes[targetNodeId] = { ...nodes[targetNodeId], parent: gridId };
+      nodes[sourceNodeId] = { ...nodes[sourceNodeId], parent: gridId };
+
+      return { ...state, nodes, past: [...state.past.slice(-MAX_HISTORY + 1), state.nodes], future: [] };
+    }
+
+    case 'WRAP_NEW_IN_INLINE_GRID': {
+      const { targetNodeId, newNodeId, newNode } = action;
+      const targetNode = state.nodes[targetNodeId];
+      if (!targetNode) return state;
+
+      const parentId = targetNode.parent;
+      if (!parentId || !state.nodes[parentId]) return state;
+
+      const gridId = genId();
+      const nodes = {
+        ...state.nodes,
+        [gridId]: {
+          type: { resolvedName: 'InlineGrid' },
+          isCanvas: true,
+          props: { gap: '8' },
+          nodes: [targetNodeId, newNodeId],
+          linkedNodes: {},
+          parent: parentId,
+          displayName: 'Inline Grid',
+          custom: {},
+        } as NodeRecord,
+        [parentId]: {
+          ...state.nodes[parentId],
+          nodes: state.nodes[parentId].nodes.map((id) => (id === targetNodeId ? gridId : id)),
+        },
+        [targetNodeId]: { ...targetNode, parent: gridId },
+        [newNodeId]: { ...newNode, parent: gridId },
+      };
+
+      return { ...state, nodes, past: [...state.past.slice(-MAX_HISTORY + 1), state.nodes], future: [] };
+    }
+
     case 'UNDO': {
       if (state.past.length === 0) return state;
       const prev = state.past[state.past.length - 1];
@@ -206,6 +283,8 @@ export interface PageEditorContextValue {
       props?: Record<string, any>,
       index?: number,
     ) => string;
+    wrapInInlineGrid: (targetNodeId: string, sourceNodeId: string) => void;
+    wrapNewInInlineGrid: (targetNodeId: string, componentName: string, displayName: string, props?: Record<string, any>) => void;
     undo: () => void;
     redo: () => void;
     clearHistory: () => void;
@@ -372,6 +451,30 @@ export function PageEditorProvider({
     [],
   );
 
+  const wrapInInlineGrid = React.useCallback(
+    (targetNodeId: string, sourceNodeId: string) =>
+      dispatch({ type: 'WRAP_IN_INLINE_GRID', targetNodeId, sourceNodeId }),
+    [],
+  );
+
+  const wrapNewInInlineGrid = React.useCallback(
+    (targetNodeId: string, componentName: string, displayName: string, props: Record<string, any> = {}): void => {
+      const newNodeId = genId();
+      const newNode: NodeRecord = {
+        type: { resolvedName: componentName },
+        isCanvas: CANVAS_COMPONENTS.has(componentName),
+        props,
+        nodes: [],
+        linkedNodes: {},
+        parent: '',
+        displayName,
+        custom: {},
+      };
+      dispatch({ type: 'WRAP_NEW_IN_INLINE_GRID', targetNodeId, newNodeId, newNode });
+    },
+    [],
+  );
+
   const undo = React.useCallback(() => dispatch({ type: 'UNDO' }), []);
   const redo = React.useCallback(() => dispatch({ type: 'REDO' }), []);
   const clearHistory = React.useCallback(() => dispatch({ type: 'CLEAR_HISTORY' }), []);
@@ -394,6 +497,8 @@ export function PageEditorProvider({
         deleteNode,
         moveNode,
         addNode,
+        wrapInInlineGrid,
+        wrapNewInInlineGrid,
         undo,
         redo,
         clearHistory,
