@@ -6,96 +6,18 @@ import { Button, modal, toast } from '$lib/components/core';
 import { ModalContent } from '$lib/components/core/dialog/modal';
 import { useMutation } from '$lib/graphql/request';
 import { getErrorMessage } from '$lib/utils/error';
-import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import {
+  ActiveSessionFieldsFragmentDoc,
+  GetMyActiveSessionsDocument,
+  RevokeMySessionDocument,
+  RequestStepUpVerificationDocument,
+  VerifyStepUpVerificationDocument,
+  RevokeAllOtherSessionsDocument,
+  type ActiveSessionFieldsFragment,
+} from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
-interface ActiveSession {
-  _id: string;
-  kratos_identity_id: string;
-  kratos_session_id: string;
-  device_name: string;
-  device_model: string;
-  os: string;
-  app_version: string;
-  client_type: string;
-  ip_address: string;
-  last_active_at: string;
-  is_current: boolean;
-  has_active_websocket: boolean;
-}
-
-// GraphQL operations defined as plain strings to avoid shipping the ~300KB graphql
-// parser to the client bundle. graphql-request accepts string queries at runtime.
-// TODO: Replace with codegen-generated TypedDocumentNode imports after running `yarn codegen`.
-
-const ACTIVE_SESSION_FIELDS = `
-  _id
-  kratos_identity_id
-  kratos_session_id
-  device_name
-  device_model
-  os
-  app_version
-  client_type
-  ip_address
-  last_active_at
-  is_current
-  has_active_websocket
-`;
-
-const GetMyActiveSessionsDocument = `
-  query getMyActiveSessions {
-    getMyActiveSessions {
-      ${ACTIVE_SESSION_FIELDS}
-    }
-  }
-` as unknown as TypedDocumentNode<
-  { getMyActiveSessions: ActiveSession[] },
-  Record<string, never>
->;
-
-const RevokeMySessionDocument = `
-  mutation revokeMySession($sessionId: MongoID!) {
-    revokeMySession(session_id: $sessionId) {
-      ${ACTIVE_SESSION_FIELDS}
-    }
-  }
-` as unknown as TypedDocumentNode<
-  { revokeMySession: ActiveSession },
-  { sessionId: string }
->;
-
-const RequestStepUpVerificationDocument = `
-  mutation requestStepUpVerification {
-    requestStepUpVerification {
-      success
-    }
-  }
-` as unknown as TypedDocumentNode<
-  { requestStepUpVerification: { success: boolean } },
-  Record<string, never>
->;
-
-const VerifyStepUpVerificationDocument = `
-  mutation verifyStepUpVerification($code: String!) {
-    verifyStepUpVerification(code: $code) {
-      step_up_token
-    }
-  }
-` as unknown as TypedDocumentNode<
-  { verifyStepUpVerification: { step_up_token: string } },
-  { code: string }
->;
-
-const RevokeAllOtherSessionsDocument = `
-  mutation revokeAllOtherSessions($stepUpToken: String!) {
-    revokeAllOtherSessions(step_up_token: $stepUpToken) {
-      revoked_count
-    }
-  }
-` as unknown as TypedDocumentNode<
-  { revokeAllOtherSessions: { revoked_count: number } },
-  { stepUpToken: string }
->;
+type ActiveSession = ActiveSessionFieldsFragment;
 
 // ---- Relative time helper ----
 function relativeTime(iso: string): string {
@@ -136,7 +58,7 @@ function StepUpVerificationModal({ onSuccess }: { onSuccess: (token: string) => 
     setLoading(true);
     try {
       const { data } = await verifyCode({ variables: { code } });
-      const token = data?.verifyStepUpVerification?.step_up_token;
+      const token = data?.verifyStepUpVerification;
       if (!token) {
         toast.error('Verification failed');
         setLoading(false);
@@ -292,7 +214,7 @@ export default function ActiveSessionsPage() {
     try {
       const { data } = await fetchSessions({});
       if (data?.getMyActiveSessions) {
-        setSessions(data.getMyActiveSessions);
+        setSessions(useFragment(ActiveSessionFieldsFragmentDoc, data.getMyActiveSessions));
       }
     } catch (error: unknown) {
       toast.error(getErrorMessage(error));
