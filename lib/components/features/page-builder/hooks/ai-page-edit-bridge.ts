@@ -13,6 +13,8 @@ export interface AIPageEditTriggers {
   applySections: (sections: PageSection[]) => void;
   /** Surgically update or inject a single section from section_designer tool. */
   applySectionUpdate: (section: PageSection) => void;
+  /** Apply a PageTheme returned by page_designer tool to the theme editor state. */
+  applyTheme: (theme: Record<string, unknown>) => void;
   /** Return current page as PageSection[] for persistence. */
   getSections: () => PageSection[];
   getStructureData: () => string | null;

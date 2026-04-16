@@ -53,6 +53,29 @@ fragment PageConfigFragment on PageConfig {
   template_id
   template_version_installed
   space_id
+  theme {
+    type
+    mode
+    colors {
+      accent
+    }
+    background {
+      type
+      value
+    }
+    fonts {
+      title {
+        family
+      }
+      body {
+        family
+      }
+    }
+    effects {
+      type
+      value
+    }
+  }
   sections {
     ...PageSectionFragment
   }
