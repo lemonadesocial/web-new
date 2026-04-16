@@ -50,6 +50,8 @@ const TYPE_TO_RESOLVED: Record<string, string> = {
   event_schedule: 'SubEventSection',
   event_gallery: 'GallerySection',
   event_collectibles: 'EventCollectibles',
+  event_speakers: 'EventSpeakers',
+  event_sponsors: 'EventSponsors',
   event_datetime: 'EventDateTimeBlock',
   event_location_block: 'EventLocationBlock',
   event_community: 'CommunitySection',
@@ -89,11 +91,13 @@ export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNo
   const rootSection = sorted.find((s) => s.type === 'layout_container');
 
   function addSection(section: PageSection, parentId: string | null): void {
-    const resolvedName = TYPE_TO_RESOLVED[section.type] ?? section.type;
+    const resolvedName = TYPE_TO_RESOLVED[section.type];
+    if (!resolvedName) return; // skip unknown types — prevents Craft.js resolver crash
     const isRootSection = section === rootSection;
     const nodeId = isRootSection ? 'ROOT' : section.craft_node_id || section.id;
     const childIds = (section.children ?? [])
       .sort((a, b) => a.order - b.order)
+      .filter((c) => c === rootSection || !!TYPE_TO_RESOLVED[c.type])
       .map((c) => (c === rootSection ? 'ROOT' : c.craft_node_id || c.id));
 
     nodes[nodeId] = {

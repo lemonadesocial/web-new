@@ -2169,6 +2169,28 @@ export const CraftPassport = (_props: any) => {
 };
 CraftPassport.craft = { displayName: 'Passport' };
 
+export const CraftEventSpeakers = (_props: any) => {
+  const { enabled } = usePageEditor();
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Speakers">
+      <Placeholder name="Speakers" description="Event speakers section" />
+    </CraftSection>
+  );
+};
+CraftEventSpeakers.craft = { displayName: 'EventSpeakers' };
+
+export const CraftEventSponsors = (_props: any) => {
+  const { enabled } = usePageEditor();
+  if (!enabled) return null;
+  return (
+    <CraftSection name="Sponsors">
+      <Placeholder name="Sponsors" description="Event sponsors section" />
+    </CraftSection>
+  );
+};
+CraftEventSponsors.craft = { displayName: 'EventSponsors' };
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Resolver – maps resolvedName → component (same format as before)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2206,4 +2228,6 @@ export const resolver: Record<string, React.ComponentType<any>> = {
   MusicPlayer: CraftMusicPlayer,
   WalletConnect: CraftWalletConnect,
   Passport: CraftPassport,
+  EventSpeakers: CraftEventSpeakers,
+  EventSponsors: CraftEventSponsors,
 };
