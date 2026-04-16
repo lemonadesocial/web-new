@@ -1011,6 +1011,7 @@ query getEventJoinRequests($event: MongoID!, $skip: Int!, $limit: Int!, $state: 
         _id
         name
         display_name
+        email
         new_photos_expanded(limit: 1) {
           _id
           key
