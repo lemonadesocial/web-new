@@ -1,4 +1,4 @@
-fragment ActiveSession on Session {
+fragment ActiveSession on ActiveSession {
   _id
   kratos_identity_id
   kratos_session_id
@@ -19,10 +19,8 @@ query getMyActiveSessions {
   }
 }
 
-mutation revokeMySession($sessionId: MongoID!) {
-  revokeMySession(session_id: $sessionId) {
-    ...ActiveSession
-  }
+mutation revokeMySession($sessionId: String!) {
+  revokeMySession(sessionId: $sessionId)
 }
 
 mutation revokeCurrentSession {
@@ -30,19 +28,13 @@ mutation revokeCurrentSession {
 }
 
 mutation requestStepUpVerification {
-  requestStepUpVerification {
-    success
-  }
+  requestStepUpVerification
 }
 
 mutation verifyStepUpVerification($code: String!) {
-  verifyStepUpVerification(code: $code) {
-    step_up_token
-  }
+  verifyStepUpVerification(code: $code)
 }
 
 mutation revokeAllOtherSessions($stepUpToken: String!) {
-  revokeAllOtherSessions(step_up_token: $stepUpToken) {
-    revoked_count
-  }
+  revokeAllOtherSessions(stepUpToken: $stepUpToken)
 }
