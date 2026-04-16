@@ -73,17 +73,32 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
-  const applyPageDesign = async (structureData: unknown, message: string) => {
+  const applyPageDesign = async (sections: unknown, message: string) => {
     const triggers = getAIPageEditTriggers();
     if (!triggers) {
       console.warn('[AI Designer] Editor bridge not available — page design not applied');
       return;
     }
-    if (structureData) {
-      const data = typeof structureData === 'string' ? structureData : JSON.stringify(structureData);
+    if (!sections) return;
+
+    if (Array.isArray(sections)) {
+      triggers.applySections(sections);
+    } else {
+      // Legacy fallback: raw CraftJS JSON string
+      const data = typeof sections === 'string' ? sections : JSON.stringify(sections);
       triggers.applyStructureData(data);
-      toast.success(message);
     }
+    toast.success(message);
+  };
+
+  const applySectionUpdate = async (section: unknown, message: string) => {
+    const triggers = getAIPageEditTriggers();
+    if (!triggers || !section) {
+      console.warn('[AI Designer] Editor bridge not available — section update not applied');
+      return;
+    }
+    triggers.applySectionUpdate(section as any);
+    toast.success(message);
   };
 
   const [run, { loading }] = useMutation(
@@ -189,6 +204,9 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
           })
           .with('update_page_config_section', async () => {
             await applyPageDesign(tool.data, 'Design updated!');
+          })
+          .with('section_designer', async () => {
+            await applySectionUpdate(tool.data, 'Section updated!');
           });
       },
       onError: (error) => {
