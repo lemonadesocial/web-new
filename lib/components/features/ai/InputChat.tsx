@@ -37,9 +37,16 @@ type InputChatProps = {
   showTools?: boolean;
   readOnly?: boolean;
   compact?: boolean;
+  configOverride?: string;
 };
 
-export function InputChat({ variant = 'default', showTools = true, readOnly, compact }: InputChatProps) {
+export function InputChat({
+  variant = 'default',
+  showTools = true,
+  readOnly,
+  compact,
+  configOverride,
+}: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
@@ -239,7 +246,7 @@ export function InputChat({ variant = 'default', showTools = true, readOnly, com
     run({
       variables: {
         message: text,
-        config: state.config || AI_CONFIG,
+        config: configOverride || state.config || AI_CONFIG,
         session: state.session,
         data: state.data || {},
         standId: state.standId,

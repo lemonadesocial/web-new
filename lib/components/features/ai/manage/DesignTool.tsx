@@ -8,6 +8,7 @@ import { AIChatActionKind, useAIChat } from '../provider';
 import { TemplateTool } from './TemplateTool';
 import { SectionTool } from './SectionTool';
 import { storeManageLayout, useStoreManageLayout } from './store';
+import { AI_CONFIG } from '$lib/utils/constants';
 
 const segments: SegmentItem<string>[] = [
   { label: 'Builder', value: 'builder', iconLeft: 'icon-cards-outline' },
@@ -30,7 +31,7 @@ export function DesignTool() {
     } else {
       aiChatDispatch({
         type: AIChatActionKind.set_config,
-        payload: { config: undefined },
+        payload: { config: AI_CONFIG },
       });
     }
   }, [segment, aiChatDispatch]);
@@ -50,7 +51,7 @@ export function DesignTool() {
         <BuilderTabs />
       ) : (
         <div className="flex-1 overflow-hidden px-4">
-          <AIChat compact showTools={false} readOnly={true} />
+          <AIChat compact showTools={false} readOnly={true} configOverride={PAGE_DESIGNER_CONFIG_ID} />
         </div>
       )}
     </div>
