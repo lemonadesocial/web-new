@@ -92,17 +92,19 @@ function ManageLayoutContent() {
 
   const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
-    if (pageConfigData_?.sections?.length && !hasInitializedRef.current) {
-      try {
-        const nodes = sectionsToNodes(pageConfigData_.sections as PageSection[]);
-        actions.deserialize(JSON.stringify(nodes));
-        actions.history.clear();
-        hasInitializedRef.current = true;
-      } catch (e) {
-        console.error('Failed to deserialize pageConfig sections', e);
-      }
+    // Fire once the page config query has resolved (pageConfigData !== undefined),
+    // even when sections is empty — sectionsToNodes([]) builds a default layout.
+    if (pageConfigData === undefined || hasInitializedRef.current) return;
+    try {
+      const sections = ((pageConfigData_?.sections ?? []) as PageSection[]);
+      const nodes = sectionsToNodes(sections);
+      actions.deserialize(JSON.stringify(nodes));
+      actions.history.clear();
+      hasInitializedRef.current = true;
+    } catch (e) {
+      console.error('Failed to deserialize pageConfig sections', e);
     }
-  }, [pageConfigData_, actions]);
+  }, [pageConfigData, pageConfigData_, actions]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -170,10 +172,7 @@ function ManageLayoutContent() {
           const nodes = sectionsToNodes([section]);
           const newNode = nodes[nodeId];
           if (newNode && query.node('main-col').get()) {
-            actions.addNodeTree(
-              { rootNodeId: nodeId, nodes: { [nodeId]: { id: nodeId, data: { ...newNode, type: newNode.type } } } },
-              'main-col',
-            );
+            actions.addNode('main-col', newNode.type.resolvedName, newNode.displayName, newNode.props);
           }
         }
       },
