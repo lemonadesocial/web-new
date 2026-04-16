@@ -86,7 +86,7 @@ export function CommunityDetailForm({ space }: { space: Space }) {
 
   const [slug, setSlug] = React.useState(space.slug || '');
   const [checking, setChecking] = React.useState(false);
-  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState(false);
+  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState<boolean | null>(null);
 
   const { client } = useClient();
   const { __typename, ...address } = space.address || {};
@@ -96,6 +96,9 @@ export function CommunityDetailForm({ space }: { space: Space }) {
     setValue,
     control,
     reset,
+    setError,
+    trigger,
+    getValues,
     formState: { errors, dirtyFields, isDirty },
   } = useForm<FormValues>({
     defaultValues: {
@@ -199,17 +202,29 @@ export function CommunityDetailForm({ space }: { space: Space }) {
   };
 
   const debouncedFetchData = React.useCallback(
-    debounce(async (query) => {
+    debounce(async (query: string) => {
+      const normalizedSlug = kebabCase(query);
+
       try {
-        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
+        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: normalizedSlug } });
+        if (getValues('slug') !== query) return;
+
+        if (!data?.canUseSpaceSlug) {
+          setError('slug', { type: 'validate', message: 'This URL is already taken.' });
+        } else {
+          await trigger('slug');
+        }
+
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
       } catch (err) {
         Sentry.captureException(err);
       } finally {
-        setChecking(false);
+        if (getValues('slug') === query) {
+          setChecking(false);
+        }
       }
     }, 500),
-    [],
+    [client, getValues, setError, trigger],
   );
 
   const onSubmit = async (values: FormValues) => {
@@ -235,16 +250,21 @@ export function CommunityDetailForm({ space }: { space: Space }) {
     if (slug.length < 3 || !dirtyFields.slug) return '';
 
     if (checking) return 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2';
-    if (canUseSpaceSlug) {
+    if (canUseSpaceSlug === true) {
       return 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2';
-    } else {
+    }
+    if (canUseSpaceSlug === false) {
       return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
     }
+
+    return '';
   };
 
   React.useEffect(() => {
     setValue('theme_data', state, { shouldDirty: true });
   }, [state]);
+
+  React.useEffect(() => () => debouncedFetchData.cancel(), [debouncedFetchData]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -362,18 +382,19 @@ export function CommunityDetailForm({ space }: { space: Space }) {
                         setValue('slug', value, { shouldDirty: true, shouldValidate: true });
                         if (value.length > 2) {
                           setChecking(true);
+                          setCanUseSpaceSlug(null);
                           debouncedFetchData(value);
+                        } else {
+                          setChecking(false);
+                          setCanUseSpaceSlug(null);
+                          debouncedFetchData.cancel();
                         }
                       }}
                       right={{
                         icon: getIconSlugField(),
                       }}
-                      error={dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)}
-                      hint={
-                        !checking && dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)
-                          ? errors.slug?.message || 'This URL is already taken.'
-                          : ''
-                      }
+                      error={dirtyFields.slug && !!errors.slug?.message}
+                      hint={dirtyFields.slug ? errors.slug?.message || '' : ''}
                     />
                   )}
                 />
