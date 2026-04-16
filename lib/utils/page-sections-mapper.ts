@@ -182,12 +182,10 @@ export function nodesToSections(serialized: string): PageSection[] {
     };
   }
 
-  const rootNode = nodes['ROOT'];
-  if (!rootNode) return [];
+  if (!nodes['ROOT']) return [];
 
-  return rootNode.nodes
-    .map((nodeId, idx) => nodeToSection(nodeId, idx))
-    .filter((s): s is PageSection => s !== null);
+  const rootSection = nodeToSection('ROOT', 0);
+  return rootSection ? [rootSection] : [];
 }
 
 // ─── sectionToNodePatch ───────────────────────────────────────────────────────
