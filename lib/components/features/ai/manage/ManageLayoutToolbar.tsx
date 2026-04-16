@@ -17,11 +17,11 @@ import {
   PageConfig,
   PublishEventDocument,
   Template,
-  UpdateEventThemeDocument,
   UpdatePageConfigDocument,
   UpdateSpaceDocument,
   SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { themeValuesToPageTheme, pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { nodesToSections } from '$utils/page-sections-mapper';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
@@ -73,13 +73,12 @@ function ManageLayoutToolbar() {
       toast.error(error.message || 'Failed to publish event');
     },
   });
-  const [updateEventTheme, { loading: savingTheme }] = useMutation(UpdateEventThemeDocument, {
+  const [updatePageConfigTheme, { loading: savingTheme }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      const updatedEvent = data?.updateEvent;
-      if (updatedEvent?._id) {
+      if (data?.updatePageConfig?._id) {
         toast.success('Theme saved successfully!');
-        store.setData({ ...state.data, theme_data: themeState } as Event);
-        updateEvent({ theme_data: updatedEvent.theme_data });
+        store.setPageConfigId(data.updatePageConfig._id);
+        store.setSavedPageTheme(themeValuesToPageTheme(themeState) as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -100,9 +99,12 @@ function ManageLayoutToolbar() {
   });
 
   const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
-  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(event?.theme_data));
+  const savedThemeAsValues = state.savedPageTheme
+    ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
+    : (event?.theme_data || defaultTheme);
+  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
 
-  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && isThemeDirty;
+  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
   const brandTitle = event?.title || 'Event Manager';
   const brandSubtitle = event?.space_expanded?.title || '';
   const isMobileSubPane = state.mobilePane !== 'main';
@@ -122,11 +124,11 @@ function ManageLayoutToolbar() {
   };
 
   const handleSaveTheme = () => {
-    if (!event?._id) return;
-    updateEventTheme({
+    if (!state.pageConfigId) return;
+    updatePageConfigTheme({
       variables: {
-        id: event._id,
-        input: { theme_data: themeState },
+        id: state.pageConfigId,
+        input: { theme: themeValuesToPageTheme(themeState) as any },
       },
     });
   };
@@ -233,7 +235,7 @@ function ManageLayoutToolbar() {
   const handleResetTheme = () => {
     themeDispatch({
       type: ThemeBuilderActionKind.reset,
-      payload: event?.theme_data || defaultTheme,
+      payload: savedThemeAsValues,
     });
   };
 

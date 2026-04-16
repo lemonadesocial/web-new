@@ -80,19 +80,25 @@ export function InputChat({
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
-  const applyPageDesign = async (sections: unknown, message: string) => {
+  const applyPageDesign = async (payload: unknown, message: string) => {
     const triggers = getAIPageEditTriggers();
     if (!triggers) {
       console.warn('[AI Designer] Editor bridge not available — page design not applied');
       return;
     }
-    if (!sections) return;
+    if (!payload) return;
 
-    if (Array.isArray(sections)) {
-      triggers.applySections(sections);
+    // New format: { sections: [...], theme: {...} }
+    if (payload && typeof payload === 'object' && !Array.isArray(payload) && 'sections' in payload) {
+      const { sections, theme } = payload as { sections: unknown[]; theme?: Record<string, unknown> };
+      triggers.applySections(sections as any);
+      if (theme) triggers.applyTheme(theme);
+    } else if (Array.isArray(payload)) {
+      // Bare sections array (backward compat)
+      triggers.applySections(payload as any);
     } else {
       // Legacy fallback: raw CraftJS JSON string
-      const data = typeof sections === 'string' ? sections : JSON.stringify(sections);
+      const data = typeof payload === 'string' ? payload : JSON.stringify(payload);
       triggers.applyStructureData(data);
     }
     toast.success(message);

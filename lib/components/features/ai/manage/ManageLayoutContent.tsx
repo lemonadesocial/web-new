@@ -19,7 +19,7 @@ import {
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
-import { useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { mockWelcomeEvent } from '../InputChat';
 import { AIChat } from '../AIChat';
@@ -30,6 +30,7 @@ import { storeManageLayout as store, useStoreManageLayout } from './store';
 import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
+import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { SettingsPanel } from './SettingsPanel';
 
 function useIsMobile() {
@@ -55,7 +56,7 @@ function ManageLayoutContent() {
   const isMobile = useIsMobile();
 
   const state = useStoreManageLayout();
-  const [themeState] = useEventTheme();
+  const [themeState, themeDispatch] = useEventTheme();
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
@@ -83,13 +84,14 @@ function ManageLayoutContent() {
 
   React.useEffect(() => {
     store.setPageConfigId((pageConfig as any)?._id ?? undefined);
+    store.setSavedPageTheme((pageConfigData_ as any)?.theme ?? undefined);
     if (pageConfig) {
       aiChatDispatch({
         type: AIChatActionKind.set_page_config,
         payload: { pageConfig },
       });
     }
-  }, [pageConfig, aiChatDispatch]);
+  }, [pageConfig, pageConfigData_, aiChatDispatch]);
 
   const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
@@ -101,6 +103,15 @@ function ManageLayoutContent() {
       const nodes = sectionsToNodes(sections);
       actions.deserialize(JSON.stringify(nodes));
       actions.history.clear();
+
+      // Init theme: prefer PageConfig.theme, fall back to Event.theme_data
+      const storedTheme = (pageConfigData_ as any)?.theme as StoredPageTheme | undefined;
+      if (storedTheme) {
+        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: pageThemeToThemeValues(storedTheme) });
+      } else if (event?.theme_data) {
+        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: event.theme_data });
+      }
+
       hasInitializedRef.current = true;
     } catch (e) {
       console.error('Failed to deserialize pageConfig sections', e);
@@ -153,6 +164,9 @@ function ManageLayoutContent() {
   const editorRef = React.useRef({ actions, query, state });
   editorRef.current = { actions, query, state };
 
+  const themeDispatchRef = React.useRef(themeDispatch);
+  themeDispatchRef.current = themeDispatch;
+
   React.useEffect(() => {
     setAIPageEditTriggers({
       applyStructureData: (data: string) => {
@@ -176,6 +190,10 @@ function ManageLayoutContent() {
             actions.addNode('main-col', newNode.type.resolvedName, newNode.displayName, newNode.props);
           }
         }
+      },
+      applyTheme: (theme: Record<string, unknown>) => {
+        const themeValues = pageThemeToThemeValues(theme as StoredPageTheme);
+        themeDispatchRef.current({ type: ThemeBuilderActionKind.reset, payload: themeValues });
       },
       getSections: () => {
         try {

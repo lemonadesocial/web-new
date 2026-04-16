@@ -23,6 +23,8 @@ interface IStore {
   templateName?: string;
   fullScreen: boolean;
   pageConfigId?: string;
+  /** Last persisted PageConfig.theme — used for dirty-check and Reset in the theme editor */
+  savedPageTheme?: Record<string, unknown>;
 }
 
 const defaultStore: IStore = {
@@ -65,5 +67,6 @@ export const storeManageLayout = {
     aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, isCreatingTemplate, templateName })),
   setFullScreen: (fullScreen: boolean) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, fullScreen })),
   setPageConfigId: (pageConfigId: string | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, pageConfigId })),
+  setSavedPageTheme: (savedPageTheme: Record<string, unknown> | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, savedPageTheme })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };
