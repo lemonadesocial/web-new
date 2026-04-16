@@ -116,11 +116,12 @@ export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNo
   // Find the root container; fall back to building a default layout if absent
   if (rootSection) {
     addSection(rootSection, null);
-    // Top-level non-container sections that have no parent yet
+    // Top-level non-container sections that have no parent yet — attach to ROOT
     for (const s of sorted) {
       const nodeId = s.craft_node_id || s.id;
       if (s.type !== 'layout_container' && !nodes[nodeId]) {
-        addSection(s, null);
+        addSection(s, 'ROOT');
+        nodes['ROOT'].nodes.push(nodeId);
       }
     }
   } else {
