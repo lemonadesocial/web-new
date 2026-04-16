@@ -385,6 +385,112 @@ describe('Connectors — submitApiKey error toast interception', () => {
   });
 });
 
+describe('Connectors — connectPlatform error toast interception', () => {
+  let capturedConnectPlatformOnError: ((error: unknown) => void) | null = null;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    toastSuccess.mockReset();
+    toastError.mockReset();
+    disconnectMock.mockReset();
+    useQueryMock.mockReset();
+    useMutationMock.mockReset();
+    capturedConnectPlatformOnError = null;
+
+    // Return unconnected state so the user can trigger connect flow
+    useQueryMock.mockImplementation((_doc: any, options: any) => {
+      if (options?.variables?.spaceId) {
+        return {
+          data: { spaceConnections: [] },
+          loading: false,
+          error: null,
+          refetch: vi.fn().mockResolvedValue(undefined),
+        };
+      }
+      return {
+        data: { availableConnectors: [connectorDef] },
+        loading: false,
+        error: null,
+        refetch: vi.fn().mockResolvedValue(undefined),
+      };
+    });
+
+    // Capture the connectPlatform onError handler from the first useMutation call
+    useMutationMock.mockImplementation((_doc: any, opts: any) => {
+      const callCount = useMutationMock.mock.calls.length;
+      // First call per card = ConnectPlatform, second = DisconnectPlatform
+      if (callCount % 2 === 1 && opts?.onError) {
+        capturedConnectPlatformOnError = opts.onError;
+      }
+      return [vi.fn().mockResolvedValue({ data: null }), { loading: false, error: null, data: null, client: {} }, {}];
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('shows friendly message for "Connection is locked" error from connectPlatform', async () => {
+    const { Connectors } = await import(
+      '../../lib/components/features/upgrade-to-pro/Connectors'
+    );
+
+    await act(async () => {
+      render(<Connectors space={space} />);
+    });
+
+    expect(capturedConnectPlatformOnError).not.toBeNull();
+
+    act(() => {
+      capturedConnectPlatformOnError!(new Error('Connection is locked. Contact support.'));
+    });
+
+    expect(toastError).toHaveBeenCalledWith(
+      'This connection has been locked due to too many failed attempts. Please contact support to unlock it.',
+    );
+    expect(toastError).not.toHaveBeenCalledWith('Connection is locked. Contact support.');
+  });
+
+  it('shows friendly message for "too many attempts" error from connectPlatform (case-insensitive)', async () => {
+    const { Connectors } = await import(
+      '../../lib/components/features/upgrade-to-pro/Connectors'
+    );
+
+    await act(async () => {
+      render(<Connectors space={space} />);
+    });
+
+    expect(capturedConnectPlatformOnError).not.toBeNull();
+
+    act(() => {
+      capturedConnectPlatformOnError!(new Error('TOO MANY ATTEMPTS. Please try again later.'));
+    });
+
+    expect(toastError).toHaveBeenCalledWith('Too many attempts. Please wait an hour before trying again.');
+  });
+
+  it('falls back to generic error for unrecognized connectPlatform errors', async () => {
+    const { Connectors } = await import(
+      '../../lib/components/features/upgrade-to-pro/Connectors'
+    );
+
+    await act(async () => {
+      render(<Connectors space={space} />);
+    });
+
+    expect(capturedConnectPlatformOnError).not.toBeNull();
+
+    act(() => {
+      capturedConnectPlatformOnError!(new Error('Something unexpected'));
+    });
+
+    // getErrorMessage returns the Error's message when one exists, so the fallback
+    // string is only used when the error has no extractable message. Here the mock
+    // mirrors real behaviour: Error('Something unexpected') → 'Something unexpected'.
+    expect(toastError).toHaveBeenCalledWith('Something unexpected');
+  });
+});
+
 describe('Connectors — DisconnectResult handling', () => {
   beforeEach(() => {
     vi.clearAllMocks();

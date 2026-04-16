@@ -157,7 +157,14 @@ function ConnectorCard({ item, isConnected, isLocked, connectionId, space, baseP
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
     onError: (error) => {
-      toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
+      const msg = getErrorMessage(error, '');
+      if (msg.toLowerCase().includes('connection is locked')) {
+        toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
+      } else if (msg.toLowerCase().includes('too many attempts')) {
+        toast.error('Too many attempts. Please wait an hour before trying again.');
+      } else {
+        toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
+      }
     },
   });
 
@@ -331,9 +338,9 @@ function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModa
   const [submitApiKey, { loading }] = useMutation(SubmitApiKeyDocument, {
     onError: (error) => {
       const msg = getErrorMessage(error, '');
-      if (msg.includes('Connection is locked')) {
+      if (msg.toLowerCase().includes('connection is locked')) {
         toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
-      } else if (msg.includes('Too many attempts')) {
+      } else if (msg.toLowerCase().includes('too many attempts')) {
         toast.error('Too many attempts. Please wait an hour before trying again.');
       } else {
         toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
