@@ -14,6 +14,7 @@ type AIChatProps = {
   readOnly?: boolean;
   allowGuest?: boolean;
   compact?: boolean;
+  configOverride?: string;
 };
 
 export function AIChat({
@@ -22,6 +23,7 @@ export function AIChat({
   readOnly,
   allowGuest = false,
   compact,
+  configOverride,
 }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
@@ -65,7 +67,13 @@ export function AIChat({
                 }}
               >
                 <div className="relative z-10 mx-auto w-full max-w-4xl">
-                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} compact={compact} />
+                  <InputChat
+                    variant={variant}
+                    showTools={showTools}
+                    readOnly={readOnly}
+                    compact={compact}
+                    configOverride={configOverride}
+                  />
                 </div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -96,7 +104,13 @@ export function AIChat({
                 <WelcomeChat />
 
                 <div className="space-y-4">
-                  <InputChat variant={variant} showTools={showTools} readOnly={readOnly} compact={compact} />
+                  <InputChat
+                    variant={variant}
+                    showTools={showTools}
+                    readOnly={readOnly}
+                    compact={compact}
+                    configOverride={configOverride}
+                  />
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

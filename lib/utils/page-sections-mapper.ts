@@ -17,7 +17,7 @@ export interface PageSection {
   hidden: boolean;
   layout: { width: string; padding: string };
   props: Record<string, unknown>;
-  craft_node_id: string;
+  craft_node_id?: string;
   children?: PageSection[];
 }
 
