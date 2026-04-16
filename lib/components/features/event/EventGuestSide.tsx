@@ -3,7 +3,6 @@ import React from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-import { Editor, Frame } from '@craftjs/core';
 import {
   Event,
   GetEventDocument,
@@ -13,6 +12,8 @@ import {
   PageConfigFragmentFragmentDoc,
   PageConfigOwnerType,
 } from '$lib/graphql/generated/backend/graphql';
+import { PageEditorProvider, usePageEditor } from '$lib/components/features/page-builder/context';
+import { PageRenderer } from '$lib/components/features/page-builder/renderer';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
@@ -44,6 +45,23 @@ import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSection
 import { resolver } from '../ai/manage/craft/resolver';
 import { storeManageLayout } from '../ai/manage/store';
 import { formatStructureData } from '$lib/utils/page-config';
+
+function ReadOnlyPageView({ data, className }: { data: Record<string, any>; className?: string }) {
+  const { actions } = usePageEditor();
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    actions.deserialize(JSON.stringify(data));
+    setReady(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!ready) return null;
+  return (
+    <div className={className}>
+      <PageRenderer resolver={resolver} />
+    </div>
+  );
+}
 
 export function EventGuestSide({
   event: initEvent,
@@ -155,11 +173,9 @@ export function EventGuestSideContent({
 
     if (formattedStructureData && isClient) {
       return (
-        <Editor enabled={false} resolver={resolver}>
-          <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
-            <Frame data={JSON.stringify(formattedStructureData)} />
-          </div>
-        </Editor>
+        <PageEditorProvider enabled={false}>
+          <ReadOnlyPageView data={formattedStructureData} className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)} />
+        </PageEditorProvider>
       );
     }
 

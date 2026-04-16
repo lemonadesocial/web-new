@@ -24,45 +24,61 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock });
 
-// Controllable craft.js state — flipped per-test to exercise read-only (disabled) mode.
+// Controllable editor state — flipped per-test to exercise read-only (disabled) mode.
 // Disabled (enabled=false) is what end users see on the published page, which is the
 // branch Karen's findings (066af446, 175b0c9d, a2ffdef7) exercise: sections must render
 // cleanly without edit chrome, empty states return null, Spacer renders as a plain div.
 let mockEnabled = false;
 let mockSelected = false;
 
-vi.mock('@craftjs/core', () => {
+vi.mock('$lib/components/features/page-builder/context', () => {
   return {
-    useNode: (selector?: (node: any) => any) => {
-      const node = { events: { selected: mockSelected }, data: { props: {}, parent: null, nodes: [] } };
-      const selected = selector ? selector(node) : node;
-      return {
-        id: 'node-test',
-        connectors: { connect: (ref: any) => ref, drag: (ref: any) => ref },
-        actions: { setProp: vi.fn() },
-        ...selected,
-      };
-    },
-    useEditor: (selector?: (state: any) => any) => {
-      const state = { options: { enabled: mockEnabled } };
-      const selected = selector ? selector(state) : state;
-      return {
-        ...selected,
-        actions: {
-          selectNode: vi.fn(),
-          addNodeTree: vi.fn(),
-          delete: vi.fn(),
-          move: vi.fn(),
-        },
-        query: {
-          parseReactElement: () => ({ toNodeTree: () => ({}) }),
-          node: () => ({ get: () => ({ data: { parent: null, nodes: [] } }) }),
-        },
-      };
-    },
-    Element: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+    usePageEditor: () => ({
+      enabled: mockEnabled,
+      selectedId: mockSelected ? 'node-test' : null,
+      nodes: {},
+      canUndo: false,
+      canRedo: false,
+      actions: {
+        selectNode: vi.fn(),
+        addNode: vi.fn(() => 'new-node-id'),
+        deleteNode: vi.fn(),
+        moveNode: vi.fn(),
+        setProp: vi.fn(),
+        deserialize: vi.fn(),
+        undo: vi.fn(),
+        redo: vi.fn(),
+        clearHistory: vi.fn(),
+        history: { undo: vi.fn(), redo: vi.fn(), clear: vi.fn() },
+      },
+      query: {
+        serialize: vi.fn(() => '{}'),
+        node: () => ({ get: () => ({ nodes: [], parent: null }) }),
+        history: { canUndo: () => false, canRedo: () => false },
+      },
+    }),
+    usePageNode: () => ({
+      id: 'node-test',
+      props: {},
+      nodeProps: {},
+      selected: mockSelected,
+      actions: { setProp: vi.fn() },
+    }),
+    useNodeId: () => 'node-test',
+    useSettings: () => ({ id: 'node-test', props: {}, actions: { setProp: vi.fn() } }),
+    NodeIdContext: React.createContext(''),
+    PageEditorProvider: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
   };
 });
+
+// Mock pragmatic DnD — effects are not exercised in these unit tests
+vi.mock('@atlaskit/pragmatic-drag-and-drop/element/adapter', () => ({
+  draggable: () => () => {},
+  dropTargetForElements: () => () => {},
+}));
+vi.mock('@atlaskit/pragmatic-drag-and-drop/combine', () => ({
+  combine: (...fns: Array<() => void>) => () => fns.forEach((f) => f()),
+}));
 
 // Mock the layout store to provide a controllable event
 const defaultEvent: Record<string, unknown> = {

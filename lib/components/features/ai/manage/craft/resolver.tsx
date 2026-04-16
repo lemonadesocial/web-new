@@ -1,6 +1,7 @@
 import React from 'react';
-import { useNode, useEditor, Element } from '@craftjs/core';
 import clsx from 'clsx';
+import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
 import { AboutSection } from '$lib/components/features/event/AboutSection';
 import { LocationSection } from '$lib/components/features/event/LocationSection';
 import { EventAccess } from '$lib/components/features/event-access/EventAccess';
@@ -32,6 +33,7 @@ import { useStoreManageLayout, storeManageLayout } from '../store';
 import { Event, File as BackendFile } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
+import { usePageEditor, usePageNode, useNodeId } from '$lib/components/features/page-builder/context';
 
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
@@ -40,16 +42,16 @@ const useEvent = (props: any) => {
 
 const getEmbedUrl = (url: string) => {
   if (!url) return null;
-  // YouTube
   let match = url.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/);
   if (match) return `https://www.youtube.com/embed/${match[1]}`;
-
-  // Vimeo
   match = url.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/);
   if (match) return `https://player.vimeo.com/video/${match[1]}`;
-
   return null;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Settings panels (all use useSettings from SettingsPanel)
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SidebarImageSettings = () => {
   const { actions, props } = useSettings();
@@ -66,13 +68,11 @@ const SidebarImageSettings = () => {
         const newImageId = res[0]._id;
         const newPhotosExpanded = [res[0], ...(event.new_new_photos_expanded || []).slice(1)];
         const newPhotos = [newImageId, ...(event.new_new_photos || []).slice(1)];
-
         storeManageLayout.setData({
           ...event,
           new_new_photos_expanded: newPhotosExpanded as any,
           new_new_photos: newPhotos,
         });
-
         toast.success('Image uploaded successfully!');
       }
     } catch (_e) {
@@ -99,7 +99,6 @@ const SidebarImageSettings = () => {
                   className="absolute inset-0 w-full h-full object-cover opacity-40"
                 />
               ) : null}
-
               <div className="z-10 flex flex-col items-center gap-2">
                 <i
                   className={clsx(uploading ? 'icon-loader animate-spin' : 'icon-upload-sharp', 'size-8 text-tertiary')}
@@ -110,7 +109,6 @@ const SidebarImageSettings = () => {
           )}
         </FileInput>
       </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Height (px)</p>
         <Input
@@ -120,7 +118,6 @@ const SidebarImageSettings = () => {
           placeholder="Auto"
         />
       </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Aspect Ratio</p>
         <Segment
@@ -135,7 +132,6 @@ const SidebarImageSettings = () => {
           className="w-full"
         />
       </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Object Fit</p>
         <Segment
@@ -195,7 +191,7 @@ const HeroSettings = () => {
           onChange={(e) => actions.setProp((props: any) => (props.width = e.target.value))}
           placeholder="Leave empty for Full Screen"
         />
-      </div>{' '}
+      </div>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Alignment</p>
         <Segment
@@ -215,7 +211,6 @@ const HeroSettings = () => {
 };
 
 const AboutSettings = () => {
-  const { props: _props } = useSettings();
   const state = useStoreManageLayout();
   const event = state.data as Event;
 
@@ -235,7 +230,6 @@ const AboutSettings = () => {
 
 const RichTextSettings = () => {
   const { actions, props } = useSettings();
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -256,7 +250,6 @@ const RichTextSettings = () => {
 
 const VideoEmbedSettings = () => {
   const { actions, props } = useSettings();
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -277,7 +270,6 @@ const VideoEmbedSettings = () => {
 
 const RegistrationSettings = () => {
   const { actions, props } = useSettings();
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -303,7 +295,7 @@ const RegistrationSettings = () => {
 };
 
 const ColSettings = () => {
-  const { actions, props } = useSettings();
+  const { id, actions, props } = useSettings();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -344,12 +336,13 @@ const ColSettings = () => {
           )}
         </div>
         <Input
+          id={`col-width-${id}`}
           type="number"
           value={props.width || ''}
           onChange={(e) => actions.setProp((props: any) => (props.width = e.target.value))}
           placeholder="Leave empty for Full Screen"
         />
-      </div>{' '}
+      </div>
     </div>
   );
 };
@@ -366,22 +359,11 @@ const DateTimeSettings = () => {
           start={event?.start}
           end={event?.end}
           timezone={event?.timezone ?? undefined}
-          onSelect={(dateRange) =>
-            storeManageLayout.setData({
-              ...event,
-              start: dateRange.start,
-              end: dateRange.end,
-            })
-          }
+          onSelect={(dateRange) => storeManageLayout.setData({ ...event, start: dateRange.start, end: dateRange.end })}
         />
         <Timezone
           placement="bottom-end"
-          onSelect={(timezoneOption) =>
-            storeManageLayout.setData({
-              ...event,
-              timezone: timezoneOption.value,
-            })
-          }
+          onSelect={(timezoneOption) => storeManageLayout.setData({ ...event, timezone: timezoneOption.value })}
           strategy="absolute"
           className="w-full"
           trigger={() => (
@@ -449,12 +431,7 @@ const LocationSettings = () => {
         <p className="text-sm font-medium">Join URL</p>
         <Input
           value={event?.virtual_url || ''}
-          onChange={(e) =>
-            storeManageLayout.setData({
-              ...event,
-              virtual_url: e.target.value,
-            })
-          }
+          onChange={(e) => storeManageLayout.setData({ ...event, virtual_url: e.target.value })}
           placeholder="https://example.com/join"
         />
       </div>
@@ -463,10 +440,8 @@ const LocationSettings = () => {
 };
 
 const Placeholder = ({ name, description }: { name: string; description?: string }) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
-
   return (
     <div className="w-full p-6 bg-accent-400/5 border border-dashed border-accent-400/20 rounded-md text-center">
       <p className="text-accent-500 font-medium">{name} Section</p>
@@ -477,23 +452,371 @@ const Placeholder = ({ name, description }: { name: string; description?: string
   );
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// CraftSection – the drag/drop wrapper for leaf nodes
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CraftSection = ({
+  children,
+  name,
+  noPadding,
+  ...props
+}: {
+  children?: React.ReactNode;
+  name?: string;
+  noPadding?: boolean;
+  [key: string]: any;
+}) => {
+  const id = useNodeId();
+  const { enabled, nodes, actions } = usePageEditor();
+  const { nodeProps, selected, actions: nodeActions } = usePageNode();
+  const [isResizing, setIsResizing] = React.useState(false);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [dragEdge, setDragEdge] = React.useState<'top' | 'bottom' | null>(null);
+  const divRef = React.useRef<HTMLDivElement>(null);
+
+  const setProp = (updater: (p: any) => void) => nodeActions.setProp(updater);
+
+  const getPosition = () => {
+    const nodeData = nodes[id];
+    if (!nodeData) return { parentId: null, index: -1, total: 0 };
+    const parentId = nodeData.parent;
+    if (!parentId || !nodes[parentId]) return { parentId: null, index: -1, total: 0 };
+    const siblings = nodes[parentId].nodes;
+    return { parentId, index: siblings.indexOf(id), total: siblings.length };
+  };
+
+  const { index, total, parentId } = getPosition();
+  const isFirst = index === 0;
+  const isLast = index === total - 1;
+
+  const moveUp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!parentId || isFirst) return;
+    actions.moveNode(id, parentId, index - 1);
+  };
+
+  const moveDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!parentId || isLast) return;
+    actions.moveNode(id, parentId, index + 2);
+  };
+
+  const remove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    actions.deleteNode(id);
+  };
+
+  const width = nodeProps.width || props.width;
+  const height = nodeProps.height || props.height;
+  const aspectRatio = nodeProps.aspectRatio || props.aspectRatio;
+  const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
+
+  // ── Pragmatic DnD ──────────────────────────────────────────
+  React.useEffect(() => {
+    if (!enabled || !divRef.current) return;
+    const el = divRef.current;
+
+    return combine(
+      draggable({
+        element: el,
+        getInitialData: () => ({ type: 'canvas-node', nodeId: id }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element: el,
+        canDrop: ({ source }) =>
+          (source.data.type === 'canvas-node' && source.data.nodeId !== id) || source.data.type === 'new-section',
+        getData: ({ input }) => {
+          const rect = el.getBoundingClientRect();
+          const edge: 'top' | 'bottom' = input.clientY < rect.top + rect.height / 2 ? 'top' : 'bottom';
+          return { nodeId: id, edge };
+        },
+        onDragEnter: ({ self }) => setDragEdge((self.data as any).edge),
+        onDrag: ({ self }) => setDragEdge((self.data as any).edge),
+        onDragLeave: () => setDragEdge(null),
+        onDrop: ({ self, source }) => {
+          setDragEdge(null);
+          const edge = (self.data as any).edge as 'top' | 'bottom';
+          const { index: curIndex, parentId: curParent } = getPosition();
+          if (!curParent) return;
+          const targetIndex = edge === 'top' ? curIndex : curIndex + 1;
+
+          if (source.data.type === 'canvas-node') {
+            actions.moveNode(source.data.nodeId as string, curParent, targetIndex);
+          } else if (source.data.type === 'new-section') {
+            const { componentName, displayName } = source.data as any;
+            actions.addNode(curParent, componentName, displayName, {}, targetIndex);
+          }
+        },
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, id]);
+
+  if (!enabled && !children) return null;
+
+  return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+    <div
+      ref={divRef}
+      data-node-id={id}
+      onClick={(e) => {
+        if (!enabled) return;
+        e.stopPropagation();
+        actions.selectNode(id);
+      }}
+      className={clsx(
+        'relative group/section w-full flex flex-col overflow-visible rounded-2xl transition-all',
+        aspectRatio,
+        enabled && 'cursor-pointer hover:bg-primary/5',
+        isResizing && 'z-[300]',
+        isDragging && 'opacity-40',
+      )}
+      style={{
+        height: height ? `${height}px` : aspectRatio && aspectRatio !== 'aspect-auto' ? undefined : 'auto',
+        width: widthStyle,
+        maxWidth: '100%',
+      }}
+    >
+      {/* Drop indicators */}
+      {dragEdge === 'top' && enabled && (
+        <div className="absolute -top-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
+      )}
+      {dragEdge === 'bottom' && enabled && (
+        <div className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
+      )}
+
+      {/* Selection border */}
+      {enabled && selected && (
+        <div className="absolute inset-0 z-50 pointer-events-none border-2 border-primary rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.2)]" />
+      )}
+
+      {/* Interaction blocker */}
+      {enabled && <div className="absolute inset-0 z-40" />}
+
+      {enabled && selected && (
+        <>
+          <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-arrow-back-sharp rotate-90"
+              disabled={isFirst}
+              onClick={moveUp}
+              className="h-7 w-7 p-0"
+            />
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-arrow-back-sharp -rotate-90"
+              disabled={isLast}
+              onClick={moveDown}
+              className="h-7 w-7 p-0"
+            />
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-delete"
+              onClick={remove}
+              className="h-7 w-7 p-0 hover:text-error!"
+            />
+          </div>
+
+          {/* Top resize */}
+          <div
+            role="separator"
+            aria-orientation="horizontal"
+            aria-hidden="true"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startHeight = rect.height;
+              const onMove = (ev: MouseEvent) =>
+                setProp((p: any) => {
+                  p.height = Math.max(50, Math.round(startHeight + (startY - ev.pageY)));
+                });
+              const onUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+              };
+              document.addEventListener('mousemove', onMove);
+              document.addEventListener('mouseup', onUp);
+            }}
+            className="absolute top-0 left-0 right-0 h-2 z-90 cursor-ns-resize flex items-center justify-center group/handle-t bg-transparent"
+          >
+            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-t:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Left resize */}
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-hidden="true"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const onMove = (ev: MouseEvent) =>
+                setProp((p: any) => {
+                  p.width = Math.max(100, Math.round(startWidth + (startX - ev.pageX)));
+                });
+              const onUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+              };
+              document.addEventListener('mousemove', onMove);
+              document.addEventListener('mouseup', onUp);
+            }}
+            className="absolute left-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-l bg-transparent"
+          >
+            <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-l:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Right resize */}
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-hidden="true"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startX = e.pageX;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startWidth = rect.width;
+              const onMove = (ev: MouseEvent) =>
+                setProp((p: any) => {
+                  p.width = Math.max(100, Math.round(startWidth + (ev.pageX - startX)));
+                });
+              const onUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+              };
+              document.addEventListener('mousemove', onMove);
+              document.addEventListener('mouseup', onUp);
+            }}
+            className="absolute right-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-w bg-transparent"
+          >
+            <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-w:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Bottom resize */}
+          <div
+            role="separator"
+            aria-orientation="horizontal"
+            aria-hidden="true"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const startY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const startHeight = rect.height;
+              const onMove = (ev: MouseEvent) =>
+                setProp((p: any) => {
+                  p.height = Math.max(50, Math.round(startHeight + (ev.pageY - startY)));
+                });
+              const onUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+              };
+              document.addEventListener('mousemove', onMove);
+              document.addEventListener('mouseup', onUp);
+            }}
+            className="absolute bottom-0 left-0 right-0 h-2 z-110 cursor-ns-resize flex items-center justify-center group/handle-h bg-transparent"
+          >
+            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-h:opacity-100 transition-opacity shadow-sm" />
+          </div>
+
+          {/* Corner: Bottom-Right */}
+          <div
+            role="separator"
+            aria-hidden="true"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsResizing(true);
+              const sX = e.pageX;
+              const sY = e.pageY;
+              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              const sW = rect.width;
+              const sH = rect.height;
+              const onMove = (ev: MouseEvent) =>
+                setProp((p: any) => {
+                  p.width = Math.max(100, Math.round(sW + (ev.pageX - sX)));
+                  p.height = Math.max(50, Math.round(sH + (ev.pageY - sY)));
+                });
+              const onUp = () => {
+                setIsResizing(false);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+              };
+              document.addEventListener('mousemove', onMove);
+              document.addEventListener('mouseup', onUp);
+            }}
+            className="absolute bottom-0 right-0 w-4 h-4 z-120 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-br-xl border-r-2 border-b-2 border-primary/40"
+          />
+        </>
+      )}
+
+      <div
+        className={clsx(
+          'w-full rounded-2xl flex-1',
+          !noPadding && 'p-3',
+          height ? 'overflow-hidden' : 'overflow-visible',
+        )}
+      >
+        {children || <Placeholder name={name || 'Section'} />}
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tabs
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TabSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Tab Label</p>
+        <Input
+          value={props.label || ''}
+          onChange={(e) => actions.setProp((props: any) => (props.label = e.target.value))}
+          placeholder="Enter tab name..."
+        />
+      </div>
+    </div>
+  );
+};
+
 export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
   const [selectedTab, setSelectedTab] = React.useState(activeIndex);
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { enabled, actions, query } = useEditor((state) => ({ enabled: state.options.enabled }));
-
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
   const tabs = React.Children.toArray(children);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drop target must be a div with connect ref; onClick delegates node selection which is already reachable via the Settings panel and keyboard tab navigation
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      ref={(ref: any) => connect(ref)}
       onClick={(e) => {
         if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
@@ -528,10 +851,7 @@ export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
             className="ml-2 h-8 w-8 p-0"
             onClick={(e) => {
               e.stopPropagation();
-              const nodeTree = query
-                .parseReactElement(<Element is={CraftTab} label={`Tab ${tabs.length + 1}`} canvas />)
-                .toNodeTree();
-              actions.addNodeTree(nodeTree, id);
+              actions.addNode(id, 'Tab', `Tab ${tabs.length + 1}`, { label: `Tab ${tabs.length + 1}` });
             }}
           />
         )}
@@ -548,42 +868,33 @@ export const CraftTabs = ({ children, activeIndex = 0 }: any) => {
     </div>
   );
 };
-CraftTabs.craft = {
-  isCanvas: true,
-  displayName: 'Tabs',
-  rules: {
-    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Tab'),
-  },
-};
+CraftTabs.craft = { isCanvas: true, displayName: 'Tabs' };
 
-const TabSettings = () => {
-  const { actions, props } = useSettings();
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Tab Label</p>
-        <Input
-          value={props.label || ''}
-          onChange={(e) => actions.setProp((props: any) => (props.label = e.target.value))}
-          placeholder="Enter tab name..."
-        />
-      </div>
-    </div>
-  );
-};
 export const CraftTab = ({ children, label: _label }: any) => {
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { enabled, actions } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
+  const divRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!enabled || !divRef.current) return;
+    return dropTargetForElements({
+      element: divRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDrop: ({ source }) => {
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {});
+        }
+      },
+    });
+  }, [enabled, id]);
 
   return (
     <div
-      ref={(ref: any) => connect(ref)}
+      ref={divRef}
       className={clsx(
         'w-full min-h-[100px] relative transition-all',
         enabled && 'border border-dashed border-transparent hover:border-primary/10',
@@ -598,7 +909,7 @@ export const CraftTab = ({ children, label: _label }: any) => {
             icon="icon-delete"
             onClick={(e) => {
               e.stopPropagation();
-              actions.delete(id);
+              actions.deleteNode(id);
             }}
             className="h-7 w-7 p-0 hover:text-error!"
           />
@@ -613,28 +924,36 @@ export const CraftTab = ({ children, label: _label }: any) => {
     </div>
   );
 };
-CraftTab.craft = {
-  isCanvas: true,
-  displayName: 'Tab',
-  related: {
-    settings: TabSettings,
-  },
+CraftTab.craft = { isCanvas: true, displayName: 'Tab', related: { settings: TabSettings } };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Accordion
+// ─────────────────────────────────────────────────────────────────────────────
+
+const AccordionItemSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Item Title</p>
+        <Input
+          value={props.title || ''}
+          onChange={(e) => actions.setProp((props: any) => (props.title = e.target.value))}
+          placeholder="Enter item title..."
+        />
+      </div>
+    </div>
+  );
 };
 
 export const CraftAccordion = ({ children }: any) => {
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { enabled, actions, query } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drop target must be a div with connect ref; onClick delegates node selection
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      ref={(ref: any) => connect(ref)}
       onClick={(e) => {
         if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
@@ -657,16 +976,8 @@ export const CraftAccordion = ({ children }: any) => {
           className="mt-2 w-full border-dashed"
           onClick={(e) => {
             e.stopPropagation();
-            const nodeTree = query
-              .parseReactElement(
-                <Element
-                  is={CraftAccordionItem}
-                  title={`Accordion Item ${React.Children.count(children) + 1}`}
-                  canvas
-                />,
-              )
-              .toNodeTree();
-            actions.addNodeTree(nodeTree, id);
+            const count = React.Children.count(children) + 1;
+            actions.addNode(id, 'AccordionItem', `Accordion Item ${count}`, { title: `Accordion Item ${count}` });
           }}
         >
           Add Item
@@ -675,42 +986,33 @@ export const CraftAccordion = ({ children }: any) => {
     </div>
   );
 };
-CraftAccordion.craft = {
-  isCanvas: true,
-  displayName: 'Accordion',
-  rules: {
-    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Accordion Item'),
-  },
-};
+CraftAccordion.craft = { isCanvas: true, displayName: 'Accordion' };
 
-const AccordionItemSettings = () => {
-  const { actions, props } = useSettings();
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium">Item Title</p>
-        <Input
-          value={props.title || ''}
-          onChange={(e) => actions.setProp((props: any) => (props.title = e.target.value))}
-          placeholder="Enter item title..."
-        />
-      </div>
-    </div>
-  );
-};
 export const CraftAccordionItem = ({ children, title }: any) => {
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { enabled, actions } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
+  const divRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!enabled || !divRef.current) return;
+    return dropTargetForElements({
+      element: divRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDrop: ({ source }) => {
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {});
+        }
+      },
+    });
+  }, [enabled, id]);
 
   return (
     <div
-      ref={(ref: any) => connect(ref)}
+      ref={divRef}
       className={clsx(
         'w-full relative transition-all',
         enabled && 'border-2 border-dashed border-transparent hover:border-primary/20',
@@ -730,7 +1032,7 @@ export const CraftAccordionItem = ({ children, title }: any) => {
                 icon="icon-delete"
                 onClick={(e) => {
                   e.stopPropagation();
-                  actions.delete(id);
+                  actions.deleteNode(id);
                 }}
                 className="h-7 w-7 p-0 hover:text-error!"
               />
@@ -750,430 +1052,12 @@ export const CraftAccordionItem = ({ children, title }: any) => {
 CraftAccordionItem.craft = {
   isCanvas: true,
   displayName: 'Accordion Item',
-  related: {
-    settings: AccordionItemSettings,
-  },
+  related: { settings: AccordionItemSettings },
 };
 
-export const CraftSection = ({
-  children,
-  name,
-  noPadding,
-  ...props
-}: {
-  children: React.ReactNode;
-  name?: string;
-  noPadding?: boolean;
-  [key: string]: any;
-}) => {
-  const {
-    id,
-    connectors: { connect, drag },
-    selected,
-    nodeProps,
-    actions: { setProp },
-  } = useNode((node) => ({
-    selected: node.events.selected,
-    nodeProps: node.data.props,
-  }));
-
-  const { actions, query, enabled } = useEditor((state) => ({
-    enabled: state.options.enabled,
-  }));
-  const [isResizing, setIsResizing] = React.useState(false);
-
-  const getPosition = () => {
-    const node = query.node(id).get();
-    const parentId = node.data.parent;
-    if (!parentId) return { parentId: null, index: -1, total: 0 };
-
-    const siblings = query.node(parentId).get().data.nodes;
-    return {
-      parentId,
-      index: siblings.indexOf(id),
-      total: siblings.length,
-    };
-  };
-
-  const { index, total, parentId } = getPosition();
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-
-  const moveUp = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!parentId || isFirst) return;
-    actions.move(id, parentId, index - 1);
-  };
-
-  const moveDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!parentId || isLast) return;
-    actions.move(id, parentId, index + 2);
-  };
-
-  const remove = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    actions.delete(id);
-  };
-
-  const width = nodeProps.width || props.width;
-  const height = nodeProps.height || props.height;
-  const aspectRatio = nodeProps.aspectRatio || props.aspectRatio;
-  const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
-
-  // If not enabled and no children, don't render anything
-  if (!enabled && !children) return null;
-
-  return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js drag/drop container must be a div with connect/drag ref; selection already reachable via Settings panel
-    <div
-      ref={(ref: any) => ref && connect(isResizing || !enabled ? ref : drag(ref))}
-      onClick={(e) => {
-        if (!enabled) return;
-        e.stopPropagation();
-        actions.selectNode(id);
-      }}
-      className={clsx(
-        'relative group/section w-full flex flex-col overflow-visible rounded-2xl transition-all',
-        aspectRatio,
-        enabled && 'cursor-pointer hover:bg-primary/5',
-        isResizing && 'z-[300]',
-      )}
-      style={{
-        height: height ? `${height}px` : aspectRatio && aspectRatio !== 'aspect-auto' ? undefined : 'auto',
-        width: widthStyle,
-        maxWidth: '100%',
-      }}
-    >
-      {/* Selection Border */}
-      {enabled && selected && (
-        <div className="absolute inset-0 z-50 pointer-events-none border-2 border-primary rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.2)]" />
-      )}
-
-      {/* Interaction Blocker - Permanently prevents clicks on links/buttons inside sections while in editor */}
-      {enabled && <div className="absolute inset-0 z-40" />}
-
-      {enabled && selected && (
-        <>
-          <div className="absolute -top-4 right-4 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
-            <Button
-              size="xs"
-              variant="tertiary-alt"
-              icon="icon-arrow-back-sharp rotate-90"
-              disabled={isFirst}
-              onClick={moveUp}
-              className="h-7 w-7 p-0"
-            />
-            <Button
-              size="xs"
-              variant="tertiary-alt"
-              icon="icon-arrow-back-sharp -rotate-90"
-              disabled={isLast}
-              onClick={moveDown}
-              className="h-7 w-7 p-0"
-            />
-            <Button
-              size="xs"
-              variant="tertiary-alt"
-              icon="icon-delete"
-              onClick={remove}
-              className="h-7 w-7 p-0 hover:text-error!"
-            />
-          </div>
-
-          {/* Top Resize Handle */}
-          <div
-            role="separator"
-            aria-orientation="horizontal"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaY = startY - moveEvent.pageY;
-                setProp((props: any) => {
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute top-0 left-0 right-0 h-2 z-110 cursor-ns-resize flex items-center justify-center group/handle-t bg-transparent"
-          >
-            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-t:opacity-100 transition-opacity shadow-sm" />
-          </div>
-
-          {/* Left Resize Handle */}
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = startX - moveEvent.pageX;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute left-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-l bg-transparent"
-          >
-            <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-l:opacity-100 transition-opacity shadow-sm" />
-          </div>
-
-          {/* Width Resize Handle (Right) */}
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = moveEvent.pageX - startX;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute right-0 top-0 bottom-0 w-2 z-110 cursor-ew-resize flex items-center justify-center group/handle-w bg-transparent"
-          >
-            <div className="h-12 w-1 bg-primary rounded-full opacity-0 group-hover/handle-w:opacity-100 transition-opacity shadow-sm" />
-          </div>
-
-          {/* Height Resize Handle (Bottom) */}
-          <div
-            role="separator"
-            aria-orientation="horizontal"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaY = moveEvent.pageY - startY;
-                setProp((props: any) => {
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute bottom-0 left-0 right-0 h-2 z-110 cursor-ns-resize flex items-center justify-center group/handle-h bg-transparent"
-          >
-            <div className="w-12 h-1 bg-primary rounded-full opacity-0 group-hover/handle-h:opacity-100 transition-opacity shadow-sm" />
-          </div>
-
-          {/* Corner Resize Handle (Bottom-Right) */}
-          <div
-            role="separator"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = moveEvent.pageX - startX;
-                const deltaY = moveEvent.pageY - startY;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute bottom-0 right-0 w-4 h-4 z-120 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-br-xl border-r-2 border-b-2 border-primary/40"
-          />
-
-          {/* Corner Resize Handle (Top-Left) */}
-          <div
-            role="separator"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = startX - moveEvent.pageX;
-                const deltaY = startY - moveEvent.pageY;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute top-0 left-0 w-4 h-4 z-120 cursor-nwse-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tl-xl border-l-2 border-t-2 border-primary/40"
-          />
-
-          {/* Corner Resize Handle (Top-Right) */}
-          <div
-            role="separator"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = moveEvent.pageX - startX;
-                const deltaY = startY - moveEvent.pageY;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute top-0 right-0 w-4 h-4 z-120 cursor-nesw-resize bg-transparent hover:bg-primary/10 transition-colors rounded-tr-xl border-r-2 border-t-2 border-primary/40"
-          />
-
-          {/* Corner Resize Handle (Bottom-Left) */}
-          <div
-            role="separator"
-            aria-hidden="true"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              setIsResizing(true);
-              const startX = e.pageX;
-              const startY = e.pageY;
-              const rect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
-              const startWidth = rect.width;
-              const startHeight = rect.height;
-
-              const onMouseMove = (moveEvent: MouseEvent) => {
-                const deltaX = startX - moveEvent.pageX;
-                const deltaY = startY - moveEvent.pageY;
-                setProp((props: any) => {
-                  props.width = Math.max(100, Math.round(startWidth + deltaX));
-                  props.height = Math.max(50, Math.round(startHeight + deltaY));
-                });
-              };
-
-              const onMouseUp = () => {
-                setIsResizing(false);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-              };
-
-              document.addEventListener('mousemove', onMouseMove);
-              document.addEventListener('mouseup', onMouseUp);
-            }}
-            className="absolute bottom-0 left-0 w-4 h-4 z-120 cursor-nesw-resize bg-transparent hover:bg-primary/10 transition-colors rounded-bl-xl border-l-2 border-b-2 border-primary/40"
-          />
-        </>
-      )}
-
-      <div
-        className={clsx(
-          'w-full rounded-2xl flex-1',
-          !noPadding && 'p-3',
-          height ? 'overflow-hidden' : 'overflow-visible',
-        )}
-      >
-        {children || <Placeholder name={name || 'Section'} />}
-      </div>
-    </div>
-  );
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Container
+// ─────────────────────────────────────────────────────────────────────────────
 
 const ContainerSettings = () => {
   const { id, actions, props } = useSettings();
@@ -1252,7 +1136,7 @@ const ContainerSettings = () => {
           onChange={(e) => actions.setProp((props: any) => (props.width = e.target.value))}
           placeholder="Leave empty for Full Screen"
         />
-      </div>{' '}
+      </div>
     </div>
   );
 };
@@ -1267,54 +1151,62 @@ export const Container = ({
   px = '1',
   ...props
 }: any) => {
-  const {
-    id,
-    connectors: { connect },
-  } = useNode();
-  const { actions, enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const isEmpty = React.Children.count(children) === 0;
+
+  // Empty-container drop target: when the col has no sections, accept drops directly
+  React.useEffect(() => {
+    if (!enabled || !isEmpty || !containerRef.current) return;
+    return dropTargetForElements({
+      element: containerRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDrop: ({ source }) => {
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, 0);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {}, 0);
+        }
+      },
+    });
+  }, [enabled, id, isEmpty]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Container node must be a div with connect ref; selection is delegated to click, Settings panel provides keyboard entry point
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
+      ref={containerRef}
       {...props}
-      ref={(ref: any) => connect(ref)}
       onClick={(e) => {
         if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
         actions.selectNode(id);
       }}
       className={clsx(
-        'flex flex-col gap-6 w-full transition-all relative',
+        'flex flex-col gap-6 w-full transition-all relative flex-1 py-4',
         centered && 'page mx-auto',
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-0',
         px === '1' ? 'px-1' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
         enabled && 'min-h-[100px] border border-dashed border-transparent hover:border-primary/20',
+        enabled && selected && 'ring-1 ring-primary/30 bg-primary/10',
         !enabled && 'min-h-0',
         props.className,
       )}
-      style={{
-        ...props.style,
-        height: height ? `${height}px` : 'auto',
-        width: widthStyle,
-      }}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle }}
     >
       {children}
     </div>
   );
 };
-Container.craft = {
-  isCanvas: true,
-  displayName: 'Container',
-  rules: {
-    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName === 'Grid'),
-    canSelect: () => true,
-  },
-  related: {
-    settings: ContainerSettings,
-  },
-};
+Container.craft = { isCanvas: true, displayName: 'Container', related: { settings: ContainerSettings } };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Grid
+// ─────────────────────────────────────────────────────────────────────────────
 
 const GridSettings = () => {
   const { id, actions, props } = useSettings();
@@ -1370,37 +1262,25 @@ const GridSettings = () => {
           onChange={(e) => actions.setProp((props: any) => (props.width = e.target.value))}
           placeholder="Leave empty for Full Screen"
         />
-      </div>{' '}
+      </div>
     </div>
   );
 };
 
 export const Grid = ({ children, gap = '18', height, width, centered, ...props }: any) => {
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { actions, enabled } = useEditor((state) => ({
-    enabled: state.options.enabled,
-  }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
   const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Grid node must be a div with connect ref; selection handled by click on gutter/padding only
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      ref={(ref: any) => connect(ref)}
+      ref={undefined}
       onClick={(e) => {
-        if (!enabled || (e.target !== e.currentTarget && !e.currentTarget.contains(e.target as Node))) return;
-
-        // Only select grid if clicking on the grid itself (gutters/padding)
-        // or if it's explicitly intended.
-        if (e.target === e.currentTarget) {
-          e.stopPropagation();
-          actions.selectNode(id);
-        }
+        if (!enabled || e.target !== e.currentTarget) return;
+        e.stopPropagation();
+        actions.selectNode(id);
       }}
       className={clsx(
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid rounded-lg',
@@ -1411,13 +1291,24 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
         enabled && React.Children.count(children) === 0 && 'p-4 min-h-[100px]!',
         !enabled && 'min-h-0',
       )}
-      style={{
-        ...props.style,
-        height: height ? `${height}px` : 'auto',
-        width: widthStyle,
-      }}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle }}
       {...props}
     >
+      {enabled && selected && (
+        <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
+          <Button
+            size="xs"
+            variant="tertiary-alt"
+            icon="icon-delete"
+            onClick={(e) => {
+              e.stopPropagation();
+              actions.deleteNode(id);
+            }}
+            className="h-7 w-7 p-0 hover:text-error!"
+          />
+        </div>
+      )}
+
       {children}
       {enabled && React.Children.count(children) === 0 && (
         <div className="flex-1 border-2 border-dashed border-primary/20 rounded-lg p-10 flex items-center justify-center text-tertiary/40">
@@ -1427,38 +1318,43 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
     </div>
   );
 };
-Grid.craft = {
-  isCanvas: true,
-  displayName: 'Grid',
-  rules: {
-    canMoveIn: (incomingNodes: any) => incomingNodes.every((node: any) => node.data.displayName !== 'Grid'),
-  },
-  related: {
-    settings: GridSettings,
-  },
-};
+Grid.craft = { isCanvas: true, displayName: 'Grid', related: { settings: GridSettings } };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Col – drop target for sections
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const Col = ({ children, width, height, ...props }: any) => {
-  const {
-    id,
-    connectors: { connect },
-    selected,
-  } = useNode((node) => ({
-    selected: node.events.selected,
-  }));
-  const { actions, enabled } = useEditor((state) => ({
-    enabled: state.options.enabled,
-  }));
+  const id = useNodeId();
+  const { enabled, actions } = usePageEditor();
+  const { selected } = usePageNode();
+  const colRef = React.useRef<HTMLDivElement>(null);
+  const isEmpty = React.Children.count(children) === 0;
 
-  // Only apply inline width if it's a numeric value (e.g. "300").
-  // For presets like "300", "1/2", etc., we use Tailwind classes.
   const isNumericWidth = width && !isNaN(Number(width)) && width !== '300';
   const widthStyle = isNumericWidth ? `${width}px` : typeof width === 'string' && width.includes('/') ? width : 'auto';
 
+  // Empty-container drop target: when the col has no sections, accept drops directly
+  React.useEffect(() => {
+    if (!enabled || !isEmpty || !colRef.current) return;
+    return dropTargetForElements({
+      element: colRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDrop: ({ source }) => {
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, 0);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {}, 0);
+        }
+      },
+    });
+  }, [enabled, id, isEmpty]);
+
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- craft.js Col node must be a div with connect ref; selection delegated to click
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      ref={(ref: any) => connect(ref)}
+      ref={colRef}
       onClick={(e) => {
         if (!enabled || e.target !== e.currentTarget) return;
         e.stopPropagation();
@@ -1479,7 +1375,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
                   : 'flex-1 w-full',
         enabled && selected && 'ring-2 ring-primary/30',
         enabled && 'border border-dashed border-transparent hover:border-primary/10',
-        enabled && React.Children.count(children) === 0 && 'min-h-[100px]!',
+        enabled && isEmpty && 'min-h-[100px]!',
         !enabled && 'min-h-0',
       )}
       style={{
@@ -1497,14 +1393,14 @@ export const Col = ({ children, width, height, ...props }: any) => {
             icon="icon-delete"
             onClick={(e) => {
               e.stopPropagation();
-              actions.delete(id);
+              actions.deleteNode(id);
             }}
             className="h-7 w-7 p-0 hover:text-error!"
           />
         </div>
       )}
       {children}
-      {enabled && React.Children.count(children) === 0 && (
+      {enabled && isEmpty && (
         <div className="flex-1 border-2 border-dashed border-primary/10 rounded-lg min-h-[100px] flex items-center justify-center text-tertiary/30 text-xs">
           Drop sections here
         </div>
@@ -1512,23 +1408,15 @@ export const Col = ({ children, width, height, ...props }: any) => {
     </div>
   );
 };
-Col.craft = {
-  isCanvas: true,
-  displayName: 'Column',
-  rules: {
-    canMoveIn: (incomingNodes: any) =>
-      incomingNodes.every((node: any) => node.data.displayName !== 'Grid' && node.data.displayName !== 'Column'),
-  },
-  related: {
-    settings: ColSettings,
-  },
-};
+Col.craft = { isCanvas: true, displayName: 'Column', related: { settings: ColSettings } };
 
-// Wrapped Versions
+// ─────────────────────────────────────────────────────────────────────────────
+// Wrapped section components
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const CraftRichText = (props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!props.content && !enabled) return null;
-
   return (
     <CraftSection name="Rich Text">
       {props.content ? (
@@ -1539,20 +1427,12 @@ export const CraftRichText = (props: any) => {
     </CraftSection>
   );
 };
-CraftRichText.craft = {
-  displayName: 'RichText',
-  rules: { canDrag: () => true },
-  related: {
-    settings: RichTextSettings,
-  },
-};
+CraftRichText.craft = { displayName: 'RichText', related: { settings: RichTextSettings } };
 
 export const CraftVideoEmbed = (props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const embedUrl = getEmbedUrl(props.url);
-
   if (!embedUrl && !enabled) return null;
-
   return (
     <CraftSection name="Video Embed">
       {embedUrl ? (
@@ -1571,21 +1451,13 @@ export const CraftVideoEmbed = (props: any) => {
     </CraftSection>
   );
 };
-CraftVideoEmbed.craft = {
-  displayName: 'VideoEmbed',
-  rules: { canDrag: () => true },
-  related: {
-    settings: VideoEmbedSettings,
-  },
-};
+CraftVideoEmbed.craft = { displayName: 'VideoEmbed', related: { settings: VideoEmbedSettings } };
 
 export const CraftAboutSection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = event?.description;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="About">
       {hasContent ? (
@@ -1596,21 +1468,13 @@ export const CraftAboutSection = (props: any) => {
     </CraftSection>
   );
 };
-CraftAboutSection.craft = {
-  displayName: 'About',
-  rules: { canDrag: () => true },
-  related: {
-    settings: AboutSettings,
-  },
-};
+CraftAboutSection.craft = { displayName: 'About', related: { settings: AboutSettings } };
 
 export const CraftLocationSection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = event?.address;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="Map">
       {hasContent ? (
@@ -1621,13 +1485,7 @@ export const CraftLocationSection = (props: any) => {
     </CraftSection>
   );
 };
-CraftLocationSection.craft = {
-  displayName: 'Location',
-  rules: { canDrag: () => true },
-  related: {
-    settings: MapSettings,
-  },
-};
+CraftLocationSection.craft = { displayName: 'Location', related: { settings: MapSettings } };
 
 export const CraftEventAccess = (props: any) => {
   const event = useEvent(props);
@@ -1637,13 +1495,7 @@ export const CraftEventAccess = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventAccess.craft = {
-  displayName: 'CTA Block',
-  rules: { canDrag: () => true },
-  related: {
-    settings: RegistrationSettings,
-  },
-};
+CraftEventAccess.craft = { displayName: 'CTA Block', related: { settings: RegistrationSettings } };
 
 export const CraftEventCollectibles = (props: any) => {
   const event = useEvent(props);
@@ -1653,11 +1505,7 @@ export const CraftEventCollectibles = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventCollectibles.craft = {
-  displayName: 'EventCollectibles',
-  rules: { canDrag: () => true },
-  // No specific settings for collectibles yet, but we could add them if needed
-};
+CraftEventCollectibles.craft = { displayName: 'EventCollectibles' };
 
 const SubEventSettings = () => {
   const { actions, props } = useSettings();
@@ -1677,11 +1525,9 @@ const SubEventSettings = () => {
 
 export const CraftSubEventSection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = event?.subevent_enabled;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="Schedule">
       {hasContent ? (
@@ -1692,13 +1538,7 @@ export const CraftSubEventSection = (props: any) => {
     </CraftSection>
   );
 };
-CraftSubEventSection.craft = {
-  displayName: 'Schedule',
-  rules: { canDrag: () => true },
-  related: {
-    settings: SubEventSettings,
-  },
-};
+CraftSubEventSection.craft = { displayName: 'Schedule', related: { settings: SubEventSettings } };
 
 const GallerySettings = () => {
   const { actions, props } = useSettings();
@@ -1718,11 +1558,9 @@ const GallerySettings = () => {
 
 export const CraftGallerySection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = (event?.new_new_photos_expanded?.length ?? 0) > 1;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="Gallery">
       {hasContent ? (
@@ -1733,13 +1571,7 @@ export const CraftGallerySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftGallerySection.craft = {
-  displayName: 'Gallery',
-  rules: { canDrag: () => true },
-  related: {
-    settings: GallerySettings,
-  },
-};
+CraftGallerySection.craft = { displayName: 'Gallery', related: { settings: GallerySettings } };
 
 export const CraftEventDateTimeBlock = (props: any) => {
   const event = useEvent(props);
@@ -1749,21 +1581,13 @@ export const CraftEventDateTimeBlock = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventDateTimeBlock.craft = {
-  displayName: 'Date Time Block',
-  rules: { canDrag: () => true },
-  related: {
-    settings: DateTimeSettings,
-  },
-};
+CraftEventDateTimeBlock.craft = { displayName: 'Date Time Block', related: { settings: DateTimeSettings } };
 
 export const CraftEventLocationBlock = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = event?.address || event?.virtual_url;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="Location">
       {hasContent ? (
@@ -1774,21 +1598,13 @@ export const CraftEventLocationBlock = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventLocationBlock.craft = {
-  displayName: 'Location Info',
-  rules: { canDrag: () => true },
-  related: {
-    settings: LocationSettings,
-  },
-};
+CraftEventLocationBlock.craft = { displayName: 'Location Info', related: { settings: LocationSettings } };
 
 export const CraftCommunitySection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = event?.space;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="Community">
       {hasContent ? (
@@ -1799,19 +1615,13 @@ export const CraftCommunitySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftCommunitySection.craft = {
-  displayName: 'Community',
-  rules: { canDrag: () => true },
-  // No specific settings yet
-};
+CraftCommunitySection.craft = { displayName: 'Community' };
 
 export const CraftHostedBySection = (props: any) => {
   const event = useEvent(props);
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const hasContent = getEventCohosts(event).length > 0;
-
   if (!hasContent && !enabled) return null;
-
   return (
     <CraftSection name="HostedBy">
       {hasContent ? (
@@ -1822,11 +1632,7 @@ export const CraftHostedBySection = (props: any) => {
     </CraftSection>
   );
 };
-CraftHostedBySection.craft = {
-  displayName: 'Hosted By',
-  rules: { canDrag: () => true },
-  // No specific settings yet
-};
+CraftHostedBySection.craft = { displayName: 'Hosted By' };
 
 export const CraftAttendeesSection = (props: any) => {
   const event = useEvent(props);
@@ -1836,17 +1642,12 @@ export const CraftAttendeesSection = (props: any) => {
     </CraftSection>
   );
 };
-CraftAttendeesSection.craft = {
-  displayName: 'Attendees',
-  rules: { canDrag: () => true },
-  // No specific settings yet
-};
+CraftAttendeesSection.craft = { displayName: 'Attendees' };
 
 export const CraftEventHero = (props: any) => {
   const event = useEvent(props);
   const align = props.align || 'text-left';
   const flexAlign = align === 'text-center' ? 'items-center' : align === 'text-right' ? 'items-end' : 'items-start';
-
   return (
     <CraftSection name="Event Hero">
       <div className={clsx('space-y-4 flex flex-col', flexAlign, align)}>
@@ -1857,19 +1658,12 @@ export const CraftEventHero = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventHero.craft = {
-  displayName: 'Event Hero',
-  rules: { canDrag: () => true },
-  related: {
-    settings: HeroSettings,
-  },
-};
+CraftEventHero.craft = { displayName: 'Event Hero', related: { settings: HeroSettings } };
 
 export const CraftEventSidebarImage = (props: any) => {
   const event = useEvent(props);
   const aspectRatio = props.aspectRatio || 'aspect-square';
   const objectFit = props.objectFit || 'object-cover';
-
   return (
     <CraftSection name="Event Image" noPadding {...props} aspectRatio={aspectRatio} objectFit={objectFit}>
       <div
@@ -1892,13 +1686,7 @@ export const CraftEventSidebarImage = (props: any) => {
     </CraftSection>
   );
 };
-CraftEventSidebarImage.craft = {
-  displayName: 'Event Image',
-  rules: { canDrag: () => true },
-  related: {
-    settings: SidebarImageSettings,
-  },
-};
+CraftEventSidebarImage.craft = { displayName: 'Event Image', related: { settings: SidebarImageSettings } };
 
 const BannerSettings = () => {
   const { actions, props } = useSettings();
@@ -1935,7 +1723,6 @@ const BannerSettings = () => {
               {props.url ? (
                 <img src={props.url} className="absolute inset-0 w-full h-full object-cover opacity-40" />
               ) : null}
-
               <div className="z-10 flex flex-col items-center gap-2">
                 <i
                   className={clsx(uploading ? 'icon-loader animate-spin' : 'icon-upload-sharp', 'size-8 text-tertiary')}
@@ -1946,7 +1733,6 @@ const BannerSettings = () => {
           )}
         </FileInput>
       </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Image URL</p>
         <Input
@@ -1955,7 +1741,6 @@ const BannerSettings = () => {
           placeholder="https://example.com/image.jpg"
         />
       </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium">Height (px)</p>
         <Input
@@ -1970,11 +1755,9 @@ const BannerSettings = () => {
 };
 
 export const CraftImageBanner = (props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const { url, height } = props;
-
   if (!url && !enabled) return null;
-
   return (
     <CraftSection name="Image Banner" noPadding>
       <div
@@ -1995,36 +1778,25 @@ export const CraftImageBanner = (props: any) => {
     </CraftSection>
   );
 };
-CraftImageBanner.craft = {
-  displayName: 'Image Banner',
-  rules: { canDrag: () => true },
-  related: {
-    settings: BannerSettings,
-  },
-};
+CraftImageBanner.craft = { displayName: 'Image Banner', related: { settings: BannerSettings } };
 
 const SocialLinksSettings = () => {
   const { actions, props } = useSettings();
   const links = props.links || [];
 
-  const addLink = () => {
+  const addLink = () =>
     actions.setProp((props: any) => {
       if (!props.links) props.links = [];
       props.links.push('');
     });
-  };
-
-  const updateLink = (index: number, value: string) => {
+  const updateLink = (index: number, value: string) =>
     actions.setProp((props: any) => {
       props.links[index] = value;
     });
-  };
-
-  const removeLink = (index: number) => {
+  const removeLink = (index: number) =>
     actions.setProp((props: any) => {
       props.links.splice(index, 1);
     });
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -2056,11 +1828,9 @@ const SocialLinksSettings = () => {
 };
 
 export const CraftSocialLinks = (props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const links = props.links || [];
-
   if (links.length === 0 && !enabled) return null;
-
   return (
     <CraftSection name="Social Links">
       <div className="flex flex-wrap gap-4 items-center">
@@ -2083,17 +1853,10 @@ export const CraftSocialLinks = (props: any) => {
     </CraftSection>
   );
 };
-CraftSocialLinks.craft = {
-  displayName: 'Social Links',
-  rules: { canDrag: () => true },
-  related: {
-    settings: SocialLinksSettings,
-  },
-};
+CraftSocialLinks.craft = { displayName: 'Social Links', related: { settings: SocialLinksSettings } };
 
 const CustomHTMLSettings = () => {
   const { actions, props } = useSettings();
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -2111,11 +1874,9 @@ const CustomHTMLSettings = () => {
 };
 
 export const CraftCustomHTML = (props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   const { html } = props;
-
   if (!html && !enabled) return null;
-
   return (
     <CraftSection name="Custom HTML">
       {html ? (
@@ -2126,13 +1887,7 @@ export const CraftCustomHTML = (props: any) => {
     </CraftSection>
   );
 };
-CraftCustomHTML.craft = {
-  displayName: 'Custom HTML',
-  rules: { canDrag: () => true },
-  related: {
-    settings: CustomHTMLSettings,
-  },
-};
+CraftCustomHTML.craft = { displayName: 'Custom HTML', related: { settings: CustomHTMLSettings } };
 
 const SpacerSettings = () => {
   const { actions, props } = useSettings();
@@ -2152,12 +1907,8 @@ const SpacerSettings = () => {
 };
 
 export const CraftSpacer = ({ height = '40' }: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
-
-  if (!enabled) {
-    return <div style={{ height: `${height}px` }} className="w-full" />;
-  }
-
+  const { enabled } = usePageEditor();
+  if (!enabled) return <div style={{ height: `${height}px` }} className="w-full" />;
   return (
     <div
       style={{ height: `${height}px` }}
@@ -2167,16 +1918,10 @@ export const CraftSpacer = ({ height = '40' }: any) => {
     </div>
   );
 };
-CraftSpacer.craft = {
-  displayName: 'Spacer',
-  rules: { canDrag: () => true },
-  related: {
-    settings: SpacerSettings,
-  },
-};
+CraftSpacer.craft = { displayName: 'Spacer', related: { settings: SpacerSettings } };
 
 export const CraftHeader = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
   return (
     <CraftSection name="Header">
@@ -2187,7 +1932,7 @@ export const CraftHeader = (_props: any) => {
 CraftHeader.craft = { displayName: 'Header' };
 
 export const CraftFooter = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
   return (
     <CraftSection name="Footer">
@@ -2198,7 +1943,7 @@ export const CraftFooter = (_props: any) => {
 CraftFooter.craft = { displayName: 'Footer' };
 
 export const CraftMusicPlayer = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
   return (
     <CraftSection name="Music Player">
@@ -2209,7 +1954,7 @@ export const CraftMusicPlayer = (_props: any) => {
 CraftMusicPlayer.craft = { displayName: 'Music Player' };
 
 export const CraftWalletConnect = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
   return (
     <CraftSection name="Wallet Connect">
@@ -2220,7 +1965,7 @@ export const CraftWalletConnect = (_props: any) => {
 CraftWalletConnect.craft = { displayName: 'Wallet Connect' };
 
 export const CraftPassport = (_props: any) => {
-  const { enabled } = useEditor((state) => ({ enabled: state.options.enabled }));
+  const { enabled } = usePageEditor();
   if (!enabled) return null;
   return (
     <CraftSection name="Passport">
@@ -2230,7 +1975,11 @@ export const CraftPassport = (_props: any) => {
 };
 CraftPassport.craft = { displayName: 'Passport' };
 
-export const resolver = {
+// ─────────────────────────────────────────────────────────────────────────────
+// Resolver – maps resolvedName → component (same format as before)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const resolver: Record<string, React.ComponentType<any>> = {
   Container,
   Grid,
   Col,
@@ -2254,8 +2003,6 @@ export const resolver = {
   EventHero: CraftEventHero,
   EventSidebarImage: CraftEventSidebarImage,
   ImageBanner: CraftImageBanner,
-  // CardsGrid: CraftCardsGrid,
-  // Testimonials: CraftTestimonials,
   SocialLinks: CraftSocialLinks,
   CustomHTML: CraftCustomHTML,
   Spacer: CraftSpacer,
