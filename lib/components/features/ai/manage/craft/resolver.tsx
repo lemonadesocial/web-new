@@ -1379,8 +1379,9 @@ export const Col = ({ children, width, height, ...props }: any) => {
   const colRef = React.useRef<HTMLDivElement>(null);
   const isEmpty = React.Children.count(children) === 0;
 
-  const isNumericWidth = width && !isNaN(Number(width)) && width !== '300';
-  const widthStyle = isNumericWidth ? `${width}px` : typeof width === 'string' && width.includes('/') ? width : 'auto';
+  const isNumericWidth = width && !isNaN(Number(width));
+  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : 'auto';
+  const maxWidth = isNumericWidth ? `${width}px` : undefined;
 
   // Empty-container drop target: when the col has no sections, accept drops directly
   React.useEffect(() => {
