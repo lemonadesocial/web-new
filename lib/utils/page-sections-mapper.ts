@@ -39,6 +39,7 @@ const TYPE_TO_RESOLVED: Record<string, string> = {
   layout_container: 'Container',
   columns: 'Grid',
   layout_col: 'Col',
+  inline_grid: 'InlineGrid',
   tabs: 'Tabs',
   tab_item: 'Tab',
   accordion: 'Accordion',
@@ -76,7 +77,7 @@ const RESOLVED_TO_TYPE: Record<string, string> = Object.fromEntries(
 );
 
 const CANVAS_TYPES = new Set([
-  'layout_container', 'columns', 'layout_col', 'tabs', 'accordion',
+  'layout_container', 'columns', 'layout_col', 'inline_grid', 'tabs', 'accordion',
 ]);
 
 // ─── sectionsToNodes ─────────────────────────────────────────────────────────

@@ -108,10 +108,15 @@ function ManageLayoutToolbar() {
   const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
   const savedThemeAsValues = state.savedPageTheme
     ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
-    : (event?.theme_data || defaultTheme);
+    : event?.theme_data || defaultTheme;
   const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
 
-  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
+  const canSaveTheme =
+    state.layoutType === 'event' &&
+    state.activeTab === 'design' &&
+    !!event?._id &&
+    !!state.pageConfigId &&
+    isThemeDirty;
   const brandTitle = event?.title || 'Event Manager';
   const brandSubtitle = event?.space_expanded?.title || '';
   const isMobileSubPane = state.mobilePane !== 'main';
@@ -173,6 +178,7 @@ function ManageLayoutToolbar() {
     try {
       const serialized = query.serialize();
       const sections = nodesToSections(serialized);
+      console.log(sections);
 
       let template_id: string | undefined;
 
@@ -295,7 +301,11 @@ function ManageLayoutToolbar() {
             <Menu.Root strategy="fixed" placement="bottom-start">
               <Menu.Trigger>
                 {({ toggle }) => (
-                  <button type="button" className="flex items-center gap-3 cursor-pointer text-left" onClick={() => toggle()}>
+                  <button
+                    type="button"
+                    className="flex items-center gap-3 cursor-pointer text-left"
+                    onClick={() => toggle()}
+                  >
                     <div className="whitespace-nowrap">
                       <div className="flex justify-between items-center gap-1">
                         <p className="text-sm font-medium">{brandTitle}</p>
@@ -399,16 +409,16 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            {canSaveTheme && (
-              <>
-                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-                  Reset
-                </Button>
-                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-                  Save
-                </Button>
-              </>
-            )}
+            {/* {canSaveTheme && ( */}
+            {/*   <> */}
+            {/*     <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}> */}
+            {/*       Reset */}
+            {/*     </Button> */}
+            {/*     <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}> */}
+            {/*       Save */}
+            {/*     </Button> */}
+            {/*   </> */}
+            {/* )} */}
 
             {state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
@@ -416,7 +426,7 @@ function ManageLayoutToolbar() {
               </Button>
             )}
 
-            {state.activeTab === 'design' && state.builderTab === 'sections' && (
+            {state.activeTab === 'design' && (
               <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
                 <Button
                   size="sm"
