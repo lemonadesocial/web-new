@@ -911,7 +911,9 @@ export const CraftTab = ({ children, label: _label }: any) => {
     return dropTargetForElements({
       element: divRef.current,
       canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
-      onDrop: ({ source }) => {
+      onDrop: ({ source, location }) => {
+        // Only handle drops that land directly on this tab (not on a child section)
+        if (location.current.dropTargets[0]?.element !== divRef.current) return;
         if (source.data.type === 'canvas-node') {
           actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
         } else if (source.data.type === 'new-section') {
@@ -1029,7 +1031,9 @@ export const CraftAccordionItem = ({ children, title }: any) => {
     return dropTargetForElements({
       element: divRef.current,
       canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
-      onDrop: ({ source }) => {
+      onDrop: ({ source, location }) => {
+        // Only handle drops that land directly on this accordion item (not on a child section)
+        if (location.current.dropTargets[0]?.element !== divRef.current) return;
         if (source.data.type === 'canvas-node') {
           actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
         } else if (source.data.type === 'new-section') {
@@ -1198,8 +1202,10 @@ export const Container = ({
       canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
       onDragEnter: () => setContainerDropActive(true),
       onDragLeave: () => setContainerDropActive(false),
-      onDrop: ({ source }) => {
+      onDrop: ({ source, location }) => {
         setContainerDropActive(false);
+        // Only handle drops that land directly on the container (not on a child section)
+        if (location.current.dropTargets[0]?.element !== containerRef.current) return;
         if (source.data.type === 'canvas-node') {
           actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
         } else if (source.data.type === 'new-section') {
@@ -1506,8 +1512,10 @@ export const CraftInlineGrid = ({ children, gap = '8', align = 'start' }: any) =
       canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
       onDragEnter: () => setDropActive(true),
       onDragLeave: () => setDropActive(false),
-      onDrop: ({ source }) => {
+      onDrop: ({ source, location }) => {
         setDropActive(false);
+        // Only handle drops that land directly on this InlineGrid (not on a child section)
+        if (location.current.dropTargets[0]?.element !== divRef.current) return;
         if (source.data.type === 'canvas-node') {
           actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
         } else if (source.data.type === 'new-section') {

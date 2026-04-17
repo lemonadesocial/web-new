@@ -91,7 +91,5 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
     headers: { Cookie: decodeURIComponent(cookieStore?.toString()) },
     fetchPolicy: 'network-only',
   });
-  console.log(pageConfigData);
-
   return <EventGuestSide event={event} pageConfig={pageConfigData?.getPageConfig} />;
 }
