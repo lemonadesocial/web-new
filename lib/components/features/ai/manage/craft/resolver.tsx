@@ -513,7 +513,9 @@ export const CraftSection = ({
   const width = nodeProps.width || props.width;
   const height = nodeProps.height || props.height;
   const aspectRatio = nodeProps.aspectRatio || props.aspectRatio;
-  const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
+  const isNumericWidth = width && !isNaN(Number(width));
+  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
+  const maxWidth = isNumericWidth ? `${width}px` : undefined;
 
   // ── Pragmatic DnD ──────────────────────────────────────────
   React.useEffect(() => {
@@ -1188,7 +1190,9 @@ export const Container = ({
   const id = useNodeId();
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
-  const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
+  const isNumericWidth = width && !isNaN(Number(width));
+  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
+  const maxWidth = isNumericWidth ? `${width}px` : undefined;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
 
@@ -1231,14 +1235,14 @@ export const Container = ({
         centered && 'page mx-auto',
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
-        px === '1' ? 'px-1' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
+        px === '1' ? 'px-1 md:px-4' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
         enabled && 'min-h-screen border border-dashed border-transparent hover:border-primary/20',
         enabled && selected && 'ring-1 ring-primary/30',
         enabled && containerDropActive && 'bg-accent-400/5',
         !enabled && 'min-h-0',
         props.className,
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle }}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle, maxWidth }}
     >
       {children}
     </div>
@@ -1313,7 +1317,9 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
   const id = useNodeId();
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
-  const widthStyle = typeof width === 'string' && width.includes('/') ? width : width ? `${width}px` : '100%';
+  const isNumericWidth = width && !isNaN(Number(width));
+  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
+  const maxWidth = isNumericWidth ? `${width}px` : undefined;
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -1333,7 +1339,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
         enabled && React.Children.count(children) === 0 && 'p-4 min-h-[100px]!',
         !enabled && 'min-h-0',
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle }}
+      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle, maxWidth }}
       {...props}
     >
       {enabled && selected && (
@@ -1424,6 +1430,7 @@ export const Col = ({ children, width, height, ...props }: any) => {
         ...props.style,
         height: height ? `${height}px` : 'auto',
         width: widthStyle === 'auto' ? undefined : widthStyle,
+        maxWidth,
       }}
       {...props}
     >

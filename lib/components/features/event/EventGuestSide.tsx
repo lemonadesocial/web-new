@@ -201,7 +201,7 @@ export function EventGuestSideContent({
     }
 
     return (
-      <div className={clsx('flex gap-18', state.config.color, state.config.mode)}>
+      <div className={clsx('flex md:gap-18 gap-0', state.config.color, state.config.mode)}>
         <div className="hidden md:flex w-74 flex-col gap-6">
           <div className="flex flex-col gap-4">
             {event.new_new_photos_expanded?.[0] ? (
