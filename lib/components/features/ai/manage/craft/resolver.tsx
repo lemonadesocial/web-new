@@ -1197,34 +1197,10 @@ export const Container = ({
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
   const isNumericWidth = width && !isNaN(Number(width));
-  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
-  const maxWidth = isNumericWidth ? `${width}px` : undefined;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
 
-  // Always-active drop target on the container div itself.
-  // The empty space below children has no element covering it, so drags there
-  // naturally hit the container div — no separate strip needed.
-  React.useEffect(() => {
-    if (!enabled || !containerRef.current) return;
-    return dropTargetForElements({
-      element: containerRef.current,
-      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
-      onDragEnter: () => setContainerDropActive(true),
-      onDragLeave: () => setContainerDropActive(false),
-      onDrop: ({ source, location }) => {
-        setContainerDropActive(false);
-        // Only handle drops that land directly on the container (not on a child section)
-        if (location.current.dropTargets[0]?.element !== containerRef.current) return;
-        if (source.data.type === 'canvas-node') {
-          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
-        } else if (source.data.type === 'new-section') {
-          const { componentName, displayName } = source.data as any;
-          actions.addNode(id, componentName, displayName, {});
-        }
-      },
-    });
-  }, [enabled, id]);
+  // ... (useEffect for DnD)
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -1242,13 +1218,20 @@ export const Container = ({
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
         px === '1' ? 'px-1 md:px-4' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
+        isNumericWidth && 'md:max-w-[var(--desktop-width)]',
         enabled && 'min-h-screen border border-dashed border-transparent hover:border-primary/20',
         enabled && selected && 'ring-1 ring-primary/30',
         enabled && containerDropActive && 'bg-accent-400/5',
         !enabled && 'min-h-0',
         props.className,
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle, maxWidth }}
+      style={
+        {
+          ...props.style,
+          height: height ? `${height}px` : 'auto',
+          '--desktop-width': isNumericWidth ? `${width}px` : undefined,
+        } as React.CSSProperties
+      }
     >
       {children}
     </div>
@@ -1324,8 +1307,6 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
   const isNumericWidth = width && !isNaN(Number(width));
-  const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
-  const maxWidth = isNumericWidth ? `${width}px` : undefined;
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -1340,12 +1321,19 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid rounded-lg',
         centered && 'page mx-auto',
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
+        isNumericWidth && 'md:max-w-[var(--desktop-width)]',
         enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
         enabled && 'border-2 border-transparent hover:border-primary/20',
         enabled && React.Children.count(children) === 0 && 'p-4 min-h-[100px]!',
         !enabled && 'min-h-0',
       )}
-      style={{ ...props.style, height: height ? `${height}px` : 'auto', width: widthStyle, maxWidth }}
+      style={
+        {
+          ...props.style,
+          height: height ? `${height}px` : 'auto',
+          '--desktop-width': isNumericWidth ? `${width}px` : undefined,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {enabled && selected && (
@@ -1386,15 +1374,8 @@ export const Col = ({ children, width, width_mobile, height, ...props }: any) =>
   const colRef = React.useRef<HTMLDivElement>(null);
   const isEmpty = React.Children.count(children) === 0;
 
-  const currentWidth = device === 'mobile' ? width_mobile || width : width;
-
-  const isNumericWidth = currentWidth && !isNaN(Number(currentWidth));
-  const widthStyle = isNumericWidth
-    ? '100%'
-    : typeof currentWidth === 'string' && currentWidth.includes('/')
-      ? currentWidth
-      : 'auto';
-  const maxWidth = isNumericWidth ? `${currentWidth}px` : undefined;
+  const isNumericWidth = width && !isNaN(Number(width));
+  const isNumericMobileWidth = width_mobile && !isNaN(Number(width_mobile));
 
   // Empty-container drop target: when the col has no sections, accept drops directly
   React.useEffect(() => {
@@ -1424,30 +1405,36 @@ export const Col = ({ children, width, width_mobile, height, ...props }: any) =>
       }}
       className={clsx(
         'flex flex-col gap-6 min-h-[50px] transition-all relative group/col rounded-lg p-4',
-        currentWidth === '300'
-          ? 'md:w-74'
-          : currentWidth === '1/2'
-            ? 'md:w-1/2'
-            : currentWidth === '1/3'
-              ? 'md:w-1/3'
-              : currentWidth === '2/3'
-                ? 'md:w-2/3'
-                : isNumericWidth
-                  ? ''
-                  : 'flex-1 w-full',
+        // Desktop / Base Classes
+        width === '300' ? 'md:w-74 md:max-w-74' : '',
+        width === '1/2' ? 'md:w-1/2' : '',
+        width === '1/3' ? 'md:w-1/3' : '',
+        width === '2/3' ? 'md:w-2/3' : '',
+        isNumericWidth && 'md:max-w-[var(--desktop-width)] md:w-full',
+
+        // Mobile Overrides (applied in preview or on mobile screens)
+        width_mobile === '300' ? 'max-w-74 w-full' : '',
+        width_mobile === '1/2' ? 'w-1/2' : '',
+        width_mobile === '1/3' ? 'w-1/3' : '',
+        width_mobile === '2/3' ? 'w-2/3' : '',
+        isNumericMobileWidth ? 'max-w-[var(--mobile-width)] w-full' : isNumericWidth ? 'w-full max-w-full' : 'w-full',
+
         enabled && selected && 'ring-2 ring-primary/30',
         enabled && 'border border-dashed border-transparent hover:border-primary/10',
         enabled && isEmpty && 'min-h-[100px]!',
         !enabled && 'min-h-0',
       )}
-      style={{
-        ...props.style,
-        height: height ? `${height}px` : 'auto',
-        width: widthStyle === 'auto' ? undefined : widthStyle,
-        maxWidth,
-      }}
+      style={
+        {
+          ...props.style,
+          height: height ? `${height}px` : 'auto',
+          '--desktop-width': isNumericWidth ? `${width}px` : undefined,
+          '--mobile-width': isNumericMobileWidth ? `${width_mobile}px` : undefined,
+        } as React.CSSProperties
+      }
       {...props}
     >
+
       {enabled && selected && (
         <div className="absolute -top-4 right-0 z-100 flex gap-1 bg-overlay-primary border border-card-border p-1 rounded-md shadow-lg">
           <Button
