@@ -7,6 +7,12 @@ on:
 
 jobs:
   unit-tests:
+    if: >-
+      github.event_name == 'push' ||
+      (
+        !contains(github.event.pull_request.labels.*.name, 'autorelease: pending') &&
+        !startsWith(github.event.pull_request.head.ref, 'release-please--')
+      )
     name: Unit Tests
     timeout-minutes: 10
     runs-on: ubuntu-latest
