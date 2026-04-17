@@ -5,6 +5,9 @@ on:
 
 jobs:
   lint:
+    if: >-
+      !contains(github.event.pull_request.labels.*.name, 'autorelease: pending') &&
+      !startsWith(github.event.pull_request.head.ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
