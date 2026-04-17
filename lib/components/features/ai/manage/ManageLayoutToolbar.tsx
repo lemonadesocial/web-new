@@ -17,18 +17,17 @@ import {
   PageConfigFragmentFragmentDoc,
   PageConfigOwnerType,
   PublishEventDocument,
+  Space,
   SubscriptionItemType,
   Template,
   TemplateCategory,
   TemplateTarget,
   TemplateVisibility,
   UpdatePageConfigDocument,
-  UpdateSpaceDocument,
-  SpaceFragmentDoc,
 } from '$lib/graphql/generated/backend/graphql';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { themeValuesToPageTheme, pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { nodesToSections } from '$utils/page-sections-mapper';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import {
@@ -60,10 +59,16 @@ function ManageLayoutToolbar() {
   const state = useStoreManageLayout();
   const [themeState, themeDispatch] = useEventTheme();
   const event = state.data as Event | undefined;
+  const space = state.data as Space | undefined;
+  const visibleTabs = state.availableTabs.map((key) => [key, tabMappings[key]] as const);
+  const hasMultipleTabs = state.availableTabs.length > 1;
+  const showWorkspaceSwitcher = state.layoutType === 'event';
+  const isEventBuilderView = state.layoutType === 'event' && ['design', 'preview'].includes(state.activeTab);
+  const isEventSectionEditing =
+    state.layoutType === 'event' && state.activeTab === 'design' && state.builderTab === 'sections';
+  const upgradeTarget = state.layoutType === 'event' ? event?.space : space?._id;
 
-  const { actions, query, nodes, canUndo, canRedo } = usePageEditor();
-
-  // NOTE: its bc using different store
+  const { actions, query, canUndo, canRedo } = usePageEditor();
   const updateEvent = useUpdateEvent();
 
   const [publishEvent, { loading: publishingEvent }] = useMutation(PublishEventDocument, {
@@ -78,6 +83,7 @@ function ManageLayoutToolbar() {
       toast.error(error.message || 'Failed to publish event');
     },
   });
+
   const [updatePageConfigTheme, { loading: savingTheme }] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
       const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
@@ -105,59 +111,6 @@ function ManageLayoutToolbar() {
     },
   });
 
-  const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
-  const savedThemeAsValues = state.savedPageTheme
-    ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
-    : event?.theme_data || defaultTheme;
-  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
-
-  const canSaveTheme =
-    state.layoutType === 'event' &&
-    state.activeTab === 'design' &&
-    !!event?._id &&
-    !!state.pageConfigId &&
-    isThemeDirty;
-  const brandTitle = event?.title || 'Event Manager';
-  const brandSubtitle = event?.space_expanded?.title || '';
-  const isMobileSubPane = state.mobilePane !== 'main';
-
-  const handlePublish = () => {
-    match(state.layoutType)
-      .with('event', () => {
-        if (state.data?._id) {
-          publishEvent({
-            variables: {
-              event: state.data._id,
-            },
-          });
-        }
-      })
-      .otherwise(() => {});
-  };
-
-  const handleSaveTheme = () => {
-    if (!state.pageConfigId) return;
-    updatePageConfigTheme({
-      variables: {
-        id: state.pageConfigId,
-        input: { theme: themeValuesToPageTheme(themeState) as any },
-      },
-    });
-  };
-
-  const [updateSpace, { loading: savingSpace }] = useMutation(UpdateSpaceDocument, {
-    onComplete: (_, data) => {
-      const updatedSpace = useFragment(SpaceFragmentDoc, data?.updateSpace);
-      if (updatedSpace?._id) {
-        toast.success('Space layout saved successfully!');
-        store.setData({ ...state.data, ...updatedSpace } as any);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to save space layout');
-    },
-  });
-
   const [createTemplate, { loading: creatingTemplate }] = useMutation(CreateTemplateDocument);
   const [createPageConfig, { loading: creatingPageConfig }] = useMutation(CreatePageConfigDocument, {
     onComplete: (_, data) => {
@@ -172,15 +125,47 @@ function ManageLayoutToolbar() {
     },
   });
 
+  const normalizeTheme = (theme: unknown) => merge({}, defaultTheme, theme || {});
+  const savedThemeAsValues = state.savedPageTheme
+    ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
+    : (event?.theme_data || defaultTheme);
+  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
+
+  const canSaveTheme =
+    state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
+  const brandTitle = state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
+  const brandSubtitle = state.layoutType === 'event' ? event?.space_expanded?.title || '' : '';
+  const isMobileSubPane = state.mobilePane !== 'main';
+
+  const handlePublish = () => {
+    if (state.layoutType !== 'event' || !state.data?._id) return;
+
+    publishEvent({
+      variables: {
+        event: state.data._id,
+      },
+    });
+  };
+
+  const handleSaveTheme = () => {
+    if (!state.pageConfigId) return;
+
+    updatePageConfigTheme({
+      variables: {
+        id: state.pageConfigId,
+        input: { theme: themeValuesToPageTheme(themeState) as any },
+      },
+    });
+  };
+
   const handleSaveLayout = async () => {
-    if (!event?._id) return;
+    if (state.layoutType !== 'event' || !event?._id) return;
 
     try {
       const serialized = query.serialize();
       const sections = nodesToSections(serialized);
-      console.log(sections);
 
-      let template_id: string | undefined;
+      let templateId: string | undefined;
 
       if (state.isCreatingTemplate) {
         try {
@@ -194,7 +179,7 @@ function ManageLayoutToolbar() {
                 thumbnail_url: '',
                 tags: [],
                 structure_data: JSON.parse(serialized),
-                target: state.layoutType === 'event' ? TemplateTarget.Event : TemplateTarget.Space,
+                target: TemplateTarget.Event,
                 config: {},
                 subscription_tier_min: SubscriptionItemType.Free,
                 visibility: TemplateVisibility.Private,
@@ -203,47 +188,45 @@ function ManageLayoutToolbar() {
           });
           const newTemplate = templateResult.data?.createTemplate as Template;
           if (!newTemplate?._id) throw new Error('Failed to create template');
-          template_id = newTemplate._id;
+          templateId = newTemplate._id;
           store.setIsCreatingTemplate(false);
-        } catch (e: any) {
-          toast.error(e.message || 'Failed to create template');
+        } catch (error: any) {
+          toast.error(error.message || 'Failed to create template');
+          return;
         }
       }
 
       if (state.pageConfigId) {
-        // Update existing page config
         await updatePageConfig({
           variables: {
             id: state.pageConfigId,
             input: { sections: sections as any },
           },
         });
-      } else {
-        // Create new page config
-        await createPageConfig({
-          variables: {
-            input: {
-              name: event.title || 'Page Config',
-              owner_id: event._id,
-              owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
-              template_id,
-              sections: sections as any,
-            },
-          },
-        });
+        return;
       }
-    } catch (_e) {
+
+      await createPageConfig({
+        variables: {
+          input: {
+            name: event.title || 'Page Config',
+            owner_id: event._id,
+            owner_type: PageConfigOwnerType.Event,
+            template_id: templateId,
+            sections: sections as any,
+          },
+        },
+      });
+    } catch {
       toast.error('Failed to save layout');
     }
   };
-
-  const editorRef = React.useRef({ actions, query, state });
-  editorRef.current = { actions, query, state };
 
   React.useEffect(() => {
     const handleSave = () => {
       handleSaveLayout();
     };
+
     window.addEventListener('craft-save', handleSave);
     return () => window.removeEventListener('craft-save', handleSave);
   }, [handleSaveLayout]);
@@ -256,19 +239,32 @@ function ManageLayoutToolbar() {
   };
 
   const handleOpenPublicPage = () => {
-    const shortid = (state.data as Event)?.shortid || (params?.shortid as string);
-    if (shortid) {
-      window.open(`/e/${shortid}`, '_blank');
-    } else {
-      toast.error('Could not find event shortid');
-    }
+    match(state.layoutType)
+      .with('event', () => {
+        const shortid = (state.data as Event)?.shortid || (params?.shortid as string);
+        if (shortid) {
+          window.open(`/e/${shortid}`, '_blank');
+        } else {
+          toast.error('Could not find event shortid');
+        }
+      })
+      .with('community', () => {
+        const slugOrId = (state.data as Space)?.slug || (state.data as Space)?._id;
+        if (slugOrId) window.open(`/s/${slugOrId}`, '_blank');
+      })
+      .otherwise(() => {});
   };
 
   const handleOpenMobileChat = () => {
     store.setMobilePane('chat');
   };
 
-  const openDesignSheet = () => {
+  const openDesignPane = () => {
+    if (state.layoutType === 'community') {
+      store.setMobilePane('config');
+      return;
+    }
+
     sheet.open(SheetMobileDesignAction, {
       detent: 'content',
       containerClass: 'overflow-visible',
@@ -298,28 +294,35 @@ function ManageLayoutToolbar() {
             <i className="icon-lemonade-logo size-5" />
           </button>
           <div className="flex-1">
-            <Menu.Root strategy="fixed" placement="bottom-start">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <button
-                    type="button"
-                    className="flex items-center gap-3 cursor-pointer text-left"
-                    onClick={() => toggle()}
-                  >
-                    <div className="whitespace-nowrap">
-                      <div className="flex justify-between items-center gap-1">
-                        <p className="text-sm font-medium">{brandTitle}</p>
-                        <i className="icon-arrow-down size-4 text-tertiary" />
+            {showWorkspaceSwitcher ? (
+              <Menu.Root strategy="fixed" placement="bottom-start">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <button
+                      type="button"
+                      className="flex items-center gap-3 cursor-pointer text-left"
+                      onClick={() => toggle()}
+                    >
+                      <div className="whitespace-nowrap">
+                        <div className="flex justify-between items-center gap-1">
+                          <p className="text-sm font-medium">{brandTitle}</p>
+                          <i className="icon-arrow-down size-4 text-tertiary" />
+                        </div>
+                        {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                       </div>
-                      {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
-                    </div>
-                  </button>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-0 w-xs">
-                <DropdownComponent shortid={event?.shortid} />
-              </Menu.Content>
-            </Menu.Root>
+                    </button>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-0 w-xs">
+                  <DropdownComponent shortid={event?.shortid} />
+                </Menu.Content>
+              </Menu.Root>
+            ) : (
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{brandTitle}</p>
+                {!!brandSubtitle && <p className="text-tertiary text-xs truncate">{brandSubtitle}</p>}
+              </div>
+            )}
           </div>
 
           <Button
@@ -334,13 +337,16 @@ function ManageLayoutToolbar() {
         <div className="flex flex-1 justify-between items-center gap-2">
           <div className="flex gap-2">
             <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-              {Object.entries(tabMappings).map(([key, item]) => (
+              {visibleTabs.map(([key, item]) => (
                 <Button
                   key={key}
                   iconLeft={item.icon}
                   variant="tertiary"
                   size="sm"
                   onClick={() => {
+                    if (key === 'design' && state.layoutType === 'community' && !state.showSidebarLeft) {
+                      store.toggleSidebarLeft();
+                    }
                     store.setActiveTab(key as ActiveTabType);
                   }}
                   className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
@@ -361,7 +367,7 @@ function ManageLayoutToolbar() {
                   size="sm"
                   onClick={() => store.setPreviewMode(key as any)}
                   className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                ></Button>
+                />
               ))}
             </div>
 
@@ -375,14 +381,16 @@ function ManageLayoutToolbar() {
                 outlined
                 iconLeft="icon-arrow-shape-up-stack-outline"
                 onClick={() => {
-                  router.push(`/upgrade/${event?.space}`);
+                  if (upgradeTarget) {
+                    router.push(`/upgrade/${upgradeTarget}`);
+                  }
                 }}
               >
                 Upgrade
               </Button>
             )}
 
-            {['design', 'preview'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <>
                 <Menu.Root placement="bottom-end" dismissable={false} className="z-100">
                   <Menu.Trigger>
@@ -409,24 +417,24 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            {/* {canSaveTheme && ( */}
-            {/*   <> */}
-            {/*     <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}> */}
-            {/*       Reset */}
-            {/*     </Button> */}
-            {/*     <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}> */}
-            {/*       Save */}
-            {/*     </Button> */}
-            {/*   </> */}
-            {/* )} */}
+            {canSaveTheme && (
+              <>
+                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
+                  Reset
+                </Button>
+                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
+                  Save
+                </Button>
+              </>
+            )}
 
-            {state.activeTab === 'manage' && (
+            {state.layoutType === 'event' && state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
             )}
 
-            {state.activeTab === 'design' && (
+            {isEventSectionEditing && (
               <div className="flex gap-2 ml-2 pl-4 border-l border-(--color-divider)">
                 <Button
                   size="sm"
@@ -445,7 +453,7 @@ function ManageLayoutToolbar() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
@@ -456,7 +464,6 @@ function ManageLayoutToolbar() {
         </div>
       </div>
 
-      {/* Mobile Header Menu */}
       <div className="md:hidden sticky top-0 z-20 bg-overlay-primary px-3 py-2 flex flex-col gap-2 border-b border-overlay-primary">
         <div className="h-10 flex items-center justify-between gap-2">
           <button
@@ -468,38 +475,41 @@ function ManageLayoutToolbar() {
             <i className="icon-lemonade-logo size-5" />
           </button>
           <div className="flex-1 flex justify-center">
-            <Menu.Root strategy="fixed" placement="bottom">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 cursor-pointer min-w-0 text-left"
-                    onClick={() => toggle()}
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1">
-                        <p className="text-lg font-medium truncate">{brandTitle}</p>
-                        <i className="icon-arrow-down size-5 text-tertiary shrink-0" />
+            {showWorkspaceSwitcher ? (
+              <Menu.Root strategy="fixed" placement="bottom">
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 cursor-pointer min-w-0 text-left"
+                      onClick={() => toggle()}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1">
+                          <p className="text-lg font-medium truncate">{brandTitle}</p>
+                          <i className="icon-arrow-down size-5 text-tertiary shrink-0" />
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-0 w-2xs">
-                <DropdownComponent shortid={event?.shortid} />
-              </Menu.Content>
-            </Menu.Root>
+                    </button>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-0 w-2xs">
+                  <DropdownComponent shortid={event?.shortid} />
+                </Menu.Content>
+              </Menu.Root>
+            ) : (
+              <p className="text-lg font-medium truncate">{brandTitle}</p>
+            )}
           </div>
 
-          {state.mobilePane === 'chat' ? (
-            <Button variant="flat" icon="icon-settings" onClick={() => store.setMobilePane('main')} />
+          {isMobileSubPane ? (
+            <Button variant="flat" icon="icon-arrow-back-sharp" onClick={() => store.setMobilePane('main')} />
           ) : (
             <Button variant="flat" icon="icon-arrow-outward" onClick={handleOpenPublicPage} />
           )}
         </div>
       </div>
 
-      {/* Mobile Bottom Menu */}
       <div
         className={clsx(
           'md:hidden fixed inset-x-0 bottom-0 z-30 border-t bg-overlay-primary pb-[calc(env(safe-area-inset-bottom)+0.5rem)]',
@@ -517,7 +527,7 @@ function ManageLayoutToolbar() {
             Chat
           </Button>
           <div className="flex gap-2 w-max">
-            {state.activeTab === 'manage' && state.mobilePane === 'main' && (
+            {state.layoutType === 'event' && state.activeTab === 'manage' && state.mobilePane === 'main' && (
               <Button size="sm" className="rounded-full" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
               </Button>
@@ -528,12 +538,14 @@ function ManageLayoutToolbar() {
               icon="icon-arrow-shape-up-stack-outline"
               className="rounded-full aspect-square"
               onClick={() => {
-                router.push(`/upgrade/${event?.space}`);
+                if (upgradeTarget) {
+                  router.push(`/upgrade/${upgradeTarget}`);
+                }
               }}
             >
               Upgrade
             </Button>
-            {state.activeTab === 'design' && state.builderTab === 'sections' && (
+            {isEventSectionEditing && (
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -555,14 +567,14 @@ function ManageLayoutToolbar() {
                   size="sm"
                   variant="secondary"
                   className="rounded-full px-4"
-                  loading={updatingPageConfig || savingSpace || creatingTemplate || creatingPageConfig}
+                  loading={updatingPageConfig || creatingTemplate || creatingPageConfig}
                   onClick={handleSaveLayout}
                 >
                   Save Changes
                 </Button>
               </div>
             )}
-            {['preview', 'design'].includes(state.activeTab) && (
+            {isEventBuilderView && (
               <Button
                 size="sm"
                 variant="secondary"
@@ -591,34 +603,37 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            <Button
-              icon="icon-more-horiz"
-              variant="tertiary-alt"
-              className="rounded-full aspect-square"
-              size="sm"
-              onClick={() =>
-                sheet.open(SheetMobileMenuAction, {
-                  detent: 'content',
-                  containerClass: 'overflow-visible',
-                  contentClass: 'overflow-visible',
-                  props: {
-                    active: state.activeTab,
-                    onSelect: (action) => {
-                      store.setActiveTab(action);
-                      store.setMobilePane('main');
-                      if (action === 'design') {
-                        sheet.close();
-                        setTimeout(() => {
-                          openDesignSheet();
-                        }, 180);
-                      } else {
-                        sheet.close();
-                      }
+            {hasMultipleTabs && (
+              <Button
+                icon="icon-more-horiz"
+                variant="tertiary-alt"
+                className="rounded-full aspect-square"
+                size="sm"
+                onClick={() =>
+                  sheet.open(SheetMobileMenuAction, {
+                    detent: 'content',
+                    containerClass: 'overflow-visible',
+                    contentClass: 'overflow-visible',
+                    props: {
+                      active: state.activeTab,
+                      availableTabs: state.availableTabs,
+                      onSelect: (action) => {
+                        store.setActiveTab(action);
+                        store.setMobilePane('main');
+                        if (action === 'design') {
+                          sheet.close();
+                          setTimeout(() => {
+                            openDesignPane();
+                          }, 180);
+                        } else {
+                          sheet.close();
+                        }
+                      },
                     },
-                  },
-                })
-              }
-            ></Button>
+                  })
+                }
+              />
+            )}
           </div>
         </div>
       </div>
@@ -631,6 +646,7 @@ const tabs = [
   { key: 'communities', label: 'Communities' },
   { key: 'coins', label: 'Coins' },
 ];
+
 function DropdownComponent({ shortid }: { shortid?: string }) {
   const router = useRouter();
   const [active, setActive] = React.useState('events');
@@ -712,34 +728,42 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
 
 function SheetMobileMenuAction({
   active,
+  availableTabs,
   onSelect,
 }: {
   active: ActiveTabType;
+  availableTabs: ActiveTabType[];
   onSelect: (action: ActiveTabType) => void;
 }) {
   return (
     <div className="p-4 flex flex-col gap-3">
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'manage' && 'border-secondary!')}
-        onClick={() => onSelect('manage')}
-      >
-        Manage
-      </Button>
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'design' && 'border-secondary!')}
-        onClick={() => onSelect('design')}
-      >
-        Design
-      </Button>
-      <Button
-        variant="tertiary-alt"
-        className={clsx(active === 'preview' && 'border-secondary!')}
-        onClick={() => onSelect('preview')}
-      >
-        Preview
-      </Button>
+      {availableTabs.includes('manage') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'manage' && 'border-secondary!')}
+          onClick={() => onSelect('manage')}
+        >
+          Manage
+        </Button>
+      )}
+      {availableTabs.includes('design') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'design' && 'border-secondary!')}
+          onClick={() => onSelect('design')}
+        >
+          Design
+        </Button>
+      )}
+      {availableTabs.includes('preview') && (
+        <Button
+          variant="tertiary-alt"
+          className={clsx(active === 'preview' && 'border-secondary!')}
+          onClick={() => onSelect('preview')}
+        >
+          Preview
+        </Button>
+      )}
     </div>
   );
 }

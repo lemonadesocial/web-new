@@ -15,6 +15,7 @@ import {
   GetPageConfigDocument,
   PageConfigFragmentFragmentDoc,
   PageConfigOwnerType,
+  Space,
 } from '$lib/graphql/generated/backend/graphql';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
@@ -23,15 +24,20 @@ import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/
 
 import { mockWelcomeEvent } from '../InputChat';
 import { AIChat } from '../AIChat';
+import { DesignTool } from './DesignTool';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
+import ManageCommunityLayout from '../../community-manage/ManageCommunityLayout';
+import CommunityManageDesignPane from '../../community-manage/CommunityManageDesignPane';
+import CommunityManagePreview from '../../community-manage/CommunityManagePreview';
 
-import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
 import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
 import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
 import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { SettingsPanel } from './SettingsPanel';
+
+const communityPreviewTabs = new Set(['design', 'preview']);
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -48,9 +54,9 @@ function useIsMobile() {
   return isMobile;
 }
 
-function ManageLayoutContent() {
+function ManageLayoutContent({ children }: React.PropsWithChildren) {
   const params = useParams();
-  const shortid = params?.shortid as string;
+  const shortid = params?.shortid as string | undefined;
 
   const [ready, setReady] = React.useState(false);
   const isMobile = useIsMobile();
@@ -63,8 +69,8 @@ function ManageLayoutContent() {
   const { selectedId, actions, query } = usePageEditor();
   const isSelected = selectedId !== null;
 
-  const SidebarComp = tabMappings[state.activeTab].component || null;
   const cachedEvent = state.data as Event | undefined;
+  const community = state.layoutType === 'community' ? (state.data as Space | undefined) : undefined;
   const shouldFetchEvent = state.layoutType === 'event' && !!shortid && cachedEvent?.shortid !== shortid;
 
   const { data: dataGetEvent } = useQuery(GetEventDocument, {
@@ -144,7 +150,12 @@ function ManageLayoutContent() {
   );
 
   React.useEffect(() => {
-    if (state.layoutType === 'event' && event?.shortid === shortid && initializedConfigEventRef.current !== event._id) {
+    if (
+      state.layoutType === 'event' &&
+      event?._id &&
+      event.shortid === shortid &&
+      initializedConfigEventRef.current !== event._id
+    ) {
       store.setData(event);
 
       aiChatDispatch({
@@ -160,7 +171,50 @@ function ManageLayoutContent() {
 
       if (!ready) setReady(true);
     }
-  }, [state.layoutType, event, ready, shortid]);
+  }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
+
+  React.useEffect(() => {
+    if (state.layoutType === 'community' && !ready) {
+      setReady(true);
+    }
+  }, [ready, state.layoutType]);
+
+  const communityChatProps =
+    state.layoutType === 'community' && community?._id
+      ? ({
+          hideSpaceSelector: true,
+          fixedSpaceId: community._id,
+        } as const)
+      : undefined;
+
+  const sidebarContent = match([state.layoutType, state.activeTab] as const)
+    .with(['event', 'manage'], () => (
+      <div className="h-full px-4">
+        <AIChat compact />
+      </div>
+    ))
+    .with(['community', 'manage'], () => (
+      <div className="h-full px-4">
+        <AIChat compact {...communityChatProps} />
+      </div>
+    ))
+    .with(['event', 'design'], () => (
+      <div className="h-full">
+        <DesignTool />
+      </div>
+    ))
+    .with(['community', 'design'], () => (community ? <CommunityManageDesignPane space={community} /> : null))
+    .with(['event', 'preview'], () => (
+      <div className="h-full px-4">
+        <AIChat compact />
+      </div>
+    ))
+    .with(['community', 'preview'], () => (
+      <div className="h-full px-4">
+        <AIChat compact {...communityChatProps} />
+      </div>
+    ))
+    .otherwise(() => null);
 
   const editorRef = React.useRef({ actions, query, state });
   editorRef.current = { actions, query, state };
@@ -231,15 +285,21 @@ function ManageLayoutContent() {
     return () => setAIPageEditTriggers(null);
   }, []);
 
-  if (!ready) return null;
+  const isReady = state.layoutType === 'community' || ready;
+
+  if (!isReady) return null;
 
   const mobilePaneContent = match(state.mobilePane)
-    .with('chat', () => <AIChat compact />)
-    .with('config', () => <SidebarComp />)
+    .with('chat', () =>
+      state.layoutType === 'community' ? <AIChat compact {...communityChatProps} /> : <AIChat compact />,
+    )
+    .with('config', () => sidebarContent)
     .otherwise(() => null);
   const isChatPane = state.mobilePane === 'chat';
   const isConfigPane = state.mobilePane === 'config';
   const needsMobileBottomInset = state.activeTab === 'manage';
+  const shouldPadMobileConfigPane = isConfigPane && state.activeTab !== 'design';
+  const showsCommunityPreview = state.layoutType === 'community' && communityPreviewTabs.has(state.activeTab);
 
   const previewContent = match(state.layoutType)
     .with('event', () =>
@@ -274,6 +334,11 @@ function ManageLayoutContent() {
         </main>
       ) : null,
     )
+    .with('community', () =>
+      community ? (
+        <CommunityManagePreview space={community} themeData={themeState} />
+      ) : null,
+    )
     .otherwise(() => null);
 
   return (
@@ -303,7 +368,7 @@ function ManageLayoutContent() {
               className="overflow-hidden shrink-0 hidden md:block h-full"
             >
               <div data-mode={state.device} className={clsx('min-w-110 w-full h-full relative isolate pt-3')}>
-                <SidebarComp />
+                {sidebarContent}
               </div>
             </motion.div>
           )}
@@ -321,11 +386,13 @@ function ManageLayoutContent() {
               state.device === 'mobile' && 'md:w-sm',
             )}
           >
-            {state.activeTab === 'manage'
-              ? match(state.layoutType)
-                  .with('event', () => <ManageEventLayout shortid={shortid} />)
-                  .otherwise(() => null)
-              : !isMobile && previewContent}
+            {state.layoutType === 'community'
+              ? showsCommunityPreview
+                ? !isMobile && previewContent
+                : <ManageCommunityLayout>{children}</ManageCommunityLayout>
+              : state.activeTab === 'manage'
+                ? <ManageEventLayout shortid={shortid || ''} />
+                : !isMobile && previewContent}
           </div>
         </div>
       </div>
@@ -338,11 +405,13 @@ function ManageLayoutContent() {
             state.mobilePane !== 'main' && 'pointer-events-none',
           )}
         >
-          {state.activeTab === 'manage'
-            ? match(state.layoutType)
-                .with('event', () => <ManageEventLayout shortid={shortid} />)
-                .otherwise(() => null)
-            : isMobile && previewContent}
+          {state.layoutType === 'community'
+            ? showsCommunityPreview
+              ? isMobile && previewContent
+              : <ManageCommunityLayout>{children}</ManageCommunityLayout>
+            : state.activeTab === 'manage'
+              ? <ManageEventLayout shortid={shortid || ''} />
+              : isMobile && previewContent}
         </div>
 
         <AnimatePresence initial={false}>
@@ -355,7 +424,7 @@ function ManageLayoutContent() {
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               className={clsx(
                 'absolute inset-0 overflow-auto bg-background z-40',
-                isConfigPane && 'p-4',
+                shouldPadMobileConfigPane && 'p-4',
                 state.mobilePane === 'chat' && 'px-4 pt-2 pb-3',
               )}
             >

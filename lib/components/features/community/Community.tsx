@@ -27,11 +27,12 @@ type Props = {
   };
   customTitle?: (title: string) => React.ReactElement;
   hideHeroSection?: boolean;
+  hideManageControls?: boolean;
   locked?: React.ReactElement;
   showEvents?: boolean;
 };
 
-export function Community({ initData, hideHeroSection = false, showEvents }: Props) {
+export function Community({ initData, hideHeroSection = false, hideManageControls = false, showEvents }: Props) {
   const hideSubspace = true;
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
@@ -53,7 +54,7 @@ export function Community({ initData, hideHeroSection = false, showEvents }: Pro
     <div className="relative pb-20">
       {!hideHeroSection && (
         <>
-          <HeroSection space={dataGetSpace?.getSpace as Space} />
+          <HeroSection space={dataGetSpace?.getSpace as Space} hideManageControls={hideManageControls} />
           <Divider className="my-8" />
           {!hideSubspace && subSpaces.length > 0 && (
             <>
