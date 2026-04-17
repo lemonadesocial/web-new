@@ -2,18 +2,12 @@
 import { useContext } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
-import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { ory } from '$lib/utils/ory';
 import { hydraClientIdAtom, sessionAtom } from '$lib/jotai';
 import { GraphQLWSContext } from '$lib/graphql/subscription/context';
 import { useMutation } from '$lib/graphql/request';
-
-const RevokeCurrentSessionDocument = `
-  mutation revokeCurrentSession {
-    revokeCurrentSession
-  }
-` as unknown as TypedDocumentNode<{ revokeCurrentSession: boolean }, Record<string, never>>;
+import { RevokeCurrentSessionDocument } from '$lib/graphql/generated/backend/graphql';
 
 const REVOKE_TIMEOUT_MS = 2000;
 

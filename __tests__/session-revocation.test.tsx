@@ -343,7 +343,7 @@ describe('Active Sessions page', () => {
 
     mockMutate
       .mockResolvedValueOnce({ data: { getMyActiveSessions: mockSessions } })
-      .mockResolvedValueOnce({ data: { revokeMySession: mockSessions[1] } });
+      .mockResolvedValueOnce({ data: { revokeMySession: true } });
 
     const ActiveSessionsPage = (await import(
       '../app/[domain]/(default)/settings/security/sessions/page'

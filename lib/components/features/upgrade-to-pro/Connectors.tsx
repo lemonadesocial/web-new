@@ -20,6 +20,17 @@ import { getErrorMessage } from '$lib/utils/error';
 
 import { CONNECTOR_ICONS, getConnectorErrorMessage } from './utils';
 
+function handleConnectorError(error: Error, fallbackMessage: string) {
+  const msg = getErrorMessage(error, '');
+  if (msg.toLowerCase().includes('connection is locked')) {
+    toast.error('This connection has been locked due to too many failed attempts. Please contact support to unlock it.');
+  } else if (msg.toLowerCase().includes('too many attempts')) {
+    toast.error('Too many attempts. Please wait an hour before trying again.');
+  } else {
+    toast.error(getErrorMessage(error, fallbackMessage));
+  }
+}
+
 type ConnectorsProps = {
   space: Space;
   basePath?: string;
@@ -109,16 +120,18 @@ export function Connectors({ space, basePath }: ConnectorsProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {connectors.map((item) => {
             const connection = spaceConnections.find((c) => {
-              return c.enabled && c.status === 'connected' && c.connectorType === item.id;
+              return c.enabled && (c.status === 'connected' || c.status === 'locked') && c.connectorType === item.id;
             });
 
-            const isConnected = Boolean(connection);
+            const isConnected = connection?.status === 'connected';
+            const isLocked = connection?.status === 'locked';
 
             return (
               <ConnectorCard
                 key={item.id}
                 item={item}
                 isConnected={isConnected}
+                isLocked={isLocked}
                 connectionId={connection?.id}
                 space={space}
                 basePath={basePath}
@@ -136,13 +149,14 @@ export function Connectors({ space, basePath }: ConnectorsProps) {
 type ConnectorCardProps = {
   item: ConnectorDefinition;
   isConnected: boolean;
+  isLocked: boolean;
   connectionId?: string;
   space: Space;
   basePath?: string;
   refetchSpaceConnections: () => Promise<unknown>;
 };
 
-function ConnectorCard({ item, isConnected, connectionId, space, basePath, refetchSpaceConnections }: ConnectorCardProps) {
+function ConnectorCard({ item, isConnected, isLocked, connectionId, space, basePath, refetchSpaceConnections }: ConnectorCardProps) {
   const router = useRouter();
   const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
   const connectorBasePath = basePath ?? `/s/manage/${space.slug || space._id}/settings/connectors`;
@@ -153,12 +167,14 @@ function ConnectorCard({ item, isConnected, connectionId, space, basePath, refet
   }, [connectionId, connectorBasePath, router]);
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
-    onError: (error) => {
-      toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
-    },
+    onError: (error) => handleConnectorError(error, 'Unable to connect. Please try again.'),
   });
 
   const handleConnect = async () => {
+    if (isLocked) {
+      toast.error('This connection is locked. Contact support.');
+      return;
+    }
     if (loading || isConnected) return;
 
     const { data } = await connectPlatform({
@@ -199,19 +215,37 @@ function ConnectorCard({ item, isConnected, connectionId, space, basePath, refet
   const handleDisconnect = async (toggle: () => void) => {
     if (!connectionId || disconnecting) return;
 
-    await disconnectPlatform({
+    const { data } = await disconnectPlatform({
       variables: {
         connectionId,
       },
     });
 
     await refetchSpaceConnections();
-    toast.success('Connector disconnected.');
+
+    const result = data?.disconnectPlatform;
+    if (!result) {
+      // Unexpected — keep defensive fallback
+      toast.success('Connector disconnected.');
+      toggle();
+      return;
+    }
+
+    if (!result.tokenRevoked) {
+      // Revocation failure — BE has sanitized revocationError per PRD US-5.3; DO NOT re-sanitize.
+      // Toast has no 'warning' variant; reuse error (red).
+      toast.error(
+        result.revocationError ??
+          'Token could not be revoked on the external platform. Please revoke access manually in the provider settings.',
+      );
+    } else {
+      toast.success('Connector disconnected.');
+    }
     toggle();
   };
 
   return (
-    <Card.Root onClick={isConnected ? handleViewActions : handleConnect}>
+    <Card.Root onClick={isLocked ? undefined : isConnected ? handleViewActions : handleConnect}>
       <Card.Content className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div className="size-12 flex items-center justify-center rounded-sm bg-overlay-primary overflow-hidden">
@@ -221,7 +255,15 @@ function ConnectorCard({ item, isConnected, connectionId, space, basePath, refet
               <span className="text-xs font-medium uppercase">{item.name?.slice(0, 2) ?? item.icon}</span>
             )}
           </div>
-          {isConnected ? (
+          {isLocked ? (
+            <div className="flex flex-col items-end gap-1">
+              <Chip size="xs" variant="error" className="flex items-center gap-1 rounded-full h-6">
+                <i className="icon-lock" />
+                Locked
+              </Chip>
+              <span className="text-xs text-tertiary">Contact support</span>
+            </div>
+          ) : isConnected ? (
             <div className="flex items-center gap-2">
               <Chip size="xs" variant="success" className="rounded-full h-6">
                 Connected
@@ -296,9 +338,7 @@ function ApiKeyModal({ item, connectionId, refetchSpaceConnections }: ApiKeyModa
   const icon = CONNECTOR_ICONS[item.id] ?? CONNECTOR_ICONS[item.icon];
 
   const [submitApiKey, { loading }] = useMutation(SubmitApiKeyDocument, {
-    onError: (error) => {
-      toast.error(getErrorMessage(error, 'Unable to connect. Please try again.'));
-    },
+    onError: (error) => handleConnectorError(error, 'Unable to connect. Please try again.'),
     onComplete() {
       refetchSpaceConnections();
 
