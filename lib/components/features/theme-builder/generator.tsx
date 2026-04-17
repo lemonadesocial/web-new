@@ -217,7 +217,6 @@ export function ThemeGenerator({
               key={data.config.effect.emoji}
               emoji={data.config.effect.emoji}
               scoped={scoped}
-              scopeSelector={scoped ? selector : undefined}
             />
           )}
         </div>

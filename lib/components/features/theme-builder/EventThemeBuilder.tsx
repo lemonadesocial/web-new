@@ -10,6 +10,7 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   FileCategory,
   GetSystemFilesDocument,
+  PageConfigFragmentFragmentDoc,
   SystemFile,
   UpdateEventThemeDocument,
   UpdatePageConfigDocument,
@@ -22,7 +23,8 @@ import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
 import { FloatingPortal } from '@floating-ui/react';
 import { themeValuesToPageTheme } from '$utils/page-theme-adapter';
-import { useStoreManageLayout } from '../ai/manage/store';
+import { storeManageLayout, useStoreManageLayout } from '../ai/manage/store';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
 function getThemePreset(themeName: ReturnType<typeof getThemeName>) {
   return themeName in presets ? presets[themeName as keyof typeof presets] : undefined;
@@ -55,9 +57,9 @@ export function EventThemeBuilder({
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
   const [updatePageConfig] = useMutation(UpdatePageConfigDocument, {
     onComplete: (_, data) => {
-      const pageConfig = data?.updatePageConfig;
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
       if (pageConfig?._id) {
-        storeManageLayout.setSavedPageTheme(pageConfig.theme as any);
+        storeManageLayout.setSavedPageTheme(pageConfig.theme || undefined);
       }
     },
   });

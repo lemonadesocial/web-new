@@ -91,11 +91,10 @@ function ManageLayout({
   React.useEffect(() => {
     if (pageConfigFields?._id) {
       storeManageLayout.setPageConfigId(pageConfigFields._id);
-      storeManageLayout.setSavedPageTheme(pageConfigFields.theme);
+      storeManageLayout.setSavedPageTheme(pageConfigFields.theme || undefined);
     }
   }, [pageConfigFields]);
 
-  const event = state.data as Event | undefined;
   const isLoading = loadingEvent || loadingSpace || loadingPageConfig;
 
   const savedThemeAsValues = React.useMemo(() => {
