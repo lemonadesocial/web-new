@@ -4,11 +4,14 @@ import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventT
 import clsx from 'clsx';
 import React from 'react';
 import { AIChat } from '../AIChat';
-import { AIChatActionKind, useAIChat } from '../provider';
+import { AIChatActionKind, Message, useAIChat } from '../provider';
 import { TemplateTool } from './TemplateTool';
 import { SectionTool } from './SectionTool';
 import { storeManageLayout, useStoreManageLayout } from './store';
 import { AI_CONFIG } from '$lib/utils/constants';
+import { useQuery } from '$lib/graphql/request/hooks';
+import { Config, GetAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
 
 const segments: SegmentItem<string>[] = [
   { label: 'Builder', value: 'builder', iconLeft: 'icon-cards-outline' },
@@ -21,20 +24,48 @@ export function DesignTool() {
   const state = useStoreManageLayout();
   const segment = state.designMode;
   const [_, aiChatDispatch] = useAIChat();
+  const [pageDesignerConfig, setPageDesignerConfig] = React.useState<Config | null>(null);
+
+  useQuery(
+    GetAiConfigDocument,
+    {
+      variables: { id: PAGE_DESIGNER_CONFIG_ID! },
+      onComplete: (data) => {
+        if (data?.config) {
+          setPageDesignerConfig(data.config as Config);
+        }
+      },
+      skip: !PAGE_DESIGNER_CONFIG_ID,
+    },
+    aiChatClient,
+  );
 
   React.useEffect(() => {
-    if (segment === 'ai') {
-      aiChatDispatch({
-        type: AIChatActionKind.set_config,
-        payload: { config: PAGE_DESIGNER_CONFIG_ID },
-      });
-    } else {
-      aiChatDispatch({
-        type: AIChatActionKind.set_config,
-        payload: { config: AI_CONFIG },
-      });
-    }
+    if (segment !== 'builder') return;
+    aiChatDispatch({
+      type: AIChatActionKind.set_config,
+      payload: { config: AI_CONFIG },
+    });
   }, [segment, aiChatDispatch]);
+
+  React.useEffect(() => {
+    if (segment !== 'ai' || !pageDesignerConfig) return;
+    const welcomeMessage: Message = {
+      message:
+        pageDesignerConfig.welcomeMessage ||
+        `Hi, I'm ${pageDesignerConfig.name}, your ${pageDesignerConfig.job || 'assistant'}.\nHow can I help?`,
+      role: 'assistant',
+      metadata: pageDesignerConfig.welcomeMetadata,
+    };
+    aiChatDispatch({
+      type: AIChatActionKind.set_config,
+      payload: {
+        config: PAGE_DESIGNER_CONFIG_ID,
+        configs: [pageDesignerConfig],
+        messages: [welcomeMessage],
+      },
+    });
+  }, [segment, pageDesignerConfig, aiChatDispatch]);
 
   return (
     <div className="h-full flex flex-col">

@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 
 import { useClient, useMutation, useQuery } from '$lib/graphql/request';
-import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import { AiConfigFieldsFragment, Config, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import {
@@ -149,7 +149,10 @@ export function InputChat({
               dispatch({ type: AIChatActionKind.reset });
               if (res.data?.configs?.items?.length) {
                 const config = res.data.configs.items[0] as AiConfigFieldsFragment;
-                dispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+                dispatch({
+                  type: AIChatActionKind.set_config,
+                  payload: { config: config._id, configs: res.data.configs.items as Config[] },
+                });
               }
             }, 2500);
           })
@@ -193,7 +196,10 @@ export function InputChat({
               dispatch({ type: AIChatActionKind.reset });
               if (res.data?.configs?.items?.length) {
                 const config = res.data.configs.items[0] as AiConfigFieldsFragment;
-                dispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+                dispatch({
+                  type: AIChatActionKind.set_config,
+                  payload: { config: config._id, configs: res.data.configs.items as Config[] },
+                });
               }
             }, 2500);
           })
