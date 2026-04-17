@@ -8,7 +8,7 @@
  * CSS variables from these names at render time.
  */
 
-import type { ThemeValues } from '$lib/components/features/theme-builder/store';
+import { fonts, type ThemeValues } from '$lib/components/features/theme-builder/store';
 
 // Partial mirror of the backend PageTheme type.
 // The generated graphql.ts types will be updated once codegen is re-run after
@@ -99,11 +99,20 @@ export function pageThemeToThemeValues(theme: StoredPageTheme): ThemeValues {
     };
   }
 
+  const font_title = theme.fonts?.title?.family ?? 'default';
+  const font_body = theme.fonts?.body?.family ?? 'default';
+
   return {
     theme: preset,
     config,
-    font_title: theme.fonts?.title?.family ?? 'default',
-    font_body: theme.fonts?.body?.family ?? 'default',
-    variables: {},
+    font_title,
+    font_body,
+    variables: {
+      custom: theme.css_variables ?? {},
+      font: {
+        '--font-title': fonts.title[font_title] || fonts.title.default,
+        '--font-body': fonts.body[font_body] || fonts.body.default,
+      },
+    },
   };
 }

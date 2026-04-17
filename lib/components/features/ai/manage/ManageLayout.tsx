@@ -7,13 +7,23 @@ import ManageLayoutToolbar from './ManageLayoutToolbar';
 import ManageLayoutContent from './ManageLayoutContent';
 import { Button, DrawerContainer } from '$lib/components/core';
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
-import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetPageConfigDocument,
+  GetSpaceDocument,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
+  Space,
+} from '$lib/graphql/generated/backend/graphql';
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 import { hosting } from '$lib/utils/event';
 
 import { PageEditorProvider } from '$lib/components/features/page-builder/context';
 import { useParams } from 'next/navigation';
 import { useQuery } from '$lib/graphql/request';
+import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
 function ManageLayout() {
   const { isAuthenticated, me } = useRequireLemonadeAccount();
@@ -43,8 +53,32 @@ function ManageLayout() {
     },
   });
 
+  const { data: pageConfigRaw, loading: loadingPageConfig } = useQuery(GetPageConfigDocument, {
+    variables: {
+      ownerType: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
+      ownerId: state.data?._id,
+    },
+    skip: !state.data?._id || !!state.pageConfigId,
+  });
+
+  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfigRaw?.getPageConfig);
+
+  React.useEffect(() => {
+    if (pageConfigFields?._id) {
+      storeManageLayout.setPageConfigId(pageConfigFields._id);
+      storeManageLayout.setSavedPageTheme(pageConfigFields.theme);
+    }
+  }, [pageConfigFields]);
+
   const event = state.data as Event | undefined;
-  const isLoading = loadingEvent || loadingSpace;
+  const isLoading = loadingEvent || loadingSpace || loadingPageConfig;
+
+  const savedThemeAsValues = React.useMemo(() => {
+    if (state.savedPageTheme) {
+      return pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme);
+    }
+    return (state.data as Event)?.theme_data;
+  }, [state.savedPageTheme, state.data]);
 
   const hasPermission = React.useMemo(() => {
     if (!me || !state.data) return false;
@@ -118,9 +152,9 @@ function ManageLayout() {
     <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
       <PageEditorProvider enabled={state.activeTab !== 'manage'}>
         <Header showUI={false} />
-        <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={event?.theme_data}>
+        <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={savedThemeAsValues}>
           <ManageLayoutToolbar />
-          <ManageLayoutContent />
+          <ManageLayoutContent pageConfig={pageConfigRaw?.getPageConfig} />
         </EventThemeProvider>
         <DrawerContainer />
       </PageEditorProvider>

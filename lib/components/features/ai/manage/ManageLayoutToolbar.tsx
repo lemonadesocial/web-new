@@ -98,6 +98,7 @@ function ManageLayoutToolbar() {
       if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
+        store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -165,6 +166,7 @@ function ManageLayoutToolbar() {
       if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
+        store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -178,7 +180,6 @@ function ManageLayoutToolbar() {
     try {
       const serialized = query.serialize();
       const sections = nodesToSections(serialized);
-      console.log(sections);
 
       let template_id: string | undefined;
 
@@ -215,7 +216,10 @@ function ManageLayoutToolbar() {
         await updatePageConfig({
           variables: {
             id: state.pageConfigId,
-            input: { sections: sections as any },
+            input: {
+              sections: sections as any,
+              theme: themeValuesToPageTheme(themeState) as any,
+            },
           },
         });
       } else {
@@ -228,6 +232,7 @@ function ManageLayoutToolbar() {
               owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
               template_id,
               sections: sections as any,
+              theme: themeValuesToPageTheme(themeState) as any,
             },
           },
         });

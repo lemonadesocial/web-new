@@ -136,18 +136,28 @@ export function ThemeGenerator({
           )}
           style={scopedBackgroundStyle}
         >
-          {data.theme === 'shader' && <ShaderGradient mode={mode} scoped={scoped} scopeSelector={selector} />}
+          {data.theme === 'shader' && (
+            <ShaderGradient mode={mode} scoped={scoped} scopeSelector={scoped ? selector : undefined} />
+          )}
 
           {data.theme === 'image' && data.config?.image && (
             <div
-              className={scoped ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat' : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'}
+              className={
+                scoped
+                  ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat'
+                  : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'
+              }
               style={{ background: `url(${data.config.image?.url})` }}
             />
           )}
 
           {data.theme === 'passport' && (data.config?.image || data.template?.image) && (
             <div
-              className={scoped ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat' : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'}
+              className={
+                scoped
+                  ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat'
+                  : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'
+              }
               style={{ background: `url(${data.config?.image?.url || data.template?.image})` }}
             />
           )}
@@ -157,7 +167,11 @@ export function ThemeGenerator({
               {!isMobile ? (
                 <video
                   ref={videoWebRef}
-                  className={scoped ? 'min-w-full min-h-full absolute hidden md:block inset-0' : 'min-w-full min-h-full fixed hidden md:block inset-0'}
+                  className={
+                    scoped
+                      ? 'min-w-full min-h-full absolute hidden md:block inset-0'
+                      : 'min-w-full min-h-full fixed hidden md:block inset-0'
+                  }
                   autoPlay
                   loop
                   playsInline
@@ -167,12 +181,19 @@ export function ThemeGenerator({
                     src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}
                     type="video/mp4;codecs=hvc1"
                   ></source>
-                  <source src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'} type="video/webm"></source>
+                  <source
+                    src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'}
+                    type="video/webm"
+                  ></source>
                 </video>
               ) : (
                 <video
                   ref={videoMobRef}
-                  className={scoped ? 'min-w-full min-h-full absolute inset-0 md:hidden' : 'min-w-full min-h-full fixed inset-0 md:hidden'}
+                  className={
+                    scoped
+                      ? 'min-w-full min-h-full absolute inset-0 md:hidden'
+                      : 'min-w-full min-h-full fixed inset-0 md:hidden'
+                  }
                   autoPlay
                   loop
                   playsInline
@@ -192,7 +213,12 @@ export function ThemeGenerator({
           )}
 
           {data.config.effect?.type === 'float' && (
-            <EmojiAnimate key={data.config.effect.emoji} emoji={data.config.effect.emoji} scoped={scoped} />
+            <EmojiAnimate
+              key={data.config.effect.emoji}
+              emoji={data.config.effect.emoji}
+              scoped={scoped}
+              scopeSelector={scoped ? selector : undefined}
+            />
           )}
         </div>
       )}
