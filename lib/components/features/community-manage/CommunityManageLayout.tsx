@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import NextLink from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import clsx from 'clsx';
@@ -27,7 +28,72 @@ const menu = [
   { name: 'Settings', page: 'settings' },
 ];
 
-export function CommunityManageLayout({ children }: React.PropsWithChildren) {
+type Props = React.PropsWithChildren<{
+  embedded?: boolean;
+  onSpaceResolved?: (space: Space) => void;
+}>;
+
+function CommunityHeader({
+  children,
+  pathname,
+  space,
+  uid,
+}: React.PropsWithChildren<{
+  pathname: string | null;
+  space: Space;
+  uid: string;
+}>) {
+  return (
+    <>
+      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
+        <div className="page mx-auto">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-3 items-center">
+              <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
+              <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
+            </div>
+            <Button
+              iconRight="icon-arrow-outward"
+              variant="tertiary-alt"
+              size="sm"
+              className="hidden md:block"
+              onClick={() => window.open(`/s/${uid}`, '_blank')}
+            >
+              Community Page
+            </Button>
+            <Button
+              icon="icon-arrow-outward"
+              className="md:hidden"
+              variant="tertiary-alt"
+              size="sm"
+              onClick={() => window.open(`/s/${uid}`, '_blank')}
+            />
+          </div>
+          <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
+            {menu.map((item) => {
+              const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
+              const isActive =
+                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname?.includes(url);
+
+              return (
+                <NextLink
+                  href={url}
+                  key={item.page}
+                  className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+                >
+                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
+                </NextLink>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+      <div className="flex-1">{children}</div>
+    </>
+  );
+}
+
+export function CommunityManageLayout({ children, embedded = false, onSpaceResolved }: Props) {
   const { isAuthenticated, me } = useRequireLemonadeAccount();
 
   const { uid, domain } = useParams<{ uid: string; domain: string }>();
@@ -36,6 +102,12 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
 
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
   const { data, loading } = useQuery(GetSpaceDocument, { variables });
+  const space = data?.getSpace as Space | undefined;
+
+  React.useEffect(() => {
+    if (!space) return;
+    onSpaceResolved?.(space);
+  }, [onSpaceResolved, space]);
 
   if (!isAuthenticated || !me) return null;
 
@@ -97,9 +169,9 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
     );
   }
 
-  const space = data?.getSpace as Space;
-  const spaceAdmins = space.admins?.map((u) => u._id) || [];
-  const canManage = me?._id && [space.creator, ...spaceAdmins].includes(me._id);
+  const resolvedSpace = space as Space;
+  const spaceAdmins = resolvedSpace.admins?.map((u) => u._id) || [];
+  const canManage = me?._id && [resolvedSpace.creator, ...spaceAdmins].includes(me._id);
 
   if (!canManage) {
     return (
@@ -110,11 +182,11 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold">No Access</h1>
-            <p className="text-secondary">You don't have access to manage this event.</p>
+            <p className="text-secondary">You don't have access to manage this community.</p>
           </div>
           <Button
             variant="tertiary"
-            onClick={() => (window.location.href = `/s/${space.slug || space._id}`)}
+            onClick={() => (window.location.href = `/s/${resolvedSpace.slug || resolvedSpace._id}`)}
             iconRight="icon-chevron-right"
           >
             Community Page
@@ -124,55 +196,22 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
     );
   }
 
-  return (
-    <CommunityManageSpaceProvider space={space} hostname={hostname}>
-      <main className="flex flex-col h-dvh overflow-auto">
-        <Header />
-        <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
-          <div className="page mx-auto">
-            <div className="flex justify-between items-center">
-              <div className="flex gap-3 items-center">
-                <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
-                <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
-              </div>
-              <Button
-                iconRight="icon-arrow-outward"
-                variant="tertiary-alt"
-                size="sm"
-                className="hidden md:block"
-                onClick={() => window.open(`/s/${uid}`, '_blank')}
-              >
-                Community Page
-              </Button>
-              <Button
-                icon="icon-arrow-outward"
-                className="md:hidden"
-                variant="tertiary-alt"
-                size="sm"
-                onClick={() => window.open(`/s/${uid}`, '_blank')}
-              />
-            </div>
-            <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
-              {menu.map((item) => {
-                const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
-                const isActive =
-                  item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
-
-                return (
-                  <NextLink
-                    href={url}
-                    key={item.page}
-                    className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
-                  >
-                    <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
-                  </NextLink>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-        <div className="flex-1">{children}</div>
-      </main>
+  const content = (
+    <CommunityManageSpaceProvider space={resolvedSpace} hostname={hostname}>
+      <CommunityHeader pathname={pathname} space={resolvedSpace} uid={uid}>
+        {children}
+      </CommunityHeader>
     </CommunityManageSpaceProvider>
+  );
+
+  if (embedded) {
+    return <div className="flex flex-col h-full overflow-auto">{content}</div>;
+  }
+
+  return (
+    <main className="flex flex-col h-dvh overflow-auto">
+      <Header />
+      {content}
+    </main>
   );
 }

@@ -14,6 +14,8 @@ type AIChatProps = {
   readOnly?: boolean;
   allowGuest?: boolean;
   compact?: boolean;
+  hideSpaceSelector?: boolean;
+  fixedSpaceId?: string;
   configOverride?: string;
 };
 
@@ -23,6 +25,8 @@ export function AIChat({
   readOnly,
   allowGuest = false,
   compact,
+  hideSpaceSelector,
+  fixedSpaceId,
   configOverride,
 }: AIChatProps) {
   const me = useMe();
@@ -72,6 +76,8 @@ export function AIChat({
                     showTools={showTools}
                     readOnly={readOnly}
                     compact={compact}
+                    hideSpaceSelector={hideSpaceSelector}
+                    fixedSpaceId={fixedSpaceId}
                     configOverride={configOverride}
                   />
                 </div>
@@ -109,6 +115,8 @@ export function AIChat({
                     showTools={showTools}
                     readOnly={readOnly}
                     compact={compact}
+                    hideSpaceSelector={hideSpaceSelector}
+                    fixedSpaceId={fixedSpaceId}
                     configOverride={configOverride}
                   />
                   <motion.div

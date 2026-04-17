@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { merge } from 'lodash';
 
 import { getClient } from '$lib/graphql/request';
 import {
@@ -15,10 +14,9 @@ import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { Community } from '$lib/components/features/community';
 import { PasswordGate } from '$lib/components/features/preview/PasswordGate';
 import { EventThemeProvider, ThemeProvider } from '$lib/components/features/theme-builder/provider';
-import { defaultTheme } from '$lib/components/features/theme-builder/store';
-import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
 import { MainEventLayout } from '$lib/components/features/event/MainEventLayout';
 import Header, { RootMenu } from '$lib/components/layouts/header';
+import { getCommunityThemeData } from '$lib/components/features/community-manage/theme';
 
 type Props = { params: Promise<{ token: string }> };
 
@@ -133,36 +131,10 @@ export default async function Page({ params }: Props) {
 
     if (!space) return notFound();
 
-    let themeData = defaultTheme;
-    let emptyTheme = undefined;
-
-    if (space.theme_data) {
-      themeData = merge({}, defaultTheme, {
-        theme: space.theme_data.theme,
-        font_title: space.theme_data.font_title,
-        font_body: space.theme_data.font_body,
-        variables: space.theme_data.variables,
-        config: {
-          mode: space.theme_data.mode || space.theme_data.config?.mode,
-          color: space.theme_data.foreground?.key || space.theme_data.config?.fg || space.theme_data.config?.color,
-          class: space.theme_data.class,
-          image: space.theme_data.config?.image,
-          name: space.theme_data.config?.name,
-          effect: space.theme_data.config?.effect,
-        },
-      });
-
-      if (space.theme_name && space.theme_name !== 'default') {
-        themeData = merge({}, themeData, defaultPassportConfig[space.theme_name as string] || {});
-      }
-    } else {
-      if (space.theme_name && space.theme_name !== 'default') {
-        emptyTheme = defaultPassportConfig[space.theme_name as string] || undefined;
-      }
-    }
+    const themeData = getCommunityThemeData(space);
 
     return (
-      <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
+      <ThemeProvider themeData={themeData}>
         <Community initData={{ space }} />
       </ThemeProvider>
     );

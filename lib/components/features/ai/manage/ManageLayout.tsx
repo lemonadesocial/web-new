@@ -2,7 +2,13 @@
 import React from 'react';
 
 import Header from '$lib/components/layouts/header';
-import { storeManageLayout, useStoreManageLayout } from './store';
+import {
+  ActiveTabType,
+  LayoutType,
+  defaultAvailableTabs,
+  storeManageLayout,
+  useStoreManageLayout,
+} from './store';
 import ManageLayoutToolbar from './ManageLayoutToolbar';
 import ManageLayoutContent from './ManageLayoutContent';
 import { Button, DrawerContainer } from '$lib/components/core';
@@ -16,8 +22,11 @@ import {
   PageConfigOwnerType,
   Space,
 } from '$lib/graphql/generated/backend/graphql';
+import { ThemeValues } from '$lib/components/features/theme-builder/store';
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 import { hosting } from '$lib/utils/event';
+import { isObjectId } from '$lib/utils/helpers';
+import { getCommunityThemeData } from '../../community-manage/theme';
 
 import { PageEditorProvider } from '$lib/components/features/page-builder/context';
 import { useParams } from 'next/navigation';
@@ -25,13 +34,24 @@ import { useQuery } from '$lib/graphql/request';
 import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
-function ManageLayout() {
+interface Props extends React.PropsWithChildren {
+  layoutType?: LayoutType;
+  availableTabs?: ActiveTabType[];
+}
+
+function ManageLayout({
+  children,
+  layoutType = 'event',
+  availableTabs = defaultAvailableTabs,
+}: Props) {
   const { isAuthenticated, me } = useRequireLemonadeAccount();
   const params = useParams();
   const shortid = params?.shortid as string;
   const uid = params?.uid as string;
 
   const state = useStoreManageLayout();
+  const entity = state.data as Event | Space | undefined;
+  const availableTabsKey = availableTabs.join(',');
 
   const { loading: loadingEvent } = useQuery(GetEventDocument, {
     variables: { shortid },
@@ -43,9 +63,14 @@ function ManageLayout() {
     },
   });
 
+  const spaceVariables = React.useMemo(() => {
+    if (!uid) return undefined;
+    return isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+  }, [uid]);
+
   const { loading: loadingSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: uid },
-    skip: state.layoutType !== 'community' || !!state.data || !uid,
+    variables: spaceVariables,
+    skip: state.layoutType !== 'community' || !!state.data || !spaceVariables,
     onComplete: (data) => {
       if (data?.getSpace) {
         storeManageLayout.setData(data.getSpace as Space);
@@ -77,8 +102,11 @@ function ManageLayout() {
     if (state.savedPageTheme) {
       return pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme);
     }
-    return (state.data as Event)?.theme_data;
-  }, [state.savedPageTheme, state.data]);
+    if (state.layoutType === 'community') {
+      return getCommunityThemeData((entity as Space | undefined) || null);
+    }
+    return (state.data as Event)?.theme_data as ThemeValues | undefined;
+  }, [state.savedPageTheme, state.data, state.layoutType, entity]);
 
   const hasPermission = React.useMemo(() => {
     if (!me || !state.data) return false;
@@ -96,10 +124,14 @@ function ManageLayout() {
   }, [me, state.data, state.layoutType]);
 
   React.useEffect(() => {
+    storeManageLayout.setLayoutType(layoutType);
+    storeManageLayout.setAvailableTabs(availableTabs);
+    storeManageLayout.setActiveTab(availableTabs.includes('manage') ? 'manage' : availableTabs[0] || 'manage');
+
     return () => {
       storeManageLayout.reset();
     };
-  }, []);
+  }, [availableTabsKey, layoutType]);
 
   if (!isAuthenticated || !me) return null;
 
@@ -137,7 +169,7 @@ function ManageLayout() {
               if (state.layoutType === 'event') {
                 if (params.shortid) window.location.href = `/e/${params.shortid}`;
               } else {
-                if (params.uid) window.location.href = `/${params.uid}`;
+                if (params.uid) window.location.href = `/s/${params.uid}`;
               }
             }}
           >
@@ -152,9 +184,12 @@ function ManageLayout() {
     <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
       <PageEditorProvider enabled={state.activeTab !== 'manage'}>
         <Header showUI={false} />
-        <EventThemeProvider key={event?._id || 'event-theme-default'} themeData={savedThemeAsValues}>
+        <EventThemeProvider
+          key={`${state.layoutType}-${entity?._id || 'manage-theme-default'}`}
+          themeData={savedThemeAsValues}
+        >
           <ManageLayoutToolbar />
-          <ManageLayoutContent pageConfig={pageConfigRaw?.getPageConfig} />
+          <ManageLayoutContent pageConfig={pageConfigRaw?.getPageConfig}>{children}</ManageLayoutContent>
         </EventThemeProvider>
         <DrawerContainer />
       </PageEditorProvider>
