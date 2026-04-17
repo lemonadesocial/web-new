@@ -100,6 +100,8 @@ export function CommunityFormContent({
     control,
     setValue,
     setError,
+    trigger,
+    getValues,
     formState: { errors, dirtyFields },
   } = form;
 
@@ -111,37 +113,47 @@ export function CommunityFormContent({
 
   const [slug, setSlug] = React.useState('');
   const [checking, setChecking] = React.useState(false);
-  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState(false);
+  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState<boolean | null>(null);
 
   const { client } = useClient();
 
   const debouncedFetchData = React.useCallback(
-    debounce(async (query) => {
-      try {
-        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
+    debounce(async (query: string) => {
+      const normalizedSlug = kebabCase(query);
 
-        if (!!data?.canUseSpaceSlug) {
+      try {
+        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: normalizedSlug } });
+        if (getValues('slug') !== query) return;
+
+        if (!data?.canUseSpaceSlug) {
           setError('slug', { type: 'validate', message: 'This URL is already taken.' });
+        } else {
+          await trigger('slug');
         }
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
       } catch (err: unknown) {
         Sentry.captureException(err);
       } finally {
-        setChecking(false);
+        if (getValues('slug') === query) {
+          setChecking(false);
+        }
       }
     }, 500),
-    [],
+    [client, getValues, setError, trigger],
   );
 
   const getIconSlugField = () => {
     if (slug.length < 3) return '';
 
     if (checking) return 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2';
-    if (canUseSpaceSlug) {
+    if (canUseSpaceSlug === true) {
       return 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2';
-    } else {
+    }
+    if (canUseSpaceSlug === false) {
       return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
     }
+
+    return '';
   };
 
   const handleUpload = async (files: globalThis.File[], type: 'cover' | 'dp') => {
@@ -168,10 +180,7 @@ export function CommunityFormContent({
     }
   };
 
-  React.useEffect(() => {
-    if (!canUseSpaceSlug) {
-    }
-  }, [canUseSpaceSlug]);
+  React.useEffect(() => () => debouncedFetchData.cancel(), [debouncedFetchData]);
 
   return (
     <>
@@ -276,18 +285,19 @@ export function CommunityFormContent({
                     setValue('slug', value, { shouldDirty: true, shouldValidate: true });
                     if (value.length > 2) {
                       setChecking(true);
+                      setCanUseSpaceSlug(null);
                       debouncedFetchData(value);
+                    } else {
+                      setChecking(false);
+                      setCanUseSpaceSlug(null);
+                      debouncedFetchData.cancel();
                     }
                   }}
                   right={{
                     icon: getIconSlugField(),
                   }}
-                  error={dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)}
-                  hint={
-                    dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)
-                      ? errors.slug?.message || 'This URL is already taken.'
-                      : ''
-                  }
+                  error={dirtyFields.slug && !!errors.slug?.message}
+                  hint={dirtyFields.slug ? errors.slug?.message || '' : ''}
                 />
               )}
             />

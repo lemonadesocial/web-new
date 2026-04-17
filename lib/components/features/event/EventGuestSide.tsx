@@ -3,8 +3,17 @@ import React from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-import { Editor, Frame } from '@craftjs/core';
-import { Event, GetEventDocument, GetEventQuery, GetPageConfigDocument, GetPageConfigQuery, PageConfigFragmentFragmentDoc, PageConfigOwnerType } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetEventQuery,
+  GetPageConfigDocument,
+  GetPageConfigQuery,
+  PageConfigFragmentFragmentDoc,
+  PageConfigOwnerType,
+} from '$lib/graphql/generated/backend/graphql';
+import { PageEditorProvider, usePageEditor } from '$lib/components/features/page-builder/context';
+import { PageRenderer } from '$lib/components/features/page-builder/renderer';
 import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
@@ -34,6 +43,25 @@ import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
 import { CraftableEventSections } from '../ai/manage/craft/CraftableEventSections';
 import { resolver } from '../ai/manage/craft/resolver';
+import { storeManageLayout } from '../ai/manage/store';
+import { sectionsToNodes, type PageSection } from '$utils/page-sections-mapper';
+
+function ReadOnlyPageView({ data, className }: { data: Record<string, any>; className?: string }) {
+  const { actions } = usePageEditor();
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    actions.deserialize(JSON.stringify(data));
+    setReady(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!ready) return null;
+  return (
+    <div className={className}>
+      <PageRenderer resolver={resolver} />
+    </div>
+  );
+}
 
 export function EventGuestSide({
   event: initEvent,
@@ -66,7 +94,7 @@ export function EventGuestSide({
 export function EventGuestSideContent({
   event,
   pageConfig: initPageConfig,
-  autoSave = true,
+  autoSave: _autoSave = true,
   isEditable = false,
 }: {
   event: Event;
@@ -81,6 +109,12 @@ export function EventGuestSideContent({
     setIsClient(true);
   }, []);
 
+  React.useEffect(() => {
+    if (event) {
+      storeManageLayout.setData(event);
+    }
+  }, [event]);
+
   const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
     initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
@@ -88,6 +122,27 @@ export function EventGuestSideContent({
   });
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+
+  const formattedStructureData = React.useMemo(() => {
+    const sections = pageConfigFields?.sections;
+    if (!sections?.length) return null;
+    try {
+      return sectionsToNodes(sections as unknown as PageSection[]);
+    } catch {
+      return null;
+    }
+  }, [pageConfigFields]);
+
+  React.useEffect(() => {
+    if (formattedStructureData || isEditable) {
+      storeManageLayout.setFullScreen(true);
+    } else {
+      storeManageLayout.setFullScreen(false);
+    }
+
+    // Reset fullScreen when component unmounts
+    return () => storeManageLayout.setFullScreen(false);
+  }, [formattedStructureData, isEditable]);
 
   const me = useMe();
 
@@ -117,23 +172,15 @@ export function EventGuestSideContent({
   };
 
   const renderContent = () => {
-    if (isEditable && isClient) {
-      return <CraftableEventSections event={event} attending={attending} pageConfig={pageConfig} />;
+    if (isEditable && isClient && event) {
+      return <CraftableEventSections pageConfig={pageConfig} />;
     }
 
-    if (pageConfigFields?.structure_data && isClient) {
+    if (formattedStructureData && isClient) {
       return (
-        <Editor enabled={false} resolver={resolver}>
-          <div className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}>
-            <Frame
-              data={
-                typeof pageConfigFields.structure_data === 'string'
-                  ? pageConfigFields.structure_data
-                  : JSON.stringify(pageConfigFields.structure_data)
-              }
-            />
-          </div>
-        </Editor>
+        <PageEditorProvider enabled={false}>
+          <ReadOnlyPageView data={formattedStructureData} className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)} />
+        </PageEditorProvider>
       );
     }
 

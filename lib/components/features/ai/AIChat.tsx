@@ -16,6 +16,7 @@ type AIChatProps = {
   compact?: boolean;
   hideSpaceSelector?: boolean;
   fixedSpaceId?: string;
+  configOverride?: string;
 };
 
 export function AIChat({
@@ -26,6 +27,7 @@ export function AIChat({
   compact,
   hideSpaceSelector,
   fixedSpaceId,
+  configOverride,
 }: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
@@ -76,6 +78,7 @@ export function AIChat({
                     compact={compact}
                     hideSpaceSelector={hideSpaceSelector}
                     fixedSpaceId={fixedSpaceId}
+                    configOverride={configOverride}
                   />
                 </div>
                 <motion.div
@@ -114,6 +117,7 @@ export function AIChat({
                     compact={compact}
                     hideSpaceSelector={hideSpaceSelector}
                     fixedSpaceId={fixedSpaceId}
+                    configOverride={configOverride}
                   />
                   <motion.div
                     initial={{ opacity: 0 }}

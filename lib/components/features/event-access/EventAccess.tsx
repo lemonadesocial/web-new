@@ -13,7 +13,15 @@ import { MyTickets } from './MyTickets';
 import { ApprovalStatus } from './ApprovalStatus';
 import { EventRegistration } from '../event-registration';
 
-export function EventAccess({ event }: { event: Event }) {
+export function EventAccess({ 
+  event,
+  registration_heading,
+  registration_description,
+}: { 
+  event: Event;
+  registration_heading?: string;
+  registration_description?: string;
+}) {
   const me = useMe();
   const session = useSession();
   const isAttending = attending(event, me?._id);
@@ -102,6 +110,6 @@ export function EventAccess({ event }: { event: Event }) {
 
   if (requestData?.getMyEventJoinRequest && paymentOk) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} event={event} />;
 
-  return <EventRegistration event={event} />;
+  return <EventRegistration event={event} heading={registration_heading} description={registration_description} />;
 }
 

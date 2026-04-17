@@ -4,9 +4,11 @@ import clsx from 'clsx';
 
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { useStoreManageLayout } from '../ai/manage/store';
 
 export function MainEventLayout({ children }: React.PropsWithChildren) {
   const [state] = useEventTheme();
+  const { fullScreen } = useStoreManageLayout();
 
   return (
     <main
@@ -16,7 +18,11 @@ export function MainEventLayout({ children }: React.PropsWithChildren) {
       )}
     >
       <ThemeGenerator data={state} />
-      <div className="page mx-auto px-4 xl:px-0">{children}</div>
+      {fullScreen ? (
+        <div className="w-full">{children}</div>
+      ) : (
+        <div className="page mx-auto px-4 xl:px-0">{children}</div>
+      )}
     </main>
   );
 }

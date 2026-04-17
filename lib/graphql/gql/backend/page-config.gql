@@ -1,3 +1,40 @@
+fragment PageSectionFragment on PageSection {
+  id
+  type
+  order
+  hidden
+  layout {
+    width
+    padding
+  }
+  props
+  craft_node_id
+  children {
+    id
+    type
+    order
+    hidden
+    layout {
+      width
+      padding
+    }
+    props
+    craft_node_id
+    children {
+      id
+      type
+      order
+      hidden
+      layout {
+        width
+        padding
+      }
+      props
+      craft_node_id
+    }
+  }
+}
+
 fragment PageConfigFragment on PageConfig {
   _id
   name
@@ -16,7 +53,32 @@ fragment PageConfigFragment on PageConfig {
   template_id
   template_version_installed
   space_id
-  structure_data
+  theme {
+    type
+    mode
+    colors {
+      accent
+    }
+    background {
+      type
+      value
+    }
+    fonts {
+      title {
+        family
+      }
+      body {
+        family
+      }
+    }
+    effects {
+      type
+      value
+    }
+  }
+  sections {
+    ...PageSectionFragment
+  }
 }
 
 query GetPageConfig($id: MongoID, $ownerType: PageConfigOwnerType, $ownerId: MongoID) {

@@ -14,8 +14,8 @@ export async function getSiteData(domain: string) {
   )();
 }
 
-export function generateCssVariables(variables: { [key: string]: string }) {
+export function generateCssVariables(variables: Record<string, string | number>) {
   return Object.entries(variables)
-    .map(([key, value]) => `${key}: ${value};`)
+    .map(([key, value]) => `${key}: ${String(value)};`)
     .join('\n');
 }
