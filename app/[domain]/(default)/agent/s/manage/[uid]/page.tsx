@@ -19,7 +19,7 @@ import { CommunitySettingsLayout } from './CommunitySettingsLayout';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { mockWelcomeSpace } from '$lib/components/features/ai/InputChat';
-import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { AiConfigFieldsFragment, Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { isMobile } from 'react-device-detect';
 import { CommunityAgents } from '$lib/components/features/community-manage/CommunityAgents';
@@ -139,7 +139,10 @@ function Content({ space, uid }: { space: Space; uid: string }) {
       onComplete: (data) => {
         if (data?.configs?.items?.length) {
           const config = data.configs.items[0] as AiConfigFieldsFragment;
-          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+          aiChatDispatch({
+            type: AIChatActionKind.set_config,
+            payload: { config: config._id, configs: data.configs.items as Config[] },
+          });
         }
       },
       skip: !space._id,

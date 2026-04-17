@@ -31,6 +31,30 @@ fragment PageSectionFragment on PageSection {
       }
       props
       craft_node_id
+      children {
+        id
+        type
+        order
+        hidden
+        layout {
+          width
+          padding
+        }
+        props
+        craft_node_id
+        children {
+          id
+          type
+          order
+          hidden
+          layout {
+            width
+            padding
+          }
+          props
+          craft_node_id
+        }
+      }
     }
   }
 }

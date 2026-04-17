@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 
 import { useQuery } from '$lib/graphql/request';
-import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { AiConfigFieldsFragment, Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import {
@@ -138,6 +138,7 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
             type: AIChatActionKind.set_config,
             payload: {
               config: config._id,
+              configs: data.configs.items as Config[],
               messages: event ? mockWelcomeEvent(event) : undefined,
             },
           });

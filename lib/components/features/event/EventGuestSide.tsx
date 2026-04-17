@@ -118,7 +118,9 @@ export function EventGuestSideContent({
   const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
     initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
-    skip: !event?._id || isEditable,
+    // Skip client-side refetch when SSR already provided the page config (including null = confirmed no config).
+    // Prevents the client fetch from overwriting valid SSR data with a potentially unauthenticated null response.
+    skip: !event?._id || isEditable || initPageConfig !== undefined,
   });
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
@@ -172,14 +174,17 @@ export function EventGuestSideContent({
   };
 
   const renderContent = () => {
-    if (isEditable && isClient && event) {
-      return <CraftableEventSections pageConfig={pageConfig} />;
+    if (isEditable && isClient && event && formattedStructureData) {
+      return <CraftableEventSections data={formattedStructureData} />;
     }
 
     if (formattedStructureData && isClient) {
       return (
         <PageEditorProvider enabled={false}>
-          <ReadOnlyPageView data={formattedStructureData} className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)} />
+          <ReadOnlyPageView
+            data={formattedStructureData}
+            className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}
+          />
         </PageEditorProvider>
       );
     }
