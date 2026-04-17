@@ -161,7 +161,7 @@ function ManageLayoutToolbar() {
   };
 
   const handleSaveLayout = async () => {
-    if (state.layoutType !== 'event' || !event?._id) return;
+    if (!state.data?._id) return;
 
     try {
       const serialized = query.serialize();
@@ -181,7 +181,7 @@ function ManageLayoutToolbar() {
                 thumbnail_url: '',
                 tags: [],
                 structure_data: JSON.parse(serialized),
-                target: TemplateTarget.Event,
+                target: state.layoutType === 'event' ? TemplateTarget.Event : TemplateTarget.Space,
                 config: {},
                 subscription_tier_min: SubscriptionItemType.Free,
                 visibility: TemplateVisibility.Private,
@@ -198,44 +198,29 @@ function ManageLayoutToolbar() {
         }
       }
 
+      const input = {
+        sections: sections as any,
+        theme: themeValuesToPageTheme(themeState) as any,
+      };
+
       if (state.pageConfigId) {
         await updatePageConfig({
           variables: {
             id: state.pageConfigId,
-            input: {
-              sections: sections as any,
-              theme: themeValuesToPageTheme(themeState) as any,
-            },
+            input,
           },
         });
-<<<<<<< HEAD
-      } else {
-        // Create new page config
-        await createPageConfig({
-          variables: {
-            input: {
-              name: event.title || 'Page Config',
-              owner_id: event._id,
-              owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
-              template_id,
-              sections: sections as any,
-              theme: themeValuesToPageTheme(themeState) as any,
-            },
-          },
-        });
-=======
         return;
->>>>>>> origin/master
       }
 
       await createPageConfig({
         variables: {
           input: {
-            name: event.title || 'Page Config',
-            owner_id: event._id,
-            owner_type: PageConfigOwnerType.Event,
+            ...input,
+            name: (state.data as Event | Space)?.title || 'Page Config',
+            owner_id: state.data?._id,
+            owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
             template_id: templateId,
-            sections: sections as any,
           },
         },
       });
