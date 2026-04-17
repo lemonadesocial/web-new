@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import Header, { RootMenu } from '$lib/components/layouts/header';
 
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
@@ -13,6 +14,7 @@ type LayoutProps = React.PropsWithChildren & {
 
 export default async function EventLayout({ children, params }: LayoutProps) {
   const shortid = (await params).shortid;
+  const cookieStore = await cookies();
 
   const client = getClient();
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
@@ -25,14 +27,16 @@ export default async function EventLayout({ children, params }: LayoutProps) {
   const { data: pageConfigData } = await client.query({
     query: GetPageConfigDocument,
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: eventId },
+    headers: { Cookie: decodeURIComponent(cookieStore?.toString()) },
+    fetchPolicy: 'network-only',
   });
 
   const pageTheme = (pageConfigData?.getPageConfig as any)?.theme as StoredPageTheme | undefined;
-  const themeData = pageTheme ? pageThemeToThemeValues(pageTheme) : data.getEvent.theme_data;
+  const themeData = pageTheme?.type ? pageThemeToThemeValues(pageTheme) : data.getEvent.theme_data;
 
   return (
     <main className="flex flex-col min-h-dvh w-full overflow-y-auto no-scrollbar">
-      <div className="z-10000">
+      <div className="relative z-10000">
         <Header mainMenu={RootMenu} />
       </div>
       <EventThemeProvider themeData={themeData}>

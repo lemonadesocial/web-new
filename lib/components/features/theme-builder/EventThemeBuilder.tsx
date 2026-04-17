@@ -10,8 +10,11 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   FileCategory,
   GetSystemFilesDocument,
+  PageConfigFragmentFragmentDoc,
   SystemFile,
   UpdateEventThemeDocument,
+  UpdatePageConfigDocument,
+  UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { colors, emojis, fonts, getRandomColor, getThemeName, patterns, presets, shaders } from './store';
@@ -19,6 +22,9 @@ import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
 import { FloatingPortal } from '@floating-ui/react';
+import { themeValuesToPageTheme } from '$utils/page-theme-adapter';
+import { storeManageLayout, useStoreManageLayout } from '../ai/manage/store';
+import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
 function getThemePreset(themeName: ReturnType<typeof getThemeName>) {
   return themeName in presets ? presets[themeName as keyof typeof presets] : undefined;
@@ -26,12 +32,14 @@ function getThemePreset(themeName: ReturnType<typeof getThemeName>) {
 
 export function EventThemeBuilder({
   eventId,
+  pageConfigId: pageConfigIdProp,
   autoSave = true,
   inline = false,
   menuInPortal = true,
   inlinePanelClassName,
 }: {
   eventId?: string;
+  pageConfigId?: string;
   autoSave?: boolean;
   inline?: boolean;
   menuInPortal?: boolean;
@@ -43,38 +51,37 @@ export function EventThemeBuilder({
   const activePreset = getThemePreset(themeName);
   const mounted = React.useRef(false);
 
+  const { pageConfigId: pageConfigIdStore } = useStoreManageLayout();
+  const pageConfigId = pageConfigIdProp || pageConfigIdStore;
+
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
-
-  // PERF: improve image loading
-  useQuery(GetSystemFilesDocument, {
-    variables: {
-      categories: [
-        FileCategory.SpaceDarkTheme,
-        FileCategory.SpaceLightTheme,
-        FileCategory.EventDarkTheme,
-        FileCategory.EventLightTheme,
-      ],
+  const [updatePageConfig] = useMutation(UpdatePageConfigDocument, {
+    onComplete: (_, data) => {
+      const pageConfig = useFragment(PageConfigFragmentFragmentDoc, data?.updatePageConfig);
+      if (pageConfig?._id) {
+        storeManageLayout.setSavedPageTheme(pageConfig.theme || undefined);
+      }
     },
   });
 
-  useQuery(GetSystemFilesDocument, {
-    variables: {
-      categories: [
-        FileCategory.SpaceDarkTheme,
-        FileCategory.SpaceLightTheme,
-        FileCategory.EventDarkTheme,
-        FileCategory.EventLightTheme,
-      ],
-    },
-  });
+  // ... (useQuery calls)
 
   React.useEffect(() => {
-    if (mounted.current && autoSave && eventId) {
-      updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
+    if (mounted.current && autoSave) {
+      if (pageConfigId) {
+        updatePageConfig({
+          variables: {
+            id: pageConfigId,
+            input: { theme: themeValuesToPageTheme(data) as any },
+          },
+        });
+      } else if (eventId) {
+        updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
+      }
     } else {
       mounted.current = true;
     }
-  }, [autoSave, data, eventId]);
+  }, [autoSave, data, eventId, pageConfigId]);
 
   if (inline) {
     return <InlineEventThemeBuilderPanel menuInPortal={menuInPortal} className={inlinePanelClassName} />;

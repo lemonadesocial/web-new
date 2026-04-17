@@ -13,8 +13,9 @@ export function MainEventLayout({ children }: React.PropsWithChildren) {
   return (
     <main
       className={clsx(
-        'relative flex flex-col w-full z-100 mt-7 md:mt-11',
-        state.theme !== 'default' && [state.config.color, state.config.mode],
+        'relative flex flex-col w-full z-100 mt-16 md:mt-24',
+        state.config.color,
+        state.config.mode,
       )}
     >
       <ThemeGenerator data={state} />

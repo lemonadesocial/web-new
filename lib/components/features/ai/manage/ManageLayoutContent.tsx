@@ -54,7 +54,10 @@ function useIsMobile() {
   return isMobile;
 }
 
-function ManageLayoutContent({ children }: React.PropsWithChildren) {
+function ManageLayoutContent({
+  children,
+  pageConfig: pageConfigProp,
+}: React.PropsWithChildren<{ pageConfig?: any }>) {
   const params = useParams();
   const shortid = params?.shortid as string | undefined;
 
@@ -81,48 +84,33 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
     (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
-  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
-    variables: { ownerType: PageConfigOwnerType.Event, ownerId: eventId },
-    skip: !eventId,
-  });
-  const pageConfig = pageConfigData?.getPageConfig;
-  const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+  const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfigProp);
 
   React.useEffect(() => {
-    store.setPageConfigId((pageConfig as any)?._id ?? undefined);
-    store.setSavedPageTheme((pageConfigData_ as any)?.theme ?? undefined);
-    if (pageConfig) {
+    if (pageConfigProp) {
       aiChatDispatch({
         type: AIChatActionKind.set_page_config,
-        payload: { pageConfig },
+        payload: { pageConfig: pageConfigProp },
       });
     }
-  }, [pageConfig, pageConfigData_, aiChatDispatch]);
+  }, [pageConfigProp, aiChatDispatch]);
 
   const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
     // Fire once the page config query has resolved (pageConfigData !== undefined),
     // even when sections is empty — sectionsToNodes([]) builds a default layout.
-    if (pageConfigData === undefined || hasInitializedRef.current) return;
+    if (pageConfigProp === undefined || hasInitializedRef.current) return;
     try {
       const sections = ((pageConfigData_?.sections ?? []) as unknown as PageSection[]);
       const nodes = sectionsToNodes(sections);
       actions.deserialize(JSON.stringify(nodes));
       actions.history.clear();
 
-      // Init theme: prefer PageConfig.theme, fall back to Event.theme_data
-      const storedTheme = (pageConfigData_ as any)?.theme as StoredPageTheme | undefined;
-      if (storedTheme) {
-        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: pageThemeToThemeValues(storedTheme) });
-      } else if (event?.theme_data) {
-        themeDispatch({ type: ThemeBuilderActionKind.reset, payload: event.theme_data });
-      }
-
       hasInitializedRef.current = true;
     } catch (e) {
       console.error('Failed to deserialize pageConfig sections', e);
     }
-  }, [pageConfigData, pageConfigData_, actions]);
+  }, [pageConfigProp, pageConfigData_, actions]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -276,7 +264,6 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
             { id: 'registration', type: 'event_registration', order: 4, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'registration' },
           ];
           const nodes = sectionsToNodes(defaultSections);
-          console.log(JSON.stringify(nodes));
           actions.deserialize(JSON.stringify(nodes));
           // Satisfy exhaustive-deps — _event intentionally unused in default reset
         }
@@ -310,8 +297,6 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
           data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
             'relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
-            themeState.theme,
-            themeState.config.name,
             themeState.config.color,
             themeState.config.mode === 'light' && 'light',
             themeState.config.mode === 'dark' && 'dark',
@@ -329,7 +314,7 @@ function ManageLayoutContent({ children }: React.PropsWithChildren) {
               if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
-            <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfig} />
+            <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfigProp} />
           </div>
         </main>
       ) : null,

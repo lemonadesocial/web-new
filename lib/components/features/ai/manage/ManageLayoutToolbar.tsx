@@ -64,8 +64,7 @@ function ManageLayoutToolbar() {
   const hasMultipleTabs = state.availableTabs.length > 1;
   const showWorkspaceSwitcher = state.layoutType === 'event';
   const isEventBuilderView = state.layoutType === 'event' && ['design', 'preview'].includes(state.activeTab);
-  const isEventSectionEditing =
-    state.layoutType === 'event' && state.activeTab === 'design' && state.builderTab === 'sections';
+  const isEventSectionEditing = state.layoutType === 'event' && state.activeTab === 'design';
   const upgradeTarget = state.layoutType === 'event' ? event?.space : space?._id;
 
   const { actions, query, canUndo, canRedo } = usePageEditor();
@@ -104,6 +103,7 @@ function ManageLayoutToolbar() {
       if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
+        store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -118,6 +118,7 @@ function ManageLayoutToolbar() {
       if (pageConfig?._id) {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
+        store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
       }
     },
     onError: (error) => {
@@ -128,12 +129,17 @@ function ManageLayoutToolbar() {
   const normalizeTheme = (theme: unknown) => merge({}, defaultTheme, theme || {});
   const savedThemeAsValues = state.savedPageTheme
     ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
-    : (event?.theme_data || defaultTheme);
+    : event?.theme_data || defaultTheme;
   const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
 
   const canSaveTheme =
-    state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
-  const brandTitle = state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
+    state.layoutType === 'event' &&
+    state.activeTab === 'design' &&
+    !!event?._id &&
+    !!state.pageConfigId &&
+    isThemeDirty;
+  const brandTitle =
+    state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
   const brandSubtitle = state.layoutType === 'event' ? event?.space_expanded?.title || '' : '';
   const isMobileSubPane = state.mobilePane !== 'main';
 
@@ -159,7 +165,7 @@ function ManageLayoutToolbar() {
   };
 
   const handleSaveLayout = async () => {
-    if (state.layoutType !== 'event' || !event?._id) return;
+    if (!state.data?._id) return;
 
     try {
       const serialized = query.serialize();
@@ -179,7 +185,7 @@ function ManageLayoutToolbar() {
                 thumbnail_url: '',
                 tags: [],
                 structure_data: JSON.parse(serialized),
-                target: TemplateTarget.Event,
+                target: state.layoutType === 'event' ? TemplateTarget.Event : TemplateTarget.Space,
                 config: {},
                 subscription_tier_min: SubscriptionItemType.Free,
                 visibility: TemplateVisibility.Private,
@@ -196,11 +202,16 @@ function ManageLayoutToolbar() {
         }
       }
 
+      const input = {
+        sections: sections as any,
+        theme: themeValuesToPageTheme(themeState) as any,
+      };
+
       if (state.pageConfigId) {
         await updatePageConfig({
           variables: {
             id: state.pageConfigId,
-            input: { sections: sections as any },
+            input,
           },
         });
         return;
@@ -209,11 +220,11 @@ function ManageLayoutToolbar() {
       await createPageConfig({
         variables: {
           input: {
-            name: event.title || 'Page Config',
-            owner_id: event._id,
-            owner_type: PageConfigOwnerType.Event,
+            ...input,
+            name: (state.data as Event | Space)?.title || 'Page Config',
+            owner_id: state.data?._id,
+            owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
             template_id: templateId,
-            sections: sections as any,
           },
         },
       });
@@ -417,16 +428,16 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            {canSaveTheme && (
-              <>
-                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-                  Reset
-                </Button>
-                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-                  Save
-                </Button>
-              </>
-            )}
+            {/* {canSaveTheme && ( */}
+            {/*   <> */}
+            {/*     <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}> */}
+            {/*       Reset */}
+            {/*     </Button> */}
+            {/*     <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}> */}
+            {/*       Save */}
+            {/*     </Button> */}
+            {/*   </> */}
+            {/* )} */}
 
             {state.layoutType === 'event' && state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>

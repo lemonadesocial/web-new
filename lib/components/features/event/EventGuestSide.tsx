@@ -19,10 +19,11 @@ import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending, isPromoter } from '$lib/utils/event';
-import { useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 import { randomEventDP } from '$lib/utils/user';
+import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
@@ -102,7 +103,7 @@ export function EventGuestSideContent({
   autoSave?: boolean;
   isEditable?: boolean;
 }) {
-  const [state] = useEventTheme();
+  const [state, themeDispatch] = useEventTheme();
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -124,6 +125,16 @@ export function EventGuestSideContent({
   });
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+
+  React.useEffect(() => {
+    if (pageConfigData === undefined) return;
+    const storedTheme = (pageConfigFields as any)?.theme as StoredPageTheme | undefined;
+    if (storedTheme) {
+      themeDispatch({ type: ThemeBuilderActionKind.reset, payload: pageThemeToThemeValues(storedTheme) });
+    } else if (event?.theme_data) {
+      themeDispatch({ type: ThemeBuilderActionKind.reset, payload: event.theme_data });
+    }
+  }, [pageConfigData, pageConfigFields, event?.theme_data, themeDispatch]);
 
   const formattedStructureData = React.useMemo(() => {
     const sections = pageConfigFields?.sections;
@@ -183,14 +194,14 @@ export function EventGuestSideContent({
         <PageEditorProvider enabled={false}>
           <ReadOnlyPageView
             data={formattedStructureData}
-            className={clsx(state.theme, state.config.name, state.config.color, state.config.mode)}
+            className={clsx(state.config.color, state.config.mode)}
           />
         </PageEditorProvider>
       );
     }
 
     return (
-      <div className={clsx('flex gap-18', state.theme, state.config.name, state.config.color, state.config.mode)}>
+      <div className={clsx('flex md:gap-18 gap-0', state.config.color, state.config.mode)}>
         <div className="hidden md:flex w-74 flex-col gap-6">
           <div className="flex flex-col gap-4">
             {event.new_new_photos_expanded?.[0] ? (
