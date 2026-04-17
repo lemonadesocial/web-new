@@ -18,7 +18,7 @@ import { EventMore } from '$lib/components/features/event-manage/EventMore';
 import { EventOverview } from '$lib/components/features/event-manage/overview/EventOverview';
 import { EventRegistration } from '$lib/components/features/event-manage/EventRegistration';
 import { EventPaymentLayout } from './EventPaymentLayout';
-import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { AiConfigFieldsFragment, Config, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { isMobile } from 'react-device-detect';
 
@@ -97,6 +97,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
             type: AIChatActionKind.set_config,
             payload: {
               config: config._id,
+              configs: data.configs.items as Config[],
               messages: mockWelcomeEvent(event),
             },
           });
