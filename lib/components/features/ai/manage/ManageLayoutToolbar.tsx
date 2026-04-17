@@ -64,8 +64,7 @@ function ManageLayoutToolbar() {
   const hasMultipleTabs = state.availableTabs.length > 1;
   const showWorkspaceSwitcher = state.layoutType === 'event';
   const isEventBuilderView = state.layoutType === 'event' && ['design', 'preview'].includes(state.activeTab);
-  const isEventSectionEditing =
-    state.layoutType === 'event' && state.activeTab === 'design' && state.builderTab === 'sections';
+  const isEventSectionEditing = state.layoutType === 'event' && state.activeTab === 'design';
   const upgradeTarget = state.layoutType === 'event' ? event?.space : space?._id;
 
   const { actions, query, canUndo, canRedo } = usePageEditor();
@@ -130,12 +129,17 @@ function ManageLayoutToolbar() {
   const normalizeTheme = (theme: unknown) => merge({}, defaultTheme, theme || {});
   const savedThemeAsValues = state.savedPageTheme
     ? pageThemeToThemeValues(state.savedPageTheme as StoredPageTheme)
-    : (event?.theme_data || defaultTheme);
+    : event?.theme_data || defaultTheme;
   const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(savedThemeAsValues));
 
   const canSaveTheme =
-    state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && !!state.pageConfigId && isThemeDirty;
-  const brandTitle = state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
+    state.layoutType === 'event' &&
+    state.activeTab === 'design' &&
+    !!event?._id &&
+    !!state.pageConfigId &&
+    isThemeDirty;
+  const brandTitle =
+    state.layoutType === 'community' ? space?.title || 'Community Manager' : event?.title || 'Event Manager';
   const brandSubtitle = state.layoutType === 'event' ? event?.space_expanded?.title || '' : '';
   const isMobileSubPane = state.mobilePane !== 'main';
 
@@ -424,16 +428,16 @@ function ManageLayoutToolbar() {
               </>
             )}
 
-            {canSaveTheme && (
-              <>
-                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-                  Reset
-                </Button>
-                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-                  Save
-                </Button>
-              </>
-            )}
+            {/* {canSaveTheme && ( */}
+            {/*   <> */}
+            {/*     <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}> */}
+            {/*       Reset */}
+            {/*     </Button> */}
+            {/*     <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}> */}
+            {/*       Save */}
+            {/*     </Button> */}
+            {/*   </> */}
+            {/* )} */}
 
             {state.layoutType === 'event' && state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
