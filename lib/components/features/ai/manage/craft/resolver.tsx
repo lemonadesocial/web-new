@@ -495,6 +495,7 @@ export const CraftSection = ({
   const { index, total, parentId } = getPosition();
   const isFirst = index === 0;
   const isLast = index === total - 1;
+  const parentIsInlineGrid = !!parentId && nodes[parentId]?.type?.resolvedName === 'InlineGrid';
 
   const moveUp = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -559,6 +560,18 @@ export const CraftSection = ({
           if (!curParent) return;
 
           if (zone === 'top' || zone === 'bottom') {
+            // When dropping at the bottom of a section that is a direct child of an InlineGrid,
+            // wrap it and the dragged section in a new Col — producing a stacked column layout.
+            const parentIsInlineGrid = nodes[curParent]?.type?.resolvedName === 'InlineGrid';
+            if (zone === 'bottom' && parentIsInlineGrid) {
+              if (source.data.type === 'canvas-node') {
+                actions.wrapInColStack(id, source.data.nodeId as string);
+              } else if (source.data.type === 'new-section') {
+                const { componentName, displayName } = source.data as any;
+                actions.wrapNewInColStack(id, componentName, displayName);
+              }
+              return;
+            }
             const targetIndex = zone === 'top' ? curIndex : curIndex + 1;
             if (source.data.type === 'canvas-node') {
               actions.moveNode(source.data.nodeId as string, curParent, targetIndex);
@@ -621,7 +634,13 @@ export const CraftSection = ({
         <div className="absolute -top-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
       )}
       {dragZone === 'bottom' && enabled && (
-        <div className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
+        parentIsInlineGrid ? (
+          <div className="absolute inset-0 border-2 border-accent-400 bg-accent-400/10 z-[110] rounded-2xl pointer-events-none flex items-center justify-center">
+            <span className="bg-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Stack</span>
+          </div>
+        ) : (
+          <div className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-accent-400 z-[110] rounded-full pointer-events-none" />
+        )
       )}
       {dragZone === 'inline' && enabled && (
         <div className="absolute inset-0 border-2 border-accent-400 bg-accent-400/10 z-[110] rounded-2xl pointer-events-none flex items-center justify-center">
@@ -1200,7 +1219,26 @@ export const Container = ({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
 
-  // ... (useEffect for DnD)
+  React.useEffect(() => {
+    if (!enabled || !containerRef.current) return;
+    return dropTargetForElements({
+      element: containerRef.current,
+      canDrop: ({ source }) => source.data.type === 'canvas-node' || source.data.type === 'new-section',
+      onDragEnter: () => setContainerDropActive(true),
+      onDragLeave: () => setContainerDropActive(false),
+      onDrop: ({ source, location }) => {
+        setContainerDropActive(false);
+        // Only handle drops that land directly on this Container (not on a child)
+        if (location.current.dropTargets[0]?.element !== containerRef.current) return;
+        if (source.data.type === 'canvas-node') {
+          actions.moveNode(source.data.nodeId as string, id, Number.MAX_SAFE_INTEGER);
+        } else if (source.data.type === 'new-section') {
+          const { componentName, displayName } = source.data as any;
+          actions.addNode(id, componentName, displayName, {});
+        }
+      },
+    });
+  }, [enabled, id]);
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions

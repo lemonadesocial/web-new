@@ -36,6 +36,8 @@ type PageEditorAction =
   | { type: 'ADD'; parentId: string; nodeId: string; node: NodeRecord; index: number }
   | { type: 'WRAP_IN_INLINE_GRID'; targetNodeId: string; sourceNodeId: string }
   | { type: 'WRAP_NEW_IN_INLINE_GRID'; targetNodeId: string; newNodeId: string; newNode: NodeRecord }
+  | { type: 'WRAP_IN_COL_STACK'; targetNodeId: string; sourceNodeId: string }
+  | { type: 'WRAP_NEW_IN_COL_STACK'; targetNodeId: string; newNodeId: string; newNode: NodeRecord }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'CLEAR_HISTORY' };
@@ -229,6 +231,80 @@ function reducer(state: PageEditorState, action: PageEditorAction): PageEditorSt
       return { ...state, nodes, past: [...state.past.slice(-MAX_HISTORY + 1), state.nodes], future: [] };
     }
 
+    case 'WRAP_IN_COL_STACK': {
+      // Wraps the target node and source node together in a new Col inside the parent InlineGrid.
+      // Produces: InlineGrid → [..., Col[target, source], ...]
+      const { targetNodeId, sourceNodeId } = action;
+      const targetNode = state.nodes[targetNodeId];
+      const sourceNode = state.nodes[sourceNodeId];
+      if (!targetNode || !sourceNode) return state;
+
+      const parentId = targetNode.parent;
+      if (!parentId || !state.nodes[parentId]) return state;
+
+      const colId = genId();
+      const nodes = { ...state.nodes };
+
+      const sourceParentId = sourceNode.parent;
+      if (sourceParentId && nodes[sourceParentId]) {
+        nodes[sourceParentId] = {
+          ...nodes[sourceParentId],
+          nodes: nodes[sourceParentId].nodes.filter((id) => id !== sourceNodeId),
+        };
+      }
+
+      nodes[colId] = {
+        type: { resolvedName: 'Col' },
+        isCanvas: true,
+        props: {},
+        nodes: [targetNodeId, sourceNodeId],
+        linkedNodes: {},
+        parent: parentId,
+        displayName: 'Column',
+        custom: {},
+      };
+      nodes[parentId] = {
+        ...nodes[parentId],
+        nodes: nodes[parentId].nodes.map((id) => (id === targetNodeId ? colId : id)),
+      };
+      nodes[targetNodeId] = { ...nodes[targetNodeId], parent: colId };
+      nodes[sourceNodeId] = { ...nodes[sourceNodeId], parent: colId };
+
+      return { ...state, nodes, past: [...state.past.slice(-MAX_HISTORY + 1), state.nodes], future: [] };
+    }
+
+    case 'WRAP_NEW_IN_COL_STACK': {
+      const { targetNodeId, newNodeId, newNode } = action;
+      const targetNode = state.nodes[targetNodeId];
+      if (!targetNode) return state;
+
+      const parentId = targetNode.parent;
+      if (!parentId || !state.nodes[parentId]) return state;
+
+      const colId = genId();
+      const nodes = {
+        ...state.nodes,
+        [colId]: {
+          type: { resolvedName: 'Col' },
+          isCanvas: true,
+          props: {},
+          nodes: [targetNodeId, newNodeId],
+          linkedNodes: {},
+          parent: parentId,
+          displayName: 'Column',
+          custom: {},
+        } as NodeRecord,
+        [parentId]: {
+          ...state.nodes[parentId],
+          nodes: state.nodes[parentId].nodes.map((id) => (id === targetNodeId ? colId : id)),
+        },
+        [targetNodeId]: { ...targetNode, parent: colId },
+        [newNodeId]: { ...newNode, parent: colId },
+      };
+
+      return { ...state, nodes, past: [...state.past.slice(-MAX_HISTORY + 1), state.nodes], future: [] };
+    }
+
     case 'UNDO': {
       if (state.past.length === 0) return state;
       const prev = state.past[state.past.length - 1];
@@ -285,6 +361,8 @@ export interface PageEditorContextValue {
     ) => string;
     wrapInInlineGrid: (targetNodeId: string, sourceNodeId: string) => void;
     wrapNewInInlineGrid: (targetNodeId: string, componentName: string, displayName: string, props?: Record<string, any>) => void;
+    wrapInColStack: (targetNodeId: string, sourceNodeId: string) => void;
+    wrapNewInColStack: (targetNodeId: string, componentName: string, displayName: string, props?: Record<string, any>) => void;
     undo: () => void;
     redo: () => void;
     clearHistory: () => void;
@@ -457,6 +535,30 @@ export function PageEditorProvider({
     [],
   );
 
+  const wrapInColStack = React.useCallback(
+    (targetNodeId: string, sourceNodeId: string) =>
+      dispatch({ type: 'WRAP_IN_COL_STACK', targetNodeId, sourceNodeId }),
+    [],
+  );
+
+  const wrapNewInColStack = React.useCallback(
+    (targetNodeId: string, componentName: string, displayName: string, props: Record<string, any> = {}): void => {
+      const newNodeId = genId();
+      const newNode: NodeRecord = {
+        type: { resolvedName: componentName },
+        isCanvas: CANVAS_COMPONENTS.has(componentName),
+        props,
+        nodes: [],
+        linkedNodes: {},
+        parent: '',
+        displayName,
+        custom: {},
+      };
+      dispatch({ type: 'WRAP_NEW_IN_COL_STACK', targetNodeId, newNodeId, newNode });
+    },
+    [],
+  );
+
   const wrapNewInInlineGrid = React.useCallback(
     (targetNodeId: string, componentName: string, displayName: string, props: Record<string, any> = {}): void => {
       const newNodeId = genId();
@@ -499,6 +601,8 @@ export function PageEditorProvider({
         addNode,
         wrapInInlineGrid,
         wrapNewInInlineGrid,
+        wrapInColStack,
+        wrapNewInColStack,
         undo,
         redo,
         clearHistory,
