@@ -185,8 +185,8 @@ export function EventGuestSideContent({
   };
 
   const renderContent = () => {
-    if (isEditable && isClient && event && formattedStructureData) {
-      return <CraftableEventSections data={formattedStructureData} />;
+    if (isEditable && isClient && event) {
+      return <CraftableEventSections data={formattedStructureData ?? undefined} />;
     }
 
     if (formattedStructureData && isClient) {

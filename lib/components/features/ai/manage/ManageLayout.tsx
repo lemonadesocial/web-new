@@ -78,12 +78,13 @@ function ManageLayout({
     },
   });
 
-  const { data: pageConfigRaw, loading: loadingPageConfig } = useQuery(GetPageConfigDocument, {
+  const pageConfigShouldFetch = !!state.data?._id && !state.pageConfigId;
+  const { data: pageConfigRaw, loading: loadingPageConfig, error: pageConfigError } = useQuery(GetPageConfigDocument, {
     variables: {
       ownerType: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
       ownerId: state.data?._id,
     },
-    skip: !state.data?._id || !!state.pageConfigId,
+    skip: !pageConfigShouldFetch,
   });
 
   const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfigRaw?.getPageConfig);
@@ -95,7 +96,19 @@ function ManageLayout({
     }
   }, [pageConfigFields]);
 
-  const isLoading = loadingEvent || loadingSpace || loadingPageConfig;
+  // Guard against the brief window where loadingPageConfig is false but the fetch hasn't started
+  // yet (useQuery's loading initialises to false), and also guard against query errors so
+  // ManageLayoutContent always receives a resolved value (null = no config, object = has config).
+  const isLoading = loadingEvent || loadingSpace || loadingPageConfig ||
+    (pageConfigShouldFetch && pageConfigRaw === null && !pageConfigError);
+
+  // Resolved value passed to ManageLayoutContent:
+  //   undefined → still loading (init effect will wait)
+  //   null      → query resolved with no config or errored (init effect builds default layout)
+  //   object    → query resolved with a config (init effect deserializes it)
+  const resolvedPageConfig = pageConfigShouldFetch && (pageConfigRaw === null || pageConfigError)
+    ? null
+    : pageConfigRaw?.getPageConfig;
 
   const savedThemeAsValues = React.useMemo(() => {
     if (state.savedPageTheme) {
@@ -188,7 +201,7 @@ function ManageLayout({
           themeData={savedThemeAsValues}
         >
           <ManageLayoutToolbar />
-          <ManageLayoutContent pageConfig={pageConfigRaw?.getPageConfig}>{children}</ManageLayoutContent>
+          <ManageLayoutContent pageConfig={resolvedPageConfig}>{children}</ManageLayoutContent>
         </EventThemeProvider>
         <DrawerContainer />
       </PageEditorProvider>
