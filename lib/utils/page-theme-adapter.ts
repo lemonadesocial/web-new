@@ -35,9 +35,7 @@ export function themeValuesToPageTheme(data: ThemeValues): StoredPageTheme {
     mode: config.mode ?? 'dark',
   };
 
-  if (config.color) {
-    theme.colors = { accent: config.color };
-  }
+  theme.colors = { accent: config.color || 'woodsmoke' };
 
   // Background: shader or pattern uses config.name; image uses config.image.url
   if (preset === 'shader' && config.name) {
