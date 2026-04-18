@@ -10,7 +10,9 @@ export function CraftableEventSections({ data }: { data?: Record<string, any> })
   const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
-    actions.deserialize(JSON.stringify(data));
+    if (data !== undefined) {
+      actions.deserialize(JSON.stringify(data));
+    }
     setReady(true);
   }, []);
 

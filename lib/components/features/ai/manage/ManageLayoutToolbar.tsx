@@ -202,10 +202,14 @@ function ManageLayoutToolbar() {
         }
       }
 
-      const input = {
+      const input: Record<string, any> = {
         sections: sections as any,
-        theme: themeValuesToPageTheme(themeState) as any,
       };
+
+      // Only persist the theme when the user has explicitly changed it
+      if (isThemeDirty) {
+        input.theme = themeValuesToPageTheme(themeState) as any;
+      }
 
       if (state.pageConfigId) {
         await updatePageConfig({
@@ -221,6 +225,8 @@ function ManageLayoutToolbar() {
         variables: {
           input: {
             ...input,
+            // Always include theme on first creation so the page config has an initial value
+            theme: themeValuesToPageTheme(themeState) as any,
             name: (state.data as Event | Space)?.title || 'Page Config',
             owner_id: state.data?._id,
             owner_type: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,

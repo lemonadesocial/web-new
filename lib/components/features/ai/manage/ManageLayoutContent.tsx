@@ -39,6 +39,14 @@ import { SettingsPanel } from './SettingsPanel';
 
 const communityPreviewTabs = new Set(['design', 'preview']);
 
+const DEFAULT_EVENT_SECTIONS: PageSection[] = [
+  { id: 'event-hero', type: 'event_hero', order: 0, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'event-hero' },
+  { id: 'datetime-block', type: 'event_datetime', order: 1, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'datetime-block' },
+  { id: 'location-block', type: 'event_location_block', order: 2, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'location-block' },
+  { id: 'about', type: 'event_about', order: 3, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'about' },
+  { id: 'registration', type: 'event_registration', order: 4, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'registration' },
+];
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState(false);
 
@@ -97,11 +105,15 @@ function ManageLayoutContent({
 
   const hasInitializedRef = React.useRef(false);
   React.useEffect(() => {
-    // Fire once the page config query has resolved (pageConfigData !== undefined),
-    // even when sections is empty — sectionsToNodes([]) builds a default layout.
+    // Fire once the page config query has resolved (pageConfigProp !== undefined).
+    // null  = resolved but no config exists → fall back to DEFAULT_EVENT_SECTIONS for events.
+    // object = resolved with saved sections → deserialize them.
     if (pageConfigProp === undefined || hasInitializedRef.current) return;
     try {
-      const sections = ((pageConfigData_?.sections ?? []) as unknown as PageSection[]);
+      const saved = ((pageConfigData_?.sections ?? []) as unknown as PageSection[]);
+      const sections = saved.length === 0 && state.layoutType === 'event'
+        ? DEFAULT_EVENT_SECTIONS
+        : saved;
       const nodes = sectionsToNodes(sections);
       actions.deserialize(JSON.stringify(nodes));
       actions.history.clear();
@@ -110,7 +122,7 @@ function ManageLayoutContent({
     } catch (e) {
       console.error('Failed to deserialize pageConfig sections', e);
     }
-  }, [pageConfigProp, pageConfigData_, actions]);
+  }, [pageConfigProp, pageConfigData_, actions, state.layoutType]);
 
   useQuery(
     GetListAiConfigDocument,
@@ -255,17 +267,8 @@ function ManageLayoutContent({
       resetToDefault: () => {
         const { state, actions } = editorRef.current;
         if (state.layoutType === 'event') {
-          const _event = state.data as Event;
-          const defaultSections: PageSection[] = [
-            { id: 'event-hero', type: 'event_hero', order: 0, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'event-hero' },
-            { id: 'datetime-block', type: 'event_datetime', order: 1, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'datetime-block' },
-            { id: 'location-block', type: 'event_location_block', order: 2, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'location-block' },
-            { id: 'about', type: 'event_about', order: 3, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'about' },
-            { id: 'registration', type: 'event_registration', order: 4, hidden: false, layout: { width: 'contained', padding: 'md' }, props: {}, craft_node_id: 'registration' },
-          ];
-          const nodes = sectionsToNodes(defaultSections);
+          const nodes = sectionsToNodes(DEFAULT_EVENT_SECTIONS);
           actions.deserialize(JSON.stringify(nodes));
-          // Satisfy exhaustive-deps — _event intentionally unused in default reset
         }
       },
     });
