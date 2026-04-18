@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.36.0](https://github.com/lemonadesocial/web-new/compare/v10.35.0...v10.36.0) (2026-04-18)
+
+
+### Features
+
+* enable drag-to-stack and drop-into-container in page builder ([922254d](https://github.com/lemonadesocial/web-new/commit/922254d0a1d0bd29d01834df423c2dd6e5969b0f))
+
+
+### Bug Fixes
+
+* only save theme on layout save when dirty, default accent to woodsmoke ([cd5a5d3](https://github.com/lemonadesocial/web-new/commit/cd5a5d3bc2adb4bc28e65f51ce6df8983317739b))
+* resolve page builder init race condition and apply default event sections ([c07d21d](https://github.com/lemonadesocial/web-new/commit/c07d21d00444be52e3ef223d0cbe3d3d0669507d))
+
 ## [10.35.0](https://github.com/lemonadesocial/web-new/compare/v10.34.0...v10.35.0) (2026-04-17)
 
 
