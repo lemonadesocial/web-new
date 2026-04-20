@@ -17,23 +17,28 @@ export default function CommunityManagePreview({
   themeData: ThemeValues;
 }) {
   const providerKey = React.useMemo(() => `${space._id}:${JSON.stringify(themeData)}`, [space._id, themeData]);
+  const mode = themeData.config.mode;
 
   return (
     <main
       data-theme-scope="community-preview"
+      data-theme={mode === 'auto' ? undefined : mode}
       className={clsx(
-        'relative isolate flex min-h-full w-full flex-col',
+        'relative isolate flex w-full min-h-full flex-col overflow-hidden bg-background rounded-none md:rounded-md',
         themeData.theme,
         themeData.config.name,
         themeData.config.color,
-        themeData.config.mode,
+        mode === 'light' && 'light',
+        mode === 'dark' && 'dark',
       )}
-      style={themeData.variables.font as React.CSSProperties}
+      style={{ ...themeData.variables.font, position: 'relative' } as React.CSSProperties}
     >
       <ThemeGenerator data={themeData} scoped scopeSelector="[data-theme-scope='community-preview']" />
       <ThemeProvider key={providerKey} themeData={themeData}>
-        <div className="page relative z-10 mx-auto px-4 pt-6 pb-20 xl:px-0">
-          <Community initData={{ space }} hideManageControls />
+        <div className="relative z-10 flex w-full flex-1">
+          <div className="page mx-auto w-full px-4 pt-6 pb-20 xl:px-0">
+            <Community initData={{ space }} hideManageControls />
+          </div>
         </div>
       </ThemeProvider>
     </main>
