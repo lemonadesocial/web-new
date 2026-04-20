@@ -54,6 +54,10 @@ export function themeValuesToPageTheme(data: ThemeValues): StoredPageTheme {
     };
   }
 
+  if (data.variables?.custom && Object.keys(data.variables.custom).length > 0) {
+    theme.css_variables = data.variables.custom;
+  }
+
   // Effects
   const effect = config.effect as { name?: string; type?: string; url?: string } | undefined;
   if (effect?.name) {
