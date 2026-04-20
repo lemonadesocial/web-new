@@ -154,13 +154,17 @@ export function buildCompareSections(featureConfigs: FeatureConfig[]): CompareSe
 }
 
 const CONNECTOR_AUTH_FAILED_MESSAGE = 'Authentication failed — please try again';
+const CONNECTOR_ACCESS_DENIED_MESSAGE = 'Access was denied. Please try connecting again and grant the required permissions.';
 const DEFAULT_CONNECTOR_ERROR_MESSAGE = 'Unable to connect. Please try again.';
 
 export function getConnectorErrorMessage(errorParam: string) {
   const normalizedError = errorParam.trim();
 
   if (!normalizedError) return DEFAULT_CONNECTOR_ERROR_MESSAGE;
-  if (normalizedError.toLowerCase() === 'invalid_csrf') return CONNECTOR_AUTH_FAILED_MESSAGE;
+
+  const lower = normalizedError.toLowerCase();
+  if (lower === 'invalid_csrf') return CONNECTOR_AUTH_FAILED_MESSAGE;
+  if (lower === 'access_denied') return CONNECTOR_ACCESS_DENIED_MESSAGE;
 
   try {
     const decodedError = decodeURIComponent(normalizedError.replace(/\+/g, ' ')).trim();
