@@ -5304,15 +5304,15 @@
     "@stablelib/wipe" "^2.0.1"
 
 "@stablelib/cbor@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@stablelib/cbor/-/cbor-2.0.1.tgz#7d974f7b636221741f4825f0f5340a33749b4ccc"
-  integrity sha512-NtJjhlcomRgGHHSjYJ2edE6DRnGf8xw/F0xECfPfPhf43O8GNX+kAyXaDxeJg0nng4jwV34cpiK2pyYF7tWhiA==
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@stablelib/cbor/-/cbor-2.0.4.tgz#d47038b9b69b1f578ae3e8fe570adf312a3297ba"
+  integrity sha512-qParOZCiJJBuMTtRpIVYJaNLH54jw1H0G9ha5FYpFPhG04w2ZrfRHoO6Dh4k8UalaQQSs5f+n2wC2IyLe9uOhQ==
   dependencies:
     "@stablelib/bytereader" "^2.0.1"
     "@stablelib/bytewriter" "^2.0.1"
     "@stablelib/float" "^2.0.1"
     "@stablelib/int" "^2.0.1"
-    "@stablelib/utf8" "^2.0.1"
+    "@stablelib/utf8" "^2.1.0"
 
 "@stablelib/float@^2.0.1":
   version "2.0.1"
@@ -5324,10 +5324,10 @@
   resolved "https://registry.yarnpkg.com/@stablelib/int/-/int-2.0.1.tgz#daf262843b158e6bb99ec029a14378ecdda2230f"
   integrity sha512-Ht63fQp3wz/F8U4AlXEPb7hfJOIILs8Lq55jgtD7KueWtyjhVuzcsGLSTAWtZs3XJDZYdF1WcSKn+kBtbzupww==
 
-"@stablelib/utf8@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@stablelib/utf8/-/utf8-2.0.1.tgz#3693310a5013cdcf92ed0bd763c8a278db6fee07"
-  integrity sha512-7+C2Iap42fbLyoKMaEIIDSb1TrcQVo+lGDItYAwb2JoAJr7QffyuDnbtvV/qzTyokOIMBrJgT+Rpsp1bPR8SjA==
+"@stablelib/utf8@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@stablelib/utf8/-/utf8-2.1.0.tgz#daf62f0c65a6f1085e63364fe84c2ac3fec86f7f"
+  integrity sha512-peZgjgrPYOvjbJcVp91yYQLocr/qw5zcLsQBL+vH3D/d0IS+Cvcsbvlu+LLEcG8sVbkWMxr0ZABhY/0t3JMh0w==
 
 "@stablelib/wipe@^2.0.1":
   version "2.0.1"
