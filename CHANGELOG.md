@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.36.1](https://github.com/lemonadesocial/web-new/compare/v10.36.0...v10.36.1) (2026-04-20)
+
+
+### Bug Fixes
+
+* community preview theme scoping ([109197d](https://github.com/lemonadesocial/web-new/commit/109197d18d390c6ae34e4c125eeb5892cf059e36))
+
 ## [10.36.0](https://github.com/lemonadesocial/web-new/compare/v10.35.0...v10.36.0) (2026-04-18)
 
 
