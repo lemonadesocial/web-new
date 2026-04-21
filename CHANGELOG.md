@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.38.0](https://github.com/lemonadesocial/web-new/compare/v10.37.0...v10.38.0) (2026-04-21)
+
+
+### Features
+
+* expose /api/page-builder/theme-catalog from store.ts ([af4c51e](https://github.com/lemonadesocial/web-new/commit/af4c51e7231d59bb342c6f328c6bc990dbd643e9))
+* fix layout round-trip and expand PageSection GQL fragment ([6ae680a](https://github.com/lemonadesocial/web-new/commit/6ae680a6652a5bb76243037339d45cb45a71202c))
+
 ## [10.37.0](https://github.com/lemonadesocial/web-new/compare/v10.36.1...v10.37.0) (2026-04-21)
 
 
