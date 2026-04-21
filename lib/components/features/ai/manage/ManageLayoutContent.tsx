@@ -345,7 +345,7 @@ function ManageLayoutContent({
         )}
       </AnimatePresence>
 
-      <div className="hidden md:flex px-0 flex-1 overflow-hidden pb-10">
+      <div className="hidden md:flex px-0 flex-1 overflow-hidden pb-3">
         <AnimatePresence initial={false}>
           {state.showSidebarLeft && (
             <motion.div
