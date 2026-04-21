@@ -30,14 +30,14 @@ import {
 import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 
-type SubscriberRange = '1H' | '1D' | '1W' | '1M' | '1Y' | 'All';
+type SubscriberRange = '1D' | '1W' | '1M' | '6M' | '1Y' | 'All';
 
 type HostRow = GetTopSpaceHostsQuery['getTopSpaceHosts'][number];
 type AttendeeRow = GetTopSpaceEventAttendeesQuery['getTopSpaceEventAttendees'][number];
 type LocationRow = GetSpaceEventLocationsLeaderboardQuery['getSpaceEventLocationsLeaderboard'][number];
 type SubscriberPoint = GetSpaceMemberAmountByDateQuery['getSpaceMemberAmountByDate'][number];
 
-const SUBSCRIBER_RANGES: readonly SubscriberRange[] = ['1H', '1D', '1W', '1M', '1Y', 'All'];
+const SUBSCRIBER_RANGES: readonly SubscriberRange[] = ['1D', '1W', '1M', '6M', '1Y', 'All'];
 const LEADERBOARD_LIMIT = 5;
 const HOST_SUMMARY_LIMIT = 1000;
 const LOCATION_LIMIT = 5;
@@ -518,8 +518,8 @@ function getSubscriberRangeWindow(range: SubscriberRange) {
   const start = new Date(end);
 
   switch (range) {
-    case '1H':
-      start.setHours(start.getHours() - 1);
+    case '6M':
+      start.setMonth(start.getMonth() - 6);
       break;
     case '1D':
       start.setDate(start.getDate() - 1);
@@ -546,8 +546,8 @@ function formatSubscriberTooltipLabel(value: string, range: SubscriberRange) {
   if (Number.isNaN(date.getTime())) return value;
 
   switch (range) {
-    case '1H':
-      return format(date, 'MMM d, h:mm a');
+    case '6M':
+      return format(date, 'MMM d, yyyy');
     case '1D':
       return format(date, 'MMM d, h:mm a');
     case '1W':

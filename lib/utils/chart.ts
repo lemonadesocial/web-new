@@ -3,9 +3,9 @@ import { format } from 'date-fns';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 
-export type TimeRange = '1H' | '1D' | '1W' | '1M' | 'All';
+export type TimeRange = '1D' | '1W' | '1M' | '6M' | 'All';
 
-export const TIME_RANGES: TimeRange[] = ['1H', '1D', '1W', '1M', 'All'];
+export const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '6M', 'All'];
 
 export function useTimeRange(event: Event | null | undefined, selectedRange: TimeRange) {
   return useMemo(() => {
@@ -25,8 +25,9 @@ export function useTimeRange(event: Event | null | undefined, selectedRange: Tim
     let calculatedStartTime: Date;
 
     switch (selectedRange) {
-      case '1H':
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 60 * 60 * 1000);
+      case '6M':
+        calculatedStartTime = new Date(calculatedEndTime);
+        calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 6);
         break;
       case '1D':
         calculatedStartTime = new Date(calculatedEndTime.getTime() - 24 * 60 * 60 * 1000);
@@ -60,14 +61,13 @@ export function getIntervalKey(date: Date, range: TimeRange): string {
   const minute = date.getMinutes();
 
   switch (range) {
-    case '1H':
-      return new Date(year, month, day, hour, minute).toISOString();
-    case '1D':
-      return new Date(year, month, day, hour).toISOString();
-    case '1W':
+    case '6M':
     case '1M':
+    case '1W':
     case 'All':
       return new Date(year, month, day).toISOString();
+    case '1D':
+      return new Date(year, month, day, hour).toISOString();
     default:
       return new Date(year, month, day, hour).toISOString();
   }
@@ -102,8 +102,8 @@ export function formatTooltipLabel(timeValue: string, range: TimeRange): string 
   const date = new Date(timeValue);
 
   switch (range) {
-    case '1H':
-      return format(date, 'h:mm');
+    case '6M':
+      return format(date, 'MMM d, yyyy');
     case '1D':
       return format(date, 'MMM d, h:mm a');
     case '1W':
@@ -117,8 +117,8 @@ export function formatTooltipLabel(timeValue: string, range: TimeRange): string 
 
 export function getIntervalLabel(range: TimeRange): string {
   switch (range) {
-    case '1H':
-      return 'M';
+    case '6M':
+      return 'D';
     case '1D':
       return 'H';
     case '1W':
@@ -129,4 +129,3 @@ export function getIntervalLabel(range: TimeRange): string {
       return 'H';
   }
 }
-
