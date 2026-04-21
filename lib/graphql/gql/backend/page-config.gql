@@ -99,6 +99,7 @@ fragment PageConfigFragment on PageConfig {
       type
       value
     }
+    css_variables
   }
   sections {
     ...PageSectionFragment
