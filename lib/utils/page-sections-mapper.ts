@@ -15,8 +15,9 @@ export interface PageSection {
   type: string;
   order: number;
   hidden: boolean;
-  layout: { width: string; padding: string };
+  layout: { width: string; padding: string; columns?: number; alignment?: string; min_height?: string; background?: { type: string; value: string } };
   props: Record<string, unknown>;
+  data_binding?: { mode: string; source?: { type: string; field?: string }; overrides?: Record<string, unknown> };
   craft_node_id?: string;
   children?: PageSection[];
 }
@@ -104,7 +105,7 @@ export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNo
     nodes[nodeId] = {
       type: { resolvedName },
       isCanvas: CANVAS_TYPES.has(section.type),
-      props: { ...section.props },
+      props: { ...section.props, layout_width: section.layout.width, layout_padding: section.layout.padding },
       nodes: childIds,
       linkedNodes: {},
       parent: parentId,

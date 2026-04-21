@@ -1,13 +1,36 @@
+fragment SectionLayoutFragment on SectionLayout {
+  width
+  padding
+  columns
+  alignment
+  min_height
+  background {
+    type
+    value
+  }
+}
+
+fragment SectionDataBindingFragment on DataBinding {
+  mode
+  source {
+    type
+    field
+  }
+  overrides
+}
+
 fragment PageSectionFragment on PageSection {
   id
   type
   order
   hidden
   layout {
-    width
-    padding
+    ...SectionLayoutFragment
   }
   props
+  data_binding {
+    ...SectionDataBindingFragment
+  }
   craft_node_id
   children {
     id
@@ -15,10 +38,12 @@ fragment PageSectionFragment on PageSection {
     order
     hidden
     layout {
-      width
-      padding
+      ...SectionLayoutFragment
     }
     props
+    data_binding {
+      ...SectionDataBindingFragment
+    }
     craft_node_id
     children {
       id
@@ -26,10 +51,12 @@ fragment PageSectionFragment on PageSection {
       order
       hidden
       layout {
-        width
-        padding
+        ...SectionLayoutFragment
       }
       props
+      data_binding {
+        ...SectionDataBindingFragment
+      }
       craft_node_id
       children {
         id
@@ -37,10 +64,12 @@ fragment PageSectionFragment on PageSection {
         order
         hidden
         layout {
-          width
-          padding
+          ...SectionLayoutFragment
         }
         props
+        data_binding {
+          ...SectionDataBindingFragment
+        }
         craft_node_id
         children {
           id
@@ -48,10 +77,12 @@ fragment PageSectionFragment on PageSection {
           order
           hidden
           layout {
-            width
-            padding
+            ...SectionLayoutFragment
           }
           props
+          data_binding {
+            ...SectionDataBindingFragment
+          }
           craft_node_id
         }
       }
