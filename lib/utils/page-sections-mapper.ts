@@ -65,6 +65,7 @@ const TYPE_TO_RESOLVED: Record<string, string> = {
   video_embed: 'VideoEmbed',
   social_links: 'SocialLinks',
   custom_html: 'CustomHTML',
+  ai_custom_section: 'AICustomSection',
   spacer: 'Spacer',
   header: 'Header',
   footer: 'Footer',
@@ -80,6 +81,43 @@ const RESOLVED_TO_TYPE: Record<string, string> = Object.fromEntries(
 const CANVAS_TYPES = new Set([
   'layout_container', 'columns', 'layout_col', 'inline_grid', 'tabs', 'accordion',
 ]);
+
+const LAYOUT_PROP_KEYS = [
+  'layout_width',
+  'layout_padding',
+  'layout_columns',
+  'layout_alignment',
+  'layout_min_height',
+  'layout_background',
+] as const;
+
+type LayoutPropKey = (typeof LAYOUT_PROP_KEYS)[number];
+
+function layoutToNodeProps(section: PageSection['layout']): Record<LayoutPropKey, unknown> {
+  return {
+    layout_width: section.width,
+    layout_padding: section.padding,
+    layout_columns: section.columns,
+    layout_alignment: section.alignment,
+    layout_min_height: section.min_height,
+    layout_background: section.background,
+  };
+}
+
+function nodePropsToLayout(props: Record<string, unknown>): PageSection['layout'] {
+  return {
+    width: (props.layout_width as string) ?? 'contained',
+    padding: (props.layout_padding as string) ?? 'md',
+    columns: props.layout_columns as number | undefined,
+    alignment: props.layout_alignment as string | undefined,
+    min_height: props.layout_min_height as string | undefined,
+    background: props.layout_background as PageSection['layout']['background'],
+  };
+}
+
+export function resolveSectionTypeToResolvedName(type: string): string | undefined {
+  return TYPE_TO_RESOLVED[type];
+}
 
 // ─── sectionsToNodes ─────────────────────────────────────────────────────────
 
@@ -105,7 +143,7 @@ export function sectionsToNodes(sections: PageSection[]): Record<string, CraftNo
     nodes[nodeId] = {
       type: { resolvedName },
       isCanvas: CANVAS_TYPES.has(section.type),
-      props: { ...section.props, layout_width: section.layout.width, layout_padding: section.layout.padding },
+      props: { ...section.props, ...layoutToNodeProps(section.layout) },
       nodes: childIds,
       linkedNodes: {},
       parent: parentId,
@@ -179,11 +217,8 @@ export function nodesToSections(serialized: string): PageSection[] {
       type,
       order,
       hidden: node.hidden ?? false,
-      layout: {
-        width: (node.props?.layout_width as string) ?? 'contained',
-        padding: (node.props?.layout_padding as string) ?? 'md',
-      },
-      props: omit(node.props, ['layout_width', 'layout_padding']),
+      layout: nodePropsToLayout(node.props ?? {}),
+      props: omit(node.props, [...LAYOUT_PROP_KEYS]),
       craft_node_id: nodeId,
       children: children.length > 0 ? children : undefined,
     };
@@ -210,7 +245,15 @@ export function sectionToNodePatch(section: PageSection): {
   const nodeId = section.craft_node_id || section.id;
   const resolvedName = TYPE_TO_RESOLVED[section.type] ?? section.type;
 
-  return { nodeId, props: section.props, isNew: false, resolvedName };
+  return {
+    nodeId,
+    props: {
+      ...section.props,
+      ...layoutToNodeProps(section.layout),
+    },
+    isNew: false,
+    resolvedName,
+  };
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

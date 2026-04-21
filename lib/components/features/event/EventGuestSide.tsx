@@ -7,16 +7,14 @@ import {
   Event,
   GetEventDocument,
   GetEventQuery,
-  GetPageConfigDocument,
   GetPageConfigQuery,
-  PageConfigFragmentFragmentDoc,
   PageConfigOwnerType,
 } from '$lib/graphql/generated/backend/graphql';
 import { PageEditorProvider, usePageEditor } from '$lib/components/features/page-builder/context';
 import { PageRenderer } from '$lib/components/features/page-builder/renderer';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
+import { GetPageConfigWithCustomCodeDocument } from '$lib/graphql/custom/page-config';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending, isPromoter } from '$lib/utils/event';
 import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
@@ -116,7 +114,7 @@ export function EventGuestSideContent({
     }
   }, [event]);
 
-  const { data: pageConfigData } = useQuery(GetPageConfigDocument, {
+  const { data: pageConfigData } = useQuery(GetPageConfigWithCustomCodeDocument, {
     variables: { ownerType: PageConfigOwnerType.Event, ownerId: event._id },
     initData: { getPageConfig: initPageConfig } as GetPageConfigQuery,
     // Skip client-side refetch when SSR already provided the page config (including null = confirmed no config).
@@ -124,7 +122,8 @@ export function EventGuestSideContent({
     skip: !event?._id || isEditable || initPageConfig !== undefined,
   });
   const pageConfig = pageConfigData?.getPageConfig;
-  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfig);
+  const pageConfigFields = pageConfig as any;
+  const customPageCss = pageConfigFields?.custom_code?.css || undefined;
 
   React.useEffect(() => {
     if (pageConfigData === undefined) return;
@@ -353,5 +352,10 @@ export function EventGuestSideContent({
     );
   };
 
-  return renderContent();
+  return (
+    <div data-page-theme-root>
+      {customPageCss ? <style dangerouslySetInnerHTML={{ __html: customPageCss }} /> : null}
+      {renderContent()}
+    </div>
+  );
 }

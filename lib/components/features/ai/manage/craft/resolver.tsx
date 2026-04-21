@@ -35,6 +35,53 @@ import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 import { usePageEditor, usePageNode, useNodeId } from '$lib/components/features/page-builder/context';
 
+const FALLBACK_BACKGROUND_KEYWORDS: Array<[string, string]> = [
+  ['blue-ocean', 'linear-gradient(135deg, #0ea5e9 0%, #164e63 100%)'],
+  ['ocean', 'linear-gradient(135deg, #0ea5e9 0%, #164e63 100%)'],
+  ['sky', '#38bdf8'],
+  ['blue', '#3b82f6'],
+  ['green', '#22c55e'],
+  ['emerald', '#10b981'],
+  ['teal', '#14b8a6'],
+  ['cyan', '#06b6d4'],
+  ['violet', '#8b5cf6'],
+  ['purple', '#a855f7'],
+  ['pink', '#ec4899'],
+  ['rose', '#f43f5e'],
+  ['red', '#ef4444'],
+  ['orange', '#f97316'],
+  ['yellow', '#eab308'],
+  ['amber', '#f59e0b'],
+  ['white', '#ffffff'],
+  ['black', '#000000'],
+  ['gray', '#6b7280'],
+  ['grey', '#6b7280'],
+];
+
+function normalizeBackgroundValue(background: unknown): string | undefined {
+  const candidate =
+    typeof background === 'string'
+      ? background
+      : background && typeof background === 'object' && 'value' in background && typeof background.value === 'string'
+        ? background.value
+        : undefined;
+
+  if (!candidate) return undefined;
+
+  if (typeof window !== 'undefined' && window.CSS?.supports) {
+    if (window.CSS.supports('background', candidate) || window.CSS.supports('color', candidate)) {
+      return candidate;
+    }
+  }
+
+  const normalized = candidate.trim().toLowerCase();
+  for (const [keyword, value] of FALLBACK_BACKGROUND_KEYWORDS) {
+    if (normalized.includes(keyword)) return value;
+  }
+
+  return undefined;
+}
+
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
   return (layoutState.data as Event) || props.event;
@@ -520,6 +567,14 @@ export const CraftSection = ({
   const width = nodeProps.width || props.width;
   const height = nodeProps.height || props.height;
   const aspectRatio = nodeProps.aspectRatio || props.aspectRatio;
+  const background =
+    nodeProps.layout_background ||
+    props.layout_background ||
+    nodeProps.background_color ||
+    props.background_color ||
+    nodeProps.background ||
+    props.background;
+  const backgroundValue = normalizeBackgroundValue(background);
   const isNumericWidth = width && !isNaN(Number(width));
   const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
   const maxWidth = isNumericWidth ? `${width}px` : undefined;
@@ -837,6 +892,7 @@ export const CraftSection = ({
           !noPadding && 'p-3',
           height ? 'overflow-hidden' : 'overflow-visible',
         )}
+        style={backgroundValue ? { background: backgroundValue } : undefined}
       >
         {children || <Placeholder name={name || 'Section'} />}
       </div>
@@ -1215,6 +1271,11 @@ export const Container = ({
   const id = useNodeId();
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
+  const background =
+    props.layout_background ||
+    props.background_color ||
+    props.background;
+  const backgroundValue = normalizeBackgroundValue(background);
   const isNumericWidth = width && !isNaN(Number(width));
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
@@ -1266,6 +1327,7 @@ export const Container = ({
       style={
         {
           ...props.style,
+          background: backgroundValue,
           height: height ? `${height}px` : 'auto',
           '--desktop-width': isNumericWidth ? `${width}px` : undefined,
         } as React.CSSProperties
@@ -2137,6 +2199,57 @@ export const CraftCustomHTML = (props: any) => {
 };
 CraftCustomHTML.craft = { displayName: 'Custom HTML', related: { settings: CustomHTMLSettings } };
 
+const AICustomSectionSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">HTML Content</p>
+        <Textarea
+          value={props.html || ''}
+          onChange={(e) => actions.setProp((nodeProps: any) => (nodeProps.html = e.target.value))}
+          placeholder="<section><div>Your custom UI here...</div></section>"
+          rows={10}
+          className="font-mono text-xs"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Scoped CSS</p>
+        <Textarea
+          value={props.css || ''}
+          onChange={(e) => actions.setProp((nodeProps: any) => (nodeProps.css = e.target.value))}
+          placeholder='[data-ai-custom-section="section-id"] { animation: float 12s linear infinite; }'
+          rows={10}
+          className="font-mono text-xs"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const CraftAICustomSection = (props: any) => {
+  const { enabled } = usePageEditor();
+  const id = useNodeId();
+  const { html, css } = props;
+  const scopeSelector = `[data-ai-custom-section="${id}"]`;
+
+  if (!html && !enabled) return null;
+
+  return (
+    <CraftSection name="AI Custom Section">
+      <div data-ai-custom-section={id} className="relative">
+        {css ? <style dangerouslySetInnerHTML={{ __html: css.replaceAll('__SECTION_SCOPE__', scopeSelector) }} /> : null}
+        {html ? (
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        ) : (
+          <Placeholder name="AI Custom Section" description="AI-authored HTML and CSS block" />
+        )}
+      </div>
+    </CraftSection>
+  );
+};
+CraftAICustomSection.craft = { displayName: 'AI Custom Section', related: { settings: AICustomSectionSettings } };
+
 const SpacerSettings = () => {
   const { actions, props } = useSettings();
   return (
@@ -2276,6 +2389,7 @@ export const resolver: Record<string, React.ComponentType<any>> = {
   ImageBanner: CraftImageBanner,
   SocialLinks: CraftSocialLinks,
   CustomHTML: CraftCustomHTML,
+  AICustomSection: CraftAICustomSection,
   Spacer: CraftSpacer,
   Header: CraftHeader,
   Footer: CraftFooter,

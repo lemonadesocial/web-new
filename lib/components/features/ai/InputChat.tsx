@@ -110,9 +110,14 @@ export function InputChat({
 
     // New format: { sections: [...], theme: {...} }
     if (payload && typeof payload === 'object' && !Array.isArray(payload) && 'sections' in payload) {
-      const { sections, theme } = payload as { sections: unknown[]; theme?: Record<string, unknown> };
+      const { sections, theme, custom_code } = payload as {
+        sections: unknown[];
+        theme?: Record<string, unknown>;
+        custom_code?: Record<string, unknown>;
+      };
       triggers.applySections(sections as any);
       if (theme) triggers.applyTheme(theme);
+      triggers.applyCustomCode(custom_code);
     } else if (Array.isArray(payload)) {
       // Bare sections array (backward compat)
       triggers.applySections(payload as any);
@@ -271,9 +276,12 @@ export function InputChat({
     if (!text) {
       return;
     }
+    const pageEditTriggers = getAIPageEditTriggers();
     const runData = {
       ...((state.data as Record<string, unknown> | undefined) || {}),
       ...(fixedSpaceId ? { space_id: fixedSpaceId } : {}),
+      ...(state.pageConfig ? { page_config_id: (state.pageConfig as any)._id } : {}),
+      ...(pageEditTriggers ? { page_sections: pageEditTriggers.getSections() } : {}),
     };
 
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });

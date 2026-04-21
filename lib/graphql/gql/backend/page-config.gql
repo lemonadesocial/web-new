@@ -132,6 +132,16 @@ fragment PageConfigFragment on PageConfig {
     }
     css_variables
   }
+  custom_code {
+    css
+    head_html
+    body_html
+    scripts {
+      src
+      content
+      strategy
+    }
+  }
   sections {
     ...PageSectionFragment
   }

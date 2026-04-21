@@ -15,6 +15,8 @@ export interface AIPageEditTriggers {
   applySectionUpdate: (section: PageSection) => void;
   /** Apply a PageTheme returned by page_designer tool to the theme editor state. */
   applyTheme: (theme: Record<string, unknown>) => void;
+  /** Apply persisted custom page code returned by page_designer. */
+  applyCustomCode: (customCode: Record<string, unknown> | undefined) => void;
   /** Return current page as PageSection[] for persistence. */
   getSections: () => PageSection[];
   getStructureData: () => string | null;

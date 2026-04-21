@@ -90,6 +90,7 @@ function ManageLayoutToolbar() {
         toast.success('Theme saved successfully!');
         store.setPageConfigId(pageConfig._id);
         store.setSavedPageTheme(themeValuesToPageTheme(themeState) as Record<string, unknown>);
+        store.setSavedPageCustomCode(state.pageCustomCode);
       }
     },
     onError: (error) => {
@@ -104,6 +105,7 @@ function ManageLayoutToolbar() {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
         store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
+        store.setSavedPageCustomCode(state.pageCustomCode);
       }
     },
     onError: (error) => {
@@ -119,6 +121,7 @@ function ManageLayoutToolbar() {
         toast.success('Layout saved successfully!');
         store.setPageConfigId(pageConfig._id);
         store.setSavedPageTheme(pageConfig.theme as Record<string, unknown>);
+        store.setSavedPageCustomCode(state.pageCustomCode);
       }
     },
     onError: (error) => {
@@ -159,7 +162,10 @@ function ManageLayoutToolbar() {
     updatePageConfigTheme({
       variables: {
         id: state.pageConfigId,
-        input: { theme: themeValuesToPageTheme(themeState) as any },
+        input: {
+          theme: themeValuesToPageTheme(themeState) as any,
+          ...(state.pageCustomCode !== undefined ? { custom_code: state.pageCustomCode as any } : {}),
+        },
       },
     });
   };
@@ -209,6 +215,10 @@ function ManageLayoutToolbar() {
       // Only persist the theme when the user has explicitly changed it
       if (isThemeDirty) {
         input.theme = themeValuesToPageTheme(themeState) as any;
+      }
+
+      if (state.pageCustomCode !== undefined) {
+        input.custom_code = state.pageCustomCode as any;
       }
 
       if (state.pageConfigId) {

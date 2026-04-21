@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image' | 'passport';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image' | 'passport' | 'custom';
   template?: {
     image?: string;
   };
@@ -205,11 +205,20 @@ const image: ThemePresetType = {
   },
 };
 
+const custom: ThemePresetType = {
+  image: `${ASSET_PREFIX}/assets/images/minimal.png`,
+  name: 'Custom',
+  ui: {
+    mode: 'all',
+  },
+};
+
 export const presets = {
   minimal,
   shader,
   pattern,
   image,
+  custom,
 };
 
 export const modes = [

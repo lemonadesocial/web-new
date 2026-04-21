@@ -16,9 +16,7 @@ import { EventThemeProvider } from '$lib/components/features/theme-builder/provi
 import {
   Event,
   GetEventDocument,
-  GetPageConfigDocument,
   GetSpaceDocument,
-  PageConfigFragmentFragmentDoc,
   PageConfigOwnerType,
   Space,
 } from '$lib/graphql/generated/backend/graphql';
@@ -31,8 +29,8 @@ import { getCommunityThemeData } from '../../community-manage/theme';
 import { PageEditorProvider } from '$lib/components/features/page-builder/context';
 import { useParams } from 'next/navigation';
 import { useQuery } from '$lib/graphql/request';
+import { GetPageConfigWithCustomCodeDocument } from '$lib/graphql/custom/page-config';
 import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 
 interface Props extends React.PropsWithChildren {
   layoutType?: LayoutType;
@@ -79,7 +77,7 @@ function ManageLayout({
   });
 
   const pageConfigShouldFetch = !!state.data?._id && !state.pageConfigId;
-  const { data: pageConfigRaw, loading: loadingPageConfig, error: pageConfigError } = useQuery(GetPageConfigDocument, {
+  const { data: pageConfigRaw, loading: loadingPageConfig, error: pageConfigError } = useQuery(GetPageConfigWithCustomCodeDocument, {
     variables: {
       ownerType: state.layoutType === 'event' ? PageConfigOwnerType.Event : PageConfigOwnerType.Space,
       ownerId: state.data?._id,
@@ -87,12 +85,14 @@ function ManageLayout({
     skip: !pageConfigShouldFetch,
   });
 
-  const pageConfigFields = useFragment(PageConfigFragmentFragmentDoc, pageConfigRaw?.getPageConfig);
+  const pageConfigFields = pageConfigRaw?.getPageConfig;
 
   React.useEffect(() => {
     if (pageConfigFields?._id) {
       storeManageLayout.setPageConfigId(pageConfigFields._id);
       storeManageLayout.setSavedPageTheme(pageConfigFields.theme || undefined);
+      storeManageLayout.setSavedPageCustomCode(pageConfigFields.custom_code || undefined);
+      storeManageLayout.setPageCustomCode(pageConfigFields.custom_code || undefined);
     }
   }, [pageConfigFields]);
 

@@ -12,12 +12,8 @@ import { aiChatClient } from '$lib/graphql/request/instances';
 import {
   Event,
   GetEventDocument,
-  GetPageConfigDocument,
-  PageConfigFragmentFragmentDoc,
-  PageConfigOwnerType,
   Space,
 } from '$lib/graphql/generated/backend/graphql';
-import { useFragment } from '$lib/graphql/generated/backend/fragment-masking';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
@@ -30,10 +26,16 @@ import ManageCommunityLayout from '../../community-manage/ManageCommunityLayout'
 import CommunityManageDesignPane from '../../community-manage/CommunityManageDesignPane';
 import CommunityManagePreview from '../../community-manage/CommunityManagePreview';
 
-import { storeManageLayout as store, useStoreManageLayout } from './store';
+import { type PageCustomCode, storeManageLayout as store, useStoreManageLayout } from './store';
 import { usePageEditor } from '$lib/components/features/page-builder/context';
 import { setAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
-import { sectionsToNodes, nodesToSections, sectionToNodePatch, type PageSection } from '$utils/page-sections-mapper';
+import {
+  sectionsToNodes,
+  nodesToSections,
+  resolveSectionTypeToResolvedName,
+  sectionToNodePatch,
+  type PageSection,
+} from '$utils/page-sections-mapper';
 import { pageThemeToThemeValues, type StoredPageTheme } from '$utils/page-theme-adapter';
 import { SettingsPanel } from './SettingsPanel';
 
@@ -77,7 +79,7 @@ function ManageLayoutContent({
   const [_, aiChatDispatch] = useAIChat();
   const initializedConfigEventRef = React.useRef<string | null>(null);
 
-  const { selectedId, actions, query } = usePageEditor();
+  const { nodes, selectedId, actions, query } = usePageEditor();
   const isSelected = selectedId !== null;
 
   const cachedEvent = state.data as Event | undefined;
@@ -92,7 +94,7 @@ function ManageLayoutContent({
     (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
   const eventId = event?._id;
 
-  const pageConfigData_ = useFragment(PageConfigFragmentFragmentDoc, pageConfigProp);
+  const pageConfigData_ = pageConfigProp;
 
   React.useEffect(() => {
     if (pageConfigProp) {
@@ -216,8 +218,8 @@ function ManageLayoutContent({
     ))
     .otherwise(() => null);
 
-  const editorRef = React.useRef({ actions, query, state });
-  editorRef.current = { actions, query, state };
+  const editorRef = React.useRef({ actions, query, state, nodes });
+  editorRef.current = { actions, query, state, nodes };
 
   const themeDispatchRef = React.useRef(themeDispatch);
   themeDispatchRef.current = themeDispatch;
@@ -232,23 +234,34 @@ function ManageLayoutContent({
         editorRef.current.actions.deserialize(JSON.stringify(nodes));
       },
       applySectionUpdate: (section: PageSection) => {
-        const { actions, query } = editorRef.current;
-        const { nodeId, props } = sectionToNodePatch(section);
-        try {
-          query.node(nodeId).get();
-          actions.setProp(nodeId, (p: Record<string, unknown>) => Object.assign(p, props));
-        } catch {
-          // Node doesn't exist — inject at end of main-col
-          const nodes = sectionsToNodes([section]);
-          const newNode = nodes[nodeId];
-          if (newNode && query.node('main-col').get()) {
-            actions.addNode('main-col', newNode.type.resolvedName, newNode.displayName, newNode.props);
-          }
+        const { actions, nodes } = editorRef.current;
+        const { nodeId, props, resolvedName } = sectionToNodePatch(section);
+        const existingNodeId =
+          (nodes[nodeId] ? nodeId : null) ||
+          Object.entries(nodes).find(([id, node]) => {
+            if (id === 'ROOT') return false;
+            return node.type.resolvedName === resolveSectionTypeToResolvedName(section.type);
+          })?.[0];
+
+        if (existingNodeId) {
+          actions.setProp(existingNodeId, (p: Record<string, unknown>) => Object.assign(p, props));
+          return;
+        }
+
+        // Node doesn't exist — inject at end of the main column when present.
+        const nextNodes = sectionsToNodes([section]);
+        const newNode = nextNodes[nodeId];
+        const parentId = nodes['main-col'] ? 'main-col' : 'ROOT';
+        if (newNode && nodes[parentId]) {
+          actions.addNode(parentId, resolvedName, newNode.displayName, newNode.props, section.order);
         }
       },
       applyTheme: (theme: Record<string, unknown>) => {
         const themeValues = pageThemeToThemeValues(theme as StoredPageTheme);
         themeDispatchRef.current({ type: ThemeBuilderActionKind.reset, payload: themeValues });
+      },
+      applyCustomCode: (customCode: Record<string, unknown> | undefined) => {
+        store.setPageCustomCode(customCode as PageCustomCode | undefined);
       },
       getSections: () => {
         try {
@@ -296,6 +309,7 @@ function ManageLayoutContent({
       event ? (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- clicking empty canvas background to deselect nodes is a mouse-only affordance; keyboard users deselect via Escape handled elsewhere
         <main
+          data-page-theme-root
           data-theme-scope="event-preview"
           data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
@@ -309,6 +323,7 @@ function ManageLayoutContent({
             if (e.target === e.currentTarget) actions.selectNode(null);
           }}
         >
+          {state.pageCustomCode?.css ? <style dangerouslySetInnerHTML={{ __html: state.pageCustomCode.css }} /> : null}
           <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- background click to deselect node; non-interactive container */}
           <div
