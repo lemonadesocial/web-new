@@ -1258,6 +1258,8 @@ CraftAccordionItem.craft = {
 
 const ContainerSettings = () => {
   const { id, actions, props } = useSettings();
+  const decorativeImage = props.decorativeImage as Record<string, unknown> | undefined;
+  const decorativeImageSource = getDecorativeImageSource(decorativeImage);
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -1334,6 +1336,29 @@ const ContainerSettings = () => {
           placeholder="Leave empty for Full Screen"
         />
       </div>
+      {decorativeImageSource ? (
+        <div className="flex flex-col gap-3 rounded-lg border border-card-border bg-card/40 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-medium">Decorative Image</p>
+              <p className="truncate text-xs text-tertiary">{decorativeImageSource}</p>
+            </div>
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-delete"
+              onClick={() =>
+                actions.setProp((props: any) => {
+                  delete props.decorativeImage;
+                })
+              }
+              className="shrink-0 hover:text-error!"
+            >
+              Remove
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
