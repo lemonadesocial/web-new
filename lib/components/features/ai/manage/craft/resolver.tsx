@@ -82,6 +82,86 @@ function normalizeBackgroundValue(background: unknown): string | undefined {
   return undefined;
 }
 
+function toCssSize(value: unknown): string | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `${value}px`;
+  }
+
+  if (typeof value !== 'string') return undefined;
+
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (/^\d+(?:\.\d+)?$/.test(trimmed)) return `${trimmed}px`;
+
+  return trimmed;
+}
+
+function getDecorativeImageSource(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    return value.trim() || undefined;
+  }
+
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+
+  return getDecorativeImageSource(
+    record.source ??
+    record.src ??
+    record.url ??
+    record.original ??
+    record.large2x ??
+    record.large ??
+    record.medium
+  );
+}
+
+function getDecorativeImagePositionClasses(position: unknown): string {
+  switch (position) {
+    case 'top-left':
+      return 'top-0 left-0';
+    case 'bottom-right':
+      return 'bottom-0 right-0';
+    case 'bottom-left':
+      return 'bottom-0 left-0';
+    case 'center-right':
+      return 'top-1/2 right-0 -translate-y-1/2';
+    case 'center-left':
+      return 'top-1/2 left-0 -translate-y-1/2';
+    case 'top-center':
+      return 'top-0 left-1/2 -translate-x-1/2';
+    case 'bottom-center':
+      return 'bottom-0 left-1/2 -translate-x-1/2';
+    case 'center':
+      return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+    case 'top-right':
+    default:
+      return 'top-0 right-0';
+  }
+}
+
+function normalizeDecorativeImage(value: unknown) {
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+  const src = getDecorativeImageSource(record);
+  if (!src) return undefined;
+
+  return {
+    src,
+    alt: typeof record.alt === 'string' ? record.alt : '',
+    positionClasses: getDecorativeImagePositionClasses(record.position),
+    className: typeof record.className === 'string' ? record.className : '',
+    width: toCssSize(record.width) ?? '160px',
+    height: toCssSize(record.height),
+    opacity: typeof record.opacity === 'number' ? record.opacity : undefined,
+    objectFit:
+      record.objectFit === 'cover' || record.objectFit === 'contain'
+        ? record.objectFit
+        : 'contain',
+  };
+}
+
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
   return (layoutState.data as Event) || props.event;
@@ -1266,6 +1346,7 @@ export const Container = ({
   centerChildren,
   padding = '0',
   px = '1',
+  decorativeImage,
   ...props
 }: any) => {
   const id = useNodeId();
@@ -1276,6 +1357,7 @@ export const Container = ({
     props.background_color ||
     props.background;
   const backgroundValue = normalizeBackgroundValue(background);
+  const decorativeImageConfig = normalizeDecorativeImage(decorativeImage);
   const isNumericWidth = width && !isNaN(Number(width));
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
@@ -1313,6 +1395,7 @@ export const Container = ({
       }}
       className={clsx(
         'flex flex-col gap-6 w-full transition-all relative flex-1',
+        decorativeImageConfig && 'isolate',
         centered && 'page mx-auto',
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
@@ -1333,7 +1416,30 @@ export const Container = ({
         } as React.CSSProperties
       }
     >
-      {children}
+      {decorativeImageConfig ? (
+        <img
+          src={decorativeImageConfig.src}
+          alt={decorativeImageConfig.alt}
+          loading="lazy"
+          aria-hidden={decorativeImageConfig.alt ? undefined : true}
+          className={clsx(
+            'pointer-events-none select-none absolute z-0 max-w-none',
+            decorativeImageConfig.positionClasses,
+            decorativeImageConfig.objectFit === 'cover' ? 'object-cover' : 'object-contain',
+            decorativeImageConfig.className,
+          )}
+          style={{
+            width: decorativeImageConfig.width,
+            height: decorativeImageConfig.height,
+            opacity: decorativeImageConfig.opacity,
+          }}
+        />
+      ) : null}
+      {decorativeImageConfig ? (
+        <div className="contents [&>*]:relative [&>*]:z-[1]">
+          {children}
+        </div>
+      ) : children}
     </div>
   );
 };
