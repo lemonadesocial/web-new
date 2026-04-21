@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.37.0](https://github.com/lemonadesocial/web-new/compare/v10.36.1...v10.37.0) (2026-04-21)
+
+
+### Features
+
+* migrate event manage tabs to query-driven routes ([5bc0177](https://github.com/lemonadesocial/web-new/commit/5bc0177af1d7c09ea3ca4214bf8049736bfaf087))
+
+
+### Bug Fixes
+
+* **connectors:** fix disconnect revocation toast and access_denied error display ([3b055a4](https://github.com/lemonadesocial/web-new/commit/3b055a4b970f98082bd3108e69dae21804e923a1))
+* reduce manage layout bottom spacing ([c69127d](https://github.com/lemonadesocial/web-new/commit/c69127d4ef9c7a571939f5e397683c6db370ddec))
+
 ## [10.36.1](https://github.com/lemonadesocial/web-new/compare/v10.36.0...v10.36.1) (2026-04-20)
 
 
