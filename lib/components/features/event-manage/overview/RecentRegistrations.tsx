@@ -5,6 +5,7 @@ import { Event, ListEventGuestsDocument } from '$lib/graphql/generated/backend/g
 import { useQuery } from '$lib/graphql/request';
 import { GuestTable } from '../common/GuestTable';
 import { Skeleton } from '$lib/components/core/skeleton';
+import { getEventManageUrl } from '../routing';
 
 interface RecentRegistrationsProps {
   event: Event;
@@ -61,7 +62,7 @@ export function RecentRegistrations({ event, titleClassName }: RecentRegistratio
           variant="tertiary"
           iconRight="icon-chevron-right"
           size="sm"
-          onClick={() => router.push(`/e/manage/${event.shortid}/guests`)}
+          onClick={() => router.push(getEventManageUrl(event.shortid, { tab: 'guests' }))}
         >
           All Guests
         </Button>

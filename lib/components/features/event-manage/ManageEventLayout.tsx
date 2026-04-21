@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { Skeleton } from '$lib/components/core';
@@ -17,8 +18,13 @@ import { EventRegistration } from '$lib/components/features/event-manage/EventRe
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { ManageEventPaymentLayout } from './ManageEventPaymentLayout';
+import {
+  defaultEventManageTab,
+  EventManageTab,
+  getEventManageTab,
+} from './routing';
 
-const tabs: Record<string, { label: string; component: React.FC }> = {
+const tabs: Record<EventManageTab, { label: string; component: React.FC }> = {
   overview: { label: 'Overview', component: EventOverview },
   guests: { label: 'Guests', component: EventGuests },
   registration: { label: 'Registration', component: EventRegistration },
@@ -27,10 +33,8 @@ const tabs: Record<string, { label: string; component: React.FC }> = {
   insights: { label: 'Insights', component: EventInsights },
   more: { label: 'More', component: EventMore },
 };
+const tabEntries = Object.entries(tabs) as [EventManageTab, (typeof tabs)[EventManageTab]][];
 
-/**
- * @description ManageEventLayout is using for wrap new AI chat UI. Keep everything same as EventManageLayout but use state instead of page
- */
 function ManageEventLayout({ shortid }: { shortid: string }) {
   const loadingFallback = (
     <div className="font-default p-4">
@@ -71,13 +75,16 @@ function ManageEventLayout({ shortid }: { shortid: string }) {
 
   return (
     <EventProtected shortid={shortid} loadingFallback={loadingFallback}>
-      {(event) => <Content event={event} shortid={shortid} />}
+      {(event) => <Content event={event} />}
     </EventProtected>
   );
 }
 
-function Content({ event, shortid }: { event: Event; shortid: string }) {
+function Content({ event }: { event: Event }) {
   const [_, aiChatDispatch] = useAIChat();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useQuery(
     GetListAiConfigDocument,
@@ -100,7 +107,29 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
     aiChatClient,
   );
 
-  const [selectedTab, setSelectedTab] = React.useState('overview');
+  const selectedTab = getEventManageTab(searchParams.get('tab'));
+  const updateTab = (tab: EventManageTab) => {
+    if (tab === selectedTab) return;
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+
+    if (tab === defaultEventManageTab) {
+      nextSearchParams.delete('tab');
+    } else {
+      nextSearchParams.set('tab', tab);
+    }
+
+    if (tab !== 'payments') {
+      nextSearchParams.delete('paymentsTab');
+    }
+
+    const query = nextSearchParams.toString();
+    const nextUrl = query ? `${pathname}?${query}` : pathname;
+
+    React.startTransition(() => {
+      router.replace(nextUrl, { scroll: false });
+    });
+  };
 
   const Comp = tabs[selectedTab].component;
 
@@ -110,12 +139,12 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         <div className="backdrop-blur-md transition-all duration-300 pt-2 font-default">
           <div className="w-full max-w-[69.5rem] mx-auto px-4">
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
-              {Object.entries(tabs).map(([key, item]) => {
+              {tabEntries.map(([key, item]) => {
                 return (
                   <div
                     key={key}
                     className={clsx('cursor-pointer', key === selectedTab && 'border-b-2 border-b-primary', 'pb-2.5')}
-                    onClick={() => setSelectedTab(key)}
+                    onClick={() => updateTab(key)}
                   >
                     <span className={clsx(key === selectedTab ? 'text-primary' : 'text-tertiary', 'font-medium')}>
                       {item.label}
