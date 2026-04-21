@@ -67,8 +67,14 @@ export function ThemeGenerator({
 
   const modeKey = mode === 'auto' ? 'dark' : mode;
   const isMinimalTheme = data.theme === 'minimal';
+  const isCustomTheme = data.theme === 'custom';
   const modeVars = data.variables?.[modeKey === 'dark' ? 'dark' : 'light'];
-  const backgroundColor = modeVars?.['--color-background'] || (isMinimalTheme ? (modeKey === 'light' ? 'var(--color-accent-50)' : 'var(--color-accent-950)') : undefined);
+  const backgroundColor = modeVars?.['--color-background'] ||
+    (isMinimalTheme
+      ? (modeKey === 'light' ? 'var(--color-accent-50)' : 'var(--color-accent-950)')
+      : isCustomTheme
+        ? (data.variables?.custom?.['--color-background'] as string | undefined)
+        : undefined);
   const selector = scopeSelector || '[data-theme-scope]';
 
   const scopedBackgroundStyle = scoped
@@ -77,7 +83,7 @@ export function ThemeGenerator({
         inset: 0,
         pointerEvents: 'none',
         zIndex: 0,
-        backgroundColor: isMinimalTheme ? backgroundColor : undefined,
+        backgroundColor: isMinimalTheme || isCustomTheme ? backgroundColor : undefined,
         ...style,
       } as React.CSSProperties)
     : style;
@@ -110,11 +116,12 @@ export function ThemeGenerator({
       )}
 
       {
-        !!(backgroundColor && isMinimalTheme) && (
+        !!(backgroundColor && (isMinimalTheme || isCustomTheme)) && (
           <style jsx global>
             {`
-              ${scoped ? `${selector} .background.minimal` : '.background.minimal'} {
+              ${scoped ? `${selector} .background.${data.theme}` : `.background.${data.theme}`} {
                 --minimal-color-bg: ${backgroundColor} !important;
+                background-color: ${backgroundColor} !important;
               }
             `}
           </style>

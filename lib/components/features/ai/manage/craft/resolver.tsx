@@ -35,6 +35,133 @@ import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 import { usePageEditor, usePageNode, useNodeId } from '$lib/components/features/page-builder/context';
 
+const FALLBACK_BACKGROUND_KEYWORDS: Array<[string, string]> = [
+  ['blue-ocean', 'linear-gradient(135deg, #0ea5e9 0%, #164e63 100%)'],
+  ['ocean', 'linear-gradient(135deg, #0ea5e9 0%, #164e63 100%)'],
+  ['sky', '#38bdf8'],
+  ['blue', '#3b82f6'],
+  ['green', '#22c55e'],
+  ['emerald', '#10b981'],
+  ['teal', '#14b8a6'],
+  ['cyan', '#06b6d4'],
+  ['violet', '#8b5cf6'],
+  ['purple', '#a855f7'],
+  ['pink', '#ec4899'],
+  ['rose', '#f43f5e'],
+  ['red', '#ef4444'],
+  ['orange', '#f97316'],
+  ['yellow', '#eab308'],
+  ['amber', '#f59e0b'],
+  ['white', '#ffffff'],
+  ['black', '#000000'],
+  ['gray', '#6b7280'],
+  ['grey', '#6b7280'],
+];
+
+function normalizeBackgroundValue(background: unknown): string | undefined {
+  const candidate =
+    typeof background === 'string'
+      ? background
+      : background && typeof background === 'object' && 'value' in background && typeof background.value === 'string'
+        ? background.value
+        : undefined;
+
+  if (!candidate) return undefined;
+
+  if (typeof window !== 'undefined' && window.CSS?.supports) {
+    if (window.CSS.supports('background', candidate) || window.CSS.supports('color', candidate)) {
+      return candidate;
+    }
+  }
+
+  const normalized = candidate.trim().toLowerCase();
+  for (const [keyword, value] of FALLBACK_BACKGROUND_KEYWORDS) {
+    if (normalized.includes(keyword)) return value;
+  }
+
+  return undefined;
+}
+
+function toCssSize(value: unknown): string | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `${value}px`;
+  }
+
+  if (typeof value !== 'string') return undefined;
+
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (/^\d+(?:\.\d+)?$/.test(trimmed)) return `${trimmed}px`;
+
+  return trimmed;
+}
+
+function getDecorativeImageSource(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    return value.trim() || undefined;
+  }
+
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+
+  return getDecorativeImageSource(
+    record.source ??
+    record.src ??
+    record.url ??
+    record.original ??
+    record.large2x ??
+    record.large ??
+    record.medium
+  );
+}
+
+function getDecorativeImagePositionClasses(position: unknown): string {
+  switch (position) {
+    case 'top-left':
+      return 'top-0 left-0';
+    case 'bottom-right':
+      return 'bottom-0 right-0';
+    case 'bottom-left':
+      return 'bottom-0 left-0';
+    case 'center-right':
+      return 'top-1/2 right-0 -translate-y-1/2';
+    case 'center-left':
+      return 'top-1/2 left-0 -translate-y-1/2';
+    case 'top-center':
+      return 'top-0 left-1/2 -translate-x-1/2';
+    case 'bottom-center':
+      return 'bottom-0 left-1/2 -translate-x-1/2';
+    case 'center':
+      return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+    case 'top-right':
+    default:
+      return 'top-0 right-0';
+  }
+}
+
+function normalizeDecorativeImage(value: unknown) {
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+  const src = getDecorativeImageSource(record);
+  if (!src) return undefined;
+
+  return {
+    src,
+    alt: typeof record.alt === 'string' ? record.alt : '',
+    positionClasses: getDecorativeImagePositionClasses(record.position),
+    className: typeof record.className === 'string' ? record.className : '',
+    width: toCssSize(record.width) ?? '160px',
+    height: toCssSize(record.height),
+    opacity: typeof record.opacity === 'number' ? record.opacity : undefined,
+    objectFit:
+      record.objectFit === 'cover' || record.objectFit === 'contain'
+        ? record.objectFit
+        : 'contain',
+  };
+}
+
 const useEvent = (props: any) => {
   const layoutState = useStoreManageLayout();
   return (layoutState.data as Event) || props.event;
@@ -520,6 +647,14 @@ export const CraftSection = ({
   const width = nodeProps.width || props.width;
   const height = nodeProps.height || props.height;
   const aspectRatio = nodeProps.aspectRatio || props.aspectRatio;
+  const background =
+    nodeProps.layout_background ||
+    props.layout_background ||
+    nodeProps.background_color ||
+    props.background_color ||
+    nodeProps.background ||
+    props.background;
+  const backgroundValue = normalizeBackgroundValue(background);
   const isNumericWidth = width && !isNaN(Number(width));
   const widthStyle = isNumericWidth ? '100%' : typeof width === 'string' && width.includes('/') ? width : '100%';
   const maxWidth = isNumericWidth ? `${width}px` : undefined;
@@ -837,6 +972,7 @@ export const CraftSection = ({
           !noPadding && 'p-3',
           height ? 'overflow-hidden' : 'overflow-visible',
         )}
+        style={backgroundValue ? { background: backgroundValue } : undefined}
       >
         {children || <Placeholder name={name || 'Section'} />}
       </div>
@@ -1122,6 +1258,8 @@ CraftAccordionItem.craft = {
 
 const ContainerSettings = () => {
   const { id, actions, props } = useSettings();
+  const decorativeImage = props.decorativeImage as Record<string, unknown> | undefined;
+  const decorativeImageSource = getDecorativeImageSource(decorativeImage);
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -1198,6 +1336,29 @@ const ContainerSettings = () => {
           placeholder="Leave empty for Full Screen"
         />
       </div>
+      {decorativeImageSource ? (
+        <div className="flex flex-col gap-3 rounded-lg border border-card-border bg-card/40 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-medium">Decorative Image</p>
+              <p className="truncate text-xs text-tertiary">{decorativeImageSource}</p>
+            </div>
+            <Button
+              size="xs"
+              variant="tertiary-alt"
+              icon="icon-delete"
+              onClick={() =>
+                actions.setProp((props: any) => {
+                  delete props.decorativeImage;
+                })
+              }
+              className="shrink-0 hover:text-error!"
+            >
+              Remove
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -1210,11 +1371,18 @@ export const Container = ({
   centerChildren,
   padding = '0',
   px = '1',
+  decorativeImage,
   ...props
 }: any) => {
   const id = useNodeId();
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
+  const background =
+    props.layout_background ||
+    props.background_color ||
+    props.background;
+  const backgroundValue = normalizeBackgroundValue(background);
+  const decorativeImageConfig = normalizeDecorativeImage(decorativeImage);
   const isNumericWidth = width && !isNaN(Number(width));
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerDropActive, setContainerDropActive] = React.useState(false);
@@ -1252,6 +1420,7 @@ export const Container = ({
       }}
       className={clsx(
         'flex flex-col gap-6 w-full transition-all relative flex-1',
+        decorativeImageConfig && 'isolate',
         centered && 'page mx-auto',
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
@@ -1266,12 +1435,36 @@ export const Container = ({
       style={
         {
           ...props.style,
+          background: backgroundValue,
           height: height ? `${height}px` : 'auto',
           '--desktop-width': isNumericWidth ? `${width}px` : undefined,
         } as React.CSSProperties
       }
     >
-      {children}
+      {decorativeImageConfig ? (
+        <img
+          src={decorativeImageConfig.src}
+          alt={decorativeImageConfig.alt}
+          loading="lazy"
+          aria-hidden={decorativeImageConfig.alt ? undefined : true}
+          className={clsx(
+            'pointer-events-none select-none absolute z-0 max-w-none',
+            decorativeImageConfig.positionClasses,
+            decorativeImageConfig.objectFit === 'cover' ? 'object-cover' : 'object-contain',
+            decorativeImageConfig.className,
+          )}
+          style={{
+            width: decorativeImageConfig.width,
+            height: decorativeImageConfig.height,
+            opacity: decorativeImageConfig.opacity,
+          }}
+        />
+      ) : null}
+      {decorativeImageConfig ? (
+        <div className="contents [&>*]:relative [&>*]:z-[1]">
+          {children}
+        </div>
+      ) : children}
     </div>
   );
 };
@@ -2137,6 +2330,57 @@ export const CraftCustomHTML = (props: any) => {
 };
 CraftCustomHTML.craft = { displayName: 'Custom HTML', related: { settings: CustomHTMLSettings } };
 
+const AICustomSectionSettings = () => {
+  const { actions, props } = useSettings();
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">HTML Content</p>
+        <Textarea
+          value={props.html || ''}
+          onChange={(e) => actions.setProp((nodeProps: any) => (nodeProps.html = e.target.value))}
+          placeholder="<section><div>Your custom UI here...</div></section>"
+          rows={10}
+          className="font-mono text-xs"
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium">Scoped CSS</p>
+        <Textarea
+          value={props.css || ''}
+          onChange={(e) => actions.setProp((nodeProps: any) => (nodeProps.css = e.target.value))}
+          placeholder='[data-ai-custom-section="section-id"] { animation: float 12s linear infinite; }'
+          rows={10}
+          className="font-mono text-xs"
+        />
+      </div>
+    </div>
+  );
+};
+
+export const CraftAICustomSection = (props: any) => {
+  const { enabled } = usePageEditor();
+  const id = useNodeId();
+  const { html, css } = props;
+  const scopeSelector = `[data-ai-custom-section="${id}"]`;
+
+  if (!html && !enabled) return null;
+
+  return (
+    <CraftSection name="AI Custom Section">
+      <div data-ai-custom-section={id} className="relative">
+        {css ? <style dangerouslySetInnerHTML={{ __html: css.replaceAll('__SECTION_SCOPE__', scopeSelector) }} /> : null}
+        {html ? (
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        ) : (
+          <Placeholder name="AI Custom Section" description="AI-authored HTML and CSS block" />
+        )}
+      </div>
+    </CraftSection>
+  );
+};
+CraftAICustomSection.craft = { displayName: 'AI Custom Section', related: { settings: AICustomSectionSettings } };
+
 const SpacerSettings = () => {
   const { actions, props } = useSettings();
   return (
@@ -2276,6 +2520,7 @@ export const resolver: Record<string, React.ComponentType<any>> = {
   ImageBanner: CraftImageBanner,
   SocialLinks: CraftSocialLinks,
   CustomHTML: CraftCustomHTML,
+  AICustomSection: CraftAICustomSection,
   Spacer: CraftSpacer,
   Header: CraftHeader,
   Footer: CraftFooter,

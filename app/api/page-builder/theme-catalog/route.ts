@@ -9,6 +9,7 @@ export async function GET() {
       { value: 'shader', name: 'Gradient', description: 'Animated gradient background' },
       { value: 'pattern', name: 'Pattern', description: 'Repeating geometric background pattern' },
       { value: 'image', name: 'Image', description: 'Custom background image' },
+      { value: 'custom', name: 'Custom', description: 'Custom CSS variables and page-scoped CSS for bespoke styling' },
     ],
     modes: [
       { value: 'dark', name: 'Dark' },

@@ -10,6 +10,12 @@ export type BuilderTabType = 'template' | 'sections' | 'theme';
 export type DesignModeType = 'builder' | 'ai';
 export type MobilePaneType = 'main' | 'chat' | 'config';
 export const defaultAvailableTabs: ActiveTabType[] = ['manage', 'design', 'preview'];
+export type PageCustomCode = {
+  css?: string;
+  head_html?: string;
+  body_html?: string;
+  scripts?: Array<{ src?: string; content?: string; strategy: string }>;
+};
 
 interface IStore {
   showSidebarLeft: boolean;
@@ -27,6 +33,10 @@ interface IStore {
   pageConfigId?: string;
   /** Last persisted PageConfig.theme — used for dirty-check and Reset in the theme editor */
   savedPageTheme?: Record<string, unknown>;
+  /** Last persisted PageConfig.custom_code — used for save round-tripping and preview reset. */
+  savedPageCustomCode?: PageCustomCode;
+  /** Current in-editor custom_code state, including AI-authored CSS. */
+  pageCustomCode?: PageCustomCode;
 }
 
 const defaultStore: IStore = {
@@ -77,5 +87,9 @@ export const storeManageLayout = {
   setFullScreen: (fullScreen: boolean) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, fullScreen })),
   setPageConfigId: (pageConfigId: string | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, pageConfigId })),
   setSavedPageTheme: (savedPageTheme: Record<string, unknown> | undefined) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, savedPageTheme })),
+  setSavedPageCustomCode: (savedPageCustomCode: PageCustomCode | undefined) =>
+    aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, savedPageCustomCode })),
+  setPageCustomCode: (pageCustomCode: PageCustomCode | undefined) =>
+    aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, pageCustomCode })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };
