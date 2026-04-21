@@ -37,7 +37,7 @@ test.describe('Email & Invites', () => {
   });
 
   test('blasts page renders blast input and system messages section', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     // Blast input area (TextEditor with contenteditable)
@@ -73,7 +73,7 @@ test.describe('Email & Invites', () => {
       });
     });
 
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     // Focus the blast input to reveal the Send button
@@ -96,7 +96,7 @@ test.describe('Email & Invites', () => {
   });
 
   test('scheduled emails section shows scheduled blast', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     // Scheduled section should be visible with the scheduled email subject
@@ -104,7 +104,7 @@ test.describe('Email & Invites', () => {
   });
 
   test('sent emails section shows sent blast', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     // Sent section should be visible
@@ -112,7 +112,7 @@ test.describe('Email & Invites', () => {
   });
 
   test('Post-Event Feedback Schedule button is visible', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByText('Post-Event Feedback')).toBeVisible({ timeout: 10000 });
@@ -120,7 +120,7 @@ test.describe('Email & Invites', () => {
   });
 
   test('Event Reminders Manage button is visible', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/blasts`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=blasts`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByText('Event Reminders')).toBeVisible({ timeout: 10000 });

@@ -23,7 +23,7 @@ test.describe('Registration Form Builder', () => {
   });
 
   test('registration form page renders heading and sections', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByText('Registration Form')).toBeVisible({ timeout: 10000 });
@@ -33,7 +33,7 @@ test.describe('Registration Form Builder', () => {
   });
 
   test('Name and Email fields are shown as Required', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     // Name and Email cards with Required label
@@ -45,7 +45,7 @@ test.describe('Registration Form Builder', () => {
   });
 
   test('ETH Address has Off/Optional/Required dropdown', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByText('ETH Address')).toBeVisible({ timeout: 10000 });
@@ -78,7 +78,7 @@ test.describe('Registration Form Builder', () => {
       });
     });
 
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     // Open ETH Address dropdown and select Optional
@@ -97,7 +97,7 @@ test.describe('Registration Form Builder', () => {
   });
 
   test('Add Question button is visible and clickable', async ({ page }) => {
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     const addButton = page.locator('[data-testid="add-question-button"]');
@@ -132,7 +132,7 @@ test.describe('Registration Form Builder', () => {
       });
     });
 
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     // Click Add Question to open the type selector modal
@@ -185,7 +185,7 @@ test.describe('Registration Form Builder', () => {
       });
     });
 
-    await page.goto(`/e/manage/${EVENT.shortid}/registration`);
+    await page.goto(`/e/manage/${EVENT.shortid}?tab=registration`);
     await page.waitForLoadState('networkidle');
 
     // Self ID section should be visible
