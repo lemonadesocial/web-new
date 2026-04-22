@@ -37,6 +37,7 @@ import { AttendeesSection } from './AttendeesSection';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 import { useTracker } from '$lib/hooks/useTracker';
+import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
@@ -96,7 +97,7 @@ export function EventGuestSide({
 export function EventGuestSideContent({
   event,
   pageConfig: initPageConfig,
-  autoSave: _autoSave = true,
+  autoSave = true,
   isEditable = false,
   constrainToPageWidth = true,
 }: {
@@ -107,7 +108,9 @@ export function EventGuestSideContent({
   constrainToPageWidth?: boolean;
 }) {
   const [state, themeDispatch] = useEventTheme();
+  const pageFontVariables = state.variables.font as React.CSSProperties | undefined;
   const [isClient, setIsClient] = React.useState(false);
+  const isDesktop = useMediaQuery('md');
 
   React.useEffect(() => {
     setIsClient(true);
@@ -129,6 +132,10 @@ export function EventGuestSideContent({
   const pageConfig = pageConfigData?.getPageConfig;
   const pageConfigFields = pageConfig as any;
   const customPageCss = pageConfigFields?.custom_code?.css || undefined;
+  const themeEditorPageConfigId = pageConfigFields?._id as string | undefined;
+  // Wait for the theme source to resolve before mounting the autosaving editor so it
+  // persists against PageConfig.theme instead of briefly writing the fallback event theme.
+  const isThemeEditorReady = !autoSave || initPageConfig !== undefined || pageConfigData !== undefined;
 
   React.useEffect(() => {
     if (pageConfigData === undefined) return;
@@ -169,6 +176,13 @@ export function EventGuestSideContent({
   const hosts = getEventCohosts(event);
 
   const router = useRouter();
+
+  const renderThemeBuilder = (viewport: 'desktop' | 'mobile') => {
+    if (!isClient || !isThemeEditorReady) return null;
+    if (viewport === 'desktop' && !isDesktop) return null;
+    if (viewport === 'mobile' && isDesktop) return null;
+    return <EventThemeBuilder eventId={event._id} pageConfigId={themeEditorPageConfigId} autoSave={autoSave} />;
+  };
 
   const renderSections = () => {
     return (event.layout_sections || DEFAULT_LAYOUT_SECTIONS).map((item) => {
@@ -221,7 +235,7 @@ export function EventGuestSideContent({
 
             {isHost && (
               <>
-                <EventThemeBuilder eventId={event._id} autoSave={false} />
+                {renderThemeBuilder('desktop')}
                 <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                   <p className="text-accent-500">You have manage access for this event.</p>
                   <Button
@@ -276,7 +290,7 @@ export function EventGuestSideContent({
               <>
                 <Spacer className="h-4" />
                 <div className="flex flex-col gap-4">
-                  <EventThemeBuilder eventId={event._id} autoSave={false} />
+                  {renderThemeBuilder('mobile')}
                   <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                     <p className="text-accent-500">You have manage access for this event.</p>
                     <Button
@@ -325,7 +339,7 @@ export function EventGuestSideContent({
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
+            <h3 className="font-title text-xl md:text-3xl font-bold">{event.title}</h3>
 
             {!!hosts.length && (
               <p className="md:hidden text-secondary text-sm">
@@ -361,9 +375,10 @@ export function EventGuestSideContent({
     <div
       data-page-theme-root
       className={clsx(
-        'w-full',
+        'w-full font-body',
         constrainToPageWidth && 'page mx-auto',
       )}
+      style={pageFontVariables}
     >
       {customPageCss ? <style dangerouslySetInnerHTML={{ __html: customPageCss }} /> : null}
       {renderContent()}

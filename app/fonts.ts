@@ -42,7 +42,7 @@ const aktura = localFont({
 const array = localFont({
   display: 'swap',
   src: '../public/assets/fonts/title/Array-Bold.otf',
-  variable: '--font-aktura',
+  variable: '--font-array',
 });
 
 const sarpanch = localFont({
