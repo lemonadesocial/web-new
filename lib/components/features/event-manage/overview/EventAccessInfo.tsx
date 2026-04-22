@@ -63,7 +63,12 @@ export function EventAccessInfo({ event }: { event: Event }) {
           <div className="absolute scale-50 origin-top-left w-[200%]">
             <EventThemeProvider themeData={event.theme_data}>
               <EventThemeLayout>
-                <EventGuestSideContent event={event} autoSave={false} isEditable={false} />
+                <EventGuestSideContent
+                  event={event}
+                  autoSave={false}
+                  isEditable={false}
+                  constrainToPageWidth={false}
+                />
               </EventThemeLayout>
             </EventThemeProvider>
           </div>

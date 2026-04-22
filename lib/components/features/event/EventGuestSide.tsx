@@ -67,11 +67,13 @@ export function EventGuestSide({
   pageConfig,
   autoSave = true,
   isEditable = false,
+  constrainToPageWidth = true,
 }: {
   event: Event;
   pageConfig?: GetPageConfigQuery['getPageConfig'];
   autoSave?: boolean;
   isEditable?: boolean;
+  constrainToPageWidth?: boolean;
 }) {
   const { data } = useQuery(GetEventDocument, {
     variables: { id: initEvent._id },
@@ -86,6 +88,7 @@ export function EventGuestSide({
       pageConfig={pageConfig}
       autoSave={autoSave}
       isEditable={isEditable}
+      constrainToPageWidth={constrainToPageWidth}
     />
   );
 }
@@ -95,11 +98,13 @@ export function EventGuestSideContent({
   pageConfig: initPageConfig,
   autoSave: _autoSave = true,
   isEditable = false,
+  constrainToPageWidth = true,
 }: {
   event: Event;
   pageConfig?: GetPageConfigQuery['getPageConfig'];
   autoSave?: boolean;
   isEditable?: boolean;
+  constrainToPageWidth?: boolean;
 }) {
   const [state, themeDispatch] = useEventTheme();
   const [isClient, setIsClient] = React.useState(false);
@@ -353,7 +358,13 @@ export function EventGuestSideContent({
   };
 
   return (
-    <div data-page-theme-root className="page mx-auto w-full">
+    <div
+      data-page-theme-root
+      className={clsx(
+        'w-full',
+        constrainToPageWidth && 'page mx-auto',
+      )}
+    >
       {customPageCss ? <style dangerouslySetInnerHTML={{ __html: customPageCss }} /> : null}
       {renderContent()}
     </div>

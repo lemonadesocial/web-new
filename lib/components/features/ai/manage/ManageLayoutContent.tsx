@@ -319,7 +319,7 @@ function ManageLayoutContent({
           data-theme-scope="event-preview"
           data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
-            'page mx-auto relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
+            'relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
             themeState.config.color,
             themeState.config.mode === 'light' && 'light',
             themeState.config.mode === 'dark' && 'dark',
@@ -338,7 +338,13 @@ function ManageLayoutContent({
               if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
-            <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfigProp} />
+            <EventGuestSide
+              event={event}
+              autoSave={false}
+              isEditable={true}
+              pageConfig={pageConfigProp}
+              constrainToPageWidth={false}
+            />
           </div>
         </main>
       ) : null,
