@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.39.2](https://github.com/lemonadesocial/web-new/compare/v10.39.1...v10.39.2) (2026-04-22)
+
+
+### Bug Fixes
+
+* apply guest event font changes from theme state ([455c538](https://github.com/lemonadesocial/web-new/commit/455c5381c4eb3d46d342c9aaa0897f95b254d07b))
+
 ## [10.39.1](https://github.com/lemonadesocial/web-new/compare/v10.39.0...v10.39.1) (2026-04-22)
 
 
