@@ -1421,7 +1421,7 @@ export const Container = ({
       className={clsx(
         'flex flex-col gap-6 w-full transition-all relative flex-1',
         decorativeImageConfig && 'isolate',
-        centered && 'page mx-auto',
+        centered && 'page mx-auto self-center',
         centerChildren && 'items-center',
         padding === '8' ? 'py-8' : padding === '16' ? 'py-16' : padding === '32' ? 'py-32' : 'py-4',
         px === '1' ? 'px-1 md:px-4' : px === '4' ? 'px-4' : px === '8' ? 'px-8' : 'px-0',
@@ -1550,7 +1550,7 @@ export const Grid = ({ children, gap = '18', height, width, centered, ...props }
       }}
       className={clsx(
         'flex flex-col md:flex-row w-full min-h-[50px] transition-all relative group/grid rounded-lg',
-        centered && 'page mx-auto',
+        centered && 'page mx-auto self-center',
         gap === '18' ? 'md:gap-18' : gap === '8' ? 'md:gap-8' : gap === '4' ? 'md:gap-4' : 'md:gap-0',
         isNumericWidth && 'md:max-w-[var(--desktop-width)]',
         enabled && selected && 'ring-2 ring-primary/50 ring-offset-2',
@@ -1601,12 +1601,12 @@ export const Col = ({ children, width, width_mobile, height, ...props }: any) =>
   const id = useNodeId();
   const { enabled, actions } = usePageEditor();
   const { selected } = usePageNode();
-  const { device } = useStoreManageLayout();
   const colRef = React.useRef<HTMLDivElement>(null);
   const isEmpty = React.Children.count(children) === 0;
 
   const isNumericWidth = width && !isNaN(Number(width));
   const isNumericMobileWidth = width_mobile && !isNaN(Number(width_mobile));
+  const hasDesktopWidth = width === '300' || width === '1/2' || width === '1/3' || width === '2/3' || isNumericWidth;
 
   // Empty-container drop target: when the col has no sections, accept drops directly
   React.useEffect(() => {
@@ -1637,11 +1637,12 @@ export const Col = ({ children, width, width_mobile, height, ...props }: any) =>
       className={clsx(
         'flex flex-col gap-6 min-h-[50px] transition-all relative group/col rounded-lg p-4',
         // Desktop / Base Classes
-        width === '300' ? 'md:w-74 md:max-w-74' : '',
-        width === '1/2' ? 'md:w-1/2' : '',
-        width === '1/3' ? 'md:w-1/3' : '',
-        width === '2/3' ? 'md:w-2/3' : '',
-        isNumericWidth && 'md:max-w-[var(--desktop-width)] md:w-full',
+        width === '300' ? 'md:w-74 md:max-w-74 md:flex-none' : '',
+        width === '1/2' ? 'md:w-1/2 md:flex-none' : '',
+        width === '1/3' ? 'md:w-1/3 md:flex-none' : '',
+        width === '2/3' ? 'md:w-2/3 md:flex-none' : '',
+        isNumericWidth && 'md:max-w-[var(--desktop-width)] md:w-full md:flex-none',
+        !hasDesktopWidth && 'md:w-auto md:basis-0 md:flex-1 md:min-w-0',
 
         // Mobile Overrides (applied in preview or on mobile screens)
         width_mobile === '300' ? 'max-w-74 w-full' : '',

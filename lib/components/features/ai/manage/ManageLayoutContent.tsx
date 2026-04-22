@@ -319,7 +319,7 @@ function ManageLayoutContent({
           data-theme-scope="event-preview"
           data-theme={themeState.config.mode === 'auto' ? undefined : themeState.config.mode}
           className={clsx(
-            'relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
+            'page mx-auto relative isolate flex flex-col w-full min-h-full bg-background rounded-none md:rounded-md overflow-hidden',
             themeState.config.color,
             themeState.config.mode === 'light' && 'light',
             themeState.config.mode === 'dark' && 'dark',

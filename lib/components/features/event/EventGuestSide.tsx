@@ -353,7 +353,7 @@ export function EventGuestSideContent({
   };
 
   return (
-    <div data-page-theme-root>
+    <div data-page-theme-root className="page mx-auto w-full">
       {customPageCss ? <style dangerouslySetInnerHTML={{ __html: customPageCss }} /> : null}
       {renderContent()}
     </div>
