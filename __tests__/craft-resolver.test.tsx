@@ -197,6 +197,9 @@ import {
   CraftAccordionItem,
   CraftSubEventSection,
   CraftGallerySection,
+  Container,
+  Grid,
+  Col,
 } from '$lib/components/features/ai/manage/craft/resolver';
 
 // ---------------------------------------------------------------------------
@@ -285,6 +288,32 @@ describe('CraftTabs (read-only mode)', () => {
       </CraftTabs>,
     );
     expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
+describe('Centered layout wrappers', () => {
+  it('centers Container within flex parents when centered is enabled', () => {
+    const { container } = render(<Container centered width="1080" />);
+    expect(container.firstElementChild?.className).toContain('page');
+    expect(container.firstElementChild?.className).toContain('mx-auto');
+    expect(container.firstElementChild?.className).toContain('self-center');
+  });
+
+  it('centers Grid within flex parents when centered is enabled', () => {
+    const { container } = render(<Grid centered width="1080" />);
+    expect(container.firstElementChild?.className).toContain('page');
+    expect(container.firstElementChild?.className).toContain('mx-auto');
+    expect(container.firstElementChild?.className).toContain('self-center');
+  });
+});
+
+describe('Column sizing', () => {
+  it('lets an unset desktop column fill the remaining grid width', () => {
+    const { container } = render(<Col />);
+    expect(container.firstElementChild?.className).toContain('md:w-auto');
+    expect(container.firstElementChild?.className).toContain('md:basis-0');
+    expect(container.firstElementChild?.className).toContain('md:flex-1');
+    expect(container.firstElementChild?.className).toContain('md:min-w-0');
   });
 });
 

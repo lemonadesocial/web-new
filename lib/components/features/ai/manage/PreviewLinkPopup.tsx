@@ -81,13 +81,13 @@ export function PreviewLinkPopup() {
       <div className="rounded-sm border border-(--color-divider) aspect-[157/88] relative overflow-hidden">
         <div className="absolute scale-50 origin-top-left w-[200%]" data-mode="desktop">
           {state.layoutType === PreviewLinkType.Event && event && (
-            <EventThemeProvider themeData={event.theme_data}>
-              <EventThemeLayout>
-                <EventGuestSideContent event={event} autoSave={false} />
-              </EventThemeLayout>
-            </EventThemeProvider>
-          )}
-        </div>
+              <EventThemeProvider themeData={event.theme_data}>
+                <EventThemeLayout>
+                  <EventGuestSideContent event={event} autoSave={false} constrainToPageWidth={false} />
+                </EventThemeLayout>
+              </EventThemeProvider>
+            )}
+          </div>
       </div>
 
       {loadingLinks ? (

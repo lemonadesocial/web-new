@@ -338,7 +338,13 @@ function ManageLayoutContent({
               if (e.target === e.currentTarget) actions.selectNode(null);
             }}
           >
-            <EventGuestSide event={event} autoSave={false} isEditable={true} pageConfig={pageConfigProp} />
+            <EventGuestSide
+              event={event}
+              autoSave={false}
+              isEditable={true}
+              pageConfig={pageConfigProp}
+              constrainToPageWidth={false}
+            />
           </div>
         </main>
       ) : null,
