@@ -194,7 +194,7 @@ function ManageLayout({
 
   return (
     <div className="h-dvh flex flex-col bg-overlay-primary dark" data-theme="dark">
-      <PageEditorProvider enabled={state.activeTab !== 'manage'}>
+      <PageEditorProvider enabled={state.activeTab === 'design'}>
         <Header showUI={false} />
         <EventThemeProvider
           key={`${state.layoutType}-${entity?._id || 'manage-theme-default'}`}

@@ -181,6 +181,12 @@ function ManageLayoutContent({
     }
   }, [ready, state.layoutType]);
 
+  React.useEffect(() => {
+    if (state.activeTab !== 'design' && selectedId !== null) {
+      actions.selectNode(null);
+    }
+  }, [actions, selectedId, state.activeTab]);
+
   const communityChatProps =
     state.layoutType === 'community' && community?._id
       ? ({
@@ -347,7 +353,7 @@ function ManageLayoutContent({
   return (
     <>
       <AnimatePresence>
-        {isSelected && state.activeTab !== 'manage' && (
+        {isSelected && state.activeTab === 'design' && (
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
