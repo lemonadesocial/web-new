@@ -9,7 +9,7 @@ type ThemeContextValue = [ThemeValues, React.Dispatch<ThemeBuilderAction>];
 export const EventThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function EventThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
-  const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
+  const [state, dispatch] = React.useReducer(themeReducer, themeData || defaultTheme);
 
   React.useEffect(() => {
     if (themeData) {
@@ -32,7 +32,7 @@ export function useEventTheme(): [state: ThemeValues, dispatch: React.Dispatch<T
 export const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
-  const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
+  const [state, dispatch] = React.useReducer(themeReducer, themeData || defaultTheme);
   const value = React.useMemo(() => [state, dispatch] as ThemeContextValue, [state]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -64,7 +64,7 @@ export enum ThemeBuilderActionKind {
 
 export type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload?: Partial<ThemeValues> };
 
-function reducers(state: ThemeValues, action: ThemeBuilderAction) {
+export function themeReducer(state: ThemeValues, action: ThemeBuilderAction) {
   switch (action.type) {
     case ThemeBuilderActionKind.select_template: {
       let payload = { ...action.payload };
@@ -115,25 +115,27 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
     case ThemeBuilderActionKind.random: {
       const [fontTitle, fontTitleVariable] = getRandomFont('title');
       const [fontBody, fontBodyVariable] = getRandomFont('body');
+      const activeTheme = !state.theme || state.theme === 'default' ? 'minimal' : state.theme;
 
       let payload: ThemeValues = {
         ...state,
+        theme: activeTheme,
         font_title: fontTitle,
         font_body: fontBody,
         variables: { ...state.variables, font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
       };
 
-      if (payload.theme === 'minimal') {
+      if (activeTheme === 'minimal') {
         payload = { ...payload, config: { ...payload.config, color: getRandomColor(), name: '' } };
       }
 
-      if (payload.theme === 'shader') {
+      if (activeTheme === 'shader') {
         const index = Math.floor(Math.random() * shaders.length);
         const shader = shaders[index];
         payload = { ...payload, config: { ...payload.config, name: shader.name, color: shader.accent } };
       }
 
-      if (payload.theme === 'pattern') {
+      if (activeTheme === 'pattern') {
         const index = Math.floor(Math.random() * patterns.length);
         const pattern = patterns[index];
         payload = { ...payload, config: { ...payload.config, name: pattern } };
