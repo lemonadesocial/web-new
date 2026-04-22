@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.39.0](https://github.com/lemonadesocial/web-new/compare/v10.38.0...v10.39.0) (2026-04-22)
+
+
+### Features
+
+* render decorative AI images in container ([def7bd6](https://github.com/lemonadesocial/web-new/commit/def7bd6e632c29849d0353d844bac56f6577d3c3))
+* support custom AI page builder CSS ([52c241c](https://github.com/lemonadesocial/web-new/commit/52c241c69a89f1f596a2c48086aa639fd174dde4))
+
+
+### Bug Fixes
+
+* allow removing decorative container images ([35450b5](https://github.com/lemonadesocial/web-new/commit/35450b586777737a68e223b70a50b67d88cd4765))
+* replace SubscriptionTierEnum with SubscriptionItemType ([4951a49](https://github.com/lemonadesocial/web-new/commit/4951a498031a006a61cfd7c83d952874a827ba34))
+
 ## [10.38.0](https://github.com/lemonadesocial/web-new/compare/v10.37.0...v10.38.0) (2026-04-21)
 
 
