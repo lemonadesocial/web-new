@@ -16,7 +16,6 @@ import {
   SubscriptionItem,
   SubscriptionItemType,
   SubscriptionPricing,
-  SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
 import { useTokenMetadata } from '$lib/hooks/useTokenMetadata';
 import { formatNumber } from '$lib/utils/number';
@@ -222,7 +221,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
   const activeSubscriptionTier = optimisticSubscriptionTier ?? (space.subscription_tier || SubscriptionItemType.Free);
   const activeSubscriptionAnnual = optimisticSubscriptionAnnual ?? space.subscription_annual ?? false;
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
-  const [upgradingTier, setUpgradingTier] = React.useState<SubscriptionTierEnum | null>(null);
+  const [upgradingTier, setUpgradingTier] = React.useState<SubscriptionItemType | null>(null);
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     ai_agents: true,
     domain_branding: false,
@@ -275,7 +274,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
     });
   }, [activeSubscriptionAnnual, activeSubscriptionTier, mergedPlans]);
 
-  const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
+  const handleUpgrade = async (tier: SubscriptionItemType, annual: boolean) => {
     if (purchasingPlan) return;
 
     setUpgradingTier(tier);
@@ -337,7 +336,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
   );
 
   const handlePlanCheckout = React.useCallback(
-    (item: PlanCard, tier: SubscriptionTierEnum) => {
+    (item: PlanCard, tier: SubscriptionItemType) => {
       const selectedPaymentMethod = getPlanPaymentMethod(item);
 
       if (selectedPaymentMethod === 'wallet') {
@@ -582,8 +581,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
                             outlined
                             variant="secondary"
                             disabled={activeSubscriptionTier === SubscriptionItemType.Plus || purchasingPlan}
-                            loading={upgradingTier === SubscriptionTierEnum.Plus}
-                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Plus)}
+                            loading={upgradingTier === SubscriptionItemType.Plus}
+                            onClick={() => handlePlanCheckout(item, SubscriptionItemType.Plus)}
                           >
                             Upgrade
                           </Button>
@@ -591,8 +590,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
                         .with(SubscriptionItemType.Pro, () => (
                           <Button
                             disabled={activeSubscriptionTier === SubscriptionItemType.Pro || purchasingPlan}
-                            loading={upgradingTier === SubscriptionTierEnum.Pro}
-                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Pro)}
+                            loading={upgradingTier === SubscriptionItemType.Pro}
+                            onClick={() => handlePlanCheckout(item, SubscriptionItemType.Pro)}
                           >
                             Upgrade
                           </Button>
@@ -602,8 +601,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [], featureCon
                             outlined
                             variant="secondary"
                             disabled={activeSubscriptionTier === SubscriptionItemType.Max || purchasingPlan}
-                            loading={upgradingTier === SubscriptionTierEnum.Max}
-                            onClick={() => handlePlanCheckout(item, SubscriptionTierEnum.Max)}
+                            loading={upgradingTier === SubscriptionItemType.Max}
+                            onClick={() => handlePlanCheckout(item, SubscriptionItemType.Max)}
                           >
                             Upgrade
                           </Button>
