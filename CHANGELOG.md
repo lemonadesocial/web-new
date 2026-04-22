@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.39.1](https://github.com/lemonadesocial/web-new/compare/v10.39.0...v10.39.1) (2026-04-22)
+
+
+### Bug Fixes
+
+* center page builder preview content ([3664509](https://github.com/lemonadesocial/web-new/commit/3664509ed2d87bbc3199d5062e021ba626338a24))
+* remove desktop preview side gutters ([0b81777](https://github.com/lemonadesocial/web-new/commit/0b8177788b7f8d0fa6c0ea7bf905994331da6feb))
+
 ## [10.39.0](https://github.com/lemonadesocial/web-new/compare/v10.38.0...v10.39.0) (2026-04-22)
 
 
