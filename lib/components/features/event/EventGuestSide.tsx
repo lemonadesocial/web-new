@@ -108,6 +108,7 @@ export function EventGuestSideContent({
   constrainToPageWidth?: boolean;
 }) {
   const [state, themeDispatch] = useEventTheme();
+  const pageFontVariables = state.variables.font as React.CSSProperties | undefined;
   const [isClient, setIsClient] = React.useState(false);
   const isDesktop = useMediaQuery('md');
 
@@ -338,7 +339,7 @@ export function EventGuestSideContent({
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
+            <h3 className="font-title text-xl md:text-3xl font-bold">{event.title}</h3>
 
             {!!hosts.length && (
               <p className="md:hidden text-secondary text-sm">
@@ -374,9 +375,10 @@ export function EventGuestSideContent({
     <div
       data-page-theme-root
       className={clsx(
-        'w-full',
+        'w-full font-body',
         constrainToPageWidth && 'page mx-auto',
       )}
+      style={pageFontVariables}
     >
       {customPageCss ? <style dangerouslySetInnerHTML={{ __html: customPageCss }} /> : null}
       {renderContent()}
