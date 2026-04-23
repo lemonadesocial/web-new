@@ -112,21 +112,11 @@ const Sidebar = () => {
 
   const isActive = (item: { path: string }) =>
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
-  const isConnectorsActive = pathname.includes('/s/manage/') && pathname.includes('/connectors');
   const isUpgradeActive = pathname.startsWith('/upgrade/');
 
   const handleUpgradeClick = () => {
     if (me || account) {
       if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
-      return;
-    }
-
-    signIn();
-  };
-
-  const handleConnectorsClick = () => {
-    if (me || account) {
-      if (mySpaces.length) router.push(`/s/manage/${mySpaces[0].slug || mySpaces[0]._id}/connectors`);
       return;
     }
 
@@ -246,16 +236,6 @@ const Sidebar = () => {
           </div>
 
           <div className="border-t p-3 pt-4 flex flex-col gap-3">
-            <SidebarFooterAction
-              toggle={toggle}
-              active={isConnectorsActive}
-              label="Connectors"
-              subtitle="Manage community integrations"
-              icon="icon-connector-line"
-              iconBadgeClassName="bg-primary"
-              onClick={handleConnectorsClick}
-            />
-
             <SidebarFooterAction
               toggle={toggle}
               active={isUpgradeActive}
