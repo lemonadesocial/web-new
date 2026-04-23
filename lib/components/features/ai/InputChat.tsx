@@ -9,8 +9,14 @@ import Image from 'next/image';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 
-import { useClient, useMutation, useQuery } from '$lib/graphql/request';
-import { AiConfigFieldsFragment, Config, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import { isAbortError, useClient, useMutation, useQuery } from '$lib/graphql/request';
+import {
+  AiConfigFieldsFragment,
+  Config,
+  GetListAiConfigDocument,
+  RunAiChatDocument,
+  RunAiChatMutation,
+} from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import {
@@ -23,7 +29,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
-import { AIChatActionKind, Message, useAIChat } from './provider';
+import { AIChatActionKind, Message, useAIChat, useAIChatRequest } from './provider';
 import { communityAvatar } from '$lib/utils/community';
 import { useMe } from '$lib/hooks/useMe';
 import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hooks/ai-page-edit-bridge';
@@ -31,6 +37,14 @@ import { getAIPageEditTriggers } from '$lib/components/features/page-builder/hoo
 const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
 const TYPING_MS = 80;
 const PAUSE_AFTER_PHRASE_MS = 1500;
+
+function getErrorMessage(error: unknown) {
+  if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+    return error.message;
+  }
+
+  return 'Something went wrong';
+}
 
 type InputChatProps = {
   variant?: 'default' | 'home';
@@ -53,8 +67,11 @@ export function InputChat({
 }: InputChatProps) {
   const router = useRouter();
   const [state, dispatch] = useAIChat();
+  const { activeRequestRef, running, setRunning } = useAIChatRequest();
   const [input, setInput] = React.useState('');
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const previousSessionRef = React.useRef(state.session);
+  const requestIdRef = React.useRef(0);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
 
@@ -100,6 +117,16 @@ export function InputChat({
     if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
   }, [isIdle]);
 
+  React.useEffect(() => {
+    if (previousSessionRef.current === state.session) return;
+
+    previousSessionRef.current = state.session;
+    activeRequestRef.current?.controller.abort();
+    activeRequestRef.current = null;
+    setRunning(false);
+    dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+  }, [activeRequestRef, dispatch, setRunning, state.session]);
+
   const applyPageDesign = async (payload: unknown, message: string) => {
     const triggers = getAIPageEditTriggers();
     if (!triggers) {
@@ -139,127 +166,118 @@ export function InputChat({
     toast.success(message);
   };
 
-  const [run, { loading }] = useMutation(
-    RunAiChatDocument,
-    {
-      onComplete: (_, income) => {
-        dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+  const [run] = useMutation(RunAiChatDocument, undefined, aiChatClient);
 
-        let runResult = income.run;
-        if (typeof runResult.metadata === 'string') {
-          try {
-            runResult = { ...runResult, metadata: JSON.parse(runResult.metadata) };
-          } catch (e) {
-            console.error('Failed to parse metadata', e);
+  const handleRunResult = async (income: RunAiChatMutation) => {
+    let runResult = income.run;
+    if (typeof runResult.metadata === 'string') {
+      try {
+        runResult = { ...runResult, metadata: JSON.parse(runResult.metadata) };
+      } catch (e) {
+        console.error('Failed to parse metadata', e);
+      }
+    }
+
+    dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...runResult, role: 'assistant' }] } });
+
+    const tool = runResult.metadata?.tool;
+    await match(tool?.name)
+      .with('create_event', async () => {
+        dispatch({
+          type: AIChatActionKind.add_message,
+          payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+        });
+
+        const res = await aiChatClient.query({
+          query: GetListAiConfigDocument,
+          variables: { filter: { events_eq: tool.data._id } },
+        });
+
+        delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
+        delay(() => {
+          dispatch({ type: AIChatActionKind.reset });
+          if (res.data?.configs?.items?.length) {
+            const config = res.data.configs.items[0] as AiConfigFieldsFragment;
+            dispatch({
+              type: AIChatActionKind.set_config,
+              payload: { config: config._id, configs: res.data.configs.items as Config[] },
+            });
           }
+        }, 2500);
+      })
+      .with('update_event', async () => {
+        const data = tool.data;
+        const res = await client.query({
+          query: GetEventDocument,
+          variables: { id: data._id },
+          fetchPolicy: 'network-only',
+        });
+        if (res.data?.getEvent) {
+          client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
+          updateEvent(res.data.getEvent as Partial<Event>);
         }
+      })
+      .with('publish_event', async () => {
+        const data = tool.data;
+        const res = await client.query({
+          query: GetEventDocument,
+          variables: { id: data._id },
+          fetchPolicy: 'network-only',
+        });
+        if (res.data?.getEvent) {
+          client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
+          updateEvent(res.data.getEvent as Partial<Event>);
+        }
+      })
+      .with('create_space', async () => {
+        dispatch({
+          type: AIChatActionKind.add_message,
+          payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+        });
 
-        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...runResult, role: 'assistant' }] } });
+        const res = await aiChatClient.query({
+          query: GetListAiConfigDocument,
+          variables: { filter: { spaces_eq: tool.data._id } },
+        });
 
-        const tool = runResult.metadata?.tool;
-        match(tool?.name)
-          .with('create_event', async () => {
+        delay(() => router.push(`/agent/s/manage/${tool?.data?._id}`), 2000);
+        delay(() => {
+          dispatch({ type: AIChatActionKind.reset });
+          if (res.data?.configs?.items?.length) {
+            const config = res.data.configs.items[0] as AiConfigFieldsFragment;
             dispatch({
-              type: AIChatActionKind.add_message,
-              payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+              type: AIChatActionKind.set_config,
+              payload: { config: config._id, configs: res.data.configs.items as Config[] },
             });
-
-            const res = await aiChatClient.query({
-              query: GetListAiConfigDocument,
-              variables: { filter: { events_eq: tool.data._id } },
-            });
-
-            delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
-            delay(() => {
-              dispatch({ type: AIChatActionKind.reset });
-              if (res.data?.configs?.items?.length) {
-                const config = res.data.configs.items[0] as AiConfigFieldsFragment;
-                dispatch({
-                  type: AIChatActionKind.set_config,
-                  payload: { config: config._id, configs: res.data.configs.items as Config[] },
-                });
-              }
-            }, 2500);
-          })
-          .with('update_event', async () => {
-            const data = tool.data;
-            const res = await client.query({
-              query: GetEventDocument,
-              variables: { id: data._id },
-              fetchPolicy: 'network-only',
-            });
-            if (res.data?.getEvent) {
-              client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
-              updateEvent(res.data.getEvent as Partial<Event>);
-            }
-          })
-          .with('publish_event', async () => {
-            const data = tool.data;
-            const res = await client.query({
-              query: GetEventDocument,
-              variables: { id: data._id },
-              fetchPolicy: 'network-only',
-            });
-            if (res.data?.getEvent) {
-              client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
-              updateEvent(res.data.getEvent as Partial<Event>);
-            }
-          })
-          .with('create_space', async () => {
-            dispatch({
-              type: AIChatActionKind.add_message,
-              payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
-            });
-
-            const res = await aiChatClient.query({
-              query: GetListAiConfigDocument,
-              variables: { filter: { spaces_eq: tool.data._id } },
-            });
-
-            delay(() => router.push(`/agent/s/manage/${tool?.data?._id}`), 2000);
-            delay(() => {
-              dispatch({ type: AIChatActionKind.reset });
-              if (res.data?.configs?.items?.length) {
-                const config = res.data.configs.items[0] as AiConfigFieldsFragment;
-                dispatch({
-                  type: AIChatActionKind.set_config,
-                  payload: { config: config._id, configs: res.data.configs.items as Config[] },
-                });
-              }
-            }, 2500);
-          })
-          .with('update_space', async () => {
-            const data = tool.data;
-            const res = await client.query({
-              query: GetSpaceDocument,
-              variables: { id: data._id },
-              fetchPolicy: 'network-only',
-            });
-            if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
-          })
-          .with('create_page_config', async () => {
-            await applyPageDesign(tool.data, 'Design applied!');
-          })
-          .with('page_designer', async () => {
-            await applyPageDesign(tool.data, 'Design applied!');
-          })
-          .with('generate_page_from_description', async () => {
-            await applyPageDesign(tool.data, 'Design applied!');
-          })
-          .with('update_page_config_section', async () => {
-            await applyPageDesign(tool.data, 'Design updated!');
-          })
-          .with('section_designer', async () => {
-            await applySectionUpdate(tool.data, 'Section updated!');
-          });
-      },
-      onError: (error) => {
-        toast.error(error.message);
-        dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
-      },
-    },
-    aiChatClient,
-  );
+          }
+        }, 2500);
+      })
+      .with('update_space', async () => {
+        const data = tool.data;
+        const res = await client.query({
+          query: GetSpaceDocument,
+          variables: { id: data._id },
+          fetchPolicy: 'network-only',
+        });
+        if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
+      })
+      .with('create_page_config', async () => {
+        await applyPageDesign(tool.data, 'Design applied!');
+      })
+      .with('page_designer', async () => {
+        await applyPageDesign(tool.data, 'Design applied!');
+      })
+      .with('generate_page_from_description', async () => {
+        await applyPageDesign(tool.data, 'Design applied!');
+      })
+      .with('update_page_config_section', async () => {
+        await applyPageDesign(tool.data, 'Design updated!');
+      })
+      .with('section_designer', async () => {
+        await applySectionUpdate(tool.data, 'Section updated!');
+      })
+      .otherwise(async () => undefined);
+  };
 
   React.useEffect(() => {
     if (textareaRef.current) {
@@ -273,9 +291,15 @@ export function InputChat({
 
   const handleSubmit = async () => {
     const text = input.trim();
-    if (!text) {
+    if (!text || running) {
       return;
     }
+
+    const controller = new AbortController();
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+    activeRequestRef.current = { id: requestId, controller };
+
     const pageEditTriggers = getAIPageEditTriggers();
     const runData = {
       ...((state.data as Record<string, unknown> | undefined) || {}),
@@ -286,9 +310,10 @@ export function InputChat({
 
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
+    setRunning(true);
     setInput('');
 
-    run({
+    const { data, error } = await run({
       variables: {
         message: text,
         config: configOverride || state.config || AI_CONFIG,
@@ -296,7 +321,38 @@ export function InputChat({
         data: runData,
         standId: state.standId || fixedSpaceId,
       },
+      signal: controller.signal,
     });
+
+    if (activeRequestRef.current?.id !== requestId) {
+      return;
+    }
+
+    activeRequestRef.current = null;
+    setRunning(false);
+    dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+
+    if (error) {
+      if (!isAbortError(error)) {
+        toast.error(getErrorMessage(error));
+      }
+      return;
+    }
+
+    if (!data) {
+      return;
+    }
+
+    await handleRunResult(data);
+  };
+
+  const handleCancel = () => {
+    if (!activeRequestRef.current) return;
+
+    activeRequestRef.current.controller.abort();
+    activeRequestRef.current = null;
+    setRunning(false);
+    dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -330,7 +386,7 @@ export function InputChat({
             </div>
           )}
           <textarea
-            disabled={loading}
+            disabled={running}
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -398,13 +454,30 @@ export function InputChat({
                 }
               />
             )}
-            <Button
-              icon="icon-arrow-foward-sharp -rotate-90"
-              size="sm"
-              onClick={handleSubmit}
-              loading={loading}
-              disabled={!input.trim()}
-            />
+            {running ? (
+              <Button
+                size="sm"
+                variant="tertiary-alt"
+                className="group p-[8px]"
+                onClick={handleCancel}
+                aria-label="Cancel AI response"
+              >
+                <span
+                  aria-hidden="true"
+                  className="relative block size-4 rounded-full bg-primary shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)] transition-colors group-hover:bg-overlay-primary group-hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+                >
+                  <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-[2px] bg-overlay-primary transition-colors group-hover:bg-primary" />
+                </span>
+              </Button>
+            ) : (
+              <Button
+                icon="icon-arrow-foward-sharp -rotate-90"
+                size="sm"
+                onClick={handleSubmit}
+                disabled={!input.trim()}
+                aria-label="Send message"
+              />
+            )}
           </div>
         </div>
       </Card.Content>

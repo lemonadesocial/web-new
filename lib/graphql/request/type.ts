@@ -9,6 +9,7 @@ export type QueryOptions<T, V> = {
 
 export type MutationOptions<T, V> = {
   variables?: V;
+  signal?: AbortSignal;
   onError?: (error: Error) => void;
   onComplete?: (client: GraphqlClient, response: T) => void;
 };

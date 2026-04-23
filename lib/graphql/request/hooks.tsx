@@ -2,7 +2,7 @@ import React from 'react';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { MutationOptions, QueryOptions } from './type';
-import { GraphqlClient } from './client';
+import { GraphqlClient, isAbortError } from './client';
 import { defaultClient } from './instances';
 
 function isEqual(a: any, b: any): boolean {
@@ -163,18 +163,20 @@ export function useMutation<T, V extends object>(
       query,
       variables: merged.variables,
       fetchPolicy: 'network-only',
+      signal: merged.signal,
     });
+    const aborted = isAbortError(error);
 
     setData((prev) => {
       if (isEqual(prev, result)) return prev;
       return result as T;
     });
 
-    setError(error);
+    setError(aborted ? null : error);
     setLoading(false);
-    if (error) {
+    if (error && !aborted) {
       merged.onError?.(error as any);
-    } else {
+    } else if (!error) {
       merged.onComplete?.(client, result as T);
     }
     return { data: result as T, error, loading: false, client };
@@ -182,5 +184,4 @@ export function useMutation<T, V extends object>(
 
   return [mutate, { data, error, client, loading }, client];
 }
-
 

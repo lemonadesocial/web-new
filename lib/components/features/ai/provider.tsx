@@ -17,6 +17,11 @@ export type Message = Partial<RunResult> & {
   role: 'user' | 'assistant';
 };
 
+export type ActiveAIRequest = {
+  id: number;
+  controller: AbortController;
+} | null;
+
 type State = {
   toggleChat: boolean;
   session: string;
@@ -64,6 +69,11 @@ export enum AIChatActionKind {
 export type AIChatAction = { type: AIChatActionKind; payload?: Partial<State> };
 
 export const AIChatContext = React.createContext<[State, React.Dispatch<AIChatAction>] | null>(null);
+const AIChatRequestContext = React.createContext<{
+  activeRequestRef: React.MutableRefObject<ActiveAIRequest>;
+  running: boolean;
+  setRunning: React.Dispatch<React.SetStateAction<boolean>>;
+} | null>(null);
 
 export function AIChatProvider({ children, initialConfigs }: { children: React.ReactNode; initialConfigs?: Config[] }) {
   const initialMessages: Message[] = [];
@@ -84,15 +94,44 @@ export function AIChatProvider({ children, initialConfigs }: { children: React.R
     config: initialConfigs?.length ? initialConfigs[0]._id : AI_CONFIG,
     messages: initialMessages,
   });
+  const [running, setRunning] = React.useState(false);
+  const activeRequestRef = React.useRef<ActiveAIRequest>(null);
 
   const value = React.useMemo(() => [state, dispatch] as [State, React.Dispatch<AIChatAction>], [state]);
+  const requestValue = React.useMemo(
+    () => ({
+      activeRequestRef,
+      running,
+      setRunning,
+    }),
+    [running],
+  );
 
-  return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
+  React.useEffect(
+    () => () => {
+      activeRequestRef.current?.controller.abort();
+      activeRequestRef.current = null;
+    },
+    [],
+  );
+
+  return (
+    <AIChatContext.Provider value={value}>
+      <AIChatRequestContext.Provider value={requestValue}>{children}</AIChatRequestContext.Provider>
+    </AIChatContext.Provider>
+  );
 }
 
 export function useAIChat(): [state: State, dispatch: React.Dispatch<AIChatAction>] {
   const context = React.useContext(AIChatContext);
   if (!context) throw new Error('useAIChat must be used within a AIChatProvider');
+
+  return context;
+}
+
+export function useAIChatRequest() {
+  const context = React.useContext(AIChatRequestContext);
+  if (!context) throw new Error('useAIChatRequest must be used within a AIChatProvider');
 
   return context;
 }
