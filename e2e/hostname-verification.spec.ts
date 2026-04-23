@@ -249,6 +249,17 @@ test.describe('Custom domain hostname verification', () => {
     // Confirming runs the request.
     await page.getByRole('button', { name: /generate new record/i }).click();
     await expect.poll(() => requestCount).toBe(1);
+
+    // NF-1: after confirm, the ConfirmModal must be gone AND the
+    // HostnameVerificationModal must actually open with the new instructions.
+    // Previously the Verify modal was popped off the top of the stack by
+    // ConfirmModal's trailing `modal.close()`, which this test missed because
+    // it only asserted the network call fired.
+    await expect(page.getByText(/re-verify custom domain\?/i)).toHaveCount(0);
+    await expect(
+      page.getByText('_lemonade-challenge.events.example.com').first(),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Verify now' })).toBeVisible();
   });
 
   // Question #2: When the user verifies hostname A, closes the modal, then

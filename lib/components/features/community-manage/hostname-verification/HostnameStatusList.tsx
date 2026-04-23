@@ -91,6 +91,17 @@ export function HostnameStatusList({ spaceId }: Props) {
       // the challenge token and immediately unverify the domain (pausing its
       // CORS access) until DNS propagates the new TXT record. Require an
       // explicit confirmation before taking that destructive action.
+      //
+      // NF-1: ConfirmModal's click handler calls `modal.close()` after the
+      // awaited `onConfirm`. If we opened the HostnameVerificationModal from
+      // inside `onConfirm`, ConfirmModal's trailing `modal.close()` would pop
+      // the TOP of the stack — which by then is the Verify modal — leaving
+      // the user stuck with the now-useless Confirm modal while the backend
+      // has already rolled the challenge token. Instead, set a `confirmed`
+      // flag in `onConfirm` and open Verify from `onClose`, deferred via
+      // setTimeout so the ConfirmModal's state-pop commits before we push
+      // the Verify modal onto a clean stack.
+      let confirmed = false;
       modal.open(ConfirmModal, {
         props: {
           title: 'Re-verify custom domain?',
@@ -98,7 +109,15 @@ export function HostnameStatusList({ spaceId }: Props) {
             'Re-verifying will generate a new TXT record. Your current verification stays active until you update DNS. The domain will be unverified (and its CORS access paused) from the moment you click until the new record is live.',
           icon: 'icon-alert-circle',
           buttonText: 'Generate new record',
-          onConfirm: () => runVerifyFlow(hostname),
+          onConfirm: () => {
+            confirmed = true;
+          },
+        },
+        onClose: () => {
+          if (!confirmed) return;
+          window.setTimeout(() => {
+            void runVerifyFlow(hostname);
+          }, 0);
         },
       });
     },
