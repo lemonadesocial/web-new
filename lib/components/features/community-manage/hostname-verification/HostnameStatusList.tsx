@@ -4,13 +4,16 @@ import React from 'react';
 
 import { Button, Card, modal, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
+import { isCustomHostname, normalizeHostname } from '$lib/utils/hostname';
 
+import { ConfirmModal } from '../../modals/ConfirmModal';
 import { HostnameVerificationModal } from '../modals/HostnameVerificationModal';
 import {
   GetSpaceHostnameEntriesDocument,
   RequestHostnameVerificationDocument,
   WhitelabelHostname,
 } from './graphql';
+import { getRequestVerificationErrorMessage } from './errors';
 
 type Props = {
   spaceId: string;
@@ -30,22 +33,32 @@ export function HostnameStatusList({ spaceId }: Props) {
     const all = data?.getSpace?.hostname_entries ?? [];
     // Filter out the built-in lemonade.social hostname — tenants only care about
     // their custom domains. Matches the filter applied to the visible list above.
-    return all.filter((e) => !e.hostname.endsWith('lemonade.social'));
+    return all.filter((e) => isCustomHostname(e.hostname));
   }, [data]);
 
   const [pendingHostname, setPendingHostname] = React.useState<string | null>(null);
 
-  const openVerifyModal = React.useCallback(
+  // Opens the verification modal for any hostname. Extracted so both the
+  // unverified flow (direct call) and the verified flow (gated behind a
+  // confirmation modal) can share the same implementation.
+  const runVerifyFlow = React.useCallback(
     async (hostname: string) => {
+      // HIGH #5: prevent parallel requests. If we're already mid-request
+      // for another hostname, early-return. Individual Verify/Re-verify
+      // buttons are also disabled via the `busy` prop below, but this is
+      // a belt-and-braces guard against rapid clicks slipping through
+      // React batching.
+      if (pendingHostname) return;
+
+      const normalized = normalizeHostname(hostname);
       setPendingHostname(hostname);
       const { data: res, error } = await requestVerification({
-        variables: { space_id: spaceId, hostname },
+        variables: { space_id: spaceId, hostname: normalized },
       });
       setPendingHostname(null);
 
       if (error || !res?.requestHostnameVerification) {
-        const message = (error as { message?: string } | null)?.message;
-        toast.error(message ?? 'Could not start verification. Please try again.');
+        toast.error(getRequestVerificationErrorMessage(error));
         return;
       }
 
@@ -54,17 +67,48 @@ export function HostnameStatusList({ spaceId }: Props) {
           spaceId,
           hostname,
           instructions: res.requestHostnameVerification,
-          onVerified: () => refetch(),
         },
         dismissible: true,
+        // HIGH #2: single refetch — `onClose` fires on dismiss, cancel, and
+        // the 2s auto-close after success. The previous `onVerified` +
+        // `onClose` combo double-fetched on every successful verification.
         onClose: () => refetch(),
       });
     },
-    [refetch, requestVerification, spaceId],
+    [pendingHostname, refetch, requestVerification, spaceId],
+  );
+
+  const openVerifyModal = React.useCallback(
+    (hostname: string, alreadyVerified: boolean) => {
+      if (pendingHostname) return;
+
+      if (!alreadyVerified) {
+        void runVerifyFlow(hostname);
+        return;
+      }
+
+      // BLOCKER #2: Re-verify on a currently-verified hostname would re-roll
+      // the challenge token and immediately unverify the domain (pausing its
+      // CORS access) until DNS propagates the new TXT record. Require an
+      // explicit confirmation before taking that destructive action.
+      modal.open(ConfirmModal, {
+        props: {
+          title: 'Re-verify custom domain?',
+          subtitle:
+            'Re-verifying will generate a new TXT record. Your current verification stays active until you update DNS. The domain will be unverified (and its CORS access paused) from the moment you click until the new record is live.',
+          icon: 'icon-alert-circle',
+          buttonText: 'Generate new record',
+          onConfirm: () => runVerifyFlow(hostname),
+        },
+      });
+    },
+    [pendingHostname, runVerifyFlow],
   );
 
   if (loading && entries.length === 0) return null;
   if (entries.length === 0) return null;
+
+  const globalBusy = Boolean(pendingHostname);
 
   return (
     <Card.Root>
@@ -74,7 +118,8 @@ export function HostnameStatusList({ spaceId }: Props) {
             key={entry.hostname}
             entry={entry}
             busy={requesting && pendingHostname === entry.hostname}
-            onVerify={() => openVerifyModal(entry.hostname)}
+            disabled={globalBusy && pendingHostname !== entry.hostname}
+            onVerify={() => openVerifyModal(entry.hostname, entry.verified)}
           />
         ))}
       </Card.Content>
@@ -85,10 +130,12 @@ export function HostnameStatusList({ spaceId }: Props) {
 function HostnameRow({
   entry,
   busy,
+  disabled,
   onVerify,
 }: {
   entry: WhitelabelHostname;
   busy: boolean;
+  disabled: boolean;
   onVerify: () => void;
 }) {
   return (
@@ -104,13 +151,19 @@ function HostnameRow({
           type="button"
           className="text-sm text-secondary hover:text-primary underline-offset-2 hover:underline disabled:opacity-50"
           onClick={onVerify}
-          disabled={busy}
+          disabled={busy || disabled}
           aria-label={`Re-verify ${entry.hostname}`}
         >
           Re-verify
         </button>
       ) : (
-        <Button size="sm" variant="secondary" onClick={onVerify} loading={busy}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={onVerify}
+          loading={busy}
+          disabled={disabled}
+        >
           Verify
         </Button>
       )}
