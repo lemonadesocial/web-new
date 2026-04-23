@@ -1,10 +1,80 @@
+// ============================================================================
 // Typed GraphQL overlay for the hostname verification flow (backend PR #2145).
-// Canonical source: lib/graphql/gql/backend/hostname-verification.gql. The next
-// `yarn codegen` run against a schema that includes #2145 will regenerate the
-// same shapes in `$lib/graphql/generated/backend/graphql`, after which this
-// file can be switched to a re-export pass-through or deleted with callers
-// repointed. Until then, this keeps the modal type-checkable and testable
-// without requiring live-schema access.
+// ----------------------------------------------------------------------------
+// CODEGEN MIGRATION NOTICE
+// ----------------------------------------------------------------------------
+// This file is a TEMPORARY stand-in for operations that will eventually be
+// emitted by `yarn codegen` once the live backend schema contains
+// `WhitelabelHostname`, `HostnameVerificationInstructions`,
+// `HostnameVerificationStatus`, `getSpace.hostname_entries`,
+// `requestHostnameVerification`, and `verifyHostname` (all shipped in
+// backend PR #2145 @ commit 177a6716).
+//
+// When `yarn codegen` is next run against that schema, three things MUST
+// happen in a single commit to avoid a duplicate-identifier time-bomb:
+//
+//   (a) Re-add the `.gql` source file at
+//       `lib/graphql/gql/backend/hostname-verification.gql` using the
+//       template at the bottom of THIS file.
+//   (b) Delete THIS overlay file.
+//   (c) Update consumers (currently: `HostnameStatusList.tsx` and
+//       `HostnameVerificationModal.tsx`) to import the documents from
+//       `$lib/graphql/generated/backend/graphql` instead of this file.
+//
+// Error-classification helpers (`isChallengeRerolledError`,
+// `getRequestVerificationErrorMessage`) live in `./errors.ts` already — they
+// are codegen-independent and survive the migration untouched.
+//
+// If you forget step (a), codegen simply won't emit the operations and the
+// app will fail to compile. If you forget step (b), you get
+// duplicate-identifier TS errors between this file and the generated one.
+// If you forget step (c), consumers keep importing from the overlay.
+//
+// GQL TEMPLATE (paste verbatim into the new `.gql` file):
+//
+//   fragment WhitelabelHostnameFragment on WhitelabelHostname {
+//     hostname
+//     verified
+//     challenge_token
+//     verified_at
+//     created_at
+//     last_checked_at
+//     last_check_error
+//   }
+//
+//   query GetSpaceHostnameEntries($id: MongoID!) {
+//     getSpace(_id: $id) {
+//       _id
+//       hostname_entries {
+//         ...WhitelabelHostnameFragment
+//       }
+//     }
+//   }
+//
+//   mutation RequestHostnameVerification($space_id: MongoID!, $hostname: String!) {
+//     requestHostnameVerification(space_id: $space_id, hostname: $hostname) {
+//       hostname
+//       challenge_token
+//       txt_record_name
+//       txt_record_value
+//       verified
+//     }
+//   }
+//
+//   mutation VerifyHostname($space_id: MongoID!, $hostname: String!) {
+//     verifyHostname(space_id: $space_id, hostname: $hostname) {
+//       hostname
+//       verified
+//       challenge_token
+//       verified_at
+//       created_at
+//       last_checked_at
+//       last_check_error
+//       txt_record_name
+//       txt_record_value
+//     }
+//   }
+// ============================================================================
 
 import { parse } from 'graphql';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
@@ -124,14 +194,3 @@ export const VerifyHostnameDocument = parse(/* GraphQL */ `
   VerifyHostnameMutation,
   VerifyHostnameMutationVariables
 >;
-
-// Backend throws 409 with the phrase below when a concurrent
-// requestHostnameVerification re-rolled the challenge mid-flight.
-// The generic error surface (`client.ts:249`) only preserves `.message`,
-// so we match on message text rather than status code.
-export function isChallengeRerolledError(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-  const message = (error as { message?: unknown }).message;
-  if (typeof message !== 'string') return false;
-  return /hostname challenge changed concurrently/i.test(message);
-}
