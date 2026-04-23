@@ -1,0 +1,44 @@
+#### Hostname verification (backend PR #2145)
+
+fragment WhitelabelHostnameFragment on WhitelabelHostname {
+  hostname
+  verified
+  challenge_token
+  verified_at
+  created_at
+  last_checked_at
+  last_check_error
+}
+
+query GetSpaceHostnameEntries($id: MongoID!) {
+  getSpace(_id: $id) {
+    _id
+    hostname_entries {
+      ...WhitelabelHostnameFragment
+    }
+  }
+}
+
+mutation RequestHostnameVerification($space_id: MongoID!, $hostname: String!) {
+  requestHostnameVerification(space_id: $space_id, hostname: $hostname) {
+    hostname
+    challenge_token
+    txt_record_name
+    txt_record_value
+    verified
+  }
+}
+
+mutation VerifyHostname($space_id: MongoID!, $hostname: String!) {
+  verifyHostname(space_id: $space_id, hostname: $hostname) {
+    hostname
+    verified
+    challenge_token
+    verified_at
+    created_at
+    last_checked_at
+    last_check_error
+    txt_record_name
+    txt_record_value
+  }
+}

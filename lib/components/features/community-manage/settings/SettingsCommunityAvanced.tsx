@@ -18,6 +18,7 @@ import { CustomDomainPane } from '../panes/CustomDomainPane';
 import { isSpaceUpgradeRequired } from '../../upgrade-to-pro/feature-guard';
 import { SpaceUpgradeRequiredModal } from '../../upgrade-to-pro/SpaceUpgradeRequiredModal';
 import { uploadFiles } from '$lib/utils/file';
+import { HostnameStatusList } from '../hostname-verification/HostnameStatusList';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
   const { data } = useQuery(GetSpaceDocument, {
@@ -221,6 +222,8 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
               </div>
               <p className="text-sm text-tertiary">Connect a new custom domain by removing the above.</p>
             </div>
+
+            <HostnameStatusList spaceId={space._id} />
 
             <Card.Root>
               <Card.Content className="p-0 divide-y divide-(--color-divider)">
@@ -435,6 +438,8 @@ export function CustomDomainSection({ space }: { space: Space }) {
             </div>
             <p className="text-sm text-tertiary">Connect a new custom domain by removing the above.</p>
           </div>
+
+          <HostnameStatusList spaceId={space._id} />
 
           <Card.Root>
             <Card.Content className="p-0 divide-y divide-(--color-divider)">
