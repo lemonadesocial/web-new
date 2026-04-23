@@ -3,6 +3,7 @@ import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/re
 import React from 'react';
 
 import { HostnameStatusList } from '$lib/components/features/community-manage/hostname-verification/HostnameStatusList';
+import type { WhitelabelHostname } from '$lib/components/features/community-manage/hostname-verification/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 
 // -----------------------------------------------------------------------------
@@ -47,7 +48,7 @@ vi.mock('$lib/components/core', async (importOriginal) => {
 // Fixtures
 // -----------------------------------------------------------------------------
 
-const unverifiedEntry = {
+const unverifiedEntry: WhitelabelHostname = {
   __typename: 'WhitelabelHostname',
   hostname: 'a.example.com',
   verified: false,
@@ -58,8 +59,12 @@ const unverifiedEntry = {
   last_check_error: null,
 };
 
-const unverifiedEntryB = { ...unverifiedEntry, hostname: 'b.example.com', challenge_token: 'tok_b' };
-const verifiedEntry = {
+const unverifiedEntryB: WhitelabelHostname = {
+  ...unverifiedEntry,
+  hostname: 'b.example.com',
+  challenge_token: 'tok_b',
+};
+const verifiedEntry: WhitelabelHostname = {
   ...unverifiedEntry,
   verified: true,
   verified_at: '2026-04-23T00:00:05Z',
@@ -75,7 +80,7 @@ const instructionsA = {
   verified: false,
 };
 
-function setupQuery(entries: typeof unverifiedEntry[]) {
+function setupQuery(entries: WhitelabelHostname[]) {
   (useQuery as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
     data: {
       __typename: 'Query',
@@ -133,7 +138,7 @@ describe('HostnameStatusList', () => {
   });
 
   it('normalizes the hostname before sending (MEDIUM #4)', async () => {
-    setupQuery([{ ...unverifiedEntry, hostname: '  A.Example.Com  ' as any }]);
+    setupQuery([{ ...unverifiedEntry, hostname: '  A.Example.Com  ' }]);
 
     const requestFn = vi
       .fn()
