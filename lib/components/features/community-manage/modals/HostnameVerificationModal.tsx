@@ -47,6 +47,11 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
   const runVerify = React.useCallback(async () => {
     setPhase('checking');
     setErrorMessage(null);
+    // NF-3: Clear the reroll advisory on retry. The banner is gated on
+    // `phase === 'rerolled'` today so a stale message isn't visible, but
+    // dropping the state here future-proofs against any gate change that
+    // would re-expose it.
+    setRerollMessage(null);
 
     const { data, error } = await verifyHostname({
       variables: { space_id: spaceId, hostname: normalizedHostname },
