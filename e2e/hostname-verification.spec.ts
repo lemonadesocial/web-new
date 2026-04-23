@@ -185,4 +185,160 @@ test.describe('Custom domain hostname verification', () => {
     await expect.poll(() => capturedVariables.hostname).toBe('events.example.com');
     expect(capturedVariables.space_id).toBe(SPACE._id);
   });
+
+  // BLOCKER #2: Re-verify on a verified hostname is a destructive operation
+  // (it rotates the challenge_token and un-verifies the domain until DNS
+  // updates). The UI must show a ConfirmModal BEFORE any network call is
+  // made; only on explicit confirm does the RequestHostnameVerification
+  // mutation fire.
+  test('re-verifying a verified hostname requires explicit confirmation', async ({ page }) => {
+    let requestCount = 0;
+
+    await page.route('**/graphql', async (route: Route) => {
+      const postData = route.request().postData();
+      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
+
+      const body = JSON.parse(postData) as { operationName?: string };
+
+      if (body.operationName === 'RequestHostnameVerification') {
+        requestCount += 1;
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { requestHostnameVerification: REQUEST_RESPONSE } }),
+        });
+      }
+
+      if (body.operationName === 'GetSpaceHostnameEntries') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: {
+              getSpace: {
+                __typename: 'Space',
+                _id: SPACE._id,
+                hostname_entries: [VERIFIED_ENTRY],
+              },
+            },
+          }),
+        });
+      }
+
+      if (body.operationName && baseMocks[body.operationName as keyof typeof baseMocks]) {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(baseMocks[body.operationName as keyof typeof baseMocks]),
+        });
+      }
+
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{"data":{}}' });
+    });
+
+    await page.goto(`/s/manage/${SPACE._id}/settings/advanced`);
+    await page.waitForLoadState('networkidle');
+
+    // Click Re-verify on a verified hostname.
+    await page.getByRole('button', { name: /re-verify/i }).click();
+
+    // The confirm modal appears; RequestHostnameVerification has NOT fired.
+    await expect(page.getByText(/re-verify custom domain\?/i)).toBeVisible();
+    expect(requestCount).toBe(0);
+
+    // Confirming runs the request.
+    await page.getByRole('button', { name: /generate new record/i }).click();
+    await expect.poll(() => requestCount).toBe(1);
+  });
+
+  // Question #2: When the user verifies hostname A, closes the modal, then
+  // clicks Verify on hostname B, the modal must show B's TXT record — not a
+  // stale copy of A's.
+  test('multi-hostname verification modal does not leak state between hostnames', async ({ page }) => {
+    const hostnameA = 'a.example.com';
+    const hostnameB = 'b.example.com';
+    const entryA = { ...UNVERIFIED_ENTRY, hostname: hostnameA, challenge_token: 'tok_a' };
+    const entryB = { ...UNVERIFIED_ENTRY, hostname: hostnameB, challenge_token: 'tok_b' };
+
+    const instructionsFor = (host: string, token: string) => ({
+      __typename: 'HostnameVerificationInstructions',
+      hostname: host,
+      challenge_token: token,
+      txt_record_name: `_lemonade-challenge.${host}`,
+      txt_record_value: token,
+      verified: false,
+    });
+
+    await page.route('**/graphql', async (route: Route) => {
+      const postData = route.request().postData();
+      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
+
+      const body = JSON.parse(postData) as {
+        operationName?: string;
+        variables?: Record<string, unknown>;
+      };
+
+      if (body.operationName === 'GetSpaceHostnameEntries') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: {
+              getSpace: {
+                __typename: 'Space',
+                _id: SPACE._id,
+                hostname_entries: [entryA, entryB],
+              },
+            },
+          }),
+        });
+      }
+
+      if (body.operationName === 'RequestHostnameVerification') {
+        const requested = String(body.variables?.hostname ?? '');
+        const token = requested === hostnameA ? 'tok_a' : 'tok_b';
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: { requestHostnameVerification: instructionsFor(requested, token) },
+          }),
+        });
+      }
+
+      if (body.operationName && baseMocks[body.operationName as keyof typeof baseMocks]) {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(baseMocks[body.operationName as keyof typeof baseMocks]),
+        });
+      }
+
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{"data":{}}' });
+    });
+
+    await page.goto(`/s/manage/${SPACE._id}/settings/advanced`);
+    await page.waitForLoadState('networkidle');
+
+    // Click Verify on row A. Modal opens with A's TXT record value.
+    const rows = page.locator('[data-testid="hostname-badge-unverified"]');
+    await expect(rows).toHaveCount(2, { timeout: 10000 });
+    await page.getByRole('button', { name: 'Verify', exact: true }).first().click();
+
+    await expect(page.getByText(`_lemonade-challenge.${hostnameA}`).first()).toBeVisible();
+    await expect(page.getByText('tok_a')).toBeVisible();
+    // B's token must NOT be in the DOM at this point.
+    await expect(page.getByText('tok_b')).toHaveCount(0);
+
+    // Close the modal.
+    await page.getByRole('button', { name: /close/i }).click();
+
+    // Click Verify on row B. Modal reopens with B's TXT record value; A's
+    // must be gone.
+    await page.getByRole('button', { name: 'Verify', exact: true }).nth(1).click();
+
+    await expect(page.getByText(`_lemonade-challenge.${hostnameB}`).first()).toBeVisible();
+    await expect(page.getByText('tok_b')).toBeVisible();
+    await expect(page.getByText('tok_a')).toHaveCount(0);
+  });
 });
