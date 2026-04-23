@@ -216,13 +216,11 @@ describe('HostnameVerificationModal', () => {
       },
     });
 
-    const onVerified = vi.fn();
     render(
       <HostnameVerificationModal
         spaceId="space-1"
         hostname="events.example.com"
         instructions={instructions}
-        onVerified={onVerified}
       />,
     );
 
@@ -232,11 +230,12 @@ describe('HostnameVerificationModal', () => {
     await waitFor(() => {
       expect(screen.getByTestId('verify-success')).toBeDefined();
     });
-    expect(onVerified).toHaveBeenCalledTimes(1);
 
     // The modal schedules modal.close() for 2000ms after success via a
     // useEffect. Rather than fake timers (which conflict with waitFor),
-    // assert the schedule + invoke the callback directly.
+    // assert the schedule + invoke the callback directly. (NF-2: the dead
+    // `onVerified` prop was removed — the auto-close is the one observable
+    // signal that verification succeeded.)
     const call = setTimeoutSpy.mock.calls.find(([, delay]) => delay === 2000);
     expect(call).toBeDefined();
     (call![0] as () => void)();

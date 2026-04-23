@@ -20,12 +20,11 @@ type Props = {
   spaceId: string;
   hostname: string;
   instructions: HostnameVerificationInstructions;
-  onVerified?: () => void;
 };
 
 const MODAL_TITLE_ID = 'hostname-verification-modal-title';
 
-export function HostnameVerificationModal({ spaceId, hostname, instructions: initial, onVerified }: Props) {
+export function HostnameVerificationModal({ spaceId, hostname, instructions: initial }: Props) {
   const normalizedHostname = React.useMemo(() => normalizeHostname(hostname), [hostname]);
   const [instructions, setInstructions] = React.useState(initial);
   const [phase, setPhase] = React.useState<Phase>('idle');
@@ -77,7 +76,6 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
     const entry = data?.verifyHostname;
     if (entry?.verified) {
       setPhase('success');
-      onVerified?.();
       return;
     }
 
@@ -85,7 +83,7 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
       entry?.last_check_error ?? 'The TXT record was not found. DNS may still be propagating.',
     );
     setPhase('failure');
-  }, [normalizedHostname, onVerified, requestVerification, spaceId, verifyHostname]);
+  }, [normalizedHostname, requestVerification, spaceId, verifyHostname]);
 
   // MEDIUM #1: Auto-close is scoped to a useEffect so its timer is cancelled
   // on unmount. Previously the timer could fire against a stale component
