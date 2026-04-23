@@ -84,6 +84,12 @@ const freshInstructions: HostnameVerificationInstructions = {
   txt_record_value: 'tok_xyz_999',
 };
 
+// NIT #2: Look mocks up by document name instead of relying on registration
+// order. The modal calls `useMutation(RequestHostnameVerificationDocument)`
+// first and `useMutation(VerifyHostnameDocument)` second today, but if that
+// ever changes (reordered imports, new intermediate mutation, etc.) the
+// previous mockReturnValueOnce chain would silently swap the mocks and
+// produce confusing test failures.
 function setupMutations({
   verifyResult,
   requestResult,
@@ -96,11 +102,12 @@ function setupMutations({
     .fn()
     .mockResolvedValue(requestResult ?? { data: { requestHostnameVerification: freshInstructions }, error: null });
 
-  // Order matters: RequestHostnameVerificationDocument is registered first in
-  // the modal component, VerifyHostnameDocument second.
-  (useMutation as unknown as ReturnType<typeof vi.fn>)
-    .mockReturnValueOnce([requestFn, { loading: false }])
-    .mockReturnValueOnce([verifyFn, { loading: false }]);
+  (useMutation as unknown as ReturnType<typeof vi.fn>).mockImplementation((doc: any) => {
+    const name = doc?.definitions?.[0]?.name?.value;
+    if (name === 'RequestHostnameVerification') return [requestFn, { loading: false }];
+    if (name === 'VerifyHostname') return [verifyFn, { loading: false }];
+    throw new Error(`unexpected document passed to useMutation: ${name}`);
+  });
 
   return { verifyFn, requestFn };
 }
@@ -157,7 +164,7 @@ describe('HostnameVerificationModal', () => {
     expect(toastSuccess).toHaveBeenCalledTimes(2);
   });
 
-  it('shows a loading state while the verify mutation is in flight', async () => {
+  it('shows a loading state while the verify mutation is in flight, then transitions to success', async () => {
     let resolveVerify!: (r: any) => void;
     const verifyFn = vi.fn(
       () => new Promise((resolve) => {
@@ -165,9 +172,12 @@ describe('HostnameVerificationModal', () => {
       }),
     );
     const requestFn = vi.fn();
-    (useMutation as unknown as ReturnType<typeof vi.fn>)
-      .mockReturnValueOnce([requestFn, { loading: false }])
-      .mockReturnValueOnce([verifyFn, { loading: false }]);
+    (useMutation as unknown as ReturnType<typeof vi.fn>).mockImplementation((doc: any) => {
+      const name = doc?.definitions?.[0]?.name?.value;
+      if (name === 'RequestHostnameVerification') return [requestFn, { loading: false }];
+      if (name === 'VerifyHostname') return [verifyFn, { loading: false }];
+      throw new Error(`unexpected document: ${name}`);
+    });
 
     render(
       <HostnameVerificationModal
@@ -183,11 +193,18 @@ describe('HostnameVerificationModal', () => {
       expect(screen.getByRole('button', { name: 'Verify now' }).getAttribute('data-loading')).toBe('true');
     });
 
-    act(() => {
+    await act(async () => {
       resolveVerify({
         data: { verifyHostname: { ...instructions, verified: true } },
         error: null,
       });
+    });
+
+    // NIT #3: assert the loading → success transition actually completes so
+    // this test isn't just checking loading and hanging on a dangling
+    // promise.
+    await waitFor(() => {
+      expect(screen.getByTestId('verify-success')).toBeDefined();
     });
   });
 
@@ -217,9 +234,9 @@ describe('HostnameVerificationModal', () => {
     });
     expect(onVerified).toHaveBeenCalledTimes(1);
 
-    // The modal schedules modal.close() for 2000ms after success. Rather than
-    // fake timers (which conflict with waitFor), assert the schedule + invoke
-    // the callback directly.
+    // The modal schedules modal.close() for 2000ms after success via a
+    // useEffect. Rather than fake timers (which conflict with waitFor),
+    // assert the schedule + invoke the callback directly.
     const call = setTimeoutSpy.mock.calls.find(([, delay]) => delay === 2000);
     expect(call).toBeDefined();
     (call![0] as () => void)();
@@ -251,7 +268,47 @@ describe('HostnameVerificationModal', () => {
     expect(modalClose).not.toHaveBeenCalled();
   });
 
-  it('handles the 409 concurrent-reroll error by refetching instructions and updating copy', async () => {
+  it('handles the 409 concurrent-reroll error via extensions.code and renders a warning-tone advisory', async () => {
+    const { verifyFn, requestFn } = setupMutations({
+      // HIGH #3: primary detection is via `extensions.code`, plumbed through
+      // the shared client as `error.code`.
+      verifyResult: {
+        data: null,
+        error: { message: 'hostname challenge changed concurrently, retry requestHostnameVerification', code: 'CONFLICT' },
+      },
+      requestResult: { data: { requestHostnameVerification: freshInstructions }, error: null },
+    });
+
+    render(
+      <HostnameVerificationModal
+        spaceId="space-1"
+        hostname="events.example.com"
+        instructions={instructions}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Verify now' }));
+
+    // HIGH #4: reroll renders in its OWN testid with role="status" (not the
+    // red DNS-failure role="alert").
+    await waitFor(() => {
+      expect(screen.getByTestId('verify-rerolled').textContent).toContain('verification token was refreshed');
+    });
+    expect(screen.queryByTestId('verify-error')).toBeNull();
+
+    expect(verifyFn).toHaveBeenCalledTimes(1);
+    expect(requestFn).toHaveBeenCalledTimes(1);
+    // New challenge token is rendered on the TXT record value row.
+    expect(screen.getByText('tok_xyz_999')).toBeDefined();
+
+    // Clicking Try again sends the user back through idle → checking.
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeDefined();
+  });
+
+  it('still detects the 409 concurrent-reroll error via the legacy message-only shape', async () => {
+    // HIGH #3 fallback path: some error paths may not plumb
+    // `extensions.code` through. The regex fallback on message text must
+    // continue to catch the rename case.
     const { verifyFn, requestFn } = setupMutations({
       verifyResult: {
         data: null,
@@ -271,12 +328,9 @@ describe('HostnameVerificationModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Verify now' }));
 
     await waitFor(() => {
-      expect(screen.getByTestId('verify-error').textContent).toContain('verification token was refreshed');
+      expect(screen.getByTestId('verify-rerolled').textContent).toContain('verification token was refreshed');
     });
-
     expect(verifyFn).toHaveBeenCalledTimes(1);
     expect(requestFn).toHaveBeenCalledTimes(1);
-    // New challenge token is rendered on the TXT record value row.
-    expect(screen.getByText('tok_xyz_999')).toBeDefined();
   });
 });
