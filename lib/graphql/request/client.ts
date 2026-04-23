@@ -31,6 +31,7 @@ interface QueryRequest<T, V extends object> {
   initData?: T | null;
   fetchPolicy?: FetchPolicy;
   headers?: HeadersInit;
+  signal?: AbortSignal;
   resolve: (result: { data: T | null; error: unknown }) => void;
   reject: (error: unknown) => void;
 }
@@ -38,6 +39,15 @@ interface QueryRequest<T, V extends object> {
 interface RequestConfig {
   cache?: 'no-store' | 'no-cache';
   credentials?: 'omit' | 'include' | 'same-origin';
+}
+
+export function isAbortError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const name = 'name' in error ? String(error.name) : '';
+  const message = 'message' in error ? String(error.message) : '';
+
+  return name === 'AbortError' || message === 'AbortError' || message === 'cancelled' || /abort/i.test(message);
 }
 
 export class GraphqlClient {
@@ -65,12 +75,14 @@ export class GraphqlClient {
     fetchPolicy = 'cache-first',
     headers,
     initData,
+    signal,
   }: {
     query: TypedDocumentNode<T, V>;
     headers?: HeadersInit;
     variables?: V;
     fetchPolicy?: FetchPolicy;
     initData?: T;
+    signal?: AbortSignal;
   }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
@@ -80,6 +92,7 @@ export class GraphqlClient {
         headers: this.getHeaders(headers),
         initData,
         fetchPolicy,
+        signal,
         resolve,
         reject,
       });
@@ -91,10 +104,12 @@ export class GraphqlClient {
     query,
     variables,
     headers,
+    signal,
   }: {
     query: TypedDocumentNode<T, V>;
     variables?: V;
     headers?: HeadersInit;
+    signal?: AbortSignal;
   }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
@@ -102,6 +117,7 @@ export class GraphqlClient {
         query,
         variables,
         headers: this.getHeaders(headers),
+        signal,
         resolve,
         reject,
       });
@@ -151,21 +167,36 @@ export class GraphqlClient {
 
     let result = initData;
     if (!result) {
-      result = await this.client.request(request.query, request.variables, headers as HeadersInit);
+      result = await this.client.request({
+        document: request.query,
+        variables: request.variables,
+        requestHeaders: headers as HeadersInit,
+        signal: request.signal,
+      });
     }
     this.cache?.normalizeAndStore(request.query, request.variables, result);
     request.resolve({ data: result, error: null });
   }
 
   private async executeNetworkRequest(request: QueryRequest<any, any>) {
-    const { query, variables, headers } = request;
-    const result = await this.client.request(query, variables, headers as HeadersInit);
+    const { query, variables, headers, signal } = request;
+    const result = await this.client.request({
+      document: query,
+      variables,
+      requestHeaders: headers as HeadersInit,
+      signal,
+    });
 
     this.cache?.normalizeAndStore(query, variables, result);
     request.resolve({ data: result, error: null });
   }
 
   private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
+    if (request.signal?.aborted || isAbortError(error)) {
+      request.resolve({ data: null, error });
+      return;
+    }
+
     // P0-4: Report GraphQL errors to Sentry with operation context
     const operationName = (request.query.definitions?.[0] as any)?.name?.value || 'unknown';
     const operationType = (request.query.definitions?.[0] as any)?.operation || 'query';

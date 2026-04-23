@@ -1,6 +1,15 @@
 import * as Sentry from '@sentry/nextjs';
 import { NextRequest } from 'next/server';
 
+function isAbortError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const name = 'name' in error ? String(error.name) : '';
+  const message = 'message' in error ? String(error.message) : '';
+
+  return name === 'AbortError' || message === 'AbortError' || message === 'cancelled' || /abort/i.test(message);
+}
+
 function getUpstreamAiUrl() {
   const aiUrl = process.env.AI_API_HTTP || process.env.NEXT_PUBLIC_AI_API_HTTP;
 
@@ -36,6 +45,7 @@ export async function POST(request: NextRequest) {
       headers,
       body,
       cache: 'no-store',
+      signal: request.signal,
     });
 
     const responseHeaders = new Headers();
@@ -54,6 +64,10 @@ export async function POST(request: NextRequest) {
       headers: responseHeaders,
     });
   } catch (error) {
+    if (request.signal.aborted || isAbortError(error)) {
+      return new Response(null, { status: 499 });
+    }
+
     Sentry.captureException(error);
     return Response.json({ error: 'AI proxy request failed.' }, { status: 502 });
   }
