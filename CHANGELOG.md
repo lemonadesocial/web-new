@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.40.0](https://github.com/lemonadesocial/web-new/compare/v10.39.2...v10.40.0) (2026-04-23)
+
+
+### Features
+
+* add cancel support for in-flight AI chat ([6b5a5e7](https://github.com/lemonadesocial/web-new/commit/6b5a5e74d1148f816b1e7e0520b0f5aaa0fb5d80))
+
 ## [10.39.2](https://github.com/lemonadesocial/web-new/compare/v10.39.1...v10.39.2) (2026-04-22)
 
 
