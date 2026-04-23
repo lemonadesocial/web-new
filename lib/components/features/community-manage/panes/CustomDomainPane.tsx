@@ -12,6 +12,7 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { copy } from '$lib/utils/helpers';
+import { GetSpaceHostnameEntriesDocument } from '../hostname-verification/graphql';
 
 type DNSType = { type: 'A' | 'CNAME'; values: string[]; host: string };
 
@@ -72,6 +73,22 @@ export function CustomDomainPane({ space }: { space: Space }) {
     onComplete: (client, incoming) => {
       if (space) {
         client.writeFragment({ id: `Space:${space._id}`, data: { ...space, ...incoming.updateSpace } });
+      }
+      // HIGH #1: The Space fragment write above only touches flat `hostnames`.
+      // `HostnameStatusList` renders off of `hostname_entries`, which the
+      // backend populates on add. Force a network fetch so the newly-added
+      // domain shows up without requiring a route change. Fire-and-forget —
+      // we don't want to block the success modal on this.
+      if (space?._id) {
+        client
+          .query({
+            query: GetSpaceHostnameEntriesDocument,
+            variables: { id: space._id },
+            fetchPolicy: 'network-only',
+          })
+          .catch(() => {
+            // Best-effort; the next route change will refetch anyway.
+          });
       }
       const values = getValues();
       const subdomainsList = values.subdomains.filter(Boolean).map((p) => `${p}.${values.domain}`);
