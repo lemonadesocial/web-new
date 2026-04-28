@@ -24,6 +24,19 @@ import { getListChains } from './crypto';
 import { groupBy } from 'lodash';
 import { JOIN_REQUEST_STATE_MAP, RECIPIENT_TYPE_MAP } from './email';
 
+type EventAddressLike = Pick<
+  Address,
+  'title' | 'street_1' | 'street_2' | 'postal' | 'city' | 'region' | 'country' | 'additional_directions'
+>;
+
+type EventLocationLike = {
+  latitude?: number | null;
+  longitude?: number | null;
+  address?: (EventAddressLike & { latitude?: number | null; longitude?: number | null }) | null;
+};
+
+export type TicketEventStatus = 'upcoming' | 'going' | 'ended' | 'unknown';
+
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
   const decimals = getListChains()
@@ -65,7 +78,7 @@ export function getEventPrice(event: Event) {
   return formatPrice(defaultPrice, true);
 }
 
-export function getEventAddress(address?: Address | undefined, short?: boolean) {
+export function getEventAddress(address?: EventAddressLike | undefined, short?: boolean) {
   if (!address) return;
 
   if (short) return [address.title, address.city || address.region, address.country].filter(Boolean).join(', ');
@@ -82,6 +95,36 @@ export function getEventAddress(address?: Address | undefined, short?: boolean) 
   ]
     .filter(Boolean)
     .join(', \n');
+}
+
+export function getEventGoogleMapsUrl(event?: EventLocationLike | null) {
+  if (!event) return null;
+
+  const latitude = event.address?.latitude ?? event.latitude;
+  const longitude = event.address?.longitude ?? event.longitude;
+
+  if (latitude != null && longitude != null) {
+    return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+  }
+
+  const address = getEventAddress(event.address ?? undefined);
+
+  if (!address) return null;
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.replace(/\s*\n\s*/g, ', '))}`;
+}
+
+export function getTicketEventStatus(event?: { start: string; end: string } | null): TicketEventStatus {
+  if (!event) return 'unknown';
+
+  const now = new Date();
+  const startDate = new Date(event.start);
+  const endDate = new Date(event.end);
+
+  if (now < startDate) return 'upcoming';
+  if (now < endDate) return 'going';
+
+  return 'ended';
 }
 
 export function getEventSubAddress(address?: Address | undefined) {
@@ -151,20 +194,22 @@ export function attending(event: Event, user: string | undefined) {
 }
 
 export function hosting(event: Event, user: string) {
-  const cohostIds = event.cohosts_expanded_new
-    ?.filter((host) => !host?.event_role || host?.event_role === EventRole.Cohost)
-    .map((host) => host?._id)
-    .filter(Boolean) || [];
-  
+  const cohostIds =
+    event.cohosts_expanded_new
+      ?.filter((host) => !host?.event_role || host?.event_role === EventRole.Cohost)
+      .map((host) => host?._id)
+      .filter(Boolean) || [];
+
   return [event.host, ...cohostIds].includes(user);
 }
 
 export function isPromoter(event: Event, user: string) {
-  const promoterIds = event.cohosts_expanded_new
-    ?.filter((host) => host?.event_role === EventRole.Gatekeeper)
-    .map((host) => host?._id)
-    .filter(Boolean) || [];
-  
+  const promoterIds =
+    event.cohosts_expanded_new
+      ?.filter((host) => host?.event_role === EventRole.Gatekeeper)
+      .map((host) => host?._id)
+      .filter(Boolean) || [];
+
   return promoterIds.includes(user);
 }
 
@@ -200,14 +245,15 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 export function isAttending(event: Event, userId: string): boolean {
   if (!event?._id) return false;
   return new Set(
-    [event?.host].filter(Boolean)
+    [event?.host]
+      .filter(Boolean)
       .concat(event?.cohosts || [])
       .concat(event?.speaker_users || [])
       .concat(event?.accepted || []),
   ).has(userId);
 }
 
-export function getTicketPassUrl(ticket: Ticket, provider: 'apple' | 'google') {
+export function getTicketPassUrl(ticket: Pick<Ticket, '_id' | 'shortid'>, provider: 'apple' | 'google') {
   return `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${provider}/${ticket._id}?shortid=${ticket.shortid}`;
 }
 
@@ -244,11 +290,11 @@ export function getEmailBlastsRecipients(item: EmailSetting) {
 }
 
 export function filterDirectPaymentAccounts(
-  accounts: Array<NewPaymentAccount | null | undefined> | null | undefined
+  accounts: Array<NewPaymentAccount | null | undefined> | null | undefined,
 ): NewPaymentAccount[] {
   return (accounts ?? []).filter(
     (account): account is NewPaymentAccount =>
       account != null &&
-      (account.type === PaymentAccountType.Ethereum || account.type === PaymentAccountType.EthereumRelay)
+      (account.type === PaymentAccountType.Ethereum || account.type === PaymentAccountType.EthereumRelay),
   );
 }

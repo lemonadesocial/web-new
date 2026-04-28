@@ -97,8 +97,8 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
       assigned_email
       assigned_to
       assigned_to_expanded {
-        _id,
-        name,
+        _id
+        name
         new_photos_expanded(limit: 1) {
           _id
           key
@@ -163,8 +163,28 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
   }
 }
 
-mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!], $buyer_wallet: String, $passcodes: [String!]) {
-  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets, buyer_wallet: $buyer_wallet, passcodes: $passcodes }) {
+mutation redeemTickets(
+  $event: MongoID!
+  $items: [PurchasableItem!]!
+  $buyer_info: BuyerInfoInput
+  $inviter: MongoID
+  $user_info: UserInput
+  $connect_wallets: [ConnectWalletInput!]
+  $buyer_wallet: String
+  $passcodes: [String!]
+) {
+  redeemTickets(
+    input: {
+      event: $event
+      items: $items
+      buyer_info: $buyer_info
+      inviter: $inviter
+      user_info: $user_info
+      connect_wallets: $connect_wallets
+      buyer_wallet: $buyer_wallet
+      passcodes: $passcodes
+    }
+  ) {
     tickets {
       _id
       accepted
@@ -345,14 +365,8 @@ query exportEventTickets(
   }
 }
 
-mutation CreateTickets(
-  $ticketType: MongoID!
-  $ticketAssignments: [TicketAssignment!]!
-) {
-  createTickets(
-    ticket_type: $ticketType
-    ticket_assignments: $ticketAssignments
-  ) {
+mutation CreateTickets($ticketType: MongoID!, $ticketAssignments: [TicketAssignment!]!) {
+  createTickets(ticket_type: $ticketType, ticket_assignments: $ticketAssignments) {
     _id
   }
 }
@@ -373,7 +387,35 @@ query GetTicket($shortid: String!) {
   getTicket(shortid: $shortid) {
     _id
     shortid
+    assigned_email
+    assigned_to
+    assigned_to_expanded {
+      _id
+      name
+      display_name
+    }
     event
+    event_expanded {
+      _id
+      title
+      start
+      end
+      timezone
+      latitude
+      longitude
+      address {
+        title
+        street_1
+        street_2
+        postal
+        city
+        region
+        country
+        additional_directions
+        latitude
+        longitude
+      }
+    }
     type
     type_expanded {
       _id
