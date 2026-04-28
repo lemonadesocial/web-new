@@ -107,7 +107,7 @@ export function HostnameStatusList({ spaceId }: Props) {
           title: 'Re-verify custom domain?',
           subtitle:
             'Re-verifying will generate a new TXT record. Your current verification stays active until you update DNS. The domain will be unverified (and its CORS access paused) from the moment you click until the new record is live.',
-          icon: 'icon-alert-circle',
+          icon: 'icon-alert-outline',
           buttonText: 'Generate new record',
           onConfirm: () => {
             confirmed = true;
@@ -212,8 +212,8 @@ function VerificationBadge({ entry }: { entry: WhitelabelHostname }) {
       className="flex items-center gap-1 text-xs text-warning-400"
       data-testid="hostname-badge-unverified"
     >
-      <i aria-hidden="true" className="icon-alert-circle size-3.5" />
-      <span className="truncate" title={message}>
+      <i aria-hidden="true" className="icon-alert-outline size-3.5" />
+      <span className="truncate text-sm leading-4" title={message}>
         {message}
       </span>
     </div>

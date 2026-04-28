@@ -138,7 +138,7 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
               data-testid="verify-rerolled"
               role="status"
             >
-              <i aria-hidden="true" className="icon-alert-circle size-5 shrink-0" />
+              <i aria-hidden="true" className="icon-alert-outline size-5 shrink-0" />
               <p className="text-sm">{rerollMessage}</p>
             </div>
           )}
@@ -165,7 +165,7 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
           <StepCard step={2} title="Then click verify below">
             <p className="text-sm text-secondary">
               DNS propagation can take a few minutes. We&apos;ll look up the TXT record on{' '}
-              <span className="text-primary font-mono text-xs break-all">
+              <span className="text-primary text-xs break-all">
                 {instructions.txt_record_name}
               </span>
               .
@@ -188,7 +188,7 @@ export function HostnameVerificationModal({ spaceId, hostname, instructions: ini
                 data-testid="verify-error"
                 role="alert"
               >
-                <i aria-hidden="true" className="icon-alert-circle size-5 shrink-0" />
+                <i aria-hidden="true" className="icon-alert-outline size-5 shrink-0" />
                 <p className="text-sm">{errorMessage}</p>
               </div>
             )}
@@ -240,7 +240,7 @@ function StepCard({
           </span>
           {/* MEDIUM #2.2: step titles are promoted to headings so screen-
               reader users can navigate the modal by heading level. */}
-          <h3 className="font-medium text-base">{title}</h3>
+          <p>{title}</p>
         </div>
         {children}
       </Card.Content>
@@ -252,8 +252,8 @@ function DnsRow({ label, value, onCopy }: { label: string; value: string; onCopy
   return (
     <div className="flex items-center justify-between gap-2 rounded-sm bg-card px-3 py-2">
       <div className="flex flex-col min-w-0 flex-1">
-        <p className="text-xs text-tertiary">{label}</p>
-        <p className="text-sm font-mono truncate" title={value}>
+        <p className="text-xs text-tertiary font-sans">{label}</p>
+        <p className="text-sm truncate font-sans" title={value}>
           {value}
         </p>
       </div>
