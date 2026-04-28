@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.41.0](https://github.com/lemonadesocial/web-new/compare/v10.40.0...v10.41.0) (2026-04-28)
+
+
+### Features
+
+* **ticket:** add standalone ticket detail page ([a423034](https://github.com/lemonadesocial/web-new/commit/a423034f260f5b4bcf8c6de9a2f6b631e9379584))
+
 ## [10.40.0](https://github.com/lemonadesocial/web-new/compare/v10.39.2...v10.40.0) (2026-04-23)
 
 
