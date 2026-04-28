@@ -372,7 +372,7 @@ function ManageLayoutContent({
         )}
       </AnimatePresence>
 
-      <div className="hidden md:flex px-0 flex-1 overflow-hidden pb-3">
+      <div className="hidden md:flex min-w-0 min-h-0 px-0 flex-1 overflow-hidden pb-3">
         <AnimatePresence initial={false}>
           {state.showSidebarLeft && (
             <motion.div
@@ -390,14 +390,14 @@ function ManageLayoutContent({
         </AnimatePresence>
         <div
           className={clsx(
-            'bg-(--btn-tertiary) transition-all ease-in-out duration-500 w-full h-full rounded-none m-0 md:rounded-md md:m-1',
+            'bg-(--btn-tertiary) transition-all ease-in-out duration-500 min-w-0 w-full h-full rounded-none m-0 md:rounded-md md:m-1',
             state.device === 'mobile' && 'md:py-4',
           )}
         >
           <div
             data-mode={state.device}
             className={clsx(
-              'w-full bg-background h-full rounded-none md:rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
+              'min-w-0 w-full bg-background h-full rounded-none md:rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
               state.device === 'mobile' && 'md:w-sm',
             )}
           >
