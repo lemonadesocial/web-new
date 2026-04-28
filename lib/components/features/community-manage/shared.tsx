@@ -24,8 +24,8 @@ export function CommonSection({
 }) {
   return (
     <div className="space-y-5">
-      <div className="flex justify-between">
-        <div className="space-y-1 flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <div className="space-y-1 flex-1 min-w-0">
           <div className="flex gap-2">
             <h3 className="text-xl font-semibold">{title}</h3>
             {count && (
@@ -38,7 +38,7 @@ export function CommonSection({
           <p className="text-secondary">{subtitle}</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
           {actions.filter(Boolean).map((item, idx) => (
             <Button
               key={idx}
@@ -78,8 +78,8 @@ export function SmallCommonSection({
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex justify-between">
-        <div className="space-y-1 flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <div className="space-y-1 flex-1 min-w-0">
           <div className="flex gap-2">
             <p className="text-xl font-semibold">{title}</p>
             {count && (
@@ -91,18 +91,22 @@ export function SmallCommonSection({
 
           <p className="text-secondary">{subtitle}</p>
         </div>
-        {actions.map((item, idx) => (
-          <Button
-            key={idx}
-            iconLeft={item.iconLeft}
-            iconRight={item.iconRight}
-            size="sm"
-            variant="tertiary-alt"
-            onClick={item.onClick}
-          >
-            {item.title}
-          </Button>
-        ))}
+        {!!actions.length && (
+          <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
+            {actions.map((item, idx) => (
+              <Button
+                key={idx}
+                iconLeft={item.iconLeft}
+                iconRight={item.iconRight}
+                size="sm"
+                variant="tertiary-alt"
+                onClick={item.onClick}
+              >
+                {item.title}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
       {children}
     </div>
