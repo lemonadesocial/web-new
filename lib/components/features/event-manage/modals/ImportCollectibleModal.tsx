@@ -235,7 +235,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
                 ) : poapIdValid && !poapError ? (
                   <i aria-hidden="true" className="icon-done size-4 text-success-500" />
                 ) : poapError ? (
-                  <i aria-hidden="true" className="icon-alert-circle size-4 text-error" />
+                  <i aria-hidden="true" className="icon-alert-outline size-4 text-error" />
                 ) : null}
               </div>
             )}
