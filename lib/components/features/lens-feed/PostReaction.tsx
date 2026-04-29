@@ -80,7 +80,7 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
       icon={isUpvoted ? 'icon-heart-filled' : 'icon-heart-outline'}
       onClick={(e) => {
         e.stopPropagation();
-        handleLensAuth(handleUpvote);
+        handleLensAuth(handleUpvote, { userInitiated: true });
       }}
       label={upvotes}
       isActive={isUpvoted}

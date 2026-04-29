@@ -34,7 +34,7 @@ export function PostComment({ post }: PostCommentProps) {
       label={commentCount}
       onClick={(e) => {
         e.stopPropagation();
-        handleLensAuth(handleAddComment);
+        handleLensAuth(handleAddComment, { userInitiated: true });
       }}
     />
   );
