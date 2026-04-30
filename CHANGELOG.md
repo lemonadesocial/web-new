@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.41.1](https://github.com/lemonadesocial/web-new/compare/v10.41.0...v10.41.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* **lens:** restrict wallet prompts to user actions ([ceb1a79](https://github.com/lemonadesocial/web-new/commit/ceb1a79dd065a2352b8d13099d34cc86ec2bc4b8))
+
 ## [10.41.0](https://github.com/lemonadesocial/web-new/compare/v10.40.0...v10.41.0) (2026-04-28)
 
 
