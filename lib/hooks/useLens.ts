@@ -20,7 +20,7 @@ import {
 import { AccountMetadata, account, MetadataAttributeType } from '@lens-protocol/metadata';
 import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { delay } from 'lodash';
 
 import {
@@ -37,7 +37,7 @@ import {
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { toast } from '$lib/components/core/toast';
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom, lemonadeUsernameAtom } from '$lib/jotai';
-import { useAppKitAccount } from '$lib/utils/appkit';
+import { useAppKitAccount, useAppKitNetwork } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { modal } from '$lib/components/core';
@@ -45,7 +45,6 @@ import { SelectProfileModal } from '$lib/components/features/lens-account/Select
 import { useClient } from '$lib/graphql/request';
 
 import { useSigner } from './useSigner';
-import { useConnectWallet } from './useConnectWallet';
 import { useMe } from './useMe';
 import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
@@ -309,7 +308,7 @@ type PostFilter = {
 export function useFeedPosts(postFilter: PostFilter) {
   const sessionClient = useAtomValue(sessionClientAtom);
   // const [posts, setPosts] = useAtom(feedPostsAtom);
-  const [posts, setPosts] = React.useState([]);
+  const [posts, setPosts] = React.useState<AnyPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();
@@ -680,31 +679,85 @@ export function useAccountStats(account: Account | null) {
   };
 }
 
+type LensAuthOptions = {
+  userInitiated?: boolean;
+};
+
+type LensWalletConnectionOptions = {
+  userInitiated?: boolean;
+  onConnect?: () => void;
+};
+
+export function useLensWalletConnection() {
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const lensChain = chainsMap[LENS_CHAIN_ID];
+  const { isConnected } = useAppKitAccount();
+  const { chainId } = useAppKitNetwork();
+
+  const isReady = useMemo(() => {
+    if (!isConnected) return false;
+    if (!lensChain) return true;
+    return chainId?.toString() === lensChain.chain_id;
+  }, [isConnected, chainId, lensChain]);
+
+  const connect = useCallback(({ userInitiated, onConnect }: LensWalletConnectionOptions = {}) => {
+    if (!userInitiated) return;
+
+    if (isReady) {
+      onConnect?.();
+      return;
+    }
+
+    modal.open(ConnectWallet, {
+      dismissible: true,
+      props: {
+        chain: lensChain,
+        onConnect: () => {
+          onConnect?.();
+        },
+      },
+    });
+  }, [isReady, lensChain]);
+
+  return { isReady, connect };
+}
+
 export function useLensAuth() {
   const account = useAtomValue(accountAtom);
   const sessionClient = useAtomValue(sessionClientAtom);
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const { isReady, connect } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
+  const { isReady, connect } = useLensWalletConnection();
   const { logIn } = useLogIn();
 
-  const handleAuth = async (action: () => Promise<void>): Promise<void> => {
+  const handleAuth = async (action: () => Promise<void>, options: LensAuthOptions = {}): Promise<void> => {
+    const shouldPrompt = options.userInitiated === true;
+
     if (account) {
       await action();
       return;
     }
 
     if (sessionClient) {
+      if (!shouldPrompt) return;
+
       modal.open(SelectProfileModal);
       return;
     }
 
     if (isReady) {
+      if (!shouldPrompt) return;
+
       toast.error('Please login to your Lens account to continue');
       await logIn();
       return;
     }
 
-    connect();
+    connect({
+      userInitiated: shouldPrompt,
+      onConnect: () => {
+        toast.error('Please login to your Lens account to continue');
+        void logIn();
+      },
+    });
   };
 
   return handleAuth;

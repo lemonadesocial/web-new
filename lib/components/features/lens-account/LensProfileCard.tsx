@@ -110,7 +110,7 @@ export function LensProfileCard({ account }: { account: Account }) {
             variant={isFollowing ? 'tertiary' : 'secondary'}
             className="w-full"
             size="sm"
-            onClick={() => handleLensAuth(handleFollow)}
+            onClick={() => handleLensAuth(handleFollow, { userInitiated: true })}
             loading={isExecuting}
             disabled={isLoadingStatus}
           >

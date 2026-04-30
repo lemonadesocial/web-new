@@ -140,7 +140,12 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
             .otherwise(() => (
               <div className="flex items-center gap-2">
                 {user?._id !== me?._id && (
-                  <Button loading={loading} size="sm" outlined={followed} onClick={() => handleLensAuth(handleFollow)}>
+                  <Button
+                    loading={loading}
+                    size="sm"
+                    outlined={followed}
+                    onClick={() => handleLensAuth(handleFollow, { userInitiated: true })}
+                  >
                     {followed ? 'Unfollow' : 'Follow'}
                   </Button>
                 )}

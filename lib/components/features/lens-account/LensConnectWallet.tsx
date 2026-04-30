@@ -1,31 +1,19 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
-import { useConnectWallet } from '$lib/hooks/useConnectWallet';
-import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { useLensWalletConnection } from '$lib/hooks/useLens';
+import { sessionClientAtom } from '$lib/jotai';
 import { useDisconnect } from '$lib/utils/appkit';
 import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 import { useClient } from '$lib/graphql/request';
 
 export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
+  const { connect, isReady } = useLensWalletConnection();
   const { disconnect } = useDisconnect();
   const setSessionClient = useSetAtom(sessionClientAtom);
   const isDesktop = useMediaQuery('md');
   const { client } = useClient();
-
-  const [wasClicked, setWasClicked] = useState(false);
-
-  useEffect(() => {
-    if (wasClicked && isReady) {
-      onConnect();
-      setWasClicked(false);
-    }
-  }, [isReady, wasClicked]);
 
   if (isReady && isDesktop) {
     return (
@@ -127,10 +115,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
         variant="secondary"
         size={isDesktop ? 'base' : 'sm'}
         className="w-fit md:w-full"
-        onClick={() => {
-          setWasClicked(true);
-          connect();
-        }}
+        onClick={() => connect({ userInitiated: true, onConnect })}
       >
         Connect Wallet
       </Button>

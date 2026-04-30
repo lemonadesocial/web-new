@@ -161,7 +161,7 @@ export function WhoToFollow() {
             variant="tertiary"
             size="sm"
             className="rounded-full"
-            onClick={() => handleLensAuth(() => handleFollow(account))}
+            onClick={() => handleLensAuth(() => handleFollow(account), { userInitiated: true })}
             loading={followLoading === account.address}
             disabled={followLoading === account.address}
           >
