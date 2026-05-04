@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.41.1](https://github.com/lemonadesocial/web-new/compare/v10.41.0...v10.41.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* community padding ([d56470c](https://github.com/lemonadesocial/web-new/commit/d56470c95093a6e40ac773fe3565b7ad84e35a6b))
+* **lens:** restrict wallet prompts to user actions ([ceb1a79](https://github.com/lemonadesocial/web-new/commit/ceb1a79dd065a2352b8d13099d34cc86ec2bc4b8))
+
 ## [10.41.0](https://github.com/lemonadesocial/web-new/compare/v10.40.0...v10.41.0) (2026-04-28)
 
 
