@@ -278,9 +278,18 @@ export class GraphqlClient {
       }
 
       if (firstError?.message) {
+        // Preserve `extensions.code` (e.g. 'CONFLICT' for 409, 'FORBIDDEN'
+        // for 403, or the numeric-string status for anything not in the
+        // formatError switch) alongside the message. This is additive — the
+        // existing `{ message }` shape still works for callers that only
+        // consume `.message`. Callers that want reliable status-based
+        // classification (e.g. hostname verification's 409-reroll handling)
+        // can read `.code` instead of regex-matching free-text messages.
+        const extensionsCode = firstError.extensions?.code;
+        const code = extensionsCode !== undefined ? String(extensionsCode) : undefined;
         request.resolve({
           data: null,
-          error: { message: firstError.message },
+          error: { message: firstError.message, code },
         });
         return;
       }
