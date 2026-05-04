@@ -35,28 +35,30 @@ type Props = React.PropsWithChildren<{
 
 function CommunityHeader({
   children,
+  embedded,
   pathname,
   space,
   uid,
 }: React.PropsWithChildren<{
+  embedded?: boolean;
   pathname: string | null;
   space: Space;
   uid: string;
 }>) {
   return (
     <>
-      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
-        <div className="page mx-auto">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-3 items-center">
-              <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
-              <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
+      <div className="pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
+        <div className={clsx('page mx-auto min-w-0', embedded ? 'px-4 md:px-6' : 'px-4 md:px-0')}>
+          <div className="flex justify-between items-center gap-3 min-w-0">
+            <div className="flex gap-3 items-center min-w-0">
+              <img src={communityAvatar(space)} className="size-7 shrink-0 rounded-xs border-card-border" />
+              <h1 className="font-semibold text-2xl truncate">{space.title}</h1>
             </div>
             <Button
               iconRight="icon-arrow-outward"
               variant="tertiary-alt"
               size="sm"
-              className="hidden md:block"
+              className="hidden shrink-0 md:block"
               onClick={() => window.open(`/s/${uid}`, '_blank')}
             >
               Community Page
@@ -198,7 +200,7 @@ export function CommunityManageLayout({ children, embedded = false, onSpaceResol
 
   const content = (
     <CommunityManageSpaceProvider space={resolvedSpace} hostname={hostname}>
-      <CommunityHeader pathname={pathname} space={resolvedSpace} uid={uid}>
+      <CommunityHeader embedded={embedded} pathname={pathname} space={resolvedSpace} uid={uid}>
         {children}
       </CommunityHeader>
     </CommunityManageSpaceProvider>

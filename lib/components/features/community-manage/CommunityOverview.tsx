@@ -75,7 +75,7 @@ export function CommunityOverview({ space: initSpace, hostname }: { space?: Spac
   const events = (dataGetEvent?.getEvents || []) as Event[];
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-6">
       <div className="flex flex-col gap-8 pb-20">
         <div className="flex flex-col gap-8">
           <ListActions spaceId={space?._id} hostname={`https://${hostname}/s/${space.slug || space._id}`} />
@@ -132,11 +132,11 @@ const actions = [
 function ListActions({ spaceId, hostname }: { spaceId: string; hostname?: string }) {
   const router = useRouter();
   return (
-    <div className="flex gap-2 overflow-x-auto no-scrollbar">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
       {actions.map((item) => (
         <Card.Root
           key={item.key}
-          className="flex-1 min-w-fit"
+          className="min-w-0"
           onClick={() => {
             match(item.key)
               .with('add_event', () => router.push(`/create/event?space=${spaceId}`))
@@ -154,7 +154,7 @@ function ListActions({ spaceId, hostname }: { spaceId: string; hostname?: string
             >
               <i aria-hidden="true" className={twMerge('size-5.5 aspect-square', item.icon)} />
             </div>
-            <p>{item.title}</p>
+            <p className="truncate">{item.title}</p>
           </Card.Content>
         </Card.Root>
       ))}
