@@ -15,7 +15,7 @@ export function CommunityPayments({ space }: { space: Space }) {
   const items = (data?.listSpacePaymentAccounts?.items ?? []) as NewPaymentAccount[];
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0 space-y-8">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding space-y-8">
       <CommunityVaultsSection space={space} items={items} loading={loading} refetch={refetch} />
       <hr className="border-t" />
       <CommunityStripeSection space={space} items={items} loading={loading} refetch={refetch} />

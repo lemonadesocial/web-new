@@ -141,7 +141,7 @@ export function CommunityAgents({ space }: Props) {
   }, [configsById, handleRefetch, scope]);
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding">
       <div className="flex flex-col gap-5">
         <div className="flex gap-2 items-center justify-between">
           <div className="flex flex-col gap-1 flex-1">

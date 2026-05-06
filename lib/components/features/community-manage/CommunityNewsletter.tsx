@@ -213,7 +213,7 @@ export function CommunityNewsletter({ spaceIdOrSlug }: CommunityNewsletterProps)
   const actionMenuDisabled = duplicatingNewsletter || deletingNewsletter;
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding">
       <div className="flex flex-col gap-8 pb-20">
         <section className="flex flex-col gap-5">
           <div className="space-y-1">

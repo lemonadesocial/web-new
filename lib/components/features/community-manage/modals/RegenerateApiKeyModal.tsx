@@ -7,7 +7,7 @@ import { getErrorMessage } from '$lib/utils/error';
 import { copy } from '$lib/utils/helpers';
 
 type RegenerateApiKeyModalProps = {
-  apiKey: ApiKeyBase;
+  apiKey: Pick<ApiKeyBase, '_id' | 'name'>;
   onRegenerated?: () => void | Promise<void>;
 };
 

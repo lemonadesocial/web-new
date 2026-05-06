@@ -91,7 +91,7 @@ export function CommunitySubmissions({ space }: Props) {
   };
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h3 className="text-xl font-semibold">

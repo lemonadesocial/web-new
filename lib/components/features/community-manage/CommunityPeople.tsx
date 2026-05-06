@@ -110,7 +110,7 @@ export function CommunityPeople({ space }: Props) {
   }, [query]);
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding">
       <div className="flex flex-col gap-3">
         <div className="flex gap-2 items-center">
           <h3 className="flex-1 text-xl font-semibold">

@@ -35,12 +35,10 @@ type Props = React.PropsWithChildren<{
 
 function CommunityHeader({
   children,
-  embedded,
   pathname,
   space,
   uid,
 }: React.PropsWithChildren<{
-  embedded?: boolean;
   pathname: string | null;
   space: Space;
   uid: string;
@@ -48,7 +46,7 @@ function CommunityHeader({
   return (
     <>
       <div className="pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
-        <div className={clsx('page mx-auto min-w-0', embedded ? 'px-4 md:px-6' : 'px-4 md:px-0')}>
+        <div className="page mx-auto min-w-0 community-manage-page-padding">
           <div className="flex justify-between items-center gap-3 min-w-0">
             <div className="flex gap-3 items-center min-w-0">
               <img src={communityAvatar(space)} className="size-7 shrink-0 rounded-xs border-card-border" />
@@ -200,14 +198,14 @@ export function CommunityManageLayout({ children, embedded = false, onSpaceResol
 
   const content = (
     <CommunityManageSpaceProvider space={resolvedSpace} hostname={hostname}>
-      <CommunityHeader embedded={embedded} pathname={pathname} space={resolvedSpace} uid={uid}>
+      <CommunityHeader pathname={pathname} space={resolvedSpace} uid={uid}>
         {children}
       </CommunityHeader>
     </CommunityManageSpaceProvider>
   );
 
   if (embedded) {
-    return <div className="flex flex-col h-full overflow-auto">{content}</div>;
+    return <div className="flex flex-col h-full overflow-auto [--community-manage-page-padding:1.5rem]">{content}</div>;
   }
 
   return (

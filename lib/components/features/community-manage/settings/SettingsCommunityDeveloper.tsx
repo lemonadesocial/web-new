@@ -20,6 +20,8 @@ import { EditApiKeyModal } from '../modals/EditApiKeyModal';
 import { RegenerateApiKeyModal } from '../modals/RegenerateApiKeyModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 
+type ApiKeyListItem = Pick<ApiKeyBase, '_id' | 'name'>;
+
 export function SettingsCommunityDeveloper({ space }: { space: Space }) {
   const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
   const uid = space.slug || space._id;
@@ -67,7 +69,7 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
 
   const formatStatusLabel = (status: string) => `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
 
-  const openDeleteConfirmation = (apiKey: ApiKeyBase) => {
+  const openDeleteConfirmation = (apiKey: ApiKeyListItem) => {
     modal.open(ConfirmModal, {
       props: {
         title: 'Delete Key?',
@@ -84,7 +86,7 @@ export function SettingsCommunityDeveloper({ space }: { space: Space }) {
   };
 
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-6">
+    <div className="page mx-auto py-7 community-manage-page-padding flex flex-col gap-6">
       <section className="flex flex-col gap-5">
         <div className="space-y-1">
           <h3 className="text-xl font-semibold">API Keys</h3>

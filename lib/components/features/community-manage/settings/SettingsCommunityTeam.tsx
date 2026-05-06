@@ -11,6 +11,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
+import { getErrorMessage } from '$lib/utils/error';
 import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 import { ConfirmModal } from '../../modals/ConfirmModal';
@@ -18,7 +19,7 @@ import { AddTeam } from '../modals/AddTeam';
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
+    <div className="page mx-auto py-7 community-manage-page-padding flex flex-col gap-8">
       <AdminSection space={space} />
       <Divider />
       <AmbassadorSection space={space} />
@@ -50,7 +51,7 @@ export function AdminSection({ space }: { space: Space }) {
   const handleRemove = async (id: string) => {
     const { error } = await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
     if (error) {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
       return;
     }
     await refetch();
@@ -179,7 +180,7 @@ export function AmbassadorSection({ space }: { space: Space }) {
   const handleRemove = async (id: string) => {
     const { error } = await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
     if (error) {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
       return;
     }
     await refetch();
