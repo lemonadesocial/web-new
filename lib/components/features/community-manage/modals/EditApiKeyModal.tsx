@@ -9,7 +9,7 @@ import { useMutation } from '$lib/graphql/request';
 import { getErrorMessage } from '$lib/utils/error';
 
 type EditApiKeyModalProps = {
-  apiKey: ApiKeyBase;
+  apiKey: Pick<ApiKeyBase, '_id' | 'name' | 'scopes' | 'key_prefix' | 'expires_at'>;
   availableScopes: string[];
   onUpdated?: () => void | Promise<void>;
 };

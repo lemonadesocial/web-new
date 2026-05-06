@@ -49,7 +49,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
   };
 
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
+    <div className="page mx-auto py-7 community-manage-page-padding flex flex-col gap-8">
       <div className="flex flex-col gap-5">
         <div>
           <h3 className="text-xl font-semibold flex-1">Event Defaults</h3>

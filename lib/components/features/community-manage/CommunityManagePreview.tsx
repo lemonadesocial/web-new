@@ -36,7 +36,7 @@ export default function CommunityManagePreview({
       <ThemeGenerator data={themeData} scoped scopeSelector="[data-theme-scope='community-preview']" />
       <ThemeProvider key={providerKey} themeData={themeData}>
         <div className="relative z-10 flex w-full flex-1">
-          <div className="page mx-auto w-full px-4 pt-6 pb-20 xl:px-0">
+          <div className="page mx-auto w-full px-4 pt-6 pb-20 md:px-6">
             <Community initData={{ space }} hideManageControls />
           </div>
         </div>

@@ -32,7 +32,7 @@ export function CommunityLaunchpad() {
   }, [tokenIds]);
 
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
+    <div className="page mx-auto py-7 community-manage-page-padding flex flex-col gap-8">
       {
         launchpadGroup ? (
           <CoinStats launchpadGroup={launchpadGroup as LaunchpadGroup} />

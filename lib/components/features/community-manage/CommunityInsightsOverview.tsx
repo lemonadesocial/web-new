@@ -104,7 +104,7 @@ export function CommunityInsightsOverview({ space }: { space: Space }) {
   const topCountries = countriesData?.getSpaceEventLocationsLeaderboard ?? [];
 
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0">
+    <div className="page mx-auto py-7 community-manage-page-padding">
       <div className="flex flex-col gap-8 pb-20">
         <section className="space-y-4">
           <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">

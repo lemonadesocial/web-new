@@ -578,6 +578,16 @@ main {
   width: 100%;
 }
 
+.community-manage-page-padding {
+  padding-inline: 1rem;
+}
+
+@media (min-width: 768px) {
+  .community-manage-page-padding {
+    padding-inline: var(--community-manage-page-padding, 0px);
+  }
+}
+
 .page:has([data-coin-template='true']) {
   max-width: 75rem;
   width: 100%;

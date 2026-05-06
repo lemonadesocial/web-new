@@ -12,7 +12,7 @@ export function CommunityEvents({ space: initSpace }: { space: Space }) {
   const space = data?.getSpace as Space;
 
   return (
-    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+    <div className="page bg-transparent! mx-auto py-7 community-manage-page-padding">
       <CommunityEventsWithCalendar space={space} className="[&_.event-calendar]:top-36" />
     </div>
   );
