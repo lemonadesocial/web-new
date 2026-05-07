@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.41.2](https://github.com/lemonadesocial/web-new/compare/v10.41.1...v10.41.2) (2026-05-06)
+
+
+### Bug Fixes
+
+* community manage page padding alignment ([427fa43](https://github.com/lemonadesocial/web-new/commit/427fa4393eaf46a6dd2b5edcec30f0af8e9d5a0f))
+
 ## [10.41.1](https://github.com/lemonadesocial/web-new/compare/v10.41.0...v10.41.1) (2026-05-04)
 
 
