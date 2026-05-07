@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useAccount, useChainId } from 'wagmi';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -10,7 +10,7 @@ import { GraphQLWSProvider } from '$lib/graphql/subscription';
 import { initializeAppKit } from '$lib/utils/appkit';
 import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';
-import { hydraClientIdAtom, sessionAtom, userAtom } from '$lib/jotai';
+import { appKitReadyAtom, hydraClientIdAtom, sessionAtom, userAtom } from '$lib/jotai';
 import { defaultClient } from '$lib/graphql/request/instances';
 import { GRAPHQL_URL } from '$lib/utils/constants';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
@@ -19,14 +19,13 @@ import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { useUtmTracker } from '$lib/hooks/useUtmTracker';
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null }) {
-  const [miniAppReady, setMiniAppReady] = useState(false);
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
-  const [appKitReady, setAppKitReady] = useState(false);
+  const setAppKitReady = useSetAtom(appKitReadyAtom);
   useLensResumeSession();
   useUtmTracker();
 
-  const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
+  const { reload } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
   const setUser = useSetAtom(userAtom);
 
@@ -63,10 +62,14 @@ export default function Providers({ children, space }: { children: React.ReactNo
 
   useEffect(() => {
     if (!chainsLoading) {
-      initializeAppKit();
-      setAppKitReady(true);
+      try {
+        initializeAppKit();
+        setAppKitReady(true);
+      } catch (error) {
+        Sentry.captureException(error, { tags: { source: 'providers-appkit-init' } });
+      }
     }
-  }, [chainsLoading]);
+  }, [chainsLoading, setAppKitReady]);
 
   useEffect(() => {
     if (space?.hydra_client_id) {
@@ -75,7 +78,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   }, [space]);
 
   useEffect(() => {
-    sdk.actions.ready().then(() => setMiniAppReady(true)).catch(e => Sentry.captureException(e));
+    sdk.actions.ready().catch(e => Sentry.captureException(e));
   }, []);
 
   useEffect(() => {
@@ -116,8 +119,6 @@ export default function Providers({ children, space }: { children: React.ReactNo
     'X-Client-App-Version': process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0',
     'X-Client-Locale': typeof navigator !== 'undefined' ? navigator.language : 'en',
   }), []);
-
-  if (chainsLoading || !appKitReady || !miniAppReady || loadingAuth) return null;
 
   return (
     <GraphqlClientProvider client={defaultClient}>

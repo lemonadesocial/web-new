@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount, useDisconnect } from '$lib/utils/appkit';
 import clsx from 'clsx';
 import { useAtom } from 'jotai';
 

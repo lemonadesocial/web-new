@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { Button, ErrorText, modal, ModalContent, toast } from "$lib/components/core";
 import { useAppKit, useAppKitAccount } from "$lib/utils/appkit";
-import { sessionAtom } from "$lib/jotai";
+import { appKitReadyAtom, sessionAtom } from "$lib/jotai";
 import { useHandleVerifyWallet } from "$lib/hooks/useSignIn";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
@@ -11,6 +11,22 @@ import { completeProfile } from "./utils";
 import { formatError } from "$lib/utils/error";
 
 export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean }) {
+  const appKitReady = useAtomValue(appKitReadyAtom);
+
+  if (!appKitReady) {
+    return (
+      <ConnectWalletModalContainer subtitle="Preparing wallet connection...">
+        <Button variant="secondary" className="w-full" disabled>
+          Connect Wallet
+        </Button>
+      </ConnectWalletModalContainer>
+    );
+  }
+
+  return <ReadyConnectWalletModal verifyRequired={verifyRequired} />;
+}
+
+function ReadyConnectWalletModal({ verifyRequired }: { verifyRequired: boolean }) {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
   const { address } = useAppKitAccount();
@@ -79,7 +95,8 @@ export function ConnectWalletModalContainer({ children, subtitle, errorMessage }
           children
             ? <>
               {children}
-              <p
+              <button
+                type="button"
                 className="w-full text-tertiary text-center cursor-pointer"
                 onClick={() => {
                   completeProfile();
@@ -87,7 +104,7 @@ export function ConnectWalletModalContainer({ children, subtitle, errorMessage }
                 }}
               >
                 Do It Later
-              </p>
+              </button>
             </>
             : (
               <Button variant="tertiary" className="w-full" onClick={() => modal.close()}>

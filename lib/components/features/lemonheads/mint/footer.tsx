@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { decodeEventLog, formatEther, zeroAddress, type Address, type EIP1193Provider } from 'viem';
 import { createPublicClient, http } from 'viem';
-import { useAppKit, useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import Link from 'next/link';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
 import { createPublicClient, http, type Address } from 'viem';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';

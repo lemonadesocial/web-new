@@ -9,3 +9,4 @@ export const scrollAtBottomAtom = atom(false);
 export const dataTheme = atom('dark');
 export const hydraClientIdAtom = atom('');
 export const userAtom = atom<User | null>(null);
+export const appKitReadyAtom = atom(false);

@@ -1,7 +1,6 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import {
   createAppKit,
-  useAppKit,
   useAppKitAccount,
   useAppKitEvents,
   useAppKitNetwork,
@@ -11,6 +10,7 @@ import {
   useWalletInfo,
   useAppKitProvider
 } from '@reown/appkit/react';
+import type { OpenOptions, Views } from '@reown/appkit/react';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 
@@ -44,8 +44,11 @@ export const getAppKitNetwork = (chain: Chain) => {
 };
 
 let appKit: ReturnType<typeof createAppKit>;
+let appKitInitialized = false;
 
 export function initializeAppKit() {
+  if (appKitInitialized) return appKit;
+
   const networks = getListChains()
     .filter((chain) => chain.tokens?.length)
     .map((chain) => getAppKitNetwork(chain));
@@ -81,11 +84,29 @@ export function initializeAppKit() {
       socials: false
     }
   });
+  appKitInitialized = true;
+
+  return appKit;
+}
+
+type AppKitOpen = <View extends Views>(options?: OpenOptions<View>) => Promise<void | { hash: string } | undefined>;
+
+export function useAppKit(): { open: AppKitOpen; close: () => Promise<void> } {
+  async function open<View extends Views>(options?: OpenOptions<View>) {
+    return appKitInitialized ? appKit.open(options) : undefined;
+  }
+
+  async function close() {
+    if (appKitInitialized) {
+      await appKit.close();
+    }
+  }
+
+  return { open, close };
 }
 
 export {
   appKit,
-  useAppKit,
   useAppKitState,
   useAppKitTheme,
   useAppKitEvents,

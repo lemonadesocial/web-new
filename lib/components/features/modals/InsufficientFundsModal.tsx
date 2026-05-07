@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
 import { truncateMiddle } from '$lib/utils/string';
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
 
