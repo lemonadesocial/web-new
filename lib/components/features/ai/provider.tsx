@@ -37,10 +37,9 @@ type State = {
   pageConfig?: GetPageConfigQuery['getPageConfig'];
 };
 
-const session = uuidV4();
 const defaultState: State = {
   toggleChat: false,
-  session: session,
+  session: '',
   config: AI_CONFIG,
   configs: [],
   tools: [
@@ -63,6 +62,7 @@ export enum AIChatActionKind {
   'set_config',
   'set_configs',
   'set_page_config',
+  'set_session',
   'reset',
 }
 
@@ -114,6 +114,12 @@ export function AIChatProvider({ children, initialConfigs }: { children: React.R
     },
     [],
   );
+
+  React.useEffect(() => {
+    if (!state.session) {
+      dispatch({ type: AIChatActionKind.set_session, payload: { session: uuidV4() } });
+    }
+  }, [state.session]);
 
   return (
     <AIChatContext.Provider value={value}>
@@ -200,6 +206,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_page_config: {
       return { ...state, pageConfig: action.payload?.pageConfig };
+    }
+
+    case AIChatActionKind.set_session: {
+      return { ...state, session: action.payload?.session || state.session };
     }
 
     case AIChatActionKind.reset: {

@@ -1,21 +1,29 @@
 'use client';
 import React from 'react';
-import { AIChat } from './AIChat';
-import { Pane } from '$lib/components/core/pane/pane';
-import { Button } from '$lib/components/core';
+import dynamic from 'next/dynamic';
 import clsx from 'clsx';
-import { AIChatActionKind, useAIChat } from './provider';
-import { Sheet } from 'react-modal-sheet';
-import { isMobile } from 'react-device-detect';
 
-interface Option<T> {
+import { AIChatActionKind, useAIChat } from './provider';
+
+type AIChatPaneComponentProps = {
+  props?: object;
+  onClose: () => void;
+};
+
+const AIChatDesktopPane = dynamic<AIChatPaneComponentProps>(() => import('./AIChatPane').then((mod) => mod.AIChatDesktopPane), {
+  ssr: false,
+});
+const AIChatMobileSheet = dynamic<AIChatPaneComponentProps>(() => import('./AIChatPane').then((mod) => mod.AIChatMobileSheet), {
+  ssr: false,
+});
+
+interface Option<T extends object = Record<string, unknown>> {
   props?: T;
   position?: 'left' | 'right';
 }
 
-interface AIChatPane {
-  content: React.ReactNode;
-  options: Option<unknown>;
+interface AIChatPaneState {
+  options: Option;
 }
 
 interface AIChatPaneAPI {
@@ -33,75 +41,51 @@ export const aiChat: AIChatPaneAPI = {
 };
 
 export function AIChatContainer() {
-  const [state, setState] = React.useState<AIChatPane>();
-  const [_, chatStoreDispath] = useAIChat();
+  const [state, setState] = React.useState<AIChatPaneState>();
+  const [isMobileView, setIsMobileView] = React.useState(false);
+  const [, chatStoreDispatch] = useAIChat();
 
-  const handleOpen = <T extends object>(opts: Option<T> = {}) => {
-    chatStoreDispath({ type: AIChatActionKind.toggle_chat });
-    if (isMobile) {
-      setState({
-        content: <AIChat compact {...(opts.props as T)} />,
-        options: { ...opts },
-      });
-    } else {
-      setState({
-        content: (
-          <Pane.Root className="rounded-none">
-            <Pane.Header.Root>
-              <Pane.Header.Right>
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-keyboard-double-arrow-left"
-                  onClick={() => aiChat.close()}
-                />
-              </Pane.Header.Right>
-            </Pane.Header.Root>
-            <Pane.Content className="p-4 overflow-auto">
-              <AIChat compact {...(opts.props as T)} />
-            </Pane.Content>
-          </Pane.Root>
-        ),
-        options: { ...opts },
-      });
-    }
-  };
-
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
     setState(undefined);
-    chatStoreDispath({ type: AIChatActionKind.close_chat });
-  };
+    chatStoreDispatch({ type: AIChatActionKind.close_chat });
+  }, [chatStoreDispatch]);
+
+  const handleOpen = React.useCallback(
+    <T extends object>(opts: Option<T> = {}) => {
+      chatStoreDispatch({ type: AIChatActionKind.toggle_chat });
+      setState({ options: opts as Option });
+    },
+    [chatStoreDispatch],
+  );
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const handleChange = () => setIsMobileView(mediaQuery.matches);
+
+    handleChange();
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   React.useEffect(() => {
     aiChat.open = handleOpen;
     aiChat.close = handleClose;
-  }, []);
+  }, [handleClose, handleOpen]);
 
-  if (!aiChat.open || !aiChat.close) {
-    return null;
+  if (isMobileView) {
+    return state ? (
+      <AIChatMobileSheet props={state.options.props} onClose={handleClose} />
+    ) : null;
   }
 
-  return !isMobile ? (
+  return (
     <div
       className={clsx(
         'flex-1 w-full transition-all ease-in-out duration-300 z-0',
-        state?.content ? 'max-w-108 opacity-100' : 'max-w-0 opacity-0',
+        state ? 'max-w-108 opacity-100' : 'max-w-0 opacity-0',
       )}
     >
-      {state?.content}
+      {state && <AIChatDesktopPane props={state.options.props} onClose={handleClose} />}
     </div>
-  ) : (
-    <Sheet avoidKeyboard isOpen={!!state?.content} onClose={() => handleClose()}>
-      <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
-        <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
-          <div className="flex justify-center items-end h-5">
-            <div className="bg-primary/8 rounded-xs w-12 h-1 cursor-row-resize"></div>
-          </div>
-        </Sheet.Header>
-        <Sheet.Content disableDrag>
-          <div className="p-4 overflow-auto h-full">{state?.content}</div>
-        </Sheet.Content>
-      </Sheet.Container>
-    </Sheet>
   );
 }
