@@ -20,6 +20,8 @@ import { ProfilePane } from '../features/pane';
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
 
+const isMobileSidebarViewport = () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+
 type SidebarFooterActionProps = {
   toggle: 'mini' | 'open';
   active?: boolean;
@@ -114,12 +116,22 @@ const Sidebar = () => {
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
   const isUpgradeActive = pathname.startsWith('/upgrade/');
 
+  const closeSidebarOnMobile = () => {
+    if (isMobileSidebarViewport()) {
+      setToggle('mini');
+    }
+  };
+
   const handleUpgradeClick = () => {
     if (me || account) {
-      if (mySpaces.length) router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
+      if (mySpaces.length) {
+        closeSidebarOnMobile();
+        router.push(`/upgrade/${mySpaces[0].slug || mySpaces[0]._id}`);
+      }
       return;
     }
 
+    closeSidebarOnMobile();
     signIn();
   };
 
@@ -127,6 +139,7 @@ const Sidebar = () => {
     dispatch({ type: AIChatActionKind.reset });
     router.replace(path);
     aiChat.close();
+    closeSidebarOnMobile();
   };
 
   return (
@@ -149,16 +162,16 @@ const Sidebar = () => {
 
       <div
         className={clsx(
-          'relative bg-overlay-primary max-sm:fixed h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
-          toggle === 'mini' && 'max-sm:-translate-x-full',
-          toggle === 'open' && 'max-sm:left-0',
+          'relative bg-overlay-primary max-md:fixed h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
+          toggle === 'mini' && 'max-md:-translate-x-full',
+          toggle === 'open' && 'max-md:left-0',
         )}
       >
         <div
           className={clsx(
             'flex flex-col h-full transition-all duration-300',
             toggle === 'open' && 'w-64',
-            toggle === 'mini' && 'w-16 max-sm:invisible',
+            toggle === 'mini' && 'w-16 max-md:invisible',
           )}
         >
           <div className="flex-1 flex flex-col overflow-hidden">
@@ -208,7 +221,10 @@ const Sidebar = () => {
                 className={clsx(
                   'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
                 )}
-                onClick={() => modal.open(CreatingModal)}
+                onClick={() => {
+                  closeSidebarOnMobile();
+                  modal.open(CreatingModal);
+                }}
               >
                 <i className="size-5 icon-plus aspect-square" />
                 {toggle === 'open' && <span className="text-sm">Create</span>}
@@ -268,13 +284,23 @@ const Sidebar = () => {
                       <div className="p-1">
                         <MenuItem
                           title="Edit Profile"
-                          onClick={() => drawer.open(ProfilePane, { dismissible: false })}
+                          onClick={() => {
+                            closeSidebarOnMobile();
+                            drawer.open(ProfilePane, { dismissible: false });
+                          }}
                         />
-                        <MenuItem title="Settings" onClick={() => router.push('/settings')} />
+                        <MenuItem
+                          title="Settings"
+                          onClick={() => {
+                            closeSidebarOnMobile();
+                            router.push('/settings');
+                          }}
+                        />
                         <MenuItem
                           title="Sign Out"
                           onClick={async () => {
                             toggle();
+                            closeSidebarOnMobile();
                             logOut();
                           }}
                         />
@@ -286,7 +312,10 @@ const Sidebar = () => {
             ) : (
               <div
                 className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
-                onClick={() => signIn()}
+                onClick={() => {
+                  closeSidebarOnMobile();
+                  signIn();
+                }}
               >
                 <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
                 {toggle === 'open' && (
