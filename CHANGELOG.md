@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.42.0](https://github.com/lemonadesocial/web-new/compare/v10.41.2...v10.42.0) (2026-05-12)
+
+
+### Features
+
+* bump Next.js to 15.5.18 ([90ac776](https://github.com/lemonadesocial/web-new/commit/90ac776bc272bf07e152b37e94a6f5271c7991ff))
+* close mobile sidebar after item actions ([d1b513c](https://github.com/lemonadesocial/web-new/commit/d1b513cc106621bbe920477253047a6e6db670d6))
+
 ## [10.41.2](https://github.com/lemonadesocial/web-new/compare/v10.41.1...v10.41.2) (2026-05-06)
 
 
